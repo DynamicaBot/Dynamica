@@ -2,8 +2,34 @@ kind: "pipeline"
 name: "default"
 type: "docker"
 steps:
+  - name: Restore Cache
+    pull: if-not-exists
+    image: drillster/drone-volume-cache
+    volumes:
+      - name: cache
+        path: /cache
+    settings:
+      restore: true
+      mount:
+        - ./node_modules
   - name: "build"
-    image: "node:12"
+    image: "node:lts-buster-slim"
+    pull: if-not-exists
     commands:
-      - "yarn install"
+      - "yarn install --frozen-lockfile --production"
       - "yarn tsc"
+  - name: Rebuild Cache
+    pull: if-not-exists
+    image: drillster/drone-volume-cache
+    volumes:
+      - name: cache
+        path: /cache
+    settings:
+      rebuild: true
+      mount:
+        - ./node_modules
+
+volumes:
+  - name: cache
+    host:
+      path: /tmp/cache
