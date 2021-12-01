@@ -102,7 +102,20 @@ module.exports = {
         )}`,
       });
     } else if (interaction.options.getSubcommandGroup() === "edit") {
-      // TODO: Permission checking
+      if (!interaction.memberPermissions?.has("MANAGE_CHANNELS")) {
+        interaction.editReply({
+          content: "User requires manage channel permissions.",
+        });
+        return;
+      }
+
+      if (!interaction.guild?.me?.permissions.has("MANAGE_CHANNELS")) {
+        interaction.editReply({
+          content: "Bot requires manage channel permissions.",
+        });
+        return;
+      }
+
       if (interaction.options.getSubcommand() === "name") {
         const targetChannel = interaction.options.getChannel(
           "targetchannel",
