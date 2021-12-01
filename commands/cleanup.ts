@@ -1,6 +1,6 @@
 import { SlashCommandBuilder } from "@discordjs/builders";
 import { CommandInteraction } from "discord.js";
-import { prisma } from "../index";
+import { prisma } from "../lib/prisma";
 
 module.exports = {
   data: new SlashCommandBuilder()
@@ -8,14 +8,17 @@ module.exports = {
     .setDescription("Cleanup empty voice channels.")
     .addChannelOption((option) =>
       option
-        .setName("targetchannel")
+        .setName("cleanupchannel")
         .setDescription("Select a channel managed by the bot to remove.")
         .addChannelType(2)
         .setRequired(true)
     ),
   async execute(interaction: CommandInteraction) {
     await interaction.deferReply({ ephemeral: true });
-    const channelOption = interaction.options.getChannel("targetchannel", true);
+    const channelOption = interaction.options.getChannel(
+      "cleanupchannel",
+      true
+    );
     const prismaPrimaryChannel = await prisma.primaryChannel.findUnique({
       where: {
         channelId: channelOption.id,

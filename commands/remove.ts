@@ -1,8 +1,6 @@
 import { SlashCommandBuilder } from "@discordjs/builders";
-import { prisma } from "..";
+import { prisma } from "../lib/prisma";
 import { CommandInteraction } from "discord.js";
-import { ChannelTypes } from "discord.js/typings/enums";
-import { channels } from "../lib/keyv";
 
 module.exports = {
   data: new SlashCommandBuilder()

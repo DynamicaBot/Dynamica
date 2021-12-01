@@ -1,0 +1,9 @@
+kind: "pipeline"
+name: "default"
+type: "docker"
+steps:
+  - name: "build"
+    image: "node:12"
+    commands:
+      - "yarn install"
+      - "yarn tsc"

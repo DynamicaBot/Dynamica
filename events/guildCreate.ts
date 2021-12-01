@@ -1,5 +1,4 @@
 import { Client, Guild } from "discord.js";
-import { channels, guilds } from "../lib/keyv";
 
 module.exports = {
   name: "guildCreate",

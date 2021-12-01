@@ -7,10 +7,6 @@ const client = new Client({
   intents: [Intents.FLAGS.GUILDS, Intents.FLAGS.GUILD_VOICE_STATES],
 });
 
-import { PrismaClient } from "@prisma/client";
-
-export const prisma = new PrismaClient();
-
 const commands = new Collection<
   string,
   {

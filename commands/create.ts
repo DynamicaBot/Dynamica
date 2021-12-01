@@ -1,5 +1,5 @@
 import { SlashCommandBuilder } from "@discordjs/builders";
-import { prisma } from "../index";
+import { prisma } from "../lib/prisma";
 import { CommandInteraction } from "discord.js";
 
 module.exports = {
