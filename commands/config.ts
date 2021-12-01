@@ -98,10 +98,6 @@ module.exports = {
 
       await interaction.editReply({
         embeds: [messageEmbed],
-        content: `${channelConfig.subchannels.map(
-          (subchannel: Subchannel) =>
-            `- ${subchannel.nickname || subchannel.channelId}\n`
-        )}`,
       });
     } else if (interaction.options.getSubcommandGroup() === "edit") {
       if (!interaction.memberPermissions?.has("MANAGE_CHANNELS")) {

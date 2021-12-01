@@ -36,7 +36,7 @@ module.exports = {
     const { subchannels } = prismaPrimaryChannel;
 
     await Promise.all(
-      subchannels.map(async (channel: Subchannel) => {
+      subchannels.map(async (channel) => {
         const discordChannel = await interaction.guild?.channels.fetch(
           channel.channelId
         );

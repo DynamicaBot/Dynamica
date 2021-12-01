@@ -18,7 +18,8 @@
     "start": "ts-node index.ts",
     "dev": "nodemon index.ts --ignore ./config/",
     "deploy": "ts-node deploy-commands.ts",
-    "lint": "prettier --write ."
+    "lint": "prettier --write .",
+    "postinstall": "prisma generate"
   },
   "devDependencies": {
     "prisma": "^3.6.0",

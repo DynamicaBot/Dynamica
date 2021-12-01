@@ -16,7 +16,7 @@ steps:
     image: "node:lts-buster-slim"
     pull: if-not-exists
     commands:
-      - "yarn install --frozen-lockfile --production"
+      - "yarn install --frozen-lockfile"
       - "yarn tsc"
   - name: Rebuild Cache
     pull: if-not-exists
