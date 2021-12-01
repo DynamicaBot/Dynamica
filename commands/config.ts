@@ -1,4 +1,5 @@
 import { Embed, SlashCommandBuilder } from "@discordjs/builders";
+import { Subchannel } from "@prisma/client";
 import { CommandInteraction } from "discord.js";
 import { prisma } from "../lib/prisma";
 
@@ -98,7 +99,8 @@ module.exports = {
       await interaction.editReply({
         embeds: [messageEmbed],
         content: `${channelConfig.subchannels.map(
-          (subchannel) => `- ${subchannel.nickname || subchannel.channelId}\n`
+          (subchannel: Subchannel) =>
+            `- ${subchannel.nickname || subchannel.channelId}\n`
         )}`,
       });
     } else if (interaction.options.getSubcommandGroup() === "edit") {

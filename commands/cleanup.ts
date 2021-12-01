@@ -1,4 +1,5 @@
 import { SlashCommandBuilder } from "@discordjs/builders";
+import { Subchannel } from "@prisma/client";
 import { CommandInteraction } from "discord.js";
 import { prisma } from "../lib/prisma";
 
@@ -35,7 +36,7 @@ module.exports = {
     const { subchannels } = prismaPrimaryChannel;
 
     await Promise.all(
-      subchannels.map(async (channel) => {
+      subchannels.map(async (channel: Subchannel) => {
         const discordChannel = await interaction.guild?.channels.fetch(
           channel.channelId
         );
