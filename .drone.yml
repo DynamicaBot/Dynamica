@@ -16,8 +16,10 @@ steps:
     image: "node:lts-buster-slim"
     pull: if-not-exists
     commands:
-      - "yarn install --frozen-lockfile"
-      - "yarn tsc"
+      - apt-get update
+      - apt-get install openssl -y -qq
+      - yarn install --frozen-lockfile
+      - yarn tsc
   - name: Rebuild Cache
     pull: if-not-exists
     image: drillster/drone-volume-cache
