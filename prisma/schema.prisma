@@ -1,0 +1,28 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = "file:../config/db.sqlite"
+}
+
+model PrimaryChannel {
+  id Int @id @default(autoincrement())
+  channelId String @unique
+  creator String
+  name String
+  general_name String
+  subchannels Subchannel[] @relation("SubchannelOnPrimaryChannel")
+}
+
+model Subchannel {
+  id Int @id @default(autoincrement())
+  nickname String?
+  channelId String @unique
+  primaryChannelId String
+  primary_channel PrimaryChannel @relation(name: "SubchannelOnPrimaryChannel", fields: [primaryChannelId], references: [channelId])
+}

@@ -1,21 +1,15 @@
 import { Client, Guild } from "discord.js";
-import { db } from "../lib/keyv";
+import { channels, guilds } from "../lib/keyv";
 
 module.exports = {
   name: "guildCreate",
   once: false,
   execute(guild: Guild) {
     console.log(guild.id);
-    db.set(guild.id, {
-      channels: [],
-      aliases: {},
-    });
+    // if (!guilds.get(guild.id)) {
+    //   guilds.set(guild.id, {
+    //     owner: guild.ownerId,
+    //   });
+    // }
   },
 };
-
-//  {
-//     channels: [],
-//     aliases: {
-//       vscode: "Coding Thingo",
-//     },
-//   }

@@ -3,7 +3,13 @@ import { Intents, Collection, Client } from "discord.js";
 import fs from "fs";
 
 // Create a new client instance
-const client = new Client({ intents: [Intents.FLAGS.GUILDS] });
+const client = new Client({
+  intents: [Intents.FLAGS.GUILDS, Intents.FLAGS.GUILD_VOICE_STATES],
+});
+
+import { PrismaClient } from "@prisma/client";
+
+export const prisma = new PrismaClient();
 
 const commands = new Collection<
   string,
@@ -20,6 +26,7 @@ for (const file of commandFiles) {
   const command = require(`./commands/${file}`);
   // Set a new item in the Collection
   // With the key as the command name and the value as the exported module
+  // console.log({ command });
   commands.set(command.data.name, command);
 }
 
