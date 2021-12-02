@@ -29,7 +29,7 @@ module.exports = {
       }
     );
 
-    await prisma.primaryChannel.create({
+    await prisma.primary.create({
       data: {
         id: channel.id,
         creator: interaction.user.id,

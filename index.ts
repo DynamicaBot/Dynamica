@@ -4,7 +4,11 @@ import fs from "fs";
 
 // Create a new client instance
 const client = new Client({
-  intents: [Intents.FLAGS.GUILDS, Intents.FLAGS.GUILD_VOICE_STATES],
+  intents: [
+    Intents.FLAGS.GUILDS,
+    Intents.FLAGS.GUILD_VOICE_STATES,
+    Intents.FLAGS.GUILD_PRESENCES,
+  ],
 });
 
 const commands = new Collection<

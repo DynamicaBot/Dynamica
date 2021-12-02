@@ -10,17 +10,26 @@ datasource db {
   url      = "file:../config/db.sqlite"
 }
 
-model PrimaryChannel {
+model Primary {
   id String @id @unique
   creator String
-  template String? 
-  generalName String?
-  secondaries Secondary[] @relation("SecondaryOnPrimaryChannel")
+  template String @default("@@game@@ ##")
+  generalName String @default("General ##")
+  secondaries Secondary[] @relation("SecondaryOnPrimary")
+  aliases Alias[] @relation("AliasOnPrimary")
 }
 
 model Secondary {
   id String @id @unique
   name String?
-  primaryChannelId String
-  primaryChannel PrimaryChannel @relation(name: "SecondaryOnPrimaryChannel", fields: [primaryChannelId], references: [id])
+  primaryId String
+  primary Primary @relation(name: "SecondaryOnPrimary", fields: [primaryId], references: [id])
+}
+
+model Alias {
+  id Int @id @default(autoincrement())
+  activity String
+  alias String
+  primaryId String
+  primary Primary @relation(name: "AliasOnPrimary", fields: [primaryId], references: [id])
 }
