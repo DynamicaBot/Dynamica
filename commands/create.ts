@@ -11,6 +11,14 @@ module.exports = {
         .setName("channelname")
         .setDescription("Channel Name")
         .setRequired(false)
+    )
+    .addBooleanOption((option) =>
+      option
+        .setName("createabove")
+        .setDescription(
+          "Whether subchannels should be created above or below the primary channel."
+        )
+        .setRequired(false)
     ),
   async execute(interaction: CommandInteraction) {
     if (!interaction.memberPermissions?.has("MANAGE_CHANNELS")) {
@@ -36,12 +44,15 @@ module.exports = {
       type: "GUILD_VOICE",
     });
 
+    const create_above = interaction.options.getBoolean("above");
+
     await prisma.primaryChannel.create({
       data: {
         channelId: channel.id,
         name,
         general_name: "General",
         creator: interaction.user.id,
+        create_above: !!create_above,
       },
     });
 
