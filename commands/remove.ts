@@ -33,7 +33,7 @@ module.exports = {
     const channel = interaction.options.getChannel("targetchannel");
     if (channel) {
       const existingChannelConfig = await prisma.primaryChannel.findUnique({
-        where: { channelId: channel.id },
+        where: { id: channel.id },
       });
       if (existingChannelConfig) {
         await interaction.deferReply();
@@ -43,7 +43,7 @@ module.exports = {
 
         await Promise.all([
           // Complete all tasks then mark command as complete
-          prisma.primaryChannel.delete({ where: { channelId: channel.id } }),
+          prisma.primaryChannel.delete({ where: { id: channel.id } }),
           channelManager?.delete("Channel deleted by bot."),
         ]);
         await interaction.editReply({
