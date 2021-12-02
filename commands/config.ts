@@ -115,6 +115,7 @@ module.exports = {
       }
 
       if (interaction.options.getSubcommand() === "name") {
+        await interaction.deferReply({ ephemeral: true });
         const targetChannel = interaction.options.getChannel(
           "targetchannel",
           true
@@ -123,7 +124,6 @@ module.exports = {
           "newchannelname",
           true
         );
-        await interaction.deferReply({ ephemeral: true });
 
         const channelConfig = await prisma.primaryChannel.findUnique({
           where: {

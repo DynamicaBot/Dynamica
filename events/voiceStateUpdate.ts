@@ -40,15 +40,61 @@ module.exports = {
       }
 
       // User joins primary
-      if (await matchingrimaryChannel(newVoiceState.channelId)) {
+      if (
+        (await matchingrimaryChannel(newVoiceState.channelId)) &&
+        newVoiceState.channelId
+      ) {
         // Trigger move event and create new subchannel.
         console.log("user joined primary");
+        const channelConfig = await prisma.primaryChannel.findUnique({
+          where: {
+            channelId: newVoiceState.channelId,
+          },
+        });
+        if (channelConfig) {
+          const newSubchannel = await newVoiceState.guild.channels.create(
+            channelConfig?.general_name,
+            {
+              type: "GUILD_VOICE",
+            }
+          );
+          await newVoiceState.member?.voice.setChannel(newSubchannel);
+          await prisma.subchannel.create({
+            data: {
+              primaryChannelId: channelConfig.channelId,
+              channelId: newSubchannel.id,
+            },
+          });
+        }
+      }
+
+      // Joined Subchannel
+      if (
+        (await matchingSubchannel(newVoiceState.channelId)) &&
+        newVoiceState.channelId
+      ) {
+        console.log("joined subchannel");
       }
 
       // User leaves subchannel
-      if (await matchingSubchannel(oldVoiceState.channelId)) {
-        // Check if subchannel is empty and if so then remove.
-        console.log("user left subchannel");
+      if (
+        (await matchingSubchannel(oldVoiceState.channelId)) &&
+        oldVoiceState.channelId
+      ) {
+        const channel = await oldVoiceState.guild.channels.fetch(
+          oldVoiceState.channelId
+        );
+        if (channel?.members.size === 0) {
+          // Delete Channel from db and server
+          await Promise.all([
+            channel.delete(),
+            prisma.subchannel.delete({
+              where: {
+                channelId: oldVoiceState.channelId,
+              },
+            }),
+          ]);
+        }
       }
     }
   },

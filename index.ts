@@ -26,6 +26,42 @@ for (const file of commandFiles) {
   commands.set(command.data.name, command);
 }
 
+client.on("interactionCreate", async (interaction) => {
+  if (!interaction.isCommand()) return;
+
+  const command = commands.get(interaction.commandName);
+
+  if (!command) return;
+
+  try {
+    await command.execute(interaction);
+  } catch (error) {
+    console.error(error);
+    // await interaction.deferReply();
+    await interaction.reply({
+      content: "There was an error while executing this command!",
+      ephemeral: true,
+    });
+  }
+});
+
+const menus = new Collection<
+  string,
+  {
+    customId: string;
+    execute: any;
+  }
+>();
+
+const menuFiles = fs
+  .readdirSync("./menus")
+  .filter((file: string) => file.endsWith(".ts"));
+
+for (const file of menuFiles) {
+  const menu = require(`./menus/${file}`);
+  menus.set(menu.customId, menu);
+}
+
 const eventFiles = fs
   .readdirSync("./events")
   .filter((file: string) => file.endsWith(".ts"));
@@ -40,21 +76,23 @@ for (const file of eventFiles) {
 }
 
 client.on("interactionCreate", async (interaction) => {
-  if (!interaction.isCommand()) return;
+  if (!interaction.isSelectMenu()) return;
 
-  const command = commands.get(interaction.commandName);
+  const menu = menus.get(interaction.customId);
 
-  if (!command) return;
+  if (!menu) return;
 
   try {
-    await command.execute(interaction);
+    await menu.execute(interaction);
   } catch (error) {
     console.error(error);
-    await interaction.reply({
-      content: "There was an error while executing this command!",
-      ephemeral: true,
-    });
+    // await interaction.deferReply();
+    // await interaction.reply({
+    //   content: "There was an error while executing this command!",
+    //   ephemeral: true,
+    // });
   }
 });
+
 // Login to Discord with your client's token
 client.login(process.env.TOKEN);
