@@ -7,16 +7,16 @@ module.exports = {
     .setName("create")
     .setDescription("Create a primary channel."),
   async execute(interaction: CommandInteraction) {
-    await interaction.deferReply();
+    // await interaction.deferReply();
     if (!interaction.memberPermissions?.has("MANAGE_CHANNELS")) {
-      await interaction.editReply({
+      await interaction.reply({
         content: "User requires manage channel permissions.",
       });
       return;
     }
 
     if (!interaction.guild?.me?.permissions.has("MANAGE_CHANNELS")) {
-      await interaction.editReply({
+      await interaction.reply({
         content: "Bot requires manage channel permissions.",
       });
       return;
@@ -36,7 +36,7 @@ module.exports = {
       },
     });
 
-    await interaction.editReply({
+    await interaction.reply({
       content: `New voice channel successfully created.`,
     });
   },

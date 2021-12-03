@@ -66,8 +66,9 @@ module.exports = {
     ),
 
   async execute(interaction: CommandInteraction) {
+    // await interaction.deferReply();
     if (interaction.options.getSubcommand() === "add") {
-      await interaction.deferReply();
+      // await interaction.deferReply();
       const activity = interaction.options.getString("activity", true);
       const alias = interaction.options.getString("alias", true);
       const primary = interaction.options.getChannel("primary", true);
@@ -98,9 +99,9 @@ module.exports = {
         });
       }
 
-      await interaction.editReply("Success");
+      await interaction.reply("Success");
     } else if (interaction.options.getSubcommand() === "remove") {
-      await interaction.deferReply();
+      // await interaction.deferReply();
       const activity = interaction.options.getString("activity", true);
       const primary = interaction.options.getChannel("primary", true);
       await prisma.alias.deleteMany({
@@ -109,16 +110,16 @@ module.exports = {
           activity,
         },
       });
-      await interaction.editReply("Success");
+      await interaction.reply("Success");
     } else if (interaction.options.getSubcommand() === "list") {
-      await interaction.deferReply();
+      // await interaction.deferReply();
       const primary = interaction.options.getChannel("primary", true);
       const aliases = await prisma.alias.findMany({
         where: {
           primaryId: primary.id,
         },
       });
-      await interaction.editReply({
+      await interaction.reply({
         content: "Success",
         embeds: [
           new Embed()
