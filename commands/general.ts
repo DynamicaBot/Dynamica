@@ -64,5 +64,6 @@ module.exports = {
       where: { id: secondaryConfig.primary.id },
       data: { generalName: name },
     });
+    await interaction.reply({ content: "Success", ephemeral: true });
   },
 };

@@ -4,11 +4,8 @@ export function formatString({
   str,
   channelNumber,
   creator,
-  general_template,
-  template,
   activities,
   aliases,
-  name,
 }: {
   /**
    * The string to format
@@ -22,14 +19,6 @@ export function formatString({
    * The creator of the channel
    */
   creator: string;
-  /**
-   * The general template
-   */
-  general_template: string;
-  /**
-   * The template
-   */
-  template: string;
 
   /**
    * Game name aliases
@@ -40,11 +29,6 @@ export function formatString({
    * The current activities
    */
   activities?: string[];
-
-  /**
-   * The name manual override
-   */
-  name?: string;
 }) {
   const precision = channelNumber.toPrecision(2);
 

@@ -204,16 +204,13 @@ export const refreshSecondary = async (channel: BaseGuildVoiceChannel) => {
   });
   const str = channelConfig.name
     ? channelConfig.name
-    : activities
+    : !activities.length
     ? primaryConfig.template
     : primaryConfig.generalName;
   channel.edit({
     name: formatString({
       str,
-      general_template: primaryConfig.generalName,
-      name: channelConfig.name ? channelConfig.name : undefined,
       creator: primaryConfig.creator,
-      template: primaryConfig.template,
       aliases: primaryConfig.aliases,
       channelNumber: 1,
       activities,
