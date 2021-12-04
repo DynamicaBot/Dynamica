@@ -1,4 +1,4 @@
-![Sapphire Logo](https://raw.githubusercontent.com/sebasptsch/Dynamica/master/assets/DynamicaLogoSquare.png)
+![Sapphire Logo](https://raw.githubusercontent.com/sebasptsch/Dynamica/master/assets/DynamicaBanner.png)
 
 # Dynamica
 
