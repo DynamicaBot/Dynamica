@@ -1,3 +1,5 @@
+![Sapphire Logo](https://raw.githubusercontent.com/sebasptsch/Dynamica/master/assets/DynamicaLogoSquare.png)
+
 # Dynamica
 
 [![Build Status](https://ci.sebasptsch.dev/api/badges/sebasptsch/Dynamica/status.svg)](https://ci.sebasptsch.dev/sebasptsch/Dynamica)
