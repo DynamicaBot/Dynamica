@@ -46,7 +46,7 @@ steps:
         from_secret: github_token
       repo: ghcr.io/sebasptsch/dynamica
       registry: ghcr.io
-      from_cache: ghcr.io/sebasptsch/dynamica
+      cache_from: ghcr.io/sebasptsch/dynamica
 volumes:
   - name: cache
     host:
