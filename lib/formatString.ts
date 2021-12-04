@@ -32,7 +32,7 @@ export function formatString({
 }) {
   const precision = channelNumber.toPrecision(2);
 
-  let formattedString = !activities?.length ? str : general_template;
+  let formattedString = str;
 
   formattedString = formattedString
     .replace("\n", " ") // No new lines
