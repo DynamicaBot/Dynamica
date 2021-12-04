@@ -27,7 +27,7 @@ module.exports = {
       interaction.user.id
     );
     if (
-      guildMember?.roles.cache.some((role) => role.name !== "Dynamica Manager")
+      !guildMember?.roles.cache.some((role) => role.name === "Dynamica Manager")
     ) {
       interaction.reply({
         ephemeral: true,
@@ -39,10 +39,13 @@ module.exports = {
       where: { id: primary?.id },
       include: { secondaries: true },
     });
-    if (!channelConfig) return;
+    if (!channelConfig) {
+      interaction.reply("Channel not managed by bot.");
+    }
     await prisma.primary.update({
       where: { id: primary.id },
       data: { template: name },
     });
+    await interaction.reply({ content: "Done", ephemeral: true });
   },
 };

@@ -1,5 +1,6 @@
 import {
   BaseGuildVoiceChannel,
+  Client,
   GuildChannelManager,
   GuildMember,
 } from "discord.js";
@@ -19,7 +20,7 @@ export const createPrimary = async (
   channelManager: GuildChannelManager,
   userId: string
 ) => {
-  const channel = await channelManager.create("Primary Channel", {
+  const channel = await channelManager.create("➕ New Session", {
     type: "GUILD_VOICE",
   });
 
@@ -52,6 +53,7 @@ export const deleteSecondary = async (channel: BaseGuildVoiceChannel) => {
     channel?.delete(),
   ]);
   scheduler.removeById(id);
+  await updateActivityCount(channel.client);
   await debug(`Secondary channel deleted ${id}.`);
 };
 
@@ -137,7 +139,7 @@ export const createSecondary = async (
       general_template: primaryChannel.generalName,
       creator: primaryChannel.creator,
       template: primaryChannel.template,
-      channelNumber: primaryChannel.secondaries.length - 1,
+      channelNumber: primaryChannel.secondaries.length + 1,
       activities: activities,
       aliases: primaryChannel.aliases,
     }),
@@ -147,9 +149,12 @@ export const createSecondary = async (
       position: channel?.position ? channel.position + 1 : undefined,
     }
   );
-  await secondary.setPosition(channel?.position + 1);
+  secondary.setPosition(channel?.position + 1);
+  if (secondary.parent) {
+    secondary.lockPermissions();
+  }
   if (member) {
-    await member.voice.setChannel(secondary);
+    member.voice.setChannel(secondary);
   }
 
   await prisma.secondary.create({
@@ -164,6 +169,7 @@ export const createSecondary = async (
       new Task(secondary.id, () => refreshSecondary(secondary))
     )
   );
+  await updateActivityCount(channelManager.client);
   await debug(`Secondary channel ${secondary.id} created by ${member?.id}`);
 };
 
@@ -208,4 +214,15 @@ export const refreshSecondary = async (channel: BaseGuildVoiceChannel) => {
     }),
   });
   await debug(`Secondary channels from primary ${primaryConfig.id} refreshed.`);
+};
+
+/**
+ * Refresh Channel Activity Count
+ */
+export const updateActivityCount = (client: Client) => {
+  return prisma.secondary.count().then((count) => {
+    client.user?.setActivity(
+      `with ${count} ${count === 1 ? "channel" : "channels"}.`
+    );
+  });
 };

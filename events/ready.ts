@@ -2,8 +2,8 @@ import { prisma } from "../lib/prisma";
 import { Client } from "discord.js";
 import { debug, info, log, error } from "../lib/colourfulLogger";
 import { scheduler } from "../lib/scheduler";
-import { SimpleIntervalJob, Task } from "toad-scheduler";
-import { refreshSecondary } from "../lib/operations";
+import { AsyncTask, SimpleIntervalJob, Task } from "toad-scheduler";
+import { refreshSecondary, updateActivityCount } from "../lib/operations";
 
 module.exports = {
   name: "ready",
@@ -24,5 +24,6 @@ module.exports = {
     )
       .catch((error) => error(error))
       .then(() => debug("Channels Restored"));
+    updateActivityCount(client);
   },
 };

@@ -29,7 +29,7 @@ module.exports = {
       interaction.user.id
     );
     if (
-      guildMember?.roles.cache.some((role) => role.name !== "Dynamica Manager")
+      !guildMember?.roles.cache.some((role) => role.name === "Dynamica Manager")
     ) {
       interaction.reply({
         ephemeral: true,
