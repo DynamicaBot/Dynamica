@@ -17,9 +17,13 @@ module.exports = {
     console.log("blank");
     const name = interaction.options.getString("name");
     const user = await interaction.guild?.members.fetch(interaction.user.id);
-    const guildMember = await interaction.guild?.members.cache.get(
+    const cachedGuildMember = await interaction.guild?.members.cache.get(
       interaction.user.id
     );
+    const guildMember = cachedGuildMember
+      ? cachedGuildMember
+      : await interaction.guild?.members.fetch(interaction.user.id);
+
     if (
       !guildMember?.roles.cache.some((role) => role.name === "Dynamica Manager")
     ) {
