@@ -1,4 +1,8 @@
-import { GuildChannelManager, GuildMember } from "discord.js";
+import {
+  BaseGuildVoiceChannel,
+  GuildChannelManager,
+  GuildMember,
+} from "discord.js";
 import { formatString } from "./formatString";
 import { prisma } from "./prisma";
 import { warn, log, info, error, debug } from "../lib/colourfulLogger";
@@ -36,22 +40,19 @@ export const createPrimary = async (
  * @param channelId Channel ID to delete
  * @returns Promise
  */
-export const deleteSecondary = async (
-  channelManager: GuildChannelManager,
-  channelId: string
-) => {
-  const channel = await channelManager.fetch(channelId);
+export const deleteSecondary = async (channel: BaseGuildVoiceChannel) => {
+  const { id } = channel;
   const channelConfig = await prisma.secondary.findUnique({
-    where: { id: channelId },
+    where: { id },
   });
   if (channel?.members.size !== 0 || !channel?.deletable || !channelConfig)
     return;
   await Promise.all([
-    prisma.secondary.delete({ where: { id: channelId } }),
+    prisma.secondary.delete({ where: { id } }),
     channel?.delete(),
   ]);
-  scheduler.removeById(channelId);
-  await debug(`Secondary channel deleted ${channelId}.`);
+  scheduler.removeById(id);
+  await debug(`Secondary channel deleted ${id}.`);
 };
 
 /**
@@ -75,13 +76,12 @@ export const deletedSecondary = async (channelId: string) => {
  * @returns Promise
  */
 export const deletePrimary = async (
-  channelManager: GuildChannelManager,
+  channel: BaseGuildVoiceChannel,
   channelId: string
 ) => {
   const channelConfig = await prisma.primary.findUnique({
     where: { id: channelId },
   });
-  const channel = await channelManager.fetch(channelId);
   if (!channel?.deletable || !channelConfig) return;
   await Promise.all([
     prisma.primary.delete({ where: { id: channelId } }),
@@ -125,10 +125,9 @@ export const createSecondary = async (
   });
 
   if (!primaryChannel) return;
-
-  const discordChannel = await channelManager.fetch(primaryId);
-  if (!primaryChannel || !discordChannel) return;
-  const activities = Array.from(discordChannel.members).flatMap((entry) => {
+  const channel = await channelManager.fetch(primaryId);
+  if (!primaryChannel || !channel) return;
+  const activities = Array.from(channel.members).flatMap((entry) => {
     if (!entry[1].presence) return [];
     return entry[1].presence?.activities.map((activity) => activity.name);
   });
@@ -144,13 +143,11 @@ export const createSecondary = async (
     }),
     {
       type: "GUILD_VOICE",
-      parent: discordChannel?.parent ? discordChannel.parent : undefined,
-      position: discordChannel?.position
-        ? discordChannel.position + 1
-        : undefined,
+      parent: channel?.parent ? channel.parent : undefined,
+      position: channel?.position ? channel.position + 1 : undefined,
     }
   );
-  await secondary.setPosition(discordChannel?.position + 1);
+  await secondary.setPosition(channel?.position + 1);
   if (member) {
     await member.voice.setChannel(secondary);
   }
@@ -164,9 +161,7 @@ export const createSecondary = async (
   scheduler.addSimpleIntervalJob(
     new SimpleIntervalJob(
       { minutes: 5 },
-      new Task(secondary.id, () =>
-        refreshSecondary(secondary.id, channelManager)
-      )
+      new Task(secondary.id, () => refreshSecondary(secondary))
     )
   );
   await debug(`Secondary channel ${secondary.id} created by ${member?.id}`);
@@ -178,10 +173,8 @@ export const createSecondary = async (
  * @param channelManager Discord Channel Manager
  * @returns nothing.
  */
-export const refreshSecondary = async (
-  id: string,
-  channelManager: GuildChannelManager
-) => {
+export const refreshSecondary = async (channel: BaseGuildVoiceChannel) => {
+  const { id } = channel;
   const channelConfig = await prisma.secondary.findUnique({
     where: { id },
   });
@@ -190,7 +183,7 @@ export const refreshSecondary = async (
     include: { aliases: true },
   });
   if (!channelConfig || !primaryConfig) return;
-  const channel = await channelManager.fetch(id);
+
   if (!channel?.manageable) return;
   const activities = Array.from(channel.members).flatMap((entry) => {
     if (!entry[1].presence) return [];

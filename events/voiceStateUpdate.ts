@@ -22,11 +22,8 @@ module.exports = {
       }
 
       // User leaves subchannel
-      if (oldVoiceState.channelId) {
-        await deleteSecondary(
-          oldVoiceState.guild.channels,
-          oldVoiceState.channelId
-        );
+      if (oldVoiceState.channel) {
+        await deleteSecondary(oldVoiceState.channel);
       }
     }
   },
