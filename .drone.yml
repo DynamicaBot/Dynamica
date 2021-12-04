@@ -46,7 +46,6 @@ steps:
         from_secret: github_token
       repo: ghcr.io/sebasptsch/dynamica
       registry: ghcr.io
-      dockerfile: ockerfile
 volumes:
   - name: cache
     host:
