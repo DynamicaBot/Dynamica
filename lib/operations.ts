@@ -144,7 +144,7 @@ export const createSecondary = async (
     : primaryChannel.template;
   const secondary = await channelManager.create(
     formatString({
-      str: str,
+      str,
       creator: primaryChannel.creator,
       channelNumber: primaryChannel.secondaries.length + 1,
       activities: activities,

@@ -35,12 +35,11 @@ export function formatString({
   let formattedString = str;
 
   formattedString = formattedString
-    .replace("\n", " ") // No new lines
     .replace("###", precision) // Numbers
     .replace("##", `#${channelNumber}`)
     .replace("@@nato@@", nato[channelNumber - 1]) // Alpha
     .replace("@@creator@@", creator); // Creator
-  if (activities) {
+  if (!!activities?.length) {
     formattedString = formattedString.replace(
       "@@game@@",
       activities
