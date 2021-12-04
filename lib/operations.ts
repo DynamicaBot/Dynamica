@@ -86,7 +86,10 @@ export const deletePrimary = async (
   });
   if (!channel?.deletable || !channelConfig) return;
   await Promise.all([
-    prisma.primary.delete({ where: { id: channelId } }),
+    prisma.primary.delete({
+      where: { id: channelId },
+      include: { secondaries: true, aliases: true },
+    }),
     channel?.delete(),
     // TODO: Delete secondary discord channels
   ]);
@@ -103,7 +106,10 @@ export const deletedPrimary = async (channelId: string) => {
     where: { id: channelId },
   });
   if (!channel) return;
-  await prisma.primary.delete({ where: { id: channelId } });
+  await prisma.primary.delete({
+    where: { id: channelId },
+    include: { aliases: true, secondaries: true },
+  });
   await debug(`Primary channel ${channelId} deleted.`);
 };
 
