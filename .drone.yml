@@ -31,6 +31,22 @@ steps:
       mount:
         - ./node_modules
 
+  - name: Publish Bot
+    pull: if-not-exists
+    image: plugins/docker
+    when:
+      branch:
+        - master
+      event:
+        - promote
+    settings:
+      username:
+        from_secret: github_username
+      password:
+        from_secret: github_token
+      repo: ghcr.io/sebasptsch/dynamica
+      registry: ghcr.io
+      dockerfile: ockerfile
 volumes:
   - name: cache
     host:

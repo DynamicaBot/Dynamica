@@ -1,0 +1,6 @@
+services:
+  discordbot:
+    build: ./
+    volumes:
+      - ./config:/app/config
+    env_file: .env

@@ -8,7 +8,7 @@ module.exports = {
       "A help command that lists all commands available to users of the bot."
     ),
   async execute(interaction: CommandInteraction) {
-    const commands = await interaction.guild?.commands.fetch();
+    const commands = await interaction.client.application?.commands.fetch();
     const commandList = commands?.map((command) => ({
       name: command.name,
       value: command.description,
