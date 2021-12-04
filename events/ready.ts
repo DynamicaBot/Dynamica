@@ -17,6 +17,15 @@ module.exports = {
           ? client.channels.cache.get(secondary.id)
           : await client.channels.fetch(secondary.id);
 
+        channel?.isVoice()
+          ? scheduler.addSimpleIntervalJob(
+              new SimpleIntervalJob(
+                { minutes: 5 },
+                new Task(secondary.id, () => refreshSecondary(channel))
+              )
+            )
+          : Promise.resolve();
+
         return channel?.isVoice()
           ? refreshSecondary(channel)
           : Promise.reject("Failed to refresh channels.");
