@@ -121,7 +121,7 @@ export const createSecondary = async (
 ) => {
   const primaryChannel = await prisma.primary.findUnique({
     where: { id: primaryId },
-    include: { aliases: true },
+    include: { aliases: true, secondaries: true },
   });
 
   if (!primaryChannel) return;
@@ -137,7 +137,7 @@ export const createSecondary = async (
       general_template: primaryChannel.generalName,
       creator: primaryChannel.creator,
       template: primaryChannel.template,
-      channelNumber: 1,
+      channelNumber: primaryChannel.secondaries.length - 1,
       activities: activities,
       aliases: primaryChannel.aliases,
     }),
@@ -178,8 +178,9 @@ export const refreshSecondary = async (channel: BaseGuildVoiceChannel) => {
   const channelConfig = await prisma.secondary.findUnique({
     where: { id },
   });
+  if (!channelConfig) return;
   const primaryConfig = await prisma.primary.findUnique({
-    where: { id: channelConfig?.primaryId },
+    where: { id: channelConfig.primaryId },
     include: { aliases: true },
   });
   if (!channelConfig || !primaryConfig) return;

@@ -17,6 +17,18 @@ module.exports = {
     console.log("blank");
     const name = interaction.options.getString("name");
     const user = await interaction.guild?.members.fetch(interaction.user.id);
+    const guildMember = await interaction.guild?.members.cache.get(
+      interaction.user.id
+    );
+    if (
+      guildMember?.roles.cache.some((role) => role.name !== "Dynamica Manager")
+    ) {
+      interaction.reply({
+        ephemeral: true,
+        content: "Must have the Dynamica role to manage aliases.",
+      });
+      return;
+    }
     const channel = user?.voice.channel;
     if (!channel) {
       await interaction.reply("Must be in a voice channel channel.");

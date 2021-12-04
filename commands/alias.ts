@@ -72,11 +72,22 @@ module.exports = {
         id: primary.id,
       },
     });
+    const guildMember = await interaction.guild?.members.cache.get(
+      interaction.user.id
+    );
+    if (
+      guildMember?.roles.cache.some((role) => role.name !== "Dynamica Manager")
+    ) {
+      interaction.reply({
+        ephemeral: true,
+        content: "Must have the Dynamica role to manage aliases.",
+      });
+      return;
+    }
     if (!channelConfig) {
       interaction.reply("Must be a valid primary channel.");
     } else {
       if (interaction.options.getSubcommand() === "add") {
-        // await interaction.deferReply();
         const activity = interaction.options.getString("activity", true);
         const alias = interaction.options.getString("alias", true);
         const existingAlias = await prisma.alias.findFirst({
