@@ -33,7 +33,7 @@ export function formatString({
   const precision = channelNumber.toPrecision(2);
 
   let formattedString = str;
-
+  const deDuplicatedActivities = [...new Set(activities)];
   formattedString = formattedString
     .replace("###", precision) // Numbers
     .replace("##", `#${channelNumber}`)
@@ -42,7 +42,7 @@ export function formatString({
   if (!!activities?.length) {
     formattedString = formattedString.replace(
       "@@game@@",
-      activities
+      deDuplicatedActivities
         .map(
           (activity) =>
             aliases.find((alias) => alias.activity === activity)?.alias ||
