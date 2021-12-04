@@ -1,7 +1,34 @@
-import { Secondary } from "@prisma/client";
-import { ChannelManager, GuildChannelManager, GuildMember } from "discord.js";
+import { GuildChannelManager, GuildMember } from "discord.js";
 import { formatString } from "./formatString";
 import { prisma } from "./prisma";
+import { warn, log, info, error, debug } from "../lib/colourfulLogger";
+import { scheduler } from "./scheduler";
+import { SimpleIntervalJob, Task } from "toad-scheduler";
+
+/**
+ * Create Primary Channel
+ * @param channelManager
+ * @param userId
+ * @returns Promise
+ */
+export const createPrimary = async (
+  channelManager: GuildChannelManager,
+  userId: string
+) => {
+  const channel = await channelManager.create("Primary Channel", {
+    type: "GUILD_VOICE",
+  });
+
+  const primary = await prisma.primary.create({
+    data: {
+      id: channel.id,
+      creator: userId,
+    },
+  });
+  await debug(
+    `New primary channel ${primary.id} created by ${primary.creator}.`
+  );
+};
 
 /**
  * Deletes Secondary Channel.
@@ -19,10 +46,12 @@ export const deleteSecondary = async (
   });
   if (channel?.members.size !== 0 || !channel?.deletable || !channelConfig)
     return;
-  return Promise.all([
+  await Promise.all([
     prisma.secondary.delete({ where: { id: channelId } }),
     channel?.delete(),
   ]);
+  scheduler.removeById(channelId);
+  await debug(`Secondary channel deleted ${channelId}.`);
 };
 
 /**
@@ -35,7 +64,8 @@ export const deletedSecondary = async (channelId: string) => {
     where: { id: channelId },
   });
   if (!channel) return;
-  return prisma.secondary.delete({ where: { id: channelId } });
+  await prisma.secondary.delete({ where: { id: channelId } });
+  await debug(`Secondary channel deleted ${channelId}`);
 };
 
 /**
@@ -53,11 +83,12 @@ export const deletePrimary = async (
   });
   const channel = await channelManager.fetch(channelId);
   if (!channel?.deletable || !channelConfig) return;
-  return Promise.all([
+  await Promise.all([
     prisma.primary.delete({ where: { id: channelId } }),
     channel?.delete(),
     // TODO: Delete secondary discord channels
   ]);
+  await debug(`Primary channel ${channelId} deleted.`);
 };
 
 /**
@@ -70,7 +101,8 @@ export const deletedPrimary = async (channelId: string) => {
     where: { id: channelId },
   });
   if (!channel) return;
-  return prisma.primary.delete({ where: { id: channelId } });
+  await prisma.primary.delete({ where: { id: channelId } });
+  await debug(`Primary channel ${channelId} deleted.`);
 };
 
 // TODO: Delete secondary discord channels
@@ -122,12 +154,22 @@ export const createSecondary = async (
   if (member) {
     await member.voice.setChannel(secondary);
   }
+
   await prisma.secondary.create({
     data: {
       id: secondary.id,
       primaryId,
     },
   });
+  scheduler.addSimpleIntervalJob(
+    new SimpleIntervalJob(
+      { minutes: 5 },
+      new Task(secondary.id, () =>
+        refreshSecondary(secondary.id, channelManager)
+      )
+    )
+  );
+  await debug(`Secondary channel ${secondary.id} created by ${member?.id}`);
 };
 
 /**
@@ -154,9 +196,14 @@ export const refreshSecondary = async (
     if (!entry[1].presence) return [];
     return entry[1].presence?.activities.map((activity) => activity.name);
   });
+  const str = channelConfig.name
+    ? channelConfig.name
+    : activities
+    ? primaryConfig.template
+    : primaryConfig.generalName;
   channel.edit({
     name: formatString({
-      str: primaryConfig.template,
+      str,
       general_template: primaryConfig.generalName,
       name: channelConfig.name ? channelConfig.name : undefined,
       creator: primaryConfig.creator,
@@ -166,4 +213,5 @@ export const refreshSecondary = async (
       activities,
     }),
   });
+  await debug(`Secondary channels from primary ${primaryConfig.id} refreshed.`);
 };

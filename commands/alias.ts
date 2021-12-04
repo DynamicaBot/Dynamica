@@ -66,72 +66,79 @@ module.exports = {
     ),
 
   async execute(interaction: CommandInteraction) {
-    // await interaction.deferReply();
-    if (interaction.options.getSubcommand() === "add") {
-      // await interaction.deferReply();
-      const activity = interaction.options.getString("activity", true);
-      const alias = interaction.options.getString("alias", true);
-      const primary = interaction.options.getChannel("primary", true);
-      const existingAliase = await prisma.alias.findFirst({
-        where: {
-          activity,
-          primaryId: primary.id,
-        },
-      });
-      if (!existingAliase) {
-        await prisma.alias.create({
-          data: {
-            primaryId: primary.id,
+    const primary = interaction.options.getChannel("primary", true);
+    const channelConfig = await prisma.primary.findUnique({
+      where: {
+        id: primary.id,
+      },
+    });
+    if (!channelConfig) {
+      interaction.reply("Must be a valid primary channel.");
+    } else {
+      if (interaction.options.getSubcommand() === "add") {
+        // await interaction.deferReply();
+        const activity = interaction.options.getString("activity", true);
+        const alias = interaction.options.getString("alias", true);
+        const existingAlias = await prisma.alias.findFirst({
+          where: {
             activity,
-            alias,
+            primaryId: primary.id,
           },
         });
-      } else {
-        await prisma.alias.update({
+        if (!existingAlias) {
+          await prisma.alias.create({
+            data: {
+              primaryId: primary.id,
+              activity,
+              alias,
+            },
+          });
+        } else {
+          await prisma.alias.update({
+            where: {
+              id: existingAlias.id,
+            },
+            data: {
+              primaryId: primary.id,
+              activity,
+              alias,
+            },
+          });
+        }
+
+        await interaction.reply("Success");
+      } else if (interaction.options.getSubcommand() === "remove") {
+        // await interaction.deferReply();
+        const activity = interaction.options.getString("activity", true);
+        await prisma.alias.deleteMany({
           where: {
-            id: existingAliase.id,
-          },
-          data: {
             primaryId: primary.id,
             activity,
-            alias,
           },
+        });
+        await interaction.reply("Success");
+      } else if (interaction.options.getSubcommand() === "list") {
+        // await interaction.deferReply();
+        const aliases = await prisma.alias.findMany({
+          where: {
+            primaryId: primary.id,
+          },
+        });
+        await interaction.reply({
+          content: "Success",
+          embeds: [
+            new Embed()
+              .addFields(
+                ...aliases.map((alias) => ({
+                  name: alias.activity,
+                  value: alias.alias,
+                }))
+              )
+              .setDescription("A list of aliases for the selected channel."),
+          ],
         });
       }
-
-      await interaction.reply("Success");
-    } else if (interaction.options.getSubcommand() === "remove") {
-      // await interaction.deferReply();
-      const activity = interaction.options.getString("activity", true);
-      const primary = interaction.options.getChannel("primary", true);
-      await prisma.alias.deleteMany({
-        where: {
-          primaryId: primary.id,
-          activity,
-        },
-      });
-      await interaction.reply("Success");
-    } else if (interaction.options.getSubcommand() === "list") {
-      // await interaction.deferReply();
-      const primary = interaction.options.getChannel("primary", true);
-      const aliases = await prisma.alias.findMany({
-        where: {
-          primaryId: primary.id,
-        },
-      });
-      await interaction.reply({
-        content: "Success",
-        embeds: [
-          new Embed()
-            .addFields(
-              ...aliases.map((alias) => ({
-                name: alias.activity,
-                value: alias.alias,
-              }))
-            )
-            .setDescription("A list of aliases for the selected channel."),
-        ],
-      });
     }
+    // await interaction.deferReply();
   },
 };

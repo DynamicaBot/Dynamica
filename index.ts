@@ -1,4 +1,5 @@
-require("dotenv").config();
+import dotenv from "dotenv";
+dotenv.config();
 import { Intents, Collection, Client } from "discord.js";
 import fs from "fs";
 
@@ -90,6 +91,10 @@ client.on("interactionCreate", async (interaction) => {
     await menu.execute(interaction);
   } catch (error) {
     console.error(error);
+    await interaction.reply({
+      content:
+        "An error occured. Contact the server host to resolve the issue.",
+    });
     // await interaction.deferReply();
     // await interaction.reply({
     //   content: "There was an error while executing this command!",

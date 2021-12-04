@@ -1,10 +1,5 @@
 import { VoiceState } from "discord.js";
-import {
-  createSecondary,
-  deleteSecondary,
-  refreshSecondary,
-} from "../lib/operations";
-import { prisma } from "../lib/prisma";
+import { createSecondary, deleteSecondary } from "../lib/operations";
 
 module.exports = {
   name: "voiceStateUpdate",
@@ -19,6 +14,7 @@ module.exports = {
           newVoiceState.channelId,
           newVoiceState.member
         );
+
         // await refreshSecondary(
         //   newVoiceState.channelId,
         //   newVoiceState.guild.channels
