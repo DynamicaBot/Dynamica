@@ -1,4 +1,4 @@
-import { Embed, SlashCommandBuilder } from "@discordjs/builders";
+import { Embed, quote, SlashCommandBuilder } from "@discordjs/builders";
 import { CommandInteraction } from "discord.js";
 import { ChannelTypes } from "discord.js/typings/enums";
 import { prisma } from "../lib/prisma";
@@ -12,13 +12,6 @@ module.exports = {
       subcommand
         .setName("add")
         .setDescription("Add a new alias.")
-        .addChannelOption((channel) =>
-          channel
-            .addChannelType(2)
-            .setRequired(true)
-            .setName("primary")
-            .setDescription("The target channel.")
-        )
         .addStringOption((option) =>
           option
             .setName("activity")
@@ -36,13 +29,6 @@ module.exports = {
       subcommand
         .setName("remove")
         .setDescription("Remove an alias.")
-        .addChannelOption((channel) =>
-          channel
-            .addChannelType(2)
-            .setRequired(true)
-            .setName("primary")
-            .setDescription("The target channel.")
-        )
         .addStringOption((option) =>
           option
             .setName("activity")
@@ -53,28 +39,41 @@ module.exports = {
         )
     )
     .addSubcommand((subcommand) =>
-      subcommand
-        .setName("list")
-        .setDescription("List currently set aliases.")
-        .addChannelOption((channel) =>
-          channel
-            .addChannelType(2)
-            .setRequired(true)
-            .setName("primary")
-            .setDescription("The target channel.")
-        )
+      subcommand.setName("list").setDescription("List currently set aliases.")
     ),
 
   async execute(interaction: CommandInteraction) {
-    const primary = interaction.options.getChannel("primary", true);
-    const channelConfig = await prisma.primary.findUnique({
+    // const primary = interaction.options.getChannel("primary", true);
+
+    const user = await interaction.guild?.members.fetch(interaction.user.id);
+    const secondaryId = user?.voice.channelId;
+    if (!secondaryId) {
+      interaction.reply({
+        content: "Must be in a Dynamica-controlled voice channel.",
+      });
+      return;
+    }
+    const secondaryConfig = await prisma.secondary.findUnique({
       where: {
-        id: primary.id,
+        id: secondaryId,
+      },
+      include: {
+        primary: true,
       },
     });
-    const guildMember = await interaction.guild?.members.cache.get(
+    if (!secondaryConfig) {
+      interaction.reply({
+        content: "Must be in a Dynamica-controlled voice channel.",
+      });
+      return;
+    }
+    const cachedGuildMember = await interaction.guild?.members.cache.get(
       interaction.user.id
     );
+    const guildMember = cachedGuildMember
+      ? cachedGuildMember
+      : await interaction.guild?.members.fetch(interaction.user.id);
+
     if (
       !guildMember?.roles.cache.some((role) => role.name === "Dynamica Manager")
     ) {
@@ -84,7 +83,7 @@ module.exports = {
       });
       return;
     }
-    if (!channelConfig) {
+    if (!secondaryConfig.primary) {
       interaction.reply("Must be a valid primary channel.");
     } else {
       if (interaction.options.getSubcommand() === "add") {
@@ -93,13 +92,13 @@ module.exports = {
         const existingAlias = await prisma.alias.findFirst({
           where: {
             activity,
-            primaryId: primary.id,
+            primaryId: secondaryConfig.primary.id,
           },
         });
         if (!existingAlias) {
           await prisma.alias.create({
             data: {
-              primaryId: primary.id,
+              primaryId: secondaryConfig.primary.id,
               activity,
               alias,
             },
@@ -110,29 +109,33 @@ module.exports = {
               id: existingAlias.id,
             },
             data: {
-              primaryId: primary.id,
+              primaryId: secondaryConfig.primary.id,
               activity,
               alias,
             },
           });
         }
 
-        await interaction.reply("Success");
+        await interaction.reply(
+          `Successfully created alias ${quote(alias)} for ${quote(activity)}`
+        );
       } else if (interaction.options.getSubcommand() === "remove") {
         // await interaction.deferReply();
         const activity = interaction.options.getString("activity", true);
         await prisma.alias.deleteMany({
           where: {
-            primaryId: primary.id,
+            primaryId: secondaryConfig.primary.id,
             activity,
           },
         });
-        await interaction.reply("Success");
+        await interaction.reply(
+          `Successfully removed alias for ${quote(activity)}`
+        );
       } else if (interaction.options.getSubcommand() === "list") {
         // await interaction.deferReply();
         const aliases = await prisma.alias.findMany({
           where: {
-            primaryId: primary.id,
+            primaryId: secondaryConfig.primary.id,
           },
         });
         await interaction.reply({
