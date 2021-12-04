@@ -1,6 +1,7 @@
 import { SlashCommandBuilder } from "@discordjs/builders";
 import { prisma } from "../lib/prisma";
 import { CommandInteraction } from "discord.js";
+import { info } from "../lib/colourfulLogger";
 
 // Set General Template
 module.exports = {
@@ -14,7 +15,6 @@ module.exports = {
         .setRequired(true)
     ),
   async execute(interaction: CommandInteraction) {
-    console.log("blank");
     const name = interaction.options.getString("name");
     const user = await interaction.guild?.members.fetch(interaction.user.id);
     const cachedGuildMember = await interaction.guild?.members.cache.get(
@@ -54,6 +54,7 @@ module.exports = {
         await interaction.reply(
           "Success. Channel may take up to 5 minutes to update."
         ); // TODO: Run update channel command.
+        info(`${channel.id} name changed.`);
       }
     }
   },

@@ -140,8 +140,8 @@ export const createSecondary = async (
     return entry[1].presence?.activities.map((activity) => activity.name);
   });
   const str = !activities.length
-    ? primaryChannel.template
-    : primaryChannel.generalName;
+    ? primaryChannel.generalName
+    : primaryChannel.template;
   const secondary = await channelManager.create(
     formatString({
       str: str,
@@ -206,8 +206,8 @@ export const refreshSecondary = async (channel: BaseGuildVoiceChannel) => {
   const str = channelConfig.name
     ? channelConfig.name
     : !activities.length
-    ? primaryConfig.template
-    : primaryConfig.generalName;
+    ? primaryConfig.generalName
+    : primaryConfig.template;
   channel.edit({
     name: formatString({
       str,
