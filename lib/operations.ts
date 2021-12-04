@@ -139,12 +139,13 @@ export const createSecondary = async (
     if (!entry[1].presence) return [];
     return entry[1].presence?.activities.map((activity) => activity.name);
   });
+  const str = !activities.length
+    ? primaryChannel.template
+    : primaryChannel.generalName;
   const secondary = await channelManager.create(
     formatString({
-      str: primaryChannel.template,
-      general_template: primaryChannel.generalName,
+      str: str,
       creator: primaryChannel.creator,
-      template: primaryChannel.template,
       channelNumber: primaryChannel.secondaries.length + 1,
       activities: activities,
       aliases: primaryChannel.aliases,
