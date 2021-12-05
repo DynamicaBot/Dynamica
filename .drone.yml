@@ -27,6 +27,16 @@ steps:
   - name: "Deploy Commands"
     image: "node:lts-buster-slim"
     pull: if-not-exists
+    environment:
+      CLIENT_ID:
+        from_secret: CLIENT_ID
+      TOKEN:
+        from_secret: TOKEN
+    when:
+      branch:
+        - master
+      event:
+        - promote
     commands:
       - yarn deploy
   - name: Rebuild Cache
