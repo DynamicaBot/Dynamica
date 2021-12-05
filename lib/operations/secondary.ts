@@ -1,39 +1,14 @@
 import {
   BaseGuildVoiceChannel,
-  Client,
   GuildChannelManager,
   GuildMember,
 } from "discord.js";
-import { formatString } from "./formatString";
-import { prisma } from "./prisma";
-import { warn, log, info, error, debug } from "../lib/colourfulLogger";
-import { scheduler } from "./scheduler";
 import { SimpleIntervalJob, Task } from "toad-scheduler";
-
-/**
- * Create Primary Channel
- * @param channelManager
- * @param userId
- * @returns Promise
- */
-export const createPrimary = async (
-  channelManager: GuildChannelManager,
-  userId: string
-) => {
-  const channel = await channelManager.create("➕ New Session", {
-    type: "GUILD_VOICE",
-  });
-
-  const primary = await prisma.primary.create({
-    data: {
-      id: channel.id,
-      creator: userId,
-    },
-  });
-  await debug(
-    `New primary channel ${primary.id} created by ${primary.creator}.`
-  );
-};
+import { debug } from "../colourfulLogger";
+import { formatString } from "../formatString";
+import { prisma } from "../prisma";
+import { scheduler } from "../scheduler";
+import { updateActivityCount } from "./general";
 
 /**
  * Deletes Secondary Channel.
@@ -70,50 +45,6 @@ export const deletedSecondary = async (channelId: string) => {
   await prisma.secondary.delete({ where: { id: channelId } });
   await debug(`Secondary channel deleted ${channelId}`);
 };
-
-/**
- * Deletes Primary Channel.,Only deletes db entries. (for discord deleted event)
- * @param channelManager Discord Channel Manager
- * @param channelId Channel ID to delete
- * @returns Promise
- */
-export const deletePrimary = async (
-  channel: BaseGuildVoiceChannel,
-  channelId: string
-) => {
-  const channelConfig = await prisma.primary.findUnique({
-    where: { id: channelId },
-  });
-  if (!channel?.deletable || !channelConfig) return;
-  await Promise.all([
-    prisma.primary.delete({
-      where: { id: channelId },
-      include: { secondaries: true, aliases: true },
-    }),
-    channel?.delete(),
-    // TODO: Delete secondary discord channels
-  ]);
-  await debug(`Primary channel ${channelId} deleted.`);
-};
-
-/**
- * Deleted Primary Channel. Only deletes db entries. (for discord deleted event)
- * @param channelId Channel ID to delete
- * @returns Promise
- */
-export const deletedPrimary = async (channelId: string) => {
-  const channel = await prisma.primary.findUnique({
-    where: { id: channelId },
-  });
-  if (!channel) return;
-  await prisma.primary.delete({
-    where: { id: channelId },
-    include: { aliases: true, secondaries: true },
-  });
-  await debug(`Primary channel ${channelId} deleted.`);
-};
-
-// TODO: Delete secondary discord channels
 
 /**
  * Creates a secondary channel linked to a primary.
@@ -218,15 +149,4 @@ export const refreshSecondary = async (channel: BaseGuildVoiceChannel) => {
     }),
   });
   await debug(`Secondary channels from primary ${primaryConfig.id} refreshed.`);
-};
-
-/**
- * Refresh Channel Activity Count
- */
-export const updateActivityCount = (client: Client) => {
-  return prisma.secondary.count().then((count) => {
-    client.user?.setActivity(
-      `with ${count} ${count === 1 ? "channel" : "channels"}.`
-    );
-  });
 };
