@@ -5,7 +5,7 @@ import { REST } from "@discordjs/rest";
 import { Routes } from "discord-api-types/v9";
 
 const { TOKEN, CLIENT_ID, GUILD_ID } = process.env;
-if (!TOKEN || !CLIENT_ID || !GUILD_ID) {
+if (!TOKEN || !CLIENT_ID) {
   console.log("Missing env vars.");
 } else {
   const commands: any[] = [];
