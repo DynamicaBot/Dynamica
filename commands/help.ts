@@ -17,12 +17,17 @@ module.exports = {
     const subcommand = interaction.options.getString("subcommand", false);
 
     const cachedGuildCommands = interaction.guild?.commands.cache;
-    const guildCommands = await interaction.guild?.commands.fetch();
+    const guildCommands =
+      cachedGuildCommands?.size === 0 || undefined
+        ? await interaction.guild?.commands.fetch()
+        : cachedGuildCommands;
 
     const cachedApplicationCommands =
       interaction.client.application?.commands.cache;
     const applicationCommands =
-      await interaction.client.application?.commands.fetch();
+      cachedApplicationCommands?.size === 0 || undefined
+        ? await interaction.client.application?.commands.fetch()
+        : cachedApplicationCommands;
     const commands = process.env.GUILD_ID ? guildCommands : applicationCommands;
 
     const subcommandList = commands
