@@ -1,5 +1,6 @@
 import { SlashCommandBuilder } from "@discordjs/builders";
 import { CommandInteraction } from "discord.js";
+import { ErrorEmbed, SuccessEmbed } from "../lib/discordEmbeds";
 import { prisma } from "../lib/prisma";
 
 module.exports = {
@@ -17,7 +18,8 @@ module.exports = {
     const secondaryId = user?.voice.channelId;
     if (!secondaryId) {
       interaction.reply({
-        content: "Must be in a Dynamica-controlled voice channel.",
+        ephemeral: true,
+        embeds: [ErrorEmbed("Must be in a Dynamica-controlled voice channel.")],
       });
       return;
     }
@@ -31,11 +33,12 @@ module.exports = {
     });
     if (!secondaryConfig) {
       interaction.reply({
-        content: "Must be in a Dynamica-controlled voice channel.",
+        ephemeral: true,
+        embeds: [ErrorEmbed("Must be in a Dynamica-controlled voice channel.")],
       });
       return;
     }
-    const name = interaction.options.getString("template", true);
+    const template = interaction.options.getString("template", true);
     const cachedGuildMember = await interaction.guild?.members.cache.get(
       interaction.user.id
     );
@@ -48,7 +51,7 @@ module.exports = {
     ) {
       interaction.reply({
         ephemeral: true,
-        content: "Must have the Dynamica role to manage aliases.",
+        embeds: [ErrorEmbed("Must have the Dynamica role to manage aliases.")],
       });
       return;
     }
@@ -57,12 +60,18 @@ module.exports = {
       include: { secondaries: true },
     });
     if (!channelConfig) {
-      interaction.reply("Channel not managed by bot.");
+      interaction.reply({
+        ephemeral: true,
+        embeds: [ErrorEmbed("Channel not managed by bot.")],
+      });
+      return;
     }
     await prisma.primary.update({
       where: { id: secondaryConfig.primary.id },
-      data: { template: name },
+      data: { template },
     });
-    await interaction.reply({ content: "Done", ephemeral: true });
+    await interaction.reply({
+      embeds: [SuccessEmbed(`Template changed to ${template}`)],
+    });
   },
 };

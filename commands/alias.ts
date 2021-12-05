@@ -1,6 +1,7 @@
 import { Embed, quote, SlashCommandBuilder } from "@discordjs/builders";
 import { CommandInteraction } from "discord.js";
 import { ChannelTypes } from "discord.js/typings/enums";
+import { ErrorEmbed, SuccessEmbed } from "../lib/discordEmbeds";
 import { prisma } from "../lib/prisma";
 
 // Set General Template
@@ -63,7 +64,8 @@ module.exports = {
     });
     if (!secondaryConfig) {
       interaction.reply({
-        content: "Must be in a Dynamica-controlled voice channel.",
+        ephemeral: true,
+        embeds: [ErrorEmbed("Must be in a Dynamica-controlled voice channel.")],
       });
       return;
     }
@@ -79,12 +81,16 @@ module.exports = {
     ) {
       interaction.reply({
         ephemeral: true,
-        content: "Must have the Dynamica role to manage aliases.",
+        embeds: [ErrorEmbed("Must have the Dynamica role to manage aliases.")],
       });
+
       return;
     }
     if (!secondaryConfig.primary) {
-      interaction.reply("Must be a valid primary channel.");
+      interaction.reply({
+        ephemeral: true,
+        embeds: [ErrorEmbed("Must be a valid primary channel.")],
+      });
     } else {
       if (interaction.options.getSubcommand() === "add") {
         const activity = interaction.options.getString("activity", true);
@@ -116,9 +122,15 @@ module.exports = {
           });
         }
 
-        await interaction.reply(
-          `Successfully created alias ${quote(alias)} for ${quote(activity)}`
-        );
+        await interaction.reply({
+          embeds: [
+            SuccessEmbed(
+              `Successfully created alias ${quote(alias)} for ${quote(
+                activity
+              )}`
+            ),
+          ],
+        });
       } else if (interaction.options.getSubcommand() === "remove") {
         // await interaction.deferReply();
         const activity = interaction.options.getString("activity", true);
@@ -128,9 +140,11 @@ module.exports = {
             activity,
           },
         });
-        await interaction.reply(
-          `Successfully removed alias for ${quote(activity)}`
-        );
+        await interaction.reply({
+          embeds: [
+            SuccessEmbed(`Successfully removed alias for ${quote(activity)}`),
+          ],
+        });
       } else if (interaction.options.getSubcommand() === "list") {
         // await interaction.deferReply();
         const aliases = await prisma.alias.findMany({
