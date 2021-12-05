@@ -50,7 +50,8 @@ module.exports = {
     const secondaryId = user?.voice.channelId;
     if (!secondaryId) {
       interaction.reply({
-        content: "Must be in a Dynamica-controlled voice channel.",
+        ephemeral: true,
+        embeds: [ErrorEmbed("Must be in a Dynamica-controlled voice channel.")],
       });
       return;
     }
@@ -153,7 +154,6 @@ module.exports = {
           },
         });
         await interaction.reply({
-          content: "Success",
           embeds: [
             new Embed()
               .addFields(
@@ -162,7 +162,7 @@ module.exports = {
                   value: alias.alias,
                 }))
               )
-              .setDescription("A list of aliases for the selected channel."),
+              .setTitle("Alias List"),
           ],
         });
       }
