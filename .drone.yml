@@ -1,6 +1,10 @@
 kind: "pipeline"
 name: "default"
 type: "docker"
+trigger:
+  branch:
+  - master
+  
 steps:
   - name: Restore Cache
     pull: if-not-exists
@@ -51,3 +55,4 @@ volumes:
   - name: cache
     host:
       path: /tmp/cache
+
