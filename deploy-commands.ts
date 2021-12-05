@@ -19,47 +19,56 @@ if (!TOKEN || !CLIENT_ID || !GUILD_ID) {
   }
 
   const rest = new REST({ version: "9" }).setToken(TOKEN);
-
-  rest
-    .get(Routes.applicationGuildCommands(CLIENT_ID, GUILD_ID))
-    .then((data: any) => {
-      const promises = [];
-      for (const command of data) {
-        console.log(`Deleted guild command: ${command.name}`);
-        const deleteUrl: any = `${Routes.applicationGuildCommands(
-          CLIENT_ID,
-          GUILD_ID
-        )}/${command.id}`;
-        promises.push(rest.delete(deleteUrl));
-      }
-      return Promise.all(promises);
-    })
-    .then((data) => {
-      console.log("deleted guild application command");
-    });
-
-  rest
-    .get(Routes.applicationCommands(CLIENT_ID))
-    .then((data: any) => {
-      const promises = [];
-      for (const command of data) {
-        console.log(`Deleted ${command.name}`);
-        const deleteUrl: any = `${Routes.applicationCommands(CLIENT_ID)}/${
-          command.id
-        }`;
-        promises.push(rest.delete(deleteUrl));
-      }
-      return Promise.all(promises);
-    })
-    .then((data: any) => {
-      rest
-        .put(Routes.applicationCommands(CLIENT_ID), {
-          body: commands,
-        })
-        .then(() =>
-          console.log("Successfully registered application commands.")
-        )
-        .catch(console.error);
-    })
-    .catch(console.error);
+  if (GUILD_ID) {
+    rest
+      .get(Routes.applicationGuildCommands(CLIENT_ID, GUILD_ID))
+      .then((data: any) => {
+        const promises = [];
+        for (const command of data) {
+          console.log(`Deleted guild command: ${command.name}`);
+          const deleteUrl: any = `${Routes.applicationGuildCommands(
+            CLIENT_ID,
+            GUILD_ID
+          )}/${command.id}`;
+          promises.push(rest.delete(deleteUrl));
+        }
+        return Promise.all(promises);
+      })
+      .then((data) => {
+        console.log("deleted old guild application command");
+        rest
+          .put(Routes.applicationGuildCommands(CLIENT_ID, GUILD_ID), {
+            body: commands,
+          })
+          .then(() =>
+            console.log("Successfully registered application commands.")
+          )
+          .catch(console.error);
+      })
+      .catch(console.error);
+  } else {
+    rest
+      .get(Routes.applicationCommands(CLIENT_ID))
+      .then((data: any) => {
+        const promises = [];
+        for (const command of data) {
+          console.log(`Deleted ${command.name}`);
+          const deleteUrl: any = `${Routes.applicationCommands(CLIENT_ID)}/${
+            command.id
+          }`;
+          promises.push(rest.delete(deleteUrl));
+        }
+        return Promise.all(promises);
+      })
+      .then((data: any) => {
+        rest
+          .put(Routes.applicationCommands(CLIENT_ID), {
+            body: commands,
+          })
+          .then(() =>
+            console.log("Successfully registered application commands.")
+          )
+          .catch(console.error);
+      });
+  }
 }
