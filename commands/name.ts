@@ -17,7 +17,7 @@ module.exports = {
     ),
   async execute(interaction: CommandInteraction) {
     const name = interaction.options.getString("name");
-    const user = await interaction.guild?.members.fetch(interaction.user.id);
+
     const cachedGuildMember = await interaction.guild?.members.cache.get(
       interaction.user.id
     );
@@ -34,7 +34,7 @@ module.exports = {
       });
       return;
     }
-    const channel = user?.voice.channel;
+    const channel = guildMember?.voice.channel;
     if (!channel) {
       await interaction.reply({
         ephemeral: true,

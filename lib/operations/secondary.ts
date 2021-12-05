@@ -64,8 +64,11 @@ export const createSecondary = async (
   });
 
   if (!primaryChannel) return;
-  const channel = await channelManager.fetch(primaryId);
-  if (!primaryChannel || !channel) return;
+  const cachedChannel = channelManager.cache.get(primaryId);
+  const channel = cachedChannel
+    ? cachedChannel
+    : await channelManager.fetch(primaryId);
+  if (!primaryChannel || !channel || !channel.isVoice()) return;
   const activities = Array.from(channel.members).flatMap((entry) => {
     if (!entry[1].presence) return [];
     return entry[1].presence?.activities.map((activity) => activity.name);

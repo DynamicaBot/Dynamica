@@ -15,9 +15,19 @@ module.exports = {
     ),
   async execute(interaction: CommandInteraction) {
     const subcommand = interaction.options.getString("subcommand", false);
-    const commands = process.env.GUILD_ID
-      ? await interaction.guild?.commands.fetch()
+
+    const cachedGuildCommands = interaction.guild?.commands.cache;
+    const guildCommands = cachedGuildCommands
+      ? cachedGuildCommands
+      : await interaction.guild?.commands.fetch();
+
+    const cachedApplicationCommands =
+      interaction.client.application?.commands.cache;
+    const applicationCommands = cachedApplicationCommands
+      ? cachedApplicationCommands
       : await interaction.client.application?.commands.fetch();
+
+    const commands = process.env.GUILD_ID ? guildCommands : applicationCommands;
 
     const subcommandList = commands
       ? commands

@@ -14,8 +14,9 @@ module.exports = {
     const secondaries = await prisma.secondary.findMany();
     Promise.all(
       secondaries.map(async (secondary) => {
-        const channel = client.channels.cache.get(secondary.id)
-          ? client.channels.cache.get(secondary.id)
+        const cachedChannel = client.channels.cache.get(secondary.id);
+        const channel = cachedChannel
+          ? cachedChannel
           : await client.channels.fetch(secondary.id);
 
         channel?.isVoice()

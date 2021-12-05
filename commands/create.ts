@@ -31,6 +31,7 @@ module.exports = {
     const cachedGuildMember = await interaction.guild?.members.cache.get(
       interaction.user.id
     );
+
     const guildMember = cachedGuildMember
       ? cachedGuildMember
       : await interaction.guild?.members.fetch(interaction.user.id);

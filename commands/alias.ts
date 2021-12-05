@@ -44,8 +44,12 @@ module.exports = {
 
   async execute(interaction: CommandInteraction) {
     // const primary = interaction.options.getChannel("primary", true);
-
-    const user = await interaction.guild?.members.fetch(interaction.user.id);
+    const cachedUser = interaction.guild?.members.cache.get(
+      interaction.user.id
+    );
+    const user = cachedUser
+      ? cachedUser
+      : await interaction.guild?.members.fetch(interaction.user.id);
     const secondaryId = user?.voice.channelId;
     if (!secondaryId) {
       interaction.reply({
