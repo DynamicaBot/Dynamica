@@ -1,19 +1,33 @@
-import { BaseGuildVoiceChannel, GuildChannelManager } from "discord.js";
+import { APIInteractionDataResolvedChannel } from "discord-api-types";
+import {
+  BaseGuildVoiceChannel,
+  GuildChannel,
+  GuildChannelManager,
+  ThreadChannel,
+} from "discord.js";
 import { debug } from "../colourfulLogger";
 import { prisma } from "../prisma";
 
 /**
  * Create Primary Channel
- * @param channelManager
- * @param userId
+ * @param channelManager - Discord Channel Manager
+ * @param userId - The user who created the channel
+ * @param section - If it exists, the parent channel it should be assigned to
  * @returns Promise
  */
 export const createPrimary = async (
   channelManager: GuildChannelManager,
-  userId: string
+  userId: string,
+  section?:
+    | GuildChannel
+    | ThreadChannel
+    | APIInteractionDataResolvedChannel
+    | null
 ) => {
+  const parent = section?.id;
   const channel = await channelManager.create("➕ New Session", {
     type: "GUILD_VOICE",
+    parent,
   });
 
   const primary = await prisma.primary.create({

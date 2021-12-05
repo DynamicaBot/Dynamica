@@ -1,13 +1,26 @@
 import { SlashCommandBuilder } from "@discordjs/builders";
 import { prisma } from "../lib/prisma";
-import { CommandInteraction } from "discord.js";
+import { CommandInteraction, GuildChannel } from "discord.js";
 import { createPrimary } from "../lib/operations/primary";
+import { ChannelType } from "discord-api-types";
 
 module.exports = {
   data: new SlashCommandBuilder()
     .setName("create")
-    .setDescription("Create a primary channel."),
+    .setDescription("Create a primary channel.")
+    .addChannelOption((option) =>
+      option
+        .addChannelType(4)
+        .setName("section")
+        .setDescription(
+          "A section that the voice channel should be created under."
+        )
+        .setRequired(false)
+    ),
   async execute(interaction: CommandInteraction) {
+    const section = interaction.options.getChannel(
+      "section"
+    ) as GuildChannel | null;
     if (!interaction.guild?.me?.permissions.has("MANAGE_CHANNELS")) {
       await interaction.reply({
         content: "Bot requires manage channel permissions.",
@@ -32,7 +45,11 @@ module.exports = {
       return;
     }
 
-    await createPrimary(interaction.guild.channels, interaction.user.id);
+    await createPrimary(
+      interaction.guild.channels,
+      interaction.user.id,
+      section
+    );
     await interaction.reply({
       content: `New voice channel successfully created.`,
     });
