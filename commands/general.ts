@@ -1,5 +1,6 @@
 import { SlashCommandBuilder } from "@discordjs/builders";
 import { CommandInteraction } from "discord.js";
+import { ErrorEmbed, SuccessEmbed } from "../lib/discordEmbeds";
 import { prisma } from "../lib/prisma";
 
 // Set General Template
@@ -18,7 +19,8 @@ module.exports = {
     const secondaryId = user?.voice.channelId;
     if (!secondaryId) {
       interaction.reply({
-        content: "Must be in a Dynamica-controlled voice channel.",
+        ephemeral: true,
+        embeds: [ErrorEmbed("Must be in a Dynamica-controlled voice channel.")],
       });
       return;
     }
@@ -32,7 +34,8 @@ module.exports = {
     });
     if (!secondaryConfig) {
       interaction.reply({
-        content: "Must be in a Dynamica-controlled voice channel.",
+        ephemeral: true,
+        embeds: [ErrorEmbed("Must be in a Dynamica-controlled voice channel.")],
       });
       return;
     }
@@ -49,7 +52,7 @@ module.exports = {
     ) {
       interaction.reply({
         ephemeral: true,
-        content: "Must have the Dynamica role to manage aliases.",
+        embeds: [ErrorEmbed("Must have the Dynamica role to manage aliases.")],
       });
       return;
     }
@@ -64,6 +67,8 @@ module.exports = {
       where: { id: secondaryConfig.primary.id },
       data: { generalName: name },
     });
-    await interaction.reply({ content: "Success", ephemeral: true });
+    await interaction.reply({
+      embeds: [SuccessEmbed(`Template Changed to ${name}`)],
+    });
   },
 };

@@ -40,12 +40,15 @@ module.exports = {
       ? subcommandList
       : [];
     // console.log(commands?.map((command) => command.options));
-    if (!commandList) {
-      await interaction.reply("Commands unavailable.");
-    } else {
-      await interaction.reply({
-        embeds: [new Embed().setDescription("Command List").addFields(...list)],
-      });
-    }
+
+    await interaction.reply({
+      embeds: [
+        new Embed()
+          .setDescription("Command List")
+          .addFields(...list)
+          .setColor(3447003)
+          .setTitle("Info"),
+      ],
+    });
   },
 };

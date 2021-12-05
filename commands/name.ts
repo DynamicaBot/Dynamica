@@ -2,6 +2,7 @@ import { SlashCommandBuilder } from "@discordjs/builders";
 import { prisma } from "../lib/prisma";
 import { CommandInteraction } from "discord.js";
 import { info } from "../lib/colourfulLogger";
+import { ErrorEmbed, SuccessEmbed } from "../lib/discordEmbeds";
 
 // Set General Template
 module.exports = {
@@ -29,13 +30,16 @@ module.exports = {
     ) {
       interaction.reply({
         ephemeral: true,
-        content: "Must have the Dynamica role to manage aliases.",
+        embeds: [ErrorEmbed("Must have the Dynamica role to manage aliases.")],
       });
       return;
     }
     const channel = user?.voice.channel;
     if (!channel) {
-      await interaction.reply("Must be in a voice channel channel.");
+      await interaction.reply({
+        ephemeral: true,
+        embeds: [ErrorEmbed("Must be in a voice channel.")],
+      });
     } else {
       const channelConfig = await prisma.secondary.findUnique({
         where: {
@@ -43,7 +47,10 @@ module.exports = {
         },
       });
       if (!channelConfig) {
-        await interaction.reply("Not a valid secondary channel.");
+        await interaction.reply({
+          ephemeral: true,
+          embeds: [ErrorEmbed("Not a valid secondary channel.")],
+        });
       } else {
         await prisma.secondary.update({
           where: { id: channel.id },
@@ -51,9 +58,13 @@ module.exports = {
             name,
           },
         });
-        await interaction.reply(
-          "Success. Channel may take up to 5 minutes to update."
-        ); // TODO: Run update channel command.
+        await interaction.reply({
+          embeds: [
+            SuccessEmbed(
+              `Channel name changed to ${name}. Channel may take up to 5 minutes to update.`
+            ),
+          ],
+        });
         info(`${channel.id} name changed.`);
       }
     }

@@ -3,6 +3,7 @@ import { prisma } from "../lib/prisma";
 import { CommandInteraction, GuildChannel } from "discord.js";
 import { createPrimary } from "../lib/operations/primary";
 import { ChannelType } from "discord-api-types";
+import { ErrorEmbed, SuccessEmbed } from "../lib/discordEmbeds";
 
 module.exports = {
   data: new SlashCommandBuilder()
@@ -23,7 +24,8 @@ module.exports = {
     ) as GuildChannel | null;
     if (!interaction.guild?.me?.permissions.has("MANAGE_CHANNELS")) {
       await interaction.reply({
-        content: "Bot requires manage channel permissions.",
+        ephemeral: true,
+        embeds: [ErrorEmbed("Bot requires manage channel permissions.")],
       });
       return;
     }
@@ -40,7 +42,7 @@ module.exports = {
     ) {
       interaction.reply({
         ephemeral: true,
-        content: "Must have the Dynamica role to manage aliases.",
+        embeds: [ErrorEmbed("Must have the Dynamica role to manage aliases.")],
       });
       return;
     }
@@ -51,7 +53,7 @@ module.exports = {
       section
     );
     await interaction.reply({
-      content: `New voice channel successfully created.`,
+      embeds: [SuccessEmbed(`New voice channel successfully created.`)],
     });
   },
 };
