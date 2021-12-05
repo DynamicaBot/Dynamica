@@ -2,7 +2,8 @@ import dotenv from "dotenv";
 dotenv.config();
 import { Intents, Collection, Client } from "discord.js";
 import fs from "fs";
-import { ErrorEmbed } from "./lib/discordEmbeds";
+import { ErrorEmbed } from "@/lib/discordEmbeds";
+import { error } from "@/lib/colourfulLogger";
 
 // Create a new client instance
 const client = new Client({
@@ -41,10 +42,10 @@ client.on("interactionCreate", async (interaction) => {
 
   try {
     await command.execute(interaction);
-  } catch (error) {
-    console.error(error);
+  } catch (e) {
+    error(e);
     // await interaction.deferReply();
-    await interaction.reply({
+    interaction.reply({
       embeds: [ErrorEmbed("There was an error while executing this command!")],
       ephemeral: true,
     });

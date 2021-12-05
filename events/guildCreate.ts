@@ -1,6 +1,6 @@
-import { prisma } from "../lib/prisma";
+import { prisma } from "@/lib/prisma";
 import { Client, Guild } from "discord.js";
-import { debug } from "../lib/colourfulLogger";
+import { debug } from "@/lib/colourfulLogger";
 
 module.exports = {
   name: "guildCreate",

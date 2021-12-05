@@ -1,5 +1,4 @@
 import { Embed, SlashCommandBuilder } from "@discordjs/builders";
-import { APIEmbedField } from "discord-api-types";
 import { CommandInteraction } from "discord.js";
 
 module.exports = {

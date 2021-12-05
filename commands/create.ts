@@ -1,9 +1,7 @@
 import { SlashCommandBuilder } from "@discordjs/builders";
-import { prisma } from "../lib/prisma";
 import { CommandInteraction, GuildChannel } from "discord.js";
-import { createPrimary } from "../lib/operations/primary";
-import { ChannelType } from "discord-api-types";
-import { ErrorEmbed, SuccessEmbed } from "../lib/discordEmbeds";
+import { createPrimary } from "@/lib/operations/primary";
+import { ErrorEmbed, SuccessEmbed } from "@/lib/discordEmbeds";
 
 module.exports = {
   data: new SlashCommandBuilder()
