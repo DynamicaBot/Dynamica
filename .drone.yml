@@ -38,6 +38,8 @@ steps:
       event:
         - promote
     commands:
+      - apt-get update
+      - apt-get install openssl -y -qq
       - yarn deploy
   - name: Rebuild Cache
     pull: if-not-exists
