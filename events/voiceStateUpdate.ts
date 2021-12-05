@@ -1,5 +1,5 @@
 import { VoiceState } from "discord.js";
-import { createSecondary, deleteSecondary } from "../lib/operations";
+import { createSecondary, deleteSecondary } from "../lib/operations/secondary";
 
 module.exports = {
   name: "voiceStateUpdate",
@@ -14,11 +14,6 @@ module.exports = {
           newVoiceState.channelId,
           newVoiceState.member
         );
-
-        // await refreshSecondary(
-        //   newVoiceState.channelId,
-        //   newVoiceState.guild.channels
-        // );
       }
 
       // User leaves subchannel

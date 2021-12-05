@@ -1,7 +1,7 @@
 import { SlashCommandBuilder } from "@discordjs/builders";
 import { prisma } from "../lib/prisma";
 import { CommandInteraction } from "discord.js";
-import { createPrimary } from "../lib/operations";
+import { createPrimary } from "../lib/operations/primary";
 
 module.exports = {
   data: new SlashCommandBuilder()

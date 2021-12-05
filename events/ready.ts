@@ -1,9 +1,10 @@
 import { prisma } from "../lib/prisma";
 import { Client } from "discord.js";
-import { debug, info, log, error } from "../lib/colourfulLogger";
+import { debug, info } from "../lib/colourfulLogger";
 import { scheduler } from "../lib/scheduler";
-import { AsyncTask, SimpleIntervalJob, Task } from "toad-scheduler";
-import { refreshSecondary, updateActivityCount } from "../lib/operations";
+import { SimpleIntervalJob, Task } from "toad-scheduler";
+import { updateActivityCount } from "../lib/operations/general";
+import { refreshSecondary } from "../lib/operations/secondary";
 
 module.exports = {
   name: "ready",

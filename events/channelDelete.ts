@@ -1,10 +1,6 @@
 import { GuildChannel } from "discord.js";
-import {
-  deletedPrimary,
-  deletedSecondary,
-  deletePrimary,
-  deleteSecondary,
-} from "../lib/operations";
+import { deletedPrimary } from "../lib/operations/primary";
+import { deletedSecondary } from "../lib/operations/secondary";
 
 module.exports = {
   name: "channelDelete",
