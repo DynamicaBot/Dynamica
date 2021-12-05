@@ -19,18 +19,17 @@ module.exports = {
     const cachedGuildCommands = interaction.guild?.commands.cache;
     const guildCommands =
       cachedGuildCommands?.size === 0 || undefined
-        ? cachedGuildCommands
-        : await interaction.guild?.commands.fetch();
+        ? await interaction.guild?.commands.fetch()
+        : cachedGuildCommands;
 
     const cachedApplicationCommands =
       interaction.client.application?.commands.cache;
     const applicationCommands =
       cachedApplicationCommands?.size === 0 || undefined
-        ? cachedApplicationCommands
-        : await interaction.client.application?.commands.fetch();
-
+        ? await interaction.client.application?.commands.fetch()
+        : cachedApplicationCommands;
     const commands = process.env.GUILD_ID ? guildCommands : applicationCommands;
-    console.log(commands);
+
     const subcommandList = commands
       ? commands
           ?.find((command) => command.name === subcommand)
