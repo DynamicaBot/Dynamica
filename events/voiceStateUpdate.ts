@@ -1,5 +1,5 @@
 import { VoiceState } from "discord.js";
-import { createSecondary, deleteSecondary } from "@/lib/operations/secondary";
+import { createSecondary, deleteSecondary } from "../lib/operations/secondary";
 
 module.exports = {
   name: "voiceStateUpdate",

@@ -3,8 +3,8 @@ name: "default"
 type: "docker"
 trigger:
   branch:
-  - master
-  
+    - master
+
 steps:
   - name: Restore Cache
     pull: if-not-exists
@@ -16,7 +16,7 @@ steps:
       restore: true
       mount:
         - ./node_modules
-  - name: "build"
+  - name: "Build"
     image: "node:lts-buster-slim"
     pull: if-not-exists
     commands:
@@ -24,6 +24,11 @@ steps:
       - apt-get install openssl -y -qq
       - yarn install --frozen-lockfile
       - yarn tsc
+  - name: "Deploy Commands"
+    image: "node:lts-buster-slim"
+    pull: if-not-exists
+    commands:
+      - yarn deploy
   - name: Rebuild Cache
     pull: if-not-exists
     image: drillster/drone-volume-cache
@@ -55,4 +60,3 @@ volumes:
   - name: cache
     host:
       path: /tmp/cache
-

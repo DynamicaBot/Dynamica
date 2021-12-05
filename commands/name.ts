@@ -1,8 +1,8 @@
 import { SlashCommandBuilder } from "@discordjs/builders";
-import { prisma } from "@/lib/prisma";
+import { prisma } from "../lib/prisma";
 import { CommandInteraction } from "discord.js";
-import { info } from "@/lib/colourfulLogger";
-import { ErrorEmbed, SuccessEmbed } from "@/lib/discordEmbeds";
+import { info } from "../lib/colourfulLogger";
+import { ErrorEmbed, SuccessEmbed } from "../lib/discordEmbeds";
 
 // Set General Template
 module.exports = {

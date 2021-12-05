@@ -1,7 +1,7 @@
 import { SlashCommandBuilder } from "@discordjs/builders";
 import { CommandInteraction } from "discord.js";
-import { ErrorEmbed, SuccessEmbed } from "@/lib/discordEmbeds";
-import { prisma } from "@/lib/prisma";
+import { ErrorEmbed, SuccessEmbed } from "../lib/discordEmbeds";
+import { prisma } from "../lib/prisma";
 
 module.exports = {
   data: new SlashCommandBuilder()

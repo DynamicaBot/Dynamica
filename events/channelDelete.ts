@@ -1,8 +1,8 @@
 import { GuildChannel } from "discord.js";
-import { deletedPrimary } from "@/lib/operations/primary";
-import { deletedSecondary } from "@/lib/operations/secondary";
-import { prisma } from "@/lib/prisma";
-import { error } from "@/lib/colourfulLogger";
+import { deletedPrimary } from "../lib/operations/primary";
+import { deletedSecondary } from "../lib/operations/secondary";
+import { prisma } from "../lib/prisma";
+import { error } from "../lib/colourfulLogger";
 
 module.exports = {
   name: "channelDelete",
