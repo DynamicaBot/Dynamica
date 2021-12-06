@@ -127,6 +127,7 @@ module.exports = {
         }
 
         await interaction.reply({
+          ephemeral: true,
           embeds: [
             SuccessEmbed(
               `Successfully created alias ${quote(alias)} for ${quote(
@@ -145,6 +146,7 @@ module.exports = {
           },
         });
         await interaction.reply({
+          ephemeral: true,
           embeds: [
             SuccessEmbed(`Successfully removed alias for ${quote(activity)}`),
           ],
@@ -157,6 +159,7 @@ module.exports = {
           },
         });
         await interaction.reply({
+          ephemeral: true,
           embeds: [
             new Embed()
               .addFields(

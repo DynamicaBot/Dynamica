@@ -55,9 +55,9 @@ module.exports = {
       : subcommandList
       ? subcommandList
       : [];
-    // console.log(commands?.map((command) => command.options));
 
     await interaction.reply({
+      ephemeral: true,
       embeds: [
         new Embed()
           .setDescription("Command List")
