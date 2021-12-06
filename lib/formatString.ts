@@ -43,6 +43,7 @@ export function formatString({
     formattedString = formattedString.replace(
       "@@game@@",
       deDuplicatedActivities
+        .filter((activity) => activity !== "Custom Status")
         .map(
           (activity) =>
             aliases.find((alias) => alias.activity === activity)?.alias ||
