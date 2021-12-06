@@ -111,7 +111,9 @@ export const createSecondary = async (
     )
   );
   await updateActivityCount(channelManager.client);
-  await debug(`Secondary channel ${secondary.id} created by ${member?.id}`);
+  await debug(
+    `Secondary channel ${secondary.name} created by ${member?.user.tag} in ${channelManager.guild.name}.`
+  );
 };
 
 /**
@@ -150,13 +152,13 @@ export const refreshSecondary = async (channel: BaseGuildVoiceChannel) => {
     activities,
   });
   if (channel.name === name) {
-    debug(`Skipped rename for ${channel.name} as activities haven't changed.`);
+    debug(`Skipped rename for ${channel.name} as name hasn't changed.`);
   } else {
     await channel.edit({
       name,
     });
     debug(
-      `Secondary channel ${channel.name} from primary ${primaryConfig.id} refreshed.`
+      `Secondary channel ${channel.name} in ${channel.guild.name} refreshed.`
     );
   }
 };

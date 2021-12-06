@@ -37,7 +37,7 @@ export const createPrimary = async (
     },
   });
   await debug(
-    `New primary channel ${primary.id} created by ${primary.creator}.`
+    `New primary channel ${channel.name} created by ${primary.creator}.`
   );
 };
 
@@ -61,9 +61,10 @@ export const deletePrimary = async (
       include: { secondaries: true, aliases: true },
     }),
     channel?.delete(),
-    // TODO: Delete secondary discord channels
   ]);
-  await debug(`Primary channel ${channelId} deleted.`);
+  await debug(
+    `Primary channel ${channel.name} in ${channel.guild.name} deleted.`
+  );
 };
 
 /**
@@ -80,5 +81,5 @@ export const deletedPrimary = async (channelId: string) => {
     where: { id: channelId },
     include: { aliases: true, secondaries: true },
   });
-  await debug(`Primary channel ${channelId} deleted.`);
+  await debug(`Primary channel ${channel.id} deleted.`);
 };
