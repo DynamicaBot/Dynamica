@@ -1,4 +1,4 @@
-import { Embed, SlashCommandBuilder } from "@discordjs/builders";
+import { Embed, hyperlink, SlashCommandBuilder } from "@discordjs/builders";
 import { CommandInteraction } from "discord.js";
 
 module.exports = {
@@ -35,13 +35,19 @@ module.exports = {
           ?.find((command) => command.name === subcommand)
           ?.options.map((option) => ({
             name: option.name,
-            value: option.description,
+            value: `${option.description} - ${hyperlink(
+              "help",
+              `https://dynamica.dev/docs/commands/${subcommand}#${option.name}`
+            )}`,
           }))
       : [];
     const commandList = commands
       ? commands?.map((command) => ({
           name: command.name,
-          value: command.description,
+          value: `${command.description} - ${hyperlink(
+            "help",
+            `https://dynamica.dev/docs/commands/${command.name}`
+          )}`,
         }))
       : [];
     const list = !subcommand
