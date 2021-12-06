@@ -56,18 +56,11 @@ module.exports = {
     ) {
       interaction.reply({
         ephemeral: true,
-        embeds: [ErrorEmbed("Must have the Dynamica role to manage aliases.")],
-      });
-      return;
-    }
-    const channelConfig = await prisma.primary.findUnique({
-      where: { id: secondaryConfig.primary?.id },
-      include: { secondaries: true },
-    });
-    if (!channelConfig) {
-      interaction.reply({
-        ephemeral: true,
-        embeds: [ErrorEmbed("Channel not managed by bot.")],
+        embeds: [
+          ErrorEmbed(
+            "Must have the Dynamica role to change the channel template."
+          ),
+        ],
       });
       return;
     }

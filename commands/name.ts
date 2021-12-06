@@ -30,43 +30,39 @@ module.exports = {
     ) {
       interaction.reply({
         ephemeral: true,
-        embeds: [ErrorEmbed("Must have the Dynamica role to manage aliases.")],
+        embeds: [
+          ErrorEmbed("Must have the Dynamica role to change the channel name."),
+        ],
       });
       return;
     }
     const channel = guildMember?.voice.channel;
-    if (!channel) {
+
+    const channelConfig = await prisma.secondary.findUnique({
+      where: {
+        id: channel?.id,
+      },
+    });
+    if (!channelConfig || !channel) {
       await interaction.reply({
         ephemeral: true,
-        embeds: [ErrorEmbed("Must be in a voice channel.")],
+        embeds: [ErrorEmbed("Must be in a Dynamica-controlled voice channel.")],
       });
     } else {
-      const channelConfig = await prisma.secondary.findUnique({
-        where: {
-          id: channel.id,
+      await prisma.secondary.update({
+        where: { id: channel.id },
+        data: {
+          name,
         },
       });
-      if (!channelConfig) {
-        await interaction.reply({
-          ephemeral: true,
-          embeds: [ErrorEmbed("Not a valid secondary channel.")],
-        });
-      } else {
-        await prisma.secondary.update({
-          where: { id: channel.id },
-          data: {
-            name,
-          },
-        });
-        await interaction.reply({
-          embeds: [
-            SuccessEmbed(
-              `Channel name changed to ${name}. Channel may take up to 5 minutes to update.`
-            ),
-          ],
-        });
-        info(`${channel.id} name changed.`);
-      }
+      await interaction.reply({
+        embeds: [
+          SuccessEmbed(
+            `Channel name changed to ${name}. Channel may take up to 5 minutes to update.`
+          ),
+        ],
+      });
+      info(`${channel.id} name changed.`);
     }
   },
 };
