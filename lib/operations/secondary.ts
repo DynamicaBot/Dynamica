@@ -142,14 +142,21 @@ export const refreshSecondary = async (channel: BaseGuildVoiceChannel) => {
     : !activities.length
     ? primaryConfig.generalName
     : primaryConfig.template;
-  channel.edit({
-    name: formatString({
-      str,
-      creator: primaryConfig.creator,
-      aliases: primaryConfig.aliases,
-      channelNumber: 1,
-      activities,
-    }),
+  const name = formatString({
+    str,
+    creator: primaryConfig.creator,
+    aliases: primaryConfig.aliases,
+    channelNumber: 1,
+    activities,
   });
-  await debug(`Secondary channels from primary ${primaryConfig.id} refreshed.`);
+  if (channel.name === name) {
+    debug(`Skipped rename for ${channel.name} as activities haven't changed.`);
+  } else {
+    await channel.edit({
+      name,
+    });
+    debug(
+      `Secondary channel ${channel.name} from primary ${primaryConfig.id} refreshed.`
+    );
+  }
 };
