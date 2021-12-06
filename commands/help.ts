@@ -36,7 +36,7 @@ module.exports = {
           ?.options.map((option) => ({
             name: option.name,
             value: `${option.description} - ${hyperlink(
-              "help",
+              `Docs - ${option.name}`,
               `https://dynamica.dev/docs/commands/${subcommand}#${option.name}`
             )}`,
           }))
@@ -45,7 +45,7 @@ module.exports = {
       ? commands?.map((command) => ({
           name: command.name,
           value: `${command.description} - ${hyperlink(
-            "help",
+            `Docs - ${command.name}`,
             `https://dynamica.dev/docs/commands/${command.name}`
           )}`,
         }))

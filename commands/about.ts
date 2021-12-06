@@ -1,12 +1,10 @@
-import { Embed, hyperlink, SlashCommandBuilder } from "@discordjs/builders";
+import { Embed, SlashCommandBuilder } from "@discordjs/builders";
 import { CommandInteraction } from "discord.js";
 
 module.exports = {
   data: new SlashCommandBuilder()
     .setName("about")
-    .setDescription(
-      `About the bot. ${hyperlink("Help Page", "https://sebasptsch.dev")}`
-    ),
+    .setDescription(`About the bot.`),
   async execute(interaction: CommandInteraction) {
     interaction.reply({
       embeds: [
