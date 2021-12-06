@@ -24,23 +24,6 @@ steps:
       - apt-get install openssl -y -qq
       - yarn install --frozen-lockfile
       - yarn tsc
-  - name: "Deploy Commands"
-    image: "node:lts-buster-slim"
-    pull: if-not-exists
-    environment:
-      CLIENT_ID:
-        from_secret: CLIENT_ID
-      TOKEN:
-        from_secret: TOKEN
-    when:
-      branch:
-        - master
-      event:
-        - promote
-    commands:
-      - apt-get update
-      - apt-get install openssl -y -qq
-      - yarn deploy
   - name: Rebuild Cache
     pull: if-not-exists
     image: drillster/drone-volume-cache

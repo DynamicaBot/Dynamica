@@ -3,4 +3,4 @@ WORKDIR /app
 COPY . .
 RUN apt-get update && apt-get install openssl -y -qq
 RUN yarn install --frozen-lockfile
-CMD yarn prisma migrate deploy && yarn start
+CMD yarn deploy && yarn prisma migrate deploy && yarn start
