@@ -32,6 +32,7 @@ export function formatString(
     .replace(/@@nato@@/g, nato[channelNumber - 1]) // Alpha
     .replace(/@@num@@/g, memberCount.toString()) // number of channel members
     .replace(/@@game@@/g, activityList.join(", ")) // Activities
+    .replace(/@@creator@@/g, creator) // Creator
     .replace(/<<(.+)\/(.+)>>/g, memberCount === 1 ? plurals[1] : plurals[2]); // person
 }
 

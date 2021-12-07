@@ -78,7 +78,7 @@ export const createSecondary = async (
     : primaryChannel.template;
   const secondary = await channelManager.create(
     formatString(str, {
-      creator: primaryChannel.creator,
+      creator: member?.displayName as string,
       channelNumber: primaryChannel.secondaries.length + 1,
       activities: activities,
       aliases: primaryChannel.aliases,
@@ -133,7 +133,12 @@ export const refreshSecondary = async (channel: BaseGuildVoiceChannel) => {
     include: { aliases: true },
   });
   if (!channelConfig || !primaryConfig) return;
-
+  const channelCreator = channelConfig.creator
+    ? channel.members.get(channelConfig.creator)?.displayName
+    : "";
+  const creator = channelCreator
+    ? channelCreator
+    : channel.members.at(0)?.displayName;
   if (!channel?.manageable) return;
   const activities = Array.from(channel.members).flatMap((entry) => {
     if (!entry[1].presence) return [];
@@ -145,7 +150,7 @@ export const refreshSecondary = async (channel: BaseGuildVoiceChannel) => {
     ? primaryConfig.generalName
     : primaryConfig.template;
   const name = formatString(str, {
-    creator: primaryConfig.creator,
+    creator: creator ? creator : "",
     aliases: primaryConfig.aliases,
     channelNumber: 1,
     activities,
