@@ -15,8 +15,6 @@ export function formatString(
 
   const { creator, channelNumber, activities, aliases, memberCount } = options;
 
-  const precision = channelNumber.toFixed(2);
-
   const activityList = [...new Set(activities)]
     .filter((activity) => activity !== "Customer Status")
     .map(
@@ -27,7 +25,7 @@ export function formatString(
   const plurals = str.split(/<<(.+)\/(.+)>>/g);
 
   return str
-    .replace(/###/g, precision) // 001
+    .replace(/###/g, channelNumber.toString().padStart(3, "0")) // 001
     .replace(/##/g, `#${channelNumber}`) // #1
     .replace(/\$#/g, channelNumber.toString()) // 1
     .replace(/\+#/g, romanize(channelNumber)) // I
