@@ -77,12 +77,12 @@ export const createSecondary = async (
     ? primaryChannel.generalName
     : primaryChannel.template;
   const secondary = await channelManager.create(
-    formatString({
-      str,
+    formatString(str, {
       creator: primaryChannel.creator,
       channelNumber: primaryChannel.secondaries.length + 1,
       activities: activities,
       aliases: primaryChannel.aliases,
+      memberCount: channel.members.size,
     }),
     {
       type: "GUILD_VOICE",
@@ -144,12 +144,12 @@ export const refreshSecondary = async (channel: BaseGuildVoiceChannel) => {
     : !activities.length
     ? primaryConfig.generalName
     : primaryConfig.template;
-  const name = formatString({
-    str,
+  const name = formatString(str, {
     creator: primaryConfig.creator,
     aliases: primaryConfig.aliases,
     channelNumber: 1,
     activities,
+    memberCount: channel.members.size,
   });
   if (channel.name === name) {
     debug(`Skipped rename for ${channel.name} as name hasn't changed.`);

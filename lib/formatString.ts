@@ -1,59 +1,41 @@
 import { Alias } from "@prisma/client";
+import { romanize } from "romans";
 
-export function formatString({
-  str,
-  channelNumber,
-  creator,
-  activities,
-  aliases,
-}: {
-  /**
-   * The string to format
-   */
-  str: string;
-  /**
-   * The channel number
-   */
-  channelNumber: number;
-  /**
-   * The creator of the channel
-   */
-  creator: string;
-
-  /**
-   * Game name aliases
-   */
-  aliases: Alias[];
-
-  /**
-   * The current activities
-   */
-  activities?: string[];
-}) {
-  const precision = channelNumber.toPrecision(2);
-
-  let formattedString = str;
-  const deDuplicatedActivities = [...new Set(activities)];
-  formattedString = formattedString
-    .replace("###", precision) // Numbers
-    .replace("##", `#${channelNumber}`)
-    .replace("@@nato@@", nato[channelNumber - 1]) // Alpha
-    .replace("@@creator@@", creator); // Creator
-  if (!!activities?.length) {
-    formattedString = formattedString.replace(
-      "@@game@@",
-      deDuplicatedActivities
-        .filter((activity) => activity !== "Custom Status")
-        .map(
-          (activity) =>
-            aliases.find((alias) => alias.activity === activity)?.alias ||
-            activity
-        )
-        .toString()
-    );
+export function formatString(
+  str: string,
+  options: {
+    creator: string;
+    channelNumber: number;
+    activities: string[];
+    aliases: Alias[];
+    memberCount: Number;
   }
+) {
+  // get variables between / and >> or << and / and replace with the value
 
-  return formattedString;
+  const { creator, channelNumber, activities, aliases, memberCount } = options;
+
+  const precision = channelNumber.toFixed(2);
+
+  const activityList = [...new Set(activities)]
+    .filter((activity) => activity !== "Customer Status")
+    .map(
+      (activity) =>
+        aliases.find((alias) => alias.activity === activity)?.alias || activity
+    );
+
+  const plurals = str.split(/<<(.+)\/(.+)>>/g);
+
+  return str
+    .replace(/###/g, precision) // 001
+    .replace(/##/g, `#${channelNumber}`) // #1
+    .replace(/\$#/g, channelNumber.toString()) // 1
+    .replace(/\+#/g, romanize(channelNumber)) // I
+    .replace(/@@nato@@/g, nato[channelNumber - 1]) // Alpha
+    .replace(/@@num@@/g, memberCount.toString()) // number of channel members
+    .replace(/@@creator@@/g, creator) // Creator
+    .replace(/@@game@@/g, activityList.join(", ")) // Activities
+    .replace(/<<(.+)\/(.+)>>/g, memberCount === 1 ? plurals[1] : plurals[2]); // person
 }
 
 const nato = [
