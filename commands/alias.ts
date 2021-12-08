@@ -66,13 +66,14 @@ module.exports = {
       const existingAlias = await prisma.alias.findFirst({
         where: {
           activity,
-          guild: interaction.guild,
+          guildId: interaction.guild.id,
         },
       });
+
       if (!existingAlias) {
         await prisma.alias.create({
           data: {
-            guildId: interaction.id,
+            guildId: interaction.guild.id,
             activity,
             alias,
           },
