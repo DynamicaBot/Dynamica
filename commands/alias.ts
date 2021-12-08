@@ -44,39 +44,6 @@ module.exports = {
     ),
 
   async execute(interaction: CommandInteraction) {
-    // const primary = interaction.options.getChannel("primary", true);
-    const cachedUser = interaction.guild?.members.cache.get(
-      interaction.user.id
-    );
-    const user = cachedUser
-      ? cachedUser
-      : await interaction.guild?.members.fetch(interaction.user.id);
-    const secondaryId = user?.voice.channelId;
-    if (!secondaryId) {
-      interaction.reply({
-        ephemeral: true,
-        embeds: [ErrorEmbed("Must be in a Dynamica-controlled voice channel.")],
-      });
-      return;
-    }
-
-    const secondaryConfig = await prisma.secondary.findUnique({
-      where: {
-        id: secondaryId,
-      },
-      include: {
-        primary: true,
-        guild: true,
-      },
-    });
-
-    if (!secondaryConfig) {
-      interaction.reply({
-        ephemeral: true,
-        embeds: [ErrorEmbed("Must be in a Dynamica-controlled voice channel.")],
-      });
-      return;
-    }
     if (!interaction.guild?.members) return;
     const guildMember = await getGuildMember(
       interaction.guild.members,
@@ -90,29 +57,22 @@ module.exports = {
         ephemeral: true,
         embeds: [ErrorEmbed("Must have the Dynamica role to manage aliases.")],
       });
+      return;
+    }
 
-      return;
-    }
-    if (!secondaryConfig.primary) {
-      interaction.reply({
-        ephemeral: true,
-        embeds: [ErrorEmbed("Must be a valid primary channel.")],
-      });
-      return;
-    }
     if (interaction.options.getSubcommand() === "add") {
       const activity = interaction.options.getString("activity", true);
       const alias = interaction.options.getString("alias", true);
       const existingAlias = await prisma.alias.findFirst({
         where: {
           activity,
-          guild: secondaryConfig.guild,
+          guild: interaction.guild,
         },
       });
       if (!existingAlias) {
         await prisma.alias.create({
           data: {
-            guildId: secondaryConfig.guildId,
+            guildId: interaction.id,
             activity,
             alias,
           },
@@ -142,7 +102,7 @@ module.exports = {
       const activity = interaction.options.getString("activity", true);
       await prisma.alias.deleteMany({
         where: {
-          guild: secondaryConfig.guild,
+          guildId: interaction.guild.id,
           activity,
         },
       });
@@ -155,7 +115,7 @@ module.exports = {
     } else if (interaction.options.getSubcommand() === "list") {
       const aliases = await prisma.alias.findMany({
         where: {
-          guild: secondaryConfig.guild,
+          guildId: interaction.guild.id,
         },
       });
       await interaction.reply({
