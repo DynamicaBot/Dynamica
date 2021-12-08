@@ -4,6 +4,7 @@ import {
   GuildMember,
 } from "discord.js";
 import { SimpleIntervalJob, Task } from "toad-scheduler";
+import checkGuild from "../checks/guild";
 import { debug } from "../colourfulLogger";
 import { formatString } from "../formatString";
 import { getChannel } from "../getCached";
@@ -108,7 +109,7 @@ export const createSecondary = async (
   if (member) {
     member.voice.setChannel(secondary);
   }
-
+  await checkGuild(channelManager.guild.id);
   await prisma.secondary.create({
     data: {
       id: secondary.id,

@@ -5,6 +5,7 @@ import {
   GuildChannelManager,
   ThreadChannel,
 } from "discord.js";
+import checkGuild from "../checks/guild";
 import { debug } from "../colourfulLogger";
 import { prisma } from "../prisma";
 
@@ -29,7 +30,7 @@ export const createPrimary = async (
     type: "GUILD_VOICE",
     parent,
   });
-
+  await checkGuild(channelManager.guild.id);
   const primary = await prisma.primary.create({
     data: {
       id: channel.id,

@@ -1,5 +1,6 @@
 import { Embed, quote, SlashCommandBuilder } from "@discordjs/builders";
 import { CommandInteraction } from "discord.js";
+import checkGuild from "../lib/checks/guild";
 import { ErrorEmbed, SuccessEmbed } from "../lib/discordEmbeds";
 import { getGuildMember } from "../lib/getCached";
 import { prisma } from "../lib/prisma";
@@ -44,6 +45,7 @@ module.exports = {
     ),
 
   async execute(interaction: CommandInteraction) {
+    await checkGuild(interaction.guild?.id);
     if (!interaction.guild?.members) return;
     const guildMember = await getGuildMember(
       interaction.guild.members,
