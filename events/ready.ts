@@ -5,6 +5,7 @@ import { scheduler } from "../lib/scheduler";
 import { SimpleIntervalJob, Task } from "toad-scheduler";
 import { updateActivityCount } from "../lib/operations/general";
 import { refreshSecondary } from "../lib/operations/secondary";
+import { getChannel } from "../lib/getCached";
 
 module.exports = {
   name: "ready",
@@ -14,10 +15,8 @@ module.exports = {
     const secondaries = await prisma.secondary.findMany();
     Promise.all(
       secondaries.map(async (secondary) => {
-        const cachedChannel = client.channels.cache.get(secondary.id);
-        const channel = cachedChannel
-          ? cachedChannel
-          : await client.channels.fetch(secondary.id);
+        // const cachedChannel = client.channels.cache.get(secondary.id);
+        const channel = await getChannel(client.channels, secondary.id);
 
         channel?.isVoice()
           ? scheduler.addSimpleIntervalJob(

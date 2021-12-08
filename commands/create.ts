@@ -2,6 +2,7 @@ import { SlashCommandBuilder } from "@discordjs/builders";
 import { CommandInteraction, GuildChannel } from "discord.js";
 import { createPrimary } from "../lib/operations/primary";
 import { ErrorEmbed, SuccessEmbed } from "../lib/discordEmbeds";
+import { getGuildMember } from "../lib/getCached";
 
 module.exports = {
   data: new SlashCommandBuilder()
@@ -28,16 +29,13 @@ module.exports = {
       return;
     }
 
-    const cachedGuildMember = await interaction.guild?.members.cache.get(
+    const guildMember = await getGuildMember(
+      interaction.guild.members,
       interaction.user.id
     );
 
-    const guildMember = cachedGuildMember
-      ? cachedGuildMember
-      : await interaction.guild?.members.fetch(interaction.user.id);
-
     if (
-      !guildMember?.roles.cache.some((role) => role.name === "Dynamica Manager")
+      !guildMember?.roles.cache.find((role) => role.name === "Dynamica Manager")
     ) {
       interaction.reply({
         ephemeral: true,

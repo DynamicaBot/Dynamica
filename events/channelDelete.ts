@@ -19,7 +19,7 @@ module.exports = {
       if (primary) {
         return prisma.primary.delete({
           where: { id },
-          include: { aliases: true, secondaries: true },
+          include: { secondaries: true },
         });
       } else if (secondary) {
         return prisma.secondary.delete({ where: { id } });

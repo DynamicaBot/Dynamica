@@ -3,6 +3,7 @@ import { prisma } from "../lib/prisma";
 import { CommandInteraction } from "discord.js";
 import { info } from "../lib/colourfulLogger";
 import { ErrorEmbed, SuccessEmbed } from "../lib/discordEmbeds";
+import { getGuildMember } from "../lib/getCached";
 
 // Set General Template
 module.exports = {
@@ -18,12 +19,12 @@ module.exports = {
   async execute(interaction: CommandInteraction) {
     const name = interaction.options.getString("name");
 
-    const cachedGuildMember = await interaction.guild?.members.cache.get(
+    if (!interaction.guild) return;
+
+    const guildMember = await getGuildMember(
+      interaction.guild.members,
       interaction.user.id
     );
-    const guildMember = cachedGuildMember
-      ? cachedGuildMember
-      : await interaction.guild?.members.fetch(interaction.user.id);
 
     if (
       !guildMember?.roles.cache.some((role) => role.name === "Dynamica Manager")

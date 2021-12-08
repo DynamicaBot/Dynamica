@@ -3,6 +3,7 @@ import { prisma } from "../lib/prisma";
 import { CommandInteraction, Permissions } from "discord.js";
 import { info } from "../lib/colourfulLogger";
 import { ErrorEmbed, SuccessEmbed } from "../lib/discordEmbeds";
+import { getGuildMember } from "../lib/getCached";
 
 // Set lock Template
 module.exports = {
@@ -32,12 +33,12 @@ module.exports = {
       | "add"
       | "remove";
 
-    const cachedGuildMember = await interaction.guild?.members.cache.get(
+    if (!interaction.guild?.members) return;
+
+    const guildMember = await getGuildMember(
+      interaction.guild?.members,
       interaction.user.id
     );
-    const guildMember = cachedGuildMember
-      ? cachedGuildMember
-      : await interaction.guild?.members.fetch(interaction.user.id);
 
     const everyone = interaction.guild?.roles.everyone;
 

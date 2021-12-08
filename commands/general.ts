@@ -1,6 +1,7 @@
 import { SlashCommandBuilder } from "@discordjs/builders";
 import { CommandInteraction } from "discord.js";
 import { ErrorEmbed, SuccessEmbed } from "../lib/discordEmbeds";
+import { getGuildMember } from "../lib/getCached";
 import { prisma } from "../lib/prisma";
 
 // Set General Template
@@ -15,44 +16,46 @@ module.exports = {
         .setRequired(true)
     ),
   async execute(interaction: CommandInteraction) {
-    const cachedUser = interaction.guild?.members.cache.get(
+    const name = interaction.options.getString("name", true);
+
+    if (!interaction.guild) return;
+
+    const guildMember = await getGuildMember(
+      interaction.guild?.members,
       interaction.user.id
     );
-    const user = cachedUser
-      ? cachedUser
-      : await interaction.guild?.members.fetch(interaction.user.id);
 
-    const secondaryId = user?.voice.channelId;
-    if (!secondaryId) {
+    const voiceId = guildMember?.voice.channelId;
+
+    // Check if the user is in a voice channel.
+    if (!voiceId) {
       interaction.reply({
         ephemeral: true,
         embeds: [ErrorEmbed("Must be in a Dynamica-controlled voice channel.")],
       });
       return;
     }
-    const secondaryConfig = await prisma.secondary.findUnique({
+
+    // Find a valid secondary channel
+    const secondary = await prisma.secondary.findUnique({
       where: {
-        id: secondaryId,
+        id: voiceId,
       },
       include: {
         primary: true,
       },
     });
-    if (!secondaryConfig) {
+
+    // Error response for no secondary
+    if (!secondary) {
       interaction.reply({
         ephemeral: true,
         embeds: [ErrorEmbed("Must be in a Dynamica-controlled voice channel.")],
       });
       return;
     }
-    const name = interaction.options.getString("name", true);
-    const cachedGuildMember = await interaction.guild?.members.cache.get(
-      interaction.user.id
-    );
-    const guildMember = cachedGuildMember
-      ? cachedGuildMember
-      : await interaction.guild?.members.fetch(interaction.user.id);
 
+    // Check dynamica role
     if (
       !guildMember?.roles.cache.some((role) => role.name === "Dynamica Manager")
     ) {
@@ -66,19 +69,16 @@ module.exports = {
       });
       return;
     }
-    const channelConfig = await prisma.primary.findUnique({
-      where: { id: secondaryConfig.primary.id },
-      include: {
-        secondaries: true,
-      },
-    });
-    if (!channelConfig) return;
+
+    // Update channel list
     await prisma.primary.update({
-      where: { id: secondaryConfig.primary.id },
+      where: { id: secondary.primary.id },
       data: { generalName: name },
     });
+
+    // Reply with template
     await interaction.reply({
-      embeds: [SuccessEmbed(`Template Changed to ${name}`)],
+      embeds: [SuccessEmbed(`General template Changed to ${name}`)],
     });
   },
 };

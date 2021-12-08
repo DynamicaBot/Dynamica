@@ -34,6 +34,7 @@ export const createPrimary = async (
     data: {
       id: channel.id,
       creator: userId,
+      guildId: channelManager.guild.id,
     },
   });
   await debug(
@@ -58,7 +59,7 @@ export const deletePrimary = async (
   await Promise.all([
     prisma.primary.delete({
       where: { id: channelId },
-      include: { secondaries: true, aliases: true },
+      include: { secondaries: true },
     }),
     channel?.delete(),
   ]);
@@ -79,7 +80,7 @@ export const deletedPrimary = async (channelId: string) => {
   if (!channel) return;
   await prisma.primary.delete({
     where: { id: channelId },
-    include: { aliases: true, secondaries: true },
+    include: { secondaries: true },
   });
   await debug(`Primary channel ${channel.id} deleted.`);
 };

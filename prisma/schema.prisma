@@ -10,19 +10,29 @@ datasource db {
   url      = "file:../config/db.sqlite"
 }
 
+model Guild {
+  id        String @id @unique
+  primaryChannels  Primary[]
+  secondaryChannels  Secondary[]
+  aliases Alias[] @relation("AliasOnGuild")
+}
+
 model Primary {
   id String @id @unique
   creator String
   template String @default("@@game@@ ##")
   generalName String @default("General ##")
   secondaries Secondary[] @relation("SecondaryOnPrimary")
-  aliases Alias[] @relation("AliasOnPrimary")
+  guildId String?
+  guild Guild? @relation(references: [id], fields: [guildId])
 }
 
 model Secondary {
   id String @id @unique
   name String?
   creator String?
+  guildId String
+  guild Guild @relation(references: [id], fields: [guildId])
   primaryId String
   primary Primary @relation(name: "SecondaryOnPrimary", fields: [primaryId], references: [id])
 }
@@ -31,6 +41,6 @@ model Alias {
   id Int @id @default(autoincrement())
   activity String
   alias String
-  primaryId String
-  primary Primary @relation(name: "AliasOnPrimary", fields: [primaryId], references: [id])
+  guildId String?
+  guild Guild? @relation(name: "AliasOnGuild", fields: [guildId], references: [id])
 }

@@ -1,6 +1,7 @@
 import { SlashCommandBuilder } from "@discordjs/builders";
 import { CommandInteraction } from "discord.js";
 import { ErrorEmbed, SuccessEmbed } from "../lib/discordEmbeds";
+import { getGuildMember } from "../lib/getCached";
 import { prisma } from "../lib/prisma";
 
 module.exports = {
@@ -14,6 +15,7 @@ module.exports = {
         .setRequired(true)
     ),
   async execute(interaction: CommandInteraction) {
+    if (!interaction.guild) return;
     const cachedUser = interaction.guild?.members.cache.get(
       interaction.user.id
     );
@@ -44,12 +46,10 @@ module.exports = {
       return;
     }
     const template = interaction.options.getString("template", true);
-    const cachedGuildMember = await interaction.guild?.members.cache.get(
+    const guildMember = await getGuildMember(
+      interaction.guild.members,
       interaction.user.id
     );
-    const guildMember = cachedGuildMember
-      ? cachedGuildMember
-      : await interaction.guild?.members.fetch(interaction.user.id);
 
     if (
       !guildMember?.roles.cache.some((role) => role.name === "Dynamica Manager")

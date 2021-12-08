@@ -1,5 +1,6 @@
 import { Embed, hyperlink, SlashCommandBuilder } from "@discordjs/builders";
 import { CommandInteraction } from "discord.js";
+import { getCommands } from "../lib/getCached";
 
 module.exports = {
   data: new SlashCommandBuilder()
@@ -16,19 +17,10 @@ module.exports = {
   async execute(interaction: CommandInteraction) {
     const subcommand = interaction.options.getString("subcommand", false);
 
-    const cachedGuildCommands = interaction.guild?.commands.cache;
-    const guildCommands =
-      cachedGuildCommands?.size === 0 || undefined
-        ? await interaction.guild?.commands.fetch()
-        : cachedGuildCommands;
-
-    const cachedApplicationCommands =
-      interaction.client.application?.commands.cache;
-    const applicationCommands =
-      cachedApplicationCommands?.size === 0 || undefined
-        ? await interaction.client.application?.commands.fetch()
-        : cachedApplicationCommands;
-    const commands = process.env.GUILD_ID ? guildCommands : applicationCommands;
+    const commands = await getCommands(
+      interaction.guild?.commands,
+      interaction.client.application?.commands
+    );
 
     const subcommandList = commands
       ? commands

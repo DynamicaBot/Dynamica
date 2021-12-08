@@ -6,6 +6,7 @@ import {
 import { SimpleIntervalJob, Task } from "toad-scheduler";
 import { debug } from "../colourfulLogger";
 import { formatString } from "../formatString";
+import { getChannel } from "../getCached";
 import { prisma } from "../prisma";
 import { scheduler } from "../scheduler";
 import { updateActivityCount } from "./general";
@@ -58,42 +59,52 @@ export const createSecondary = async (
   primaryId: string,
   member?: GuildMember
 ) => {
-  const primaryChannel = await prisma.primary.findUnique({
+  const primaryConfig = await prisma.primary.findUnique({
     where: { id: primaryId },
-    include: { aliases: true, secondaries: true },
+    include: { guild: true, secondaries: true },
   });
 
-  if (!primaryChannel) return;
-  const cachedChannel = channelManager.cache.get(primaryId);
-  const channel = cachedChannel
-    ? cachedChannel
-    : await channelManager.fetch(primaryId);
-  if (!primaryChannel || !channel || !channel.isVoice()) return;
-  const activities = Array.from(channel.members).flatMap((entry) => {
+  if (!primaryConfig) return;
+
+  const aliases = await prisma.alias.findMany({
+    where: { guildId: channelManager.guild.id },
+  });
+
+  const primaryChannel = await getChannel(channelManager, primaryId);
+
+  if (!primaryConfig || !primaryChannel?.isVoice()) return;
+
+  const activities = Array.from(primaryChannel.members).flatMap((entry) => {
     if (!entry[1].presence) return [];
     return entry[1].presence?.activities.map((activity) => activity.name);
   });
+
   const str = !activities.length
-    ? primaryChannel.generalName
-    : primaryChannel.template;
+    ? primaryConfig.generalName
+    : primaryConfig.template;
+
   const secondary = await channelManager.create(
     formatString(str, {
       creator: member?.displayName as string,
-      channelNumber: primaryChannel.secondaries.length + 1,
+      channelNumber: primaryConfig.secondaries.length + 1,
       activities: activities,
-      aliases: primaryChannel.aliases,
-      memberCount: channel.members.size,
+      aliases,
+      memberCount: primaryChannel.members.size,
     }),
     {
       type: "GUILD_VOICE",
-      parent: channel?.parent ? channel.parent : undefined,
-      position: channel?.position ? channel.position + 1 : undefined,
+      parent: primaryChannel?.parent ? primaryChannel.parent : undefined,
+      position: primaryChannel?.position
+        ? primaryChannel.position + 1
+        : undefined,
     }
   );
-  secondary.setPosition(channel?.position + 1);
+
+  secondary.setPosition(primaryChannel?.position + 1);
   if (secondary.parent) {
     secondary.lockPermissions();
   }
+
   if (member) {
     member.voice.setChannel(secondary);
   }
@@ -102,14 +113,17 @@ export const createSecondary = async (
     data: {
       id: secondary.id,
       primaryId,
+      guildId: channelManager.guild.id,
     },
   });
+
   scheduler.addSimpleIntervalJob(
     new SimpleIntervalJob(
       { minutes: 5 },
       new Task(secondary.id, () => refreshSecondary(secondary))
     )
   );
+
   await updateActivityCount(channelManager.client);
   await debug(
     `Secondary channel ${secondary.name} created by ${member?.user.tag} in ${channelManager.guild.name}.`
@@ -124,17 +138,22 @@ export const createSecondary = async (
  */
 export const refreshSecondary = async (channel: BaseGuildVoiceChannel) => {
   const { id } = channel;
-  const channelConfig = await prisma.secondary.findUnique({
+  const secondary = await prisma.secondary.findUnique({
     where: { id },
+    include: {
+      primary: true,
+      guild: true,
+    },
   });
-  if (!channelConfig) return;
-  const primaryConfig = await prisma.primary.findUnique({
-    where: { id: channelConfig.primaryId },
-    include: { aliases: true },
+  const aliases = await prisma.alias.findMany({
+    where: {
+      guildId: channel.id,
+    },
   });
-  if (!channelConfig || !primaryConfig) return;
-  const channelCreator = channelConfig.creator
-    ? channel.members.get(channelConfig.creator)?.displayName
+  if (!secondary) return;
+
+  const channelCreator = secondary.creator
+    ? channel.members.get(secondary.creator)?.displayName
     : "";
   const creator = channelCreator
     ? channelCreator
@@ -144,14 +163,14 @@ export const refreshSecondary = async (channel: BaseGuildVoiceChannel) => {
     if (!entry[1].presence) return [];
     return entry[1].presence?.activities.map((activity) => activity.name);
   });
-  const str = channelConfig.name
-    ? channelConfig.name
+  const str = secondary.name
+    ? secondary.name
     : !activities.length
-    ? primaryConfig.generalName
-    : primaryConfig.template;
+    ? secondary.primary.generalName
+    : secondary.primary.template;
   const name = formatString(str, {
     creator: creator ? creator : "",
-    aliases: primaryConfig.aliases,
+    aliases: aliases,
     channelNumber: 1,
     activities,
     memberCount: channel.members.size,
