@@ -1,5 +1,7 @@
 import { SlashCommandBuilder } from "@discordjs/builders";
 import { CommandInteraction } from "discord.js";
+import { checkPermissions } from "../lib/checks/permissions";
+import { checkSecondary } from "../lib/checks/validSecondary";
 import { ErrorEmbed, SuccessEmbed } from "../lib/discordEmbeds";
 import { getGuildMember } from "../lib/getCached";
 import { prisma } from "../lib/prisma";
@@ -47,29 +49,16 @@ module.exports = {
     });
 
     // Error response for no secondary
-    if (!secondary) {
-      interaction.reply({
-        ephemeral: true,
-        embeds: [ErrorEmbed("Must be in a Dynamica-controlled voice channel.")],
-      });
+    if (!(await checkSecondary(interaction))) {
       return;
     }
 
     // Check dynamica role
-    if (
-      !guildMember?.roles.cache.some((role) => role.name === "Dynamica Manager")
-    ) {
-      interaction.reply({
-        ephemeral: true,
-        embeds: [
-          ErrorEmbed(
-            "Must have the Dynamica role to change the general template."
-          ),
-        ],
-      });
+    if (!(await checkPermissions(interaction))) {
       return;
     }
 
+    if (!secondary) return;
     // Update channel list
     await prisma.primary.update({
       where: { id: secondary.primary.id },

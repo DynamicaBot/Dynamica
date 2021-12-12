@@ -4,6 +4,8 @@ import { CommandInteraction } from "discord.js";
 import { info } from "../lib/colourfulLogger";
 import { ErrorEmbed, SuccessEmbed } from "../lib/discordEmbeds";
 import { getGuildMember } from "../lib/getCached";
+import { checkPermissions } from "../lib/checks/permissions";
+import { checkSecondary } from "../lib/checks/validSecondary";
 
 // Set General Template
 module.exports = {
@@ -26,44 +28,31 @@ module.exports = {
       interaction.user.id
     );
 
-    if (
-      !guildMember?.roles.cache.some((role) => role.name === "Dynamica Manager")
-    ) {
-      interaction.reply({
-        ephemeral: true,
-        embeds: [
-          ErrorEmbed("Must have the Dynamica role to change the channel name."),
-        ],
-      });
+    if (!(await checkPermissions(interaction))) {
       return;
     }
+
+    if (!(await checkSecondary(interaction))) {
+      return;
+    }
+
     const channel = guildMember?.voice.channel;
 
-    const channelConfig = await prisma.secondary.findUnique({
-      where: {
-        id: channel?.id,
+    if (!channel) return;
+
+    await prisma.secondary.update({
+      where: { id: channel.id },
+      data: {
+        name,
       },
     });
-    if (!channelConfig || !channel) {
-      await interaction.reply({
-        ephemeral: true,
-        embeds: [ErrorEmbed("Must be in a Dynamica-controlled voice channel.")],
-      });
-    } else {
-      await prisma.secondary.update({
-        where: { id: channel.id },
-        data: {
-          name,
-        },
-      });
-      await interaction.reply({
-        embeds: [
-          SuccessEmbed(
-            `Channel name changed to ${name}. Channel may take up to 5 minutes to update.`
-          ),
-        ],
-      });
-      info(`${channel.id} name changed.`);
-    }
+    await interaction.reply({
+      embeds: [
+        SuccessEmbed(
+          `Channel name changed to ${name}. Channel may take up to 5 minutes to update.`
+        ),
+      ],
+    });
+    info(`${channel.id} name changed.`);
   },
 };

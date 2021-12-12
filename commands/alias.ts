@@ -1,6 +1,7 @@
 import { Embed, quote, SlashCommandBuilder } from "@discordjs/builders";
 import { CommandInteraction } from "discord.js";
 import checkGuild from "../lib/checks/guild";
+import { checkPermissions } from "../lib/checks/permissions";
 import { ErrorEmbed, SuccessEmbed } from "../lib/discordEmbeds";
 import { getGuildMember } from "../lib/getCached";
 import { prisma } from "../lib/prisma";
@@ -47,18 +48,8 @@ module.exports = {
   async execute(interaction: CommandInteraction) {
     await checkGuild(interaction.guild?.id);
     if (!interaction.guild?.members) return;
-    const guildMember = await getGuildMember(
-      interaction.guild.members,
-      interaction.user.id
-    );
 
-    if (
-      !guildMember?.roles.cache.some((role) => role.name === "Dynamica Manager")
-    ) {
-      interaction.reply({
-        ephemeral: true,
-        embeds: [ErrorEmbed("Must have the Dynamica role to manage aliases.")],
-      });
+    if (!(await checkPermissions(interaction))) {
       return;
     }
 

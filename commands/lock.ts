@@ -4,6 +4,8 @@ import { CommandInteraction, Permissions } from "discord.js";
 import { info } from "../lib/colourfulLogger";
 import { ErrorEmbed, SuccessEmbed } from "../lib/discordEmbeds";
 import { getGuildMember } from "../lib/getCached";
+import { checkPermissions } from "../lib/checks/permissions";
+import { checkSecondary } from "../lib/checks/validSecondary";
 
 // Set lock Template
 module.exports = {
@@ -36,36 +38,20 @@ module.exports = {
     if (!interaction.guild?.members) return;
 
     const guildMember = await getGuildMember(
-      interaction.guild?.members,
+      interaction.guild.members,
       interaction.user.id
     );
 
     const everyone = interaction.guild?.roles.everyone;
+    const channel = guildMember?.voice.channel;
 
-    if (
-      !guildMember?.roles.cache.some((role) => role.name === "Dynamica Manager")
-    ) {
-      interaction.reply({
-        ephemeral: true,
-        embeds: [
-          ErrorEmbed("Must have the Dynamica role to change the channel name."),
-        ],
-      });
+    if (!channel) return;
+
+    if (!(await checkPermissions(interaction))) {
       return;
     }
 
-    const channel = guildMember?.voice.channel;
-
-    const channelConfig = await prisma.secondary.findUnique({
-      where: {
-        id: channel?.id,
-      },
-    });
-    if (!channelConfig || !channel) {
-      await interaction.reply({
-        ephemeral: true,
-        embeds: [ErrorEmbed("Must be in a Dynamica-controlled voice channel.")],
-      });
+    if (!(await checkSecondary(interaction))) {
       return;
     }
 

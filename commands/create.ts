@@ -3,6 +3,7 @@ import { CommandInteraction, GuildChannel } from "discord.js";
 import { createPrimary } from "../lib/operations/primary";
 import { ErrorEmbed, SuccessEmbed } from "../lib/discordEmbeds";
 import { getGuildMember } from "../lib/getCached";
+import { checkPermissions } from "../lib/checks/permissions";
 
 module.exports = {
   data: new SlashCommandBuilder()
@@ -29,22 +30,7 @@ module.exports = {
       return;
     }
 
-    const guildMember = await getGuildMember(
-      interaction.guild.members,
-      interaction.user.id
-    );
-
-    if (
-      !guildMember?.roles.cache.find((role) => role.name === "Dynamica Manager")
-    ) {
-      interaction.reply({
-        ephemeral: true,
-        embeds: [
-          ErrorEmbed(
-            "Must have the Dynamica role to create a primary channel."
-          ),
-        ],
-      });
+    if (!(await checkPermissions(interaction))) {
       return;
     }
 

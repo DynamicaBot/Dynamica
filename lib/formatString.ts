@@ -33,7 +33,7 @@ export function formatString(
     .replace(/@@num@@/g, memberCount.toString()) // number of channel members
     .replace(/@@game@@/g, activityList.join(", ")) // Activities
     .replace(/@@creator@@/g, creator) // Creator
-    .replace(/<<(.+)\/(.+)>>/g, memberCount === 1 ? plurals[1] : plurals[2]); // person
+    .replace(/<<(.+)\/(.+)>>/g, memberCount === 1 ? plurals[1] : plurals[2]); // Plurals
 }
 
 const nato = [

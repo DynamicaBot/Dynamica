@@ -18,7 +18,7 @@ export const getChannel = async (
   id: string
 ) => {
   const cachedChannel = channelManager.cache.get(id);
-  return cachedChannel ? cachedChannel : await channelManager.fetch(id);
+  return cachedChannel ?? (await channelManager.fetch(id));
 };
 
 /**
@@ -35,9 +35,7 @@ export const getGuildMember = async (
   const cachedGuildMember = guildMemberManager.cache.find(
     (guildMember) => guildMember.id === id
   );
-  return cachedGuildMember
-    ? cachedGuildMember
-    : await guildMemberManager.fetch(id);
+  return cachedGuildMember ?? (await guildMemberManager.fetch(id));
 };
 
 export const getCommands = async (
