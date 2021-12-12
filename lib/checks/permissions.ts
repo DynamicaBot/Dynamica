@@ -8,16 +8,8 @@ export const checkPermissions = async (interaction: CommandInteraction) => {
     interaction.guild.members,
     interaction.user.id
   );
-  if (
+  return (
     guildMember?.roles.cache.some((role) => role.name === "Dynamica Manager") ||
     guildMember?.permissions.has("ADMINISTRATOR")
-  ) {
-    return false;
-  } else {
-    interaction.reply({
-      ephemeral: true,
-      embeds: [ErrorEmbed("Must have the Dynamica role to manage aliases.")],
-    });
-    return true;
-  }
+  );
 };

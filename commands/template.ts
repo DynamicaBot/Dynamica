@@ -49,6 +49,10 @@ module.exports = {
     const template = interaction.options.getString("template", true);
 
     if (!(await checkPermissions(interaction))) {
+      await interaction.reply({
+        ephemeral: true,
+        embeds: [ErrorEmbed("Must have the Dynamica role to manage aliases.")],
+      });
       return;
     }
     await prisma.primary.update({

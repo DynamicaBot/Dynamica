@@ -19,6 +19,7 @@ module.exports = {
         .setRequired(false)
     ),
   async execute(interaction: CommandInteraction) {
+    console.log("test");
     const section = interaction.options.getChannel(
       "section"
     ) as GuildChannel | null;
@@ -29,8 +30,12 @@ module.exports = {
       });
       return;
     }
-
+    console.log(!(await checkPermissions(interaction)));
     if (!(await checkPermissions(interaction))) {
+      await interaction.reply({
+        ephemeral: true,
+        embeds: [ErrorEmbed("Must have the Dynamica role to manage aliases.")],
+      });
       return;
     }
 
