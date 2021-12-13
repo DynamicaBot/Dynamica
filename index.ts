@@ -3,7 +3,8 @@ dotenv.config();
 import { Intents, Collection, Client } from "discord.js";
 import fs from "fs";
 import { ErrorEmbed } from "./lib/discordEmbeds";
-import { error } from "./lib/colourfulLogger";
+import { error, info } from "./lib/colourfulLogger";
+import { scheduler } from "./lib/scheduler";
 
 // Create a new client instance
 const client = new Client({
@@ -67,3 +68,9 @@ for (const file of eventFiles) {
 
 // Login to Discord with your client's token
 client.login(process.env.TOKEN);
+
+process.on("SIGINT", () => {
+  client.destroy()
+  scheduler.stop()
+  info("Bot Stopped")
+})
