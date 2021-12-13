@@ -34,7 +34,16 @@ steps:
       rebuild: true
       mount:
         - ./node_modules
-
+  - name: Publish Release
+    image: plugins/github-release
+    settings:
+      api_key: 
+        from_secret: github_token
+    when:
+      event: 
+        - tag
+      branch:
+        - master
   - name: Publish Bot
     pull: if-not-exists
     image: plugins/docker
@@ -42,13 +51,14 @@ steps:
       branch:
         - master
       event:
-        - promote
+        - tag
     settings:
       username:
         from_secret: github_username
       password:
         from_secret: github_token
       repo: ghcr.io/dynamicabot/dynamica
+      auto_tag: true
       registry: ghcr.io
       cache_from: ghcr.io/dynamicabot/dynamica
 volumes:
