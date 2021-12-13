@@ -4,7 +4,7 @@
         "version": "PTDL_v1",
         "update_url": null
     },
-    "exported_at": "2021-12-12T22:02:07-05:00",
+    "exported_at": "2021-12-12T23:43:37-05:00",
     "name": "Dynamica",
     "author": "sebastian.pietschner@gmail.com",
     "description": "The dynamica discord bot",
@@ -13,17 +13,17 @@
         "ghcr.io\/parkervcp\/yolks:nodejs_16"
     ],
     "file_denylist": [],
-    "startup": "git pull && yarn deploy && yarn prisma migrate deploy && yarn start",
+    "startup": "if [[ -d .git ]] && [[ {{AUTO_UPDATE}} == \"1\" ]]; then git pull; fi; yarn deploy; yarn prisma migrate deploy; yarn start",
     "config": {
         "files": "{}",
         "startup": "{\r\n    \"done\": \"Ready! Logged in as \"\r\n}",
         "logs": "{}",
-        "stop": "^C"
+        "stop": "^^C"
     },
     "scripts": {
         "installation": {
-            "script": "apt-get update\r\napt-get install openssl git -y -qq\r\nmkdir -p \/mnt\/server\r\n\r\nif [[ -d .git\\\/ ]]; then\r\n    git pull\r\nelse\r\n    git clone https:\\\/\\\/github.com\\\/DynamicaBot\\\/dynamica.git .;\r\nfi;\r\nyarn install --frozen-lockfile",
-            "container": "node:lts-buster-slim",
+            "script": "apt-get update\r\napt-get install openssl git -y -qq\r\n\r\ncd \/mnt\/server\r\n\r\nif [ -d .git ]; then\r\n    git pull\r\nelse\r\n    git clone https:\/\/github.com\/DynamicaBot\/dynamica.git .;\r\nfi;\r\nyarn install --frozen-lockfile",
+            "container": "node:16-buster-slim",
             "entrypoint": "bash"
         }
     },
@@ -47,13 +47,22 @@
             "rules": "required|string"
         },
         {
-            "name": "Client ID",
-            "description": "The client ID of your discord bot.",
+            "name": "Application ID",
+            "description": "The application ID of your discord bot.",
             "env_variable": "CLIENT_ID",
             "default_value": "",
             "user_viewable": true,
             "user_editable": true,
             "rules": "required|string|size:18"
+        },
+        {
+            "name": "Auto Updater",
+            "description": "Set to 1 to auto update with the github repo.",
+            "env_variable": "AUTO_UPDATE",
+            "default_value": "0",
+            "user_viewable": true,
+            "user_editable": true,
+            "rules": "required|boolean"
         }
     ]
 }
