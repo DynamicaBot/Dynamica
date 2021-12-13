@@ -6,6 +6,7 @@ import { ErrorEmbed, SuccessEmbed } from "../lib/discordEmbeds";
 import { getGuildMember } from "../lib/getCached";
 import { checkPermissions } from "../lib/checks/permissions";
 import { checkSecondary } from "../lib/checks/validSecondary";
+import { checkOwner } from "../lib/checks/owner";
 
 // Set General Template
 module.exports = {
@@ -28,13 +29,7 @@ module.exports = {
       interaction.user.id
     );
 
-    if (!(await checkPermissions(interaction))) {
-      await interaction.reply({
-        ephemeral: true,
-        embeds: [ErrorEmbed("Must have the Dynamica role to manage aliases.")],
-      });
-      return;
-    }
+  
 
     if (!(await checkSecondary(interaction))) {
       await interaction.reply({
@@ -47,7 +42,10 @@ module.exports = {
     const channel = guildMember?.voice.channel;
 
     if (!channel) return;
-
+    if (!checkOwner(channel, guildMember)) {
+      interaction.reply({ephemeral: true, embeds: [ErrorEmbed("You are not the owner of this channel.")]})
+      return;
+    }
     await prisma.secondary.update({
       where: { id: channel.id },
       data: {

@@ -140,6 +140,7 @@ export const createSecondary = async (
   await prisma.secondary.create({
     data: {
       id: secondary.id,
+      creator: member?.id,
       primaryId,
       guildId: channelManager.guild.id,
       textChannelId: await textChannelId(),
