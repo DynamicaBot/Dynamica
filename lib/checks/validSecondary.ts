@@ -17,13 +17,5 @@ export const checkSecondary = async (interaction: CommandInteraction) => {
       id: channel?.id,
     },
   });
-  if (!channelConfig) {
-    await interaction.reply({
-      ephemeral: true,
-      embeds: [ErrorEmbed("Must be in a Dynamica-controlled voice channel.")],
-    });
-    return false;
-  } else {
-    return true;
-  }
+  return !!channelConfig
 };

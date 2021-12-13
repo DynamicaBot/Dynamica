@@ -42,6 +42,10 @@ module.exports = {
     });
 
     if (!(await checkSecondary(interaction))) {
+      await interaction.reply({
+        ephemeral: true,
+        embeds: [ErrorEmbed("Not a valid Dynamica channel.")]
+      })
       return;
     }
 
