@@ -4,7 +4,7 @@
         "version": "PTDL_v1",
         "update_url": null
     },
-    "exported_at": "2021-12-12T21:55:44-05:00",
+    "exported_at": "2021-12-12T22:02:07-05:00",
     "name": "Dynamica",
     "author": "sebastian.pietschner@gmail.com",
     "description": "The dynamica discord bot",
@@ -22,7 +22,7 @@
     },
     "scripts": {
         "installation": {
-            "script": "apt-get update\r\napt-get install openssl git -y -qq\r\nmkdir -p \/mnt\/server\r\ncd \/mnt\/server\r\nif [[ -d .git\\\/ ]]; then\r\n    git pull\r\nelse\r\n    git clone https:\\\/\\\/github.com\\\/DynamicaBot\\\/dynamica.git .;\r\nfi;\r\nyarn install --frozen-lockfile",
+            "script": "apt-get update\r\napt-get install openssl git -y -qq\r\nmkdir -p \/mnt\/server\r\n\r\nif [[ -d .git\\\/ ]]; then\r\n    git pull\r\nelse\r\n    git clone https:\\\/\\\/github.com\\\/DynamicaBot\\\/dynamica.git .;\r\nfi;\r\nyarn install --frozen-lockfile",
             "container": "node:lts-buster-slim",
             "entrypoint": "bash"
         }
