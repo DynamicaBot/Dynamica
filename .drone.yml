@@ -53,6 +53,7 @@ steps:
       event:
         - tag
     settings:
+      tags: latest
       username:
         from_secret: github_username
       password:
