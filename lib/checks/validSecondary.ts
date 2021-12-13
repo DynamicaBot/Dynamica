@@ -11,10 +11,11 @@ export const checkSecondary = async (interaction: CommandInteraction) => {
   );
 
   const channel = guildMember?.voice.channel;
+  if (!channel) return false;
 
   const channelConfig = await prisma.secondary.findUnique({
     where: {
-      id: channel?.id,
+      id: channel.id,
     },
   });
   return !!channelConfig

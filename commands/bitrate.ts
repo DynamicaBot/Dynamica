@@ -3,7 +3,7 @@ import { prisma } from "../lib/prisma";
 import { CommandInteraction } from "discord.js";
 import { info } from "../lib/colourfulLogger";
 import { ErrorEmbed, SuccessEmbed } from "../lib/discordEmbeds";
-import { getGuildMember } from "../lib/getCached";
+import { getChannel, getGuildMember } from "../lib/getCached";
 import { checkPermissions } from "../lib/checks/permissions";
 import { checkSecondary } from "../lib/checks/validSecondary";
 import { checkOwner } from "../lib/checks/owner";
@@ -11,16 +11,15 @@ import { checkOwner } from "../lib/checks/owner";
 // Set General Template
 module.exports = {
   data: new SlashCommandBuilder()
-    .setName("name")
-    .setDescription("Edit the name of the current channel.")
-    .addStringOption((option) =>
+    .setName("bitrate")
+    .setDescription("Edit the bitrate of the current channel.")
+    .addIntegerOption((option) =>
       option
-        .setName("name")
-        .setDescription("The new name of the channel (can be a template).")
-        .setRequired(true)
+        .setDescription("The bitrate to set the channel to.")
+        .setName("number")
     ),
   async execute(interaction: CommandInteraction) {
-    const name = interaction.options.getString("name");
+    const bitrate = interaction.options.getInteger("number");
 
     if (!interaction.guild) return;
 
@@ -43,26 +42,41 @@ module.exports = {
     if (!guildMember?.voice.channel) return;
 
     // check if current owner
-    if (!((await checkOwner(guildMember.voice.channel, guildMember)) || (await checkPermissions(interaction)))) {
+    if (
+      !(
+        (await checkOwner(guildMember.voice.channel, guildMember)) ||
+        (await checkPermissions(interaction))
+      )
+    ) {
       interaction.reply({
         embeds: [ErrorEmbed("You are not the current owner of this channel.")],
         ephemeral: true,
       });
       return;
     }
-    await prisma.secondary.update({
-      where: { id: channel.id },
-      data: {
-        name,
-      },
-    });
+
+    if (!bitrate) {
+        guildMember.voice.channel.edit({bitrate: 64000})
+        interaction.reply({ephemeral: true, embeds: [SuccessEmbed("Set bitrate to default.")]})
+        return;
+    }
+
+    if (!((bitrate <= 96 ) && (bitrate >= 8)) ) {
+      interaction.reply({
+        embeds: [
+          ErrorEmbed(
+            "Bitrate (in kbps) should be greater than or equal to 4 or less than or equal to 96."
+          ),
+        ],
+      });
+      return;
+    }
+    await guildMember.voice.channel.edit({ bitrate: bitrate ? bitrate * 1000 : 64000  });
     await interaction.reply({
+      ephemeral: true,
       embeds: [
-        SuccessEmbed(
-          `Channel name changed to ${name}. Channel may take up to 5 minutes to update.`
-        ),
+        SuccessEmbed(`Channel bitrate changed to ${bitrate ?? "default" }kbps.`),
       ],
     });
-    info(`${channel.id} name changed.`);
   },
 };

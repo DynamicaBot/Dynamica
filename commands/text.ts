@@ -28,6 +28,6 @@ module.exports = {
     await prisma.guild.update({where: {id: interaction.guildId}, data: {
         textChannelsEnabled: state
     }})
-    await interaction.reply({ephemeral: true, embeds: [SuccessEmbed("Temporary text channels Enabled for all future created channels.")]})
+    await interaction.reply({ephemeral: true, embeds: [SuccessEmbed(`Temporary text channels ${state ? "disabled" : "disabled"} for all future created channels.`)]})
   },
 };

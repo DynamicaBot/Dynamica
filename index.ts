@@ -5,6 +5,7 @@ import fs from "fs";
 import { ErrorEmbed } from "./lib/discordEmbeds";
 import { error, info } from "./lib/colourfulLogger";
 import { scheduler } from "./lib/scheduler";
+import { prisma } from "./lib/prisma";
 
 // Create a new client instance
 const client = new Client({
@@ -72,5 +73,6 @@ client.login(process.env.TOKEN);
 process.on("SIGINT", () => {
   client.destroy()
   scheduler.stop()
+  prisma.$disconnect()
   info("Bot Stopped")
 })

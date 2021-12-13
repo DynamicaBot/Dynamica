@@ -3,7 +3,7 @@ import { prisma } from "../lib/prisma";
 import { CommandInteraction } from "discord.js";
 import { info } from "../lib/colourfulLogger";
 import { ErrorEmbed, SuccessEmbed } from "../lib/discordEmbeds";
-import { getGuildMember } from "../lib/getCached";
+import { getChannel, getGuildMember } from "../lib/getCached";
 import { checkPermissions } from "../lib/checks/permissions";
 import { checkSecondary } from "../lib/checks/validSecondary";
 import { checkOwner } from "../lib/checks/owner";
@@ -11,16 +11,10 @@ import { checkOwner } from "../lib/checks/owner";
 // Set General Template
 module.exports = {
   data: new SlashCommandBuilder()
-    .setName("name")
-    .setDescription("Edit the name of the current channel.")
-    .addStringOption((option) =>
-      option
-        .setName("name")
-        .setDescription("The new name of the channel (can be a template).")
-        .setRequired(true)
-    ),
+    .setName("limit")
+    .setDescription("Edit the max number of people allowed in the current channel").addIntegerOption(option => option.setDescription("The maximum number of people that are allowed to join the channel.").setName("number").setRequired(true)),
   async execute(interaction: CommandInteraction) {
-    const name = interaction.options.getString("name");
+    const userLimit = interaction.options.getInteger("number", true);
 
     if (!interaction.guild) return;
 
@@ -50,19 +44,13 @@ module.exports = {
       });
       return;
     }
-    await prisma.secondary.update({
-      where: { id: channel.id },
-      data: {
-        name,
-      },
-    });
+    await guildMember.voice.channel.edit({userLimit})
     await interaction.reply({
       embeds: [
         SuccessEmbed(
-          `Channel name changed to ${name}. Channel may take up to 5 minutes to update.`
+          `Channel limit changed to ${userLimit}.`
         ),
       ],
     });
-    info(`${channel.id} name changed.`);
   },
 };

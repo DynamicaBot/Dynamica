@@ -48,16 +48,21 @@ module.exports = {
 
     if (!channel) return;
 
-    if (!checkOwner(channel, guildMember)) {
-      interaction.reply({ephemeral: true, embeds: [ErrorEmbed("You are not the owner of this channel.")]})
+    if (
+      !((await checkOwner(guildMember.voice.channel, guildMember)) || (await checkPermissions(interaction)))
+    ) {
+      interaction.reply({
+        embeds: [ErrorEmbed("You are not the current owner of this channel.")],
+        ephemeral: true,
+      });
       return;
     }
 
     if (!(await checkSecondary(interaction))) {
       await interaction.reply({
         ephemeral: true,
-        embeds: [ErrorEmbed("Not a valid Dynamica channel.")]
-      })
+        embeds: [ErrorEmbed("Not a valid Dynamica channel.")],
+      });
       return;
     }
 
