@@ -25,9 +25,22 @@ export const deleteSecondary = async (channel: BaseGuildVoiceChannel) => {
   });
   if (channel?.members.size !== 0 || !channel?.deletable || !channelConfig)
     return;
+
+  const textChannel = async () => {
+    if (channelConfig.textChannelId) {
+      const discordTextChannel = await channel.guild.channels.fetch(
+        channelConfig.textChannelId
+      );
+      if (discordTextChannel?.deletable || discordTextChannel?.isText()) {
+        return await discordTextChannel;
+      }
+    }
+    return undefined;
+  };
   await Promise.all([
     prisma.secondary.delete({ where: { id } }),
     channel?.delete(),
+    (await textChannel())?.delete(),
   ]);
   scheduler.removeById(id);
   await updateActivityCount(channel.client);
@@ -94,14 +107,14 @@ export const createSecondary = async (
     }),
     {
       type: "GUILD_VOICE",
-      parent: primaryChannel?.parent ? primaryChannel.parent : undefined,
+      parent: primaryChannel?.parent ?? undefined,
       position: primaryChannel?.position
         ? primaryChannel.position + 1
         : undefined,
     }
   );
 
-  secondary.setPosition(primaryChannel?.position + 1);
+  // secondary.setPosition(primaryChannel?.position + 1);
   if (secondary.parent) {
     secondary.lockPermissions();
   }
@@ -110,11 +123,26 @@ export const createSecondary = async (
     member.voice.setChannel(secondary);
   }
   await checkGuild(channelManager.guild.id);
+  const textChannelId = async () => {
+    if (primaryConfig.guild?.textChannelsEnabled && member) {
+      const textChannel = await channelManager.create("Text Channel", {
+        type: "GUILD_TEXT",
+        permissionOverwrites: [
+          { id: channelManager.guild.roles.everyone, deny: "VIEW_CHANNEL" },
+          { id: member?.id, allow: "VIEW_CHANNEL" },
+        ],
+        parent: secondary.parent ?? undefined
+      });
+      return textChannel.id;
+    }
+  };
+
   await prisma.secondary.create({
     data: {
       id: secondary.id,
       primaryId,
       guildId: channelManager.guild.id,
+      textChannelId: await textChannelId(),
     },
   });
 

@@ -30,7 +30,6 @@ module.exports = {
       });
       return;
     }
-    console.log(!(await checkPermissions(interaction)));
     if (!(await checkPermissions(interaction))) {
       await interaction.reply({
         ephemeral: true,

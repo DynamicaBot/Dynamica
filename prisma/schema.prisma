@@ -14,6 +14,7 @@ model Guild {
   id        String @id @unique
   primaryChannels  Primary[]
   secondaryChannels  Secondary[]
+  textChannelsEnabled Boolean @default(false)
   aliases Alias[] @relation("AliasOnGuild")
 }
 
@@ -33,6 +34,7 @@ model Secondary {
   creator String?
   guildId String
   guild Guild @relation(references: [id], fields: [guildId])
+  textChannelId String?
   primaryId String
   primary Primary @relation(name: "SecondaryOnPrimary", fields: [primaryId], references: [id])
 }
