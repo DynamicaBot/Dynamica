@@ -48,9 +48,9 @@ steps:
         from_secret: github_username
       password:
         from_secret: github_token
-      repo: ghcr.io/sebasptsch/dynamica
+      repo: ghcr.io/dynamicabot/dynamica
       registry: ghcr.io
-      cache_from: ghcr.io/sebasptsch/dynamica
+      cache_from: ghcr.io/dynamicabot/dynamica
 volumes:
   - name: cache
     host:

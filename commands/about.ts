@@ -12,10 +12,10 @@ module.exports = {
           .setTitle("About")
           .setAuthor({ name: "Sebastian P", url: "https://sebasptsch.dev" })
           .setImage(
-            "https://github.com/sebasptsch/Dynamica/raw/master/assets/DynamicaBanner.png"
+            "https://github.com/DynamicaBot/Dynamica/raw/master/assets/DynamicaBanner.png"
           )
           .setDescription("About the Dynamica Bot")
-          .setURL("https://github.com/sebasptsch/Dynamica"),
+          .setURL("https://github.com/DynamicaBot/Dynamica"),
       ],
     });
   },
