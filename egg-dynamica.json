@@ -13,7 +13,7 @@
         "ghcr.io\/parkervcp\/yolks:nodejs_16"
     ],
     "file_denylist": [],
-    "startup": "if [[ -d .git ]] && [[ {{AUTO_UPDATE}} == \"1\" ]]; then git pull; fi; yarn deploy; yarn prisma migrate deploy; yarn start",
+    "startup": "if [[ -d .git ]] && [[ {{AUTO_UPDATE}} == \"1\" ]]; then git pull --rebase; fi; yarn deploy; yarn prisma migrate deploy; yarn start",
     "config": {
         "files": "{}",
         "startup": "{\r\n    \"done\": \"Ready! Logged in as \"\r\n}",
