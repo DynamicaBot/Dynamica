@@ -1,8 +1,7 @@
-import dotenv from "dotenv";
-dotenv.config();
-import fs from "fs";
-import { REST } from "@discordjs/rest";
-import { Routes } from "discord-api-types/v9";
+require("dotenv").config();
+const fs = require("fs");
+const { REST } = require("@discordjs/rest");
+const { Routes } = require("discord-api-types/v9");
 
 const { TOKEN, CLIENT_ID, GUILD_ID } = process.env;
 if (!TOKEN || !CLIENT_ID) {
