@@ -10,7 +10,8 @@
     "chalk": "4.1.2",
     "discord.js": "^13.3.1",
     "romans": "^2.0.3",
-    "toad-scheduler": "^1.6.0"
+    "toad-scheduler": "^1.6.0",
+    "dotenv": "^10.0.0"
   },
   "scripts": {
     "start": "node dist/index.js",
@@ -23,7 +24,6 @@
   "devDependencies": {
     "@types/node": "^16.11.11",
     "@types/romans": "^2.0.0",
-    "dotenv": "^10.0.0",
     "nodemon": "^2.0.15",
     "prisma": "^3.6.0",
     "ts-node": "^10.4.0",
