@@ -1,3 +1,4 @@
+---
 kind: "pipeline"
 name: "default"
 type: "docker"
@@ -67,3 +68,8 @@ volumes:
   - name: cache
     host:
       path: /tmp/cache
+---
+kind: signature
+hmac: f06d6a80db7c6297e396999205075c2296f47b53f3d2ae24e104c79ad9bd62eb
+
+...
