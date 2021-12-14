@@ -2,9 +2,6 @@
 kind: "pipeline"
 name: "default"
 type: "docker"
-trigger:
-  branch:
-    - master
 
 steps:
   - name: Restore Cache
@@ -70,6 +67,6 @@ volumes:
       path: /tmp/cache
 ---
 kind: signature
-hmac: f06d6a80db7c6297e396999205075c2296f47b53f3d2ae24e104c79ad9bd62eb
+hmac: f2cb880506b1e2c8dfed64bd1d9055ab2ac39956b4f6d61035e544b93d93fbb3
 
 ...
