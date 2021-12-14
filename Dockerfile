@@ -27,6 +27,7 @@ WORKDIR /app
 ENV NODE_ENV="production"
 ENV DATABASE_URL "file:/app/config/db.sqlite"
 COPY --from=build /app/dist .
+COPY deploy-commands.js .
 COPY package.json .
 
 CMD yarn deploy && yarn prisma migrate deploy && yarn start
