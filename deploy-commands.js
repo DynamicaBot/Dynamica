@@ -11,7 +11,7 @@ if (!TOKEN || !CLIENT_ID) {
   const commands = [];
   const commandFiles = fs
     .readdirSync("./commands")
-    .filter((file: string) => file.endsWith(".ts"));
+    .filter((file) => file.endsWith(".ts"));
 
   // Place your client and guild ids here
 
