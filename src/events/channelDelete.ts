@@ -3,8 +3,9 @@ import { deletedPrimary } from "../lib/operations/primary";
 import { deletedSecondary } from "../lib/operations/secondary";
 import { prisma } from "../lib/prisma";
 import { error } from "../lib/colourfulLogger";
+import { event } from "./event";
 
-module.exports = {
+export const channelDelete: event = {
   name: "channelDelete",
   once: false,
   async execute({ id }: GuildChannel) {

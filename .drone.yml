@@ -1,9 +1,7 @@
+---
 kind: "pipeline"
 name: "default"
 type: "docker"
-trigger:
-  branch:
-    - master
 
 steps:
   - name: Restore Cache
@@ -37,10 +35,10 @@ steps:
   - name: Publish Release
     image: plugins/github-release
     settings:
-      api_key: 
+      api_key:
         from_secret: github_token
     when:
-      event: 
+      event:
         - tag
       branch:
         - master
@@ -54,6 +52,7 @@ steps:
         - tag
     settings:
       tags: latest
+      target: runner
       username:
         from_secret: github_username
       password:
@@ -66,3 +65,8 @@ volumes:
   - name: cache
     host:
       path: /tmp/cache
+---
+kind: signature
+hmac: f2cb880506b1e2c8dfed64bd1d9055ab2ac39956b4f6d61035e544b93d93fbb3
+
+...

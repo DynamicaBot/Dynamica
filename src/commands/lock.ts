@@ -9,7 +9,7 @@ import { checkSecondary } from "../lib/checks/validSecondary";
 import { checkOwner } from "../lib/checks/owner";
 
 // Set lock Template
-module.exports = {
+export const lock = {
   data: new SlashCommandBuilder()
     .setName("lock")
     .setDescription("Lock a channel to a certain role or user.")
@@ -49,7 +49,10 @@ module.exports = {
     if (!channel) return;
 
     if (
-      !((await checkOwner(guildMember.voice.channel, guildMember)) || (await checkPermissions(interaction)))
+      !(
+        (await checkOwner(guildMember.voice.channel, guildMember)) ||
+        (await checkPermissions(interaction))
+      )
     ) {
       interaction.reply({
         embeds: [ErrorEmbed("You are not the current owner of this channel.")],

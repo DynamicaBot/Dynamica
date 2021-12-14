@@ -6,8 +6,9 @@ import { SimpleIntervalJob, Task } from "toad-scheduler";
 import { updateActivityCount } from "../lib/operations/general";
 import { refreshSecondary } from "../lib/operations/secondary";
 import { getChannel } from "../lib/getCached";
+import { event } from "./event";
 
-module.exports = {
+export const ready: event = {
   name: "ready",
   once: true,
   async execute(client: Client) {

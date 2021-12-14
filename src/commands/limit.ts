@@ -9,17 +9,22 @@ import { checkSecondary } from "../lib/checks/validSecondary";
 import { checkOwner } from "../lib/checks/owner";
 
 // Set General Template
-module.exports = {
+export const limit = {
   data: new SlashCommandBuilder()
-    .setName("bitrate")
-    .setDescription("Edit the bitrate of the current channel.")
+    .setName("limit")
+    .setDescription(
+      "Edit the max number of people allowed in the current channel"
+    )
     .addIntegerOption((option) =>
       option
-        .setDescription("The bitrate to set the channel to.")
+        .setDescription(
+          "The maximum number of people that are allowed to join the channel."
+        )
         .setName("number")
+        .setRequired(true)
     ),
   async execute(interaction: CommandInteraction) {
-    const bitrate = interaction.options.getInteger("number");
+    const userLimit = interaction.options.getInteger("number", true);
 
     if (!interaction.guild) return;
 
@@ -54,29 +59,9 @@ module.exports = {
       });
       return;
     }
-
-    if (!bitrate) {
-        guildMember.voice.channel.edit({bitrate: 64000})
-        interaction.reply({ephemeral: true, embeds: [SuccessEmbed("Set bitrate to default.")]})
-        return;
-    }
-
-    if (!((bitrate <= 96 ) && (bitrate >= 8)) ) {
-      interaction.reply({
-        embeds: [
-          ErrorEmbed(
-            "Bitrate (in kbps) should be greater than or equal to 4 or less than or equal to 96."
-          ),
-        ],
-      });
-      return;
-    }
-    await guildMember.voice.channel.edit({ bitrate: bitrate ? bitrate * 1000 : 64000  });
+    await guildMember.voice.channel.edit({ userLimit });
     await interaction.reply({
-      ephemeral: true,
-      embeds: [
-        SuccessEmbed(`Channel bitrate changed to ${bitrate ?? "default" }kbps.`),
-      ],
+      embeds: [SuccessEmbed(`Channel limit changed to ${userLimit}.`)],
     });
   },
 };

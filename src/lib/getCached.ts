@@ -1,9 +1,12 @@
 import {
+  ApplicationCommand,
   ApplicationCommandManager,
   ChannelManager,
+  Collection,
   GuildApplicationCommandManager,
   GuildMemberManager,
   GuildMemberRoleManager,
+  GuildResolvable,
   Role,
 } from "discord.js";
 
@@ -38,10 +41,18 @@ export const getGuildMember = async (
   return cachedGuildMember ?? (await guildMemberManager.fetch(id));
 };
 
-export const getCommands = async (
+export const getCommands: (
   guildCommandManager?: GuildApplicationCommandManager,
   applicationCommandManager?: ApplicationCommandManager
-) => {
+) => Promise<
+  | Collection<
+      string,
+      ApplicationCommand<{
+        guild?: GuildResolvable;
+      }>
+    >
+  | undefined
+> = async (guildCommandManager, applicationCommandManager) => {
   if (!guildCommandManager || !applicationCommandManager) return;
   const cachedGuildCommands = guildCommandManager.cache;
   const guildCommands =

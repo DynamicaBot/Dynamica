@@ -2,7 +2,7 @@ import { Embed, hyperlink, SlashCommandBuilder } from "@discordjs/builders";
 import { CommandInteraction } from "discord.js";
 import { getCommands } from "../lib/getCached";
 
-module.exports = {
+export const help = {
   data: new SlashCommandBuilder()
     .setName("help")
     .setDescription(

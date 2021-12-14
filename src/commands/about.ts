@@ -1,7 +1,7 @@
 import { Embed, SlashCommandBuilder } from "@discordjs/builders";
 import { CommandInteraction } from "discord.js";
 
-module.exports = {
+export const about = {
   data: new SlashCommandBuilder()
     .setName("about")
     .setDescription(`About the bot.`),
