@@ -7,7 +7,7 @@ import { getGuildMember } from "../lib/getCached";
 import { prisma } from "../lib/prisma";
 
 // Set General Template
-module.exports = {
+export const alias = {
   data: new SlashCommandBuilder()
     .setName("alias")
     .setDescription("Manage aliases.")

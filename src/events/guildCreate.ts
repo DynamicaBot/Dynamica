@@ -2,8 +2,9 @@ import { prisma } from "../lib/prisma";
 import { Client, Guild } from "discord.js";
 import { debug } from "../lib/colourfulLogger";
 import checkGuild from "../lib/checks/guild";
+import { event } from "./event";
 
-module.exports = {
+export const guildCreate: event = {
   name: "guildCreate",
   once: false,
   async execute(guild: Guild) {

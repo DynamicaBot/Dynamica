@@ -1,11 +1,12 @@
 import dotenv from "dotenv";
 dotenv.config();
 import { Intents, Collection, Client } from "discord.js";
-import fs from "fs";
 import { ErrorEmbed } from "./lib/discordEmbeds";
 import { error, info } from "./lib/colourfulLogger";
 import { scheduler } from "./lib/scheduler";
 import { prisma } from "./lib/prisma";
+import * as commands from "./commands";
+import * as events from "./events";
 
 // Create a new client instance
 const client = new Client({
@@ -16,29 +17,13 @@ const client = new Client({
   ],
 });
 
-const commands = new Collection<
-  string,
-  {
-    data: object;
-    execute: any;
-  }
->();
-const commandFiles = fs
-  .readdirSync("./commands")
-  .filter((file: string) => file.endsWith(".ts"));
-
-for (const file of commandFiles) {
-  const command = require(`./commands/${file}`);
-  // Set a new item in the Collection
-  // With the key as the command name and the value as the exported module
-  // console.log({ command });
-  commands.set(command.data.name, command);
-}
-
+const commandList = Object.values(commands);
 client.on("interactionCreate", async (interaction) => {
   if (!interaction.isCommand()) return;
 
-  const command = commands.get(interaction.commandName);
+  const command = commandList.find(
+    (command) => command.data.name === interaction.commandName
+  );
 
   if (!command) return;
 
@@ -46,7 +31,6 @@ client.on("interactionCreate", async (interaction) => {
     await command.execute(interaction);
   } catch (e) {
     error(e);
-    // await interaction.deferReply();
     interaction.reply({
       embeds: [ErrorEmbed("There was an error while executing this command!")],
       ephemeral: true,
@@ -54,12 +38,9 @@ client.on("interactionCreate", async (interaction) => {
   }
 });
 
-const eventFiles = fs
-  .readdirSync("./events")
-  .filter((file: string) => file.endsWith(".ts"));
+const eventList = Object.values(events);
 
-for (const file of eventFiles) {
-  const event = require(`./events/${file}`);
+for (const event of eventList) {
   if (event.once) {
     client.once(event.name, (...args: any) => event.execute(...args));
   } else {
@@ -71,8 +52,8 @@ for (const file of eventFiles) {
 client.login(process.env.TOKEN);
 
 process.on("SIGINT", () => {
-  client.destroy()
-  scheduler.stop()
-  prisma.$disconnect()
-  info("Bot Stopped")
-})
+  client.destroy();
+  scheduler.stop();
+  prisma.$disconnect();
+  info("Bot Stopped");
+});

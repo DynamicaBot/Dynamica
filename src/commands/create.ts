@@ -5,7 +5,7 @@ import { ErrorEmbed, SuccessEmbed } from "../lib/discordEmbeds";
 import { getGuildMember } from "../lib/getCached";
 import { checkPermissions } from "../lib/checks/permissions";
 
-module.exports = {
+export const create = {
   data: new SlashCommandBuilder()
     .setName("create")
     .setDescription("Create a primary channel.")

@@ -1,7 +1,7 @@
 import { SlashCommandBuilder } from "@discordjs/builders";
 import { CommandInteraction } from "discord.js";
 
-module.exports = {
+export const invite = {
   data: new SlashCommandBuilder()
     .setName("invite")
     .setDescription("Get an invite for your own server!"),

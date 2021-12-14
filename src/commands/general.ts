@@ -7,7 +7,7 @@ import { getGuildMember } from "../lib/getCached";
 import { prisma } from "../lib/prisma";
 
 // Set General Template
-module.exports = {
+export const general = {
   data: new SlashCommandBuilder()
     .setName("general")
     .setDescription("Edit the name/template for the default general channel.")
@@ -52,8 +52,8 @@ module.exports = {
     if (!(await checkSecondary(interaction))) {
       await interaction.reply({
         ephemeral: true,
-        embeds: [ErrorEmbed("Not a valid Dynamica channel.")]
-      })
+        embeds: [ErrorEmbed("Not a valid Dynamica channel.")],
+      });
       return;
     }
 

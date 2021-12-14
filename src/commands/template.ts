@@ -6,7 +6,7 @@ import { ErrorEmbed, SuccessEmbed } from "../lib/discordEmbeds";
 import { getGuildMember } from "../lib/getCached";
 import { prisma } from "../lib/prisma";
 
-module.exports = {
+export const template = {
   data: new SlashCommandBuilder()
     .setName("template")
     .setDescription("Edit the template for all secondary channels.")
@@ -44,8 +44,8 @@ module.exports = {
     if (!(await checkSecondary(interaction))) {
       await interaction.reply({
         ephemeral: true,
-        embeds: [ErrorEmbed("Not a valid Dynamica channel.")]
-      })
+        embeds: [ErrorEmbed("Not a valid Dynamica channel.")],
+      });
       return;
     }
 

@@ -1,4 +1,7 @@
-import { SlashCommandAssertions, SlashCommandBuilder } from "@discordjs/builders";
+import {
+  SlashCommandAssertions,
+  SlashCommandBuilder,
+} from "@discordjs/builders";
 import { prisma } from "../lib/prisma";
 import { CommandInteraction, Interaction } from "discord.js";
 import { checkOwner } from "../lib/checks/owner";
@@ -7,9 +10,13 @@ import { checkSecondary } from "../lib/checks/validSecondary";
 import { ErrorEmbed, SuccessEmbed } from "../lib/discordEmbeds";
 import { getGuildMember } from "../lib/getCached";
 
-module.exports = {
-    data: new SlashCommandBuilder().setName("allyourbase").setDescription("If you are an admin you become the owner of the channel you are in."),
-   async execute (interaction: CommandInteraction) {
+export const allyourbase = {
+  data: new SlashCommandBuilder()
+    .setName("allyourbase")
+    .setDescription(
+      "If you are an admin you become the owner of the channel you are in."
+    ),
+  async execute(interaction: CommandInteraction) {
     if (!interaction.guild) return;
 
     const guildMember = await getGuildMember(
@@ -41,7 +48,7 @@ module.exports = {
     await prisma.secondary.update({
       where: { id: channel.id },
       data: {
-        creator: guildMember.id
+        creator: guildMember.id,
       },
     });
     await interaction.reply({
@@ -51,5 +58,5 @@ module.exports = {
         ),
       ],
     });
-   }
-}
+  },
+};

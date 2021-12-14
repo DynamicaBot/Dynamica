@@ -1,8 +1,9 @@
 import { prisma } from "../lib/prisma";
 import { Client, Guild } from "discord.js";
 import { debug } from "../lib/colourfulLogger";
+import { event } from "./event";
 
-module.exports = {
+export const guildDelete: event = {
   name: "guildDelete",
   once: false,
   async execute(guild: Guild) {

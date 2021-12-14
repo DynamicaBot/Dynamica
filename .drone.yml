@@ -37,10 +37,10 @@ steps:
   - name: Publish Release
     image: plugins/github-release
     settings:
-      api_key: 
+      api_key:
         from_secret: github_token
     when:
-      event: 
+      event:
         - tag
       branch:
         - master
@@ -54,6 +54,7 @@ steps:
         - tag
     settings:
       tags: latest
+      target: runner
       username:
         from_secret: github_username
       password:

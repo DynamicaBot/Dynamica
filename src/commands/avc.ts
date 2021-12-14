@@ -1,7 +1,7 @@
 import { hyperlink, SlashCommandBuilder } from "@discordjs/builders";
 import { CommandInteraction } from "discord.js";
 
-module.exports = {
+export const avc = {
   data: new SlashCommandBuilder()
     .setName("avc")
     .setDescription("About the original Auto Voice Channels bot by pixaal."),
