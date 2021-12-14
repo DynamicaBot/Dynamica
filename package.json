@@ -5,13 +5,13 @@
   "dependencies": {
     "@discordjs/builders": "^0.8.2",
     "@discordjs/rest": "^0.1.0-canary.0",
-    "discord-api-types": "^0.25.0",
     "@prisma/client": "^3.6.0",
     "chalk": "4.1.2",
+    "discord-api-types": "^0.25.0",
     "discord.js": "^13.3.1",
+    "dotenv": "^10.0.0",
     "romans": "^2.0.3",
-    "toad-scheduler": "^1.6.0",
-    "dotenv": "^10.0.0"
+    "toad-scheduler": "^1.6.0"
   },
   "scripts": {
     "start": "node dist/index.js",
@@ -19,10 +19,12 @@
     "build": "tsc -p .",
     "lint": "prettier --write ./src",
     "postinstall": "prisma generate",
-    "deploy": "node dist/deploy-commands.js deploy"
+    "deploy": "node dist/deploy-commands.js",
+    "remove": "node dist/remove-commands.js"
   },
   "devDependencies": {
-    "@types/node": "^16.11.11",
+    "@types/node": "^16.11.12",
+    "@types/node-fetch": "^3.0.3",
     "@types/romans": "^2.0.0",
     "nodemon": "^2.0.15",
     "prisma": "^3.6.0",

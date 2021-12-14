@@ -2,17 +2,12 @@ import { config } from "dotenv";
 config();
 import { REST } from "@discordjs/rest";
 import { Routes } from "discord-api-types/v9";
-import * as commands from "./commands";
 
 const { TOKEN, CLIENT_ID, GUILD_ID } = process.env;
 
 if (!TOKEN || !CLIENT_ID) {
   console.log("Missing env vars.");
 } else {
-  const commandList = Object.values(commands).map((command) =>
-    command.data.toJSON()
-  );
-
   const rest = new REST({ version: "9" }).setToken(TOKEN);
 
   (async () => {
@@ -20,11 +15,11 @@ if (!TOKEN || !CLIENT_ID) {
       console.log("Started refreshing application (/) commands.");
       if (GUILD_ID) {
         await rest.put(Routes.applicationGuildCommands(CLIENT_ID, GUILD_ID), {
-          body: commandList,
+          body: [],
         });
       } else {
         await rest.put(Routes.applicationCommands(CLIENT_ID), {
-          body: commandList,
+          body: [],
         });
       }
 
