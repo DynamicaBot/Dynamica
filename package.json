@@ -19,7 +19,7 @@
     "build": "tsc -p .",
     "lint": "prettier --write ./src",
     "postinstall": "prisma generate",
-    "deploy": "node deploy-commands.js"
+    "deploy": "node dist/deploy-commands.js deploy"
   },
   "devDependencies": {
     "@types/node": "^16.11.11",
