@@ -29,6 +29,7 @@ ENV DATABASE_URL "file:/app/config/db.sqlite"
 COPY --from=build /app/dist .
 COPY deploy-commands.js .
 COPY package.json .
+COPY prisma/schema.prisma prisma/schema.prisma
 RUN yarn install --production --frozen-lockfile
 
 CMD yarn deploy && yarn prisma migrate deploy && yarn start
