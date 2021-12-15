@@ -6,8 +6,9 @@ import { checkSecondary } from "../lib/checks/validSecondary";
 import { ErrorEmbed, SuccessEmbed } from "../lib/discordEmbeds";
 import { getGuildMember } from "../lib/getCached";
 import { prisma } from "../lib/prisma";
+import { Command } from "./command";
 
-export const transfer = {
+export const transfer: Command = {
   data: new SlashCommandBuilder()
     .setName("transfer")
     .setDescription("Transfer ownership of secondary channel to another person")

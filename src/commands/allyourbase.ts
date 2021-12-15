@@ -9,8 +9,9 @@ import { checkPermissions } from "../lib/checks/permissions";
 import { checkSecondary } from "../lib/checks/validSecondary";
 import { ErrorEmbed, SuccessEmbed } from "../lib/discordEmbeds";
 import { getGuildMember } from "../lib/getCached";
+import { Command } from "./command";
 
-export const allyourbase = {
+export const allyourbase: Command = {
   data: new SlashCommandBuilder()
     .setName("allyourbase")
     .setDescription(

@@ -4,8 +4,9 @@ import { createPrimary } from "../lib/operations/primary";
 import { ErrorEmbed, SuccessEmbed } from "../lib/discordEmbeds";
 import { getGuildMember } from "../lib/getCached";
 import { checkPermissions } from "../lib/checks/permissions";
+import { Command } from "./command";
 
-export const create = {
+export const create: Command = {
   data: new SlashCommandBuilder()
     .setName("create")
     .setDescription("Create a primary channel.")

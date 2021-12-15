@@ -1,7 +1,8 @@
 import { Embed, SlashCommandBuilder } from "@discordjs/builders";
 import { CommandInteraction } from "discord.js";
+import { Command } from "./command";
 
-export const info = {
+export const info: Command = {
   data: new SlashCommandBuilder()
     .setName("info")
     .setDescription("Get info about a user or a server!")

@@ -7,9 +7,10 @@ import { getGuildMember } from "../lib/getCached";
 import { checkPermissions } from "../lib/checks/permissions";
 import { checkSecondary } from "../lib/checks/validSecondary";
 import { checkOwner } from "../lib/checks/owner";
+import { Command } from "./command";
 
 // Set lock Template
-export const lock = {
+export const lock: Command = {
   data: new SlashCommandBuilder()
     .setName("lock")
     .setDescription("Lock a channel to a certain role or user.")

@@ -7,9 +7,10 @@ import { getChannel, getGuildMember } from "../lib/getCached";
 import { checkPermissions } from "../lib/checks/permissions";
 import { checkSecondary } from "../lib/checks/validSecondary";
 import { checkOwner } from "../lib/checks/owner";
+import { Command } from "./command";
 
 // Set General Template
-export const bitrate = {
+export const bitrate: Command = {
   data: new SlashCommandBuilder()
     .setName("bitrate")
     .setDescription("Edit the bitrate of the current channel.")

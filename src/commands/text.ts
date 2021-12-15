@@ -3,8 +3,9 @@ import { CommandInteraction } from "discord.js";
 import { checkPermissions } from "../lib/checks/permissions";
 import { ErrorEmbed, SuccessEmbed } from "../lib/discordEmbeds";
 import { prisma } from "../lib/prisma";
+import { Command } from "./command";
 
-export const text = {
+export const text: Command = {
   data: new SlashCommandBuilder()
     .setName("text")
     .setDescription("Enable or disable temporary text channels")

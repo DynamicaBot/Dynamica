@@ -5,9 +5,10 @@ import { checkSecondary } from "../lib/checks/validSecondary";
 import { ErrorEmbed, SuccessEmbed } from "../lib/discordEmbeds";
 import { getGuildMember } from "../lib/getCached";
 import { prisma } from "../lib/prisma";
+import { Command } from "./command";
 
 // Set General Template
-export const general = {
+export const general: Command = {
   data: new SlashCommandBuilder()
     .setName("general")
     .setDescription("Edit the name/template for the default general channel.")

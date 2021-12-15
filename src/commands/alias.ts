@@ -3,11 +3,11 @@ import { CommandInteraction } from "discord.js";
 import checkGuild from "../lib/checks/guild";
 import { checkPermissions } from "../lib/checks/permissions";
 import { ErrorEmbed, SuccessEmbed } from "../lib/discordEmbeds";
-import { getGuildMember } from "../lib/getCached";
 import { prisma } from "../lib/prisma";
+import { Command } from "./command";
 
 // Set General Template
-export const alias = {
+export const alias: Command = {
   data: new SlashCommandBuilder()
     .setName("alias")
     .setDescription("Manage aliases.")

@@ -7,9 +7,10 @@ import { getChannel, getGuildMember } from "../lib/getCached";
 import { checkPermissions } from "../lib/checks/permissions";
 import { checkSecondary } from "../lib/checks/validSecondary";
 import { checkOwner } from "../lib/checks/owner";
+import { Command } from "./command";
 
 // Set General Template
-export const limit = {
+export const limit: Command = {
   data: new SlashCommandBuilder()
     .setName("limit")
     .setDescription(
