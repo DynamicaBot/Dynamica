@@ -1,10 +1,9 @@
+import { db } from "@db";
 import { SlashCommandBuilder } from "@discordjs/builders";
+import { checkPermissions } from "@lib/checks/permissions";
+import { checkSecondary } from "@lib/checks/validSecondary";
+import { ErrorEmbed, SuccessEmbed } from "@lib/discordEmbeds";
 import { CommandInteraction } from "discord.js";
-import { checkPermissions } from "../lib/checks/permissions";
-import { checkSecondary } from "../lib/checks/validSecondary";
-import { ErrorEmbed, SuccessEmbed } from "../lib/discordEmbeds";
-import { getGuildMember } from "../lib/getCached";
-import { prisma } from "../lib/prisma";
 import { Command } from "./command";
 
 export const template: Command = {
@@ -33,7 +32,7 @@ export const template: Command = {
       });
       return;
     }
-    const secondaryConfig = await prisma.secondary.findUnique({
+    const secondaryConfig = await db.secondary.findUnique({
       where: {
         id: secondaryId,
       },
@@ -60,7 +59,7 @@ export const template: Command = {
       });
       return;
     }
-    await prisma.primary.update({
+    await db.primary.update({
       where: { id: secondaryConfig.primary.id },
       data: { template },
     });

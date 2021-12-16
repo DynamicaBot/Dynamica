@@ -2,7 +2,7 @@ import {
   SlashCommandBuilder,
   SlashCommandSubcommandsOnlyBuilder,
 } from "@discordjs/builders";
-import { Awaitable, ClientEvents, CommandInteraction } from "discord.js";
+import { CommandInteraction } from "discord.js";
 
 interface Command {
   data:

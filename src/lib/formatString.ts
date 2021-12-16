@@ -1,26 +1,57 @@
 import { Alias } from "@prisma/client";
+import { uniq } from "lodash";
 import { romanize } from "romans";
 
-export function formatString(
+/**
+ * Format a string according to template values.
+ * @param str The template string to format
+ * @param options The different variables that can be provided.
+ * @returns The formatted string
+ */
+export function formatChannelName(
+  /**
+   * The template string to format.
+   */
   str: string,
   options: {
+    /**
+     * Creator display name
+     */
     creator: string;
+    /**
+     * Channel number
+     */
     channelNumber: number;
+    /**
+     * List of the duplicated activities from the channel.
+     */
     activities: string[];
+    /**
+     * The available aliases for the guild.
+     */
     aliases: Alias[];
+    /**
+     * The number of members in the channel.
+     */
     memberCount: Number;
   }
 ) {
-  // get variables between / and >> or << and / and replace with the value
-
   const { creator, channelNumber, activities, aliases, memberCount } = options;
 
-  const activityList = [...new Set(activities)]
-    .filter((activity) => activity !== "Customer Status")
-    .map(
-      (activity) =>
-        aliases.find((alias) => alias.activity === activity)?.alias || activity
-    );
+  const activityList = uniq(activities);
+
+  const filteredActivityList = activityList
+    .filter((activity) => activity !== "Spotify")
+    .filter((activity) => activity !== "Custom Status");
+
+  const aliasedActivities = filteredActivityList.map((activity) => {
+    const alias = aliases.find((a) => a.activity === activity);
+    if (alias) {
+      return alias.alias;
+    } else {
+      return activity;
+    }
+  });
 
   const plurals = str.split(/<<(.+)\/(.+)>>/g);
 
@@ -31,7 +62,7 @@ export function formatString(
     .replace(/\+#/g, romanize(channelNumber)) // I
     .replace(/@@nato@@/g, nato[channelNumber - 1]) // Alpha
     .replace(/@@num@@/g, memberCount.toString()) // number of channel members
-    .replace(/@@game@@/g, activityList.join(", ")) // Activities
+    .replace(/@@game@@/g, aliasedActivities.join(", ")) // Activities
     .replace(/@@creator@@/g, creator) // Creator
     .replace(/<<(.+)\/(.+)>>/g, memberCount === 1 ? plurals[1] : plurals[2]); // Plurals
 }

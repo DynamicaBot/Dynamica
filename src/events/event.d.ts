@@ -1,4 +1,4 @@
-import { Awaitable, ClientEvents } from "discord.js";
+import { ClientEvents } from "discord.js";
 
 interface event {
   name: keyof ClientEvents;

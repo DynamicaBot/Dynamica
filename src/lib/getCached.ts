@@ -5,9 +5,7 @@ import {
   Collection,
   GuildApplicationCommandManager,
   GuildMemberManager,
-  GuildMemberRoleManager,
   GuildResolvable,
-  Role,
 } from "discord.js";
 
 /**
@@ -41,6 +39,12 @@ export const getGuildMember = async (
   return cachedGuildMember ?? (await guildMemberManager.fetch(id));
 };
 
+/**
+ * Gets a list of commands depending on the scope of the bot and cache status.
+ * @param guildCommandManager Discord guild command manager
+ * @param applicationCommandManager Discord application command manager
+ * @returns List of Commands
+ */
 export const getCommands: (
   guildCommandManager?: GuildApplicationCommandManager,
   applicationCommandManager?: ApplicationCommandManager

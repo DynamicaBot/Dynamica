@@ -1,12 +1,12 @@
+import { Client, Intents } from "discord.js";
 import dotenv from "dotenv";
-dotenv.config();
-import { Intents, Collection, Client } from "discord.js";
-import { ErrorEmbed } from "./lib/discordEmbeds";
-import { error, info } from "./lib/colourfulLogger";
-import { scheduler } from "./lib/scheduler";
-import { prisma } from "./lib/prisma";
 import * as commands from "./commands";
 import * as events from "./events";
+import { error, info } from "./lib/colourfulLogger";
+import { ErrorEmbed } from "./lib/discordEmbeds";
+import { prisma } from "./lib/prisma";
+import { scheduler } from "./lib/scheduler";
+dotenv.config();
 
 // Create a new client instance
 const client = new Client({

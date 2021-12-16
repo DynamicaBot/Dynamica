@@ -1,11 +1,15 @@
-import { prisma } from "../prisma";
-import { Guild } from "discord.js";
+import { db } from "@db";
 
+/**
+ * Check to see if a guild exists in the database. If it doesn't, create it.
+ * @param id Guild ID
+ * @returns Blank Promise
+ */
 export default async function checkGuild(id?: string) {
   if (!id) return;
-  const guildConfig = await prisma.guild.findUnique({ where: { id } });
+  const guildConfig = await db.guild.findUnique({ where: { id } });
   if (!guildConfig) {
-    await prisma.guild.create({
+    await db.guild.create({
       data: {
         id,
       },

@@ -1,9 +1,8 @@
 import { SlashCommandBuilder } from "@discordjs/builders";
+import { checkPermissions } from "@lib/checks/permissions";
+import { ErrorEmbed, SuccessEmbed } from "@lib/discordEmbeds";
+import { createPrimary } from "@lib/operations/primary";
 import { CommandInteraction, GuildChannel } from "discord.js";
-import { createPrimary } from "../lib/operations/primary";
-import { ErrorEmbed, SuccessEmbed } from "../lib/discordEmbeds";
-import { getGuildMember } from "../lib/getCached";
-import { checkPermissions } from "../lib/checks/permissions";
 import { Command } from "./command";
 
 export const create: Command = {

@@ -1,5 +1,5 @@
 {
-  "name": "discordbot",
+  "name": "dynamicabot",
   "version": "1.0.0",
   "license": "MIT",
   "dependencies": {
@@ -10,6 +10,7 @@
     "discord-api-types": "^0.25.0",
     "discord.js": "^13.3.1",
     "dotenv": "^10.0.0",
+    "lodash": "^4.17.21",
     "romans": "^2.0.3",
     "toad-scheduler": "^1.6.0"
   },
@@ -19,14 +20,17 @@
     "build": "tsc -p .",
     "lint": "prettier --write ./src",
     "postinstall": "prisma generate",
-    "deploy": "node dist/deploy-commands.js",
-    "remove": "node dist/remove-commands.js"
+    "deploy": "tsc -p . && node dist/deploy-commands.js",
+    "remove": "tsc -p . && node dist/remove-commands.js"
   },
   "devDependencies": {
+    "@types/lodash": "^4.14.178",
     "@types/node": "^16.11.12",
     "@types/node-fetch": "^3.0.3",
     "@types/romans": "^2.0.0",
     "nodemon": "^2.0.15",
+    "prettier": "^2.5.1",
+    "prettier-plugin-organize-imports": "^2.3.4",
     "prisma": "^3.6.0",
     "ts-node": "^10.4.0",
     "typescript": "^4.5.2"

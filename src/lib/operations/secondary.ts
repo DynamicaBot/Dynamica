@@ -1,16 +1,16 @@
+import { db } from "@db";
+import checkGuild from "@lib/checks/guild";
+import { debug } from "@lib/colourfulLogger";
+import { formatChannelName } from "@lib/formatString";
+import { getChannel } from "@lib/getCached";
+import { updateActivityCount } from "@lib/operations/general";
+import { scheduler } from "@lib/scheduler";
 import {
   BaseGuildVoiceChannel,
   GuildChannelManager,
   GuildMember,
 } from "discord.js";
 import { SimpleIntervalJob, Task } from "toad-scheduler";
-import checkGuild from "../checks/guild";
-import { debug } from "../colourfulLogger";
-import { formatString } from "../formatString";
-import { getChannel } from "../getCached";
-import { prisma } from "../prisma";
-import { scheduler } from "../scheduler";
-import { updateActivityCount } from "./general";
 
 /**
  * Deletes Secondary Channel.
@@ -20,7 +20,7 @@ import { updateActivityCount } from "./general";
  */
 export const deleteSecondary = async (channel: BaseGuildVoiceChannel) => {
   const { id } = channel;
-  const channelConfig = await prisma.secondary.findUnique({
+  const channelConfig = await db.secondary.findUnique({
     where: { id },
   });
   if (channel?.members.size !== 0 || !channel?.deletable || !channelConfig)
@@ -38,7 +38,7 @@ export const deleteSecondary = async (channel: BaseGuildVoiceChannel) => {
     return undefined;
   };
   await Promise.all([
-    prisma.secondary.delete({ where: { id } }),
+    db.secondary.delete({ where: { id } }),
     channel?.delete(),
     (await textChannel())?.delete(),
   ]);
@@ -53,11 +53,11 @@ export const deleteSecondary = async (channel: BaseGuildVoiceChannel) => {
  * @returns Promise
  */
 export const deletedSecondary = async (channelId: string) => {
-  const channel = await prisma.secondary.findUnique({
+  const channel = await db.secondary.findUnique({
     where: { id: channelId },
   });
   if (!channel) return;
-  await prisma.secondary.delete({ where: { id: channelId } });
+  await db.secondary.delete({ where: { id: channelId } });
   await debug(`Secondary channel deleted ${channelId}`);
 };
 
@@ -73,14 +73,14 @@ export const createSecondary = async (
   primaryId: string,
   member?: GuildMember
 ) => {
-  const primaryConfig = await prisma.primary.findUnique({
+  const primaryConfig = await db.primary.findUnique({
     where: { id: primaryId },
     include: { guild: true, secondaries: true },
   });
 
   if (!primaryConfig) return;
 
-  const aliases = await prisma.alias.findMany({
+  const aliases = await db.alias.findMany({
     where: { guildId: channelManager.guild.id },
   });
 
@@ -98,7 +98,7 @@ export const createSecondary = async (
     : primaryConfig.template;
 
   const secondary = await channelManager.create(
-    formatString(str, {
+    formatChannelName(str, {
       creator: member?.displayName as string,
       channelNumber: primaryConfig.secondaries.length + 1,
       activities: activities,
@@ -131,13 +131,13 @@ export const createSecondary = async (
           { id: channelManager.guild.roles.everyone, deny: "VIEW_CHANNEL" },
           { id: member?.id, allow: "VIEW_CHANNEL" },
         ],
-        parent: secondary.parent ?? undefined
+        parent: secondary.parent ?? undefined,
       });
       return textChannel.id;
     }
   };
 
-  await prisma.secondary.create({
+  await db.secondary.create({
     data: {
       id: secondary.id,
       creator: member?.id,
@@ -168,14 +168,14 @@ export const createSecondary = async (
  */
 export const refreshSecondary = async (channel: BaseGuildVoiceChannel) => {
   const { id } = channel;
-  const secondary = await prisma.secondary.findUnique({
+  const secondary = await db.secondary.findUnique({
     where: { id },
     include: {
       primary: true,
       guild: true,
     },
   });
-  const aliases = await prisma.alias.findMany({
+  const aliases = await db.alias.findMany({
     where: {
       guildId: channel.id,
     },
@@ -198,7 +198,7 @@ export const refreshSecondary = async (channel: BaseGuildVoiceChannel) => {
     : !activities.length
     ? secondary.primary.generalName
     : secondary.primary.template;
-  const name = formatString(str, {
+  const name = formatChannelName(str, {
     creator: creator ? creator : "",
     aliases: aliases,
     channelNumber: 1,

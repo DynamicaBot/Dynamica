@@ -1,9 +1,9 @@
+import { db } from "@db";
 import { Embed, quote, SlashCommandBuilder } from "@discordjs/builders";
+import checkGuild from "@lib/checks/guild";
+import { checkPermissions } from "@lib/checks/permissions";
+import { ErrorEmbed, SuccessEmbed } from "@lib/discordEmbeds";
 import { CommandInteraction } from "discord.js";
-import checkGuild from "../lib/checks/guild";
-import { checkPermissions } from "../lib/checks/permissions";
-import { ErrorEmbed, SuccessEmbed } from "../lib/discordEmbeds";
-import { prisma } from "../lib/prisma";
 import { Command } from "./command";
 
 // Set General Template
@@ -60,7 +60,7 @@ export const alias: Command = {
     if (interaction.options.getSubcommand() === "add") {
       const activity = interaction.options.getString("activity", true);
       const alias = interaction.options.getString("alias", true);
-      const existingAlias = await prisma.alias.findFirst({
+      const existingAlias = await db.alias.findFirst({
         where: {
           activity,
           guildId: interaction.guild.id,
@@ -68,7 +68,7 @@ export const alias: Command = {
       });
 
       if (!existingAlias) {
-        await prisma.alias.create({
+        await db.alias.create({
           data: {
             guildId: interaction.guild.id,
             activity,
@@ -76,7 +76,7 @@ export const alias: Command = {
           },
         });
       } else {
-        await prisma.alias.update({
+        await db.alias.update({
           where: {
             id: existingAlias.id,
           },
@@ -98,7 +98,7 @@ export const alias: Command = {
     } else if (interaction.options.getSubcommand() === "remove") {
       // await interaction.deferReply();
       const activity = interaction.options.getString("activity", true);
-      await prisma.alias.deleteMany({
+      await db.alias.deleteMany({
         where: {
           guildId: interaction.guild.id,
           activity,
@@ -111,7 +111,7 @@ export const alias: Command = {
         ],
       });
     } else if (interaction.options.getSubcommand() === "list") {
-      const aliases = await prisma.alias.findMany({
+      const aliases = await db.alias.findMany({
         where: {
           guildId: interaction.guild.id,
         },

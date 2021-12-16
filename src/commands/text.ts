@@ -1,8 +1,8 @@
+import { db } from "@db";
 import { SlashCommandBuilder } from "@discordjs/builders";
+import { checkPermissions } from "@lib/checks/permissions";
+import { ErrorEmbed, SuccessEmbed } from "@lib/discordEmbeds";
 import { CommandInteraction } from "discord.js";
-import { checkPermissions } from "../lib/checks/permissions";
-import { ErrorEmbed, SuccessEmbed } from "../lib/discordEmbeds";
-import { prisma } from "../lib/prisma";
 import { Command } from "./command";
 
 export const text: Command = {
@@ -29,7 +29,7 @@ export const text: Command = {
       });
       return;
     }
-    await prisma.guild.update({
+    await db.guild.update({
       where: { id: interaction.guildId },
       data: {
         textChannelsEnabled: state,

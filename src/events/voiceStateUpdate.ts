@@ -1,4 +1,4 @@
-import { prisma } from "../lib/prisma";
+import { db } from "@db";
 import { VoiceState } from "discord.js";
 import { createSecondary, deleteSecondary } from "../lib/operations/secondary";
 import { event } from "./event";
@@ -25,7 +25,7 @@ export const voiceStateUpdate: event = {
         oldVoiceState.member
       ) {
         await deleteSecondary(oldVoiceState.channel);
-        const secondaryConfig = await prisma.secondary.findUnique({
+        const secondaryConfig = await db.secondary.findUnique({
           where: { id: oldVoiceState.channelId },
           include: { guild: true },
         });
@@ -41,7 +41,7 @@ export const voiceStateUpdate: event = {
       }
       // User joins secondary channel
       if (newVoiceState.channelId && newVoiceState.member) {
-        const secondaryConfig = await prisma.secondary.findUnique({
+        const secondaryConfig = await db.secondary.findUnique({
           where: { id: newVoiceState.channelId },
           include: { guild: true },
         });

@@ -1,12 +1,12 @@
+import { db } from "@db";
 import { SlashCommandBuilder } from "@discordjs/builders";
-import { prisma } from "../lib/prisma";
+import { checkOwner } from "@lib/checks/owner";
+import { checkPermissions } from "@lib/checks/permissions";
+import { checkSecondary } from "@lib/checks/validSecondary";
+import { info } from "@lib/colourfulLogger";
+import { ErrorEmbed, SuccessEmbed } from "@lib/discordEmbeds";
+import { getGuildMember } from "@lib/getCached";
 import { CommandInteraction } from "discord.js";
-import { info } from "../lib/colourfulLogger";
-import { ErrorEmbed, SuccessEmbed } from "../lib/discordEmbeds";
-import { getGuildMember } from "../lib/getCached";
-import { checkPermissions } from "../lib/checks/permissions";
-import { checkSecondary } from "../lib/checks/validSecondary";
-import { checkOwner } from "../lib/checks/owner";
 import { Command } from "./command";
 
 // Set General Template
@@ -56,7 +56,7 @@ export const name: Command = {
       });
       return;
     }
-    await prisma.secondary.update({
+    await db.secondary.update({
       where: { id: channel.id },
       data: {
         name,

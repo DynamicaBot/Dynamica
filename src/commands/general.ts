@@ -1,10 +1,10 @@
 import { SlashCommandBuilder } from "@discordjs/builders";
+import { checkPermissions } from "@lib/checks/permissions";
+import { checkSecondary } from "@lib/checks/validSecondary";
+import { ErrorEmbed, SuccessEmbed } from "@lib/discordEmbeds";
+import { getGuildMember } from "@lib/getCached";
+import { db } from "@lib/prisma";
 import { CommandInteraction } from "discord.js";
-import { checkPermissions } from "../lib/checks/permissions";
-import { checkSecondary } from "../lib/checks/validSecondary";
-import { ErrorEmbed, SuccessEmbed } from "../lib/discordEmbeds";
-import { getGuildMember } from "../lib/getCached";
-import { prisma } from "../lib/prisma";
 import { Command } from "./command";
 
 // Set General Template
@@ -40,7 +40,7 @@ export const general: Command = {
     }
 
     // Find a valid secondary channel
-    const secondary = await prisma.secondary.findUnique({
+    const secondary = await db.secondary.findUnique({
       where: {
         id: voiceId,
       },
@@ -69,7 +69,7 @@ export const general: Command = {
 
     if (!secondary) return;
     // Update channel list
-    await prisma.primary.update({
+    await db.primary.update({
       where: { id: secondary.primary.id },
       data: { generalName: name },
     });

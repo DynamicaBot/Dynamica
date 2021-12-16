@@ -1,11 +1,11 @@
-import { prisma } from "../lib/prisma";
+import { debug, info } from "@lib/colourfulLogger";
+import { getChannel } from "@lib/getCached";
+import { updateActivityCount } from "@lib/operations/general";
+import { refreshSecondary } from "@lib/operations/secondary";
+import { db } from "@lib/prisma";
+import { scheduler } from "@lib/scheduler";
 import { Client } from "discord.js";
-import { debug, info } from "../lib/colourfulLogger";
-import { scheduler } from "../lib/scheduler";
 import { SimpleIntervalJob, Task } from "toad-scheduler";
-import { updateActivityCount } from "../lib/operations/general";
-import { refreshSecondary } from "../lib/operations/secondary";
-import { getChannel } from "../lib/getCached";
 import { event } from "./event";
 
 export const ready: event = {
@@ -13,7 +13,7 @@ export const ready: event = {
   once: true,
   async execute(client: Client) {
     info(`Ready! Logged in as ${client.user?.tag}`);
-    const secondaries = await prisma.secondary.findMany();
+    const secondaries = await db.secondary.findMany();
     Promise.all(
       secondaries.map(async (secondary) => {
         // const cachedChannel = client.channels.cache.get(secondary.id);

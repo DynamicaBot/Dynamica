@@ -1,7 +1,7 @@
-import { config } from "dotenv";
-config();
 import { REST } from "@discordjs/rest";
 import { Routes } from "discord-api-types/v9";
+import { config } from "dotenv";
+config();
 
 const { TOKEN, CLIENT_ID, GUILD_ID } = process.env;
 

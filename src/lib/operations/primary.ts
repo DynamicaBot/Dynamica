@@ -1,3 +1,6 @@
+import { db } from "@db";
+import checkGuild from "@lib/checks/guild";
+import { debug } from "@lib/colourfulLogger";
 import { APIInteractionDataResolvedChannel } from "discord-api-types";
 import {
   BaseGuildVoiceChannel,
@@ -5,9 +8,6 @@ import {
   GuildChannelManager,
   ThreadChannel,
 } from "discord.js";
-import checkGuild from "../checks/guild";
-import { debug } from "../colourfulLogger";
-import { prisma } from "../prisma";
 
 /**
  * Create Primary Channel
@@ -31,7 +31,7 @@ export const createPrimary = async (
     parent,
   });
   await checkGuild(channelManager.guild.id);
-  const primary = await prisma.primary.create({
+  const primary = await db.primary.create({
     data: {
       id: channel.id,
       creator: userId,
@@ -53,12 +53,12 @@ export const deletePrimary = async (
   channel: BaseGuildVoiceChannel,
   channelId: string
 ) => {
-  const channelConfig = await prisma.primary.findUnique({
+  const channelConfig = await db.primary.findUnique({
     where: { id: channelId },
   });
   if (!channel?.deletable || !channelConfig) return;
   await Promise.all([
-    prisma.primary.delete({
+    db.primary.delete({
       where: { id: channelId },
       include: { secondaries: true },
     }),
@@ -75,11 +75,11 @@ export const deletePrimary = async (
  * @returns Promise
  */
 export const deletedPrimary = async (channelId: string) => {
-  const channel = await prisma.primary.findUnique({
+  const channel = await db.primary.findUnique({
     where: { id: channelId },
   });
   if (!channel) return;
-  await prisma.primary.delete({
+  await db.primary.delete({
     where: { id: channelId },
     include: { secondaries: true },
   });

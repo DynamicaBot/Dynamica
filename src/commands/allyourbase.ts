@@ -1,14 +1,10 @@
-import {
-  SlashCommandAssertions,
-  SlashCommandBuilder,
-} from "@discordjs/builders";
-import { prisma } from "../lib/prisma";
-import { CommandInteraction, Interaction } from "discord.js";
-import { checkOwner } from "../lib/checks/owner";
-import { checkPermissions } from "../lib/checks/permissions";
-import { checkSecondary } from "../lib/checks/validSecondary";
-import { ErrorEmbed, SuccessEmbed } from "../lib/discordEmbeds";
-import { getGuildMember } from "../lib/getCached";
+import { db } from "@db";
+import { SlashCommandBuilder } from "@discordjs/builders";
+import { checkPermissions } from "@lib/checks/permissions";
+import { checkSecondary } from "@lib/checks/validSecondary";
+import { ErrorEmbed, SuccessEmbed } from "@lib/discordEmbeds";
+import { getGuildMember } from "@lib/getCached";
+import { CommandInteraction } from "discord.js";
 import { Command } from "./command";
 
 export const allyourbase: Command = {
@@ -46,7 +42,7 @@ export const allyourbase: Command = {
       });
       return;
     }
-    await prisma.secondary.update({
+    await db.secondary.update({
       where: { id: channel.id },
       data: {
         creator: guildMember.id,
