@@ -20,8 +20,8 @@
     "build": "tsc -p .",
     "lint": "prettier --write ./src",
     "postinstall": "prisma generate",
-    "deploy": "tsc -p . && node dist/deploy-commands.js",
-    "remove": "tsc -p . && node dist/remove-commands.js"
+    "deploy": "node dist/deploy-commands.js",
+    "remove": "node dist/remove-commands.js"
   },
   "devDependencies": {
     "@types/lodash": "^4.14.178",
