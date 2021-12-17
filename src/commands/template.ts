@@ -1,8 +1,9 @@
-import { db } from "@db";
 import { SlashCommandBuilder } from "@discordjs/builders";
 import { checkPermissions } from "@lib/checks/permissions";
 import { checkSecondary } from "@lib/checks/validSecondary";
 import { ErrorEmbed, SuccessEmbed } from "@lib/discordEmbeds";
+import { updatePrimary } from "@lib/operations/primary";
+import { db } from "@lib/prisma";
 import { CommandInteraction } from "discord.js";
 import { Command } from "./command";
 
@@ -32,13 +33,9 @@ export const template: Command = {
       });
       return;
     }
+
     const secondaryConfig = await db.secondary.findUnique({
-      where: {
-        id: secondaryId,
-      },
-      include: {
-        primary: true,
-      },
+      where: { id: secondaryId },
     });
 
     if (!(await checkSecondary(interaction))) {
@@ -59,10 +56,8 @@ export const template: Command = {
       });
       return;
     }
-    await db.primary.update({
-      where: { id: secondaryConfig.primary.id },
-      data: { template },
-    });
+
+    await updatePrimary(secondaryConfig.primaryId, { template });
     await interaction.reply({
       embeds: [SuccessEmbed(`Template changed to ${template}`)],
     });

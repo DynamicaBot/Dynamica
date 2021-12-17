@@ -1,4 +1,3 @@
-import { db } from "@db";
 import { SlashCommandBuilder } from "@discordjs/builders";
 import { checkOwner } from "@lib/checks/owner";
 import { checkPermissions } from "@lib/checks/permissions";
@@ -6,6 +5,7 @@ import { checkSecondary } from "@lib/checks/validSecondary";
 import { info } from "@lib/colourfulLogger";
 import { ErrorEmbed, SuccessEmbed } from "@lib/discordEmbeds";
 import { getGuildMember } from "@lib/getCached";
+import { db } from "@lib/prisma";
 import { CommandInteraction } from "discord.js";
 import { Command } from "./command";
 
@@ -56,12 +56,7 @@ export const name: Command = {
       });
       return;
     }
-    await db.secondary.update({
-      where: { id: channel.id },
-      data: {
-        name,
-      },
-    });
+    await db.secondary.update({ where: { id: channel.id }, data: { name } });
     await interaction.reply({
       embeds: [
         SuccessEmbed(

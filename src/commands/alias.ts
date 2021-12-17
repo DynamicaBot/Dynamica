@@ -1,8 +1,8 @@
-import { db } from "@db";
 import { Embed, quote, SlashCommandBuilder } from "@discordjs/builders";
 import checkGuild from "@lib/checks/guild";
 import { checkPermissions } from "@lib/checks/permissions";
 import { ErrorEmbed, SuccessEmbed } from "@lib/discordEmbeds";
+import { deleteAlias, listAliases, updateAlias } from "@lib/operations/alias";
 import { CommandInteraction } from "discord.js";
 import { Command } from "./command";
 
@@ -60,32 +60,8 @@ export const alias: Command = {
     if (interaction.options.getSubcommand() === "add") {
       const activity = interaction.options.getString("activity", true);
       const alias = interaction.options.getString("alias", true);
-      const existingAlias = await db.alias.findFirst({
-        where: {
-          activity,
-          guildId: interaction.guild.id,
-        },
-      });
 
-      if (!existingAlias) {
-        await db.alias.create({
-          data: {
-            guildId: interaction.guild.id,
-            activity,
-            alias,
-          },
-        });
-      } else {
-        await db.alias.update({
-          where: {
-            id: existingAlias.id,
-          },
-          data: {
-            activity,
-            alias,
-          },
-        });
-      }
+      await updateAlias(activity, alias, interaction.guildId);
 
       await interaction.reply({
         ephemeral: true,
@@ -96,14 +72,10 @@ export const alias: Command = {
         ],
       });
     } else if (interaction.options.getSubcommand() === "remove") {
-      // await interaction.deferReply();
       const activity = interaction.options.getString("activity", true);
-      await db.alias.deleteMany({
-        where: {
-          guildId: interaction.guild.id,
-          activity,
-        },
-      });
+
+      await deleteAlias(activity, interaction.guildId);
+
       await interaction.reply({
         ephemeral: true,
         embeds: [
@@ -111,23 +83,11 @@ export const alias: Command = {
         ],
       });
     } else if (interaction.options.getSubcommand() === "list") {
-      const aliases = await db.alias.findMany({
-        where: {
-          guildId: interaction.guild.id,
-        },
-      });
+      const aliases = await listAliases(interaction.guildId);
+
       await interaction.reply({
         ephemeral: true,
-        embeds: [
-          new Embed()
-            .addFields(
-              ...aliases.map((alias) => ({
-                name: alias.activity,
-                value: alias.alias,
-              }))
-            )
-            .setTitle("Alias List"),
-        ],
+        embeds: [new Embed().addFields(...aliases).setTitle("Alias List")],
       });
     }
   },

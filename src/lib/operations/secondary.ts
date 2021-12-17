@@ -16,9 +16,10 @@ import { SimpleIntervalJob, Task } from "toad-scheduler";
  * Deletes Secondary Channel.
  * @param channelManager Discord Channel Manager
  * @param channelId Channel ID to delete
- * @returns Promise
  */
-export const deleteSecondary = async (channel: BaseGuildVoiceChannel) => {
+export const deleteDiscordSecondary = async (
+  channel: BaseGuildVoiceChannel
+) => {
   const { id } = channel;
   const channelConfig = await db.secondary.findUnique({
     where: { id },
@@ -48,25 +49,10 @@ export const deleteSecondary = async (channel: BaseGuildVoiceChannel) => {
 };
 
 /**
- * Deleted Secondary Channel.
- * @param channelId Channel ID to delete
- * @returns Promise
- */
-export const deletedSecondary = async (channelId: string) => {
-  const channel = await db.secondary.findUnique({
-    where: { id: channelId },
-  });
-  if (!channel) return;
-  await db.secondary.delete({ where: { id: channelId } });
-  await debug(`Secondary channel deleted ${channelId}`);
-};
-
-/**
  * Creates a secondary channel linked to a primary.
  * @param channelManager Discord's Channel Manager.
  * @param primaryId ID of the primary channel to link to.
  * @param member The user (if they're specified) to be moved to the new channel.
- * @returns
  */
 export const createSecondary = async (
   channelManager: GuildChannelManager,
@@ -114,7 +100,6 @@ export const createSecondary = async (
     }
   );
 
-  // secondary.setPosition(primaryChannel?.position + 1);
   if (secondary.parent) {
     secondary.lockPermissions();
   }
@@ -164,7 +149,6 @@ export const createSecondary = async (
  * Retrieves data from db and changes channel name with formatting.
  * @param id Secondary channel id.
  * @param channelManager Discord Channel Manager
- * @returns nothing.
  */
 export const refreshSecondary = async (channel: BaseGuildVoiceChannel) => {
   const { id } = channel;

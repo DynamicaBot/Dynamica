@@ -1,10 +1,10 @@
+import { db } from "@lib/prisma";
 import { Client, Intents } from "discord.js";
 import dotenv from "dotenv";
 import * as commands from "./commands";
 import * as events from "./events";
 import { error, info } from "./lib/colourfulLogger";
 import { ErrorEmbed } from "./lib/discordEmbeds";
-import { prisma } from "./lib/prisma";
 import { scheduler } from "./lib/scheduler";
 dotenv.config();
 
@@ -54,6 +54,6 @@ client.login(process.env.TOKEN);
 process.on("SIGINT", () => {
   client.destroy();
   scheduler.stop();
-  prisma.$disconnect();
+  db.$disconnect();
   info("Bot Stopped");
 });

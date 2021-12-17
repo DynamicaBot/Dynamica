@@ -1,6 +1,7 @@
 import { db } from "@db";
 import checkGuild from "@lib/checks/guild";
 import { debug } from "@lib/colourfulLogger";
+import { Prisma } from "@prisma/client";
 import { APIInteractionDataResolvedChannel } from "discord-api-types";
 import {
   BaseGuildVoiceChannel,
@@ -49,7 +50,7 @@ export const createPrimary = async (
  * @param channelId Channel ID to delete
  * @returns Promise
  */
-export const deletePrimary = async (
+export const deleteDiscordPrimary = async (
   channel: BaseGuildVoiceChannel,
   channelId: string
 ) => {
@@ -75,13 +76,42 @@ export const deletePrimary = async (
  * @returns Promise
  */
 export const deletedPrimary = async (channelId: string) => {
-  const channel = await db.primary.findUnique({
-    where: { id: channelId },
-  });
-  if (!channel) return;
-  await db.primary.delete({
+  const primary = await db.primary.delete({
     where: { id: channelId },
     include: { secondaries: true },
   });
-  await debug(`Primary channel ${channel.id} deleted.`);
+  await debug(`Primary channel ${primary.id} deleted.`);
+};
+
+/**
+ * Updates the db entry for a primary channel.
+ * @param channelId
+ * @param data
+ */
+export const updatePrimary = async (channelId: string, data: any) => {
+  const primary = await db.primary.update({
+    data,
+    where: { id: channelId },
+  });
+  await debug(`Primary channel ${primary.id} updated.`);
+};
+
+export const getPrimary = async (
+  id: string,
+  include?: Prisma.PrimaryInclude
+) => {
+  return await db.primary.findUnique({
+    where: { id },
+    include,
+  });
+};
+
+export const deletePrimary = async (
+  id: string,
+  include?: Prisma.PrimaryInclude
+) => {
+  return await db.primary.delete({
+    where: { id },
+    include,
+  });
 };

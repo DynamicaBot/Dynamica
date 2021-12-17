@@ -1,7 +1,7 @@
-import { db } from "@db";
 import { SlashCommandBuilder } from "@discordjs/builders";
 import { checkPermissions } from "@lib/checks/permissions";
 import { ErrorEmbed, SuccessEmbed } from "@lib/discordEmbeds";
+import { updateGuild } from "@lib/operations/guild";
 import { CommandInteraction } from "discord.js";
 import { Command } from "./command";
 
@@ -29,12 +29,7 @@ export const text: Command = {
       });
       return;
     }
-    await db.guild.update({
-      where: { id: interaction.guildId },
-      data: {
-        textChannelsEnabled: state,
-      },
-    });
+    await updateGuild(interaction.guildId, { textChannelsEnabled: state });
     await interaction.reply({
       ephemeral: true,
       embeds: [
