@@ -1,6 +1,3 @@
-import { db } from "@db";
-import checkGuild from "@lib/checks/guild";
-import { debug } from "@lib/colourfulLogger";
 import { Prisma } from "@prisma/client";
 import { APIInteractionDataResolvedChannel } from "discord-api-types";
 import {
@@ -9,6 +6,9 @@ import {
   GuildChannelManager,
   ThreadChannel,
 } from "discord.js";
+import checkGuild from "../checks/guild";
+import { debug } from "../colourfulLogger";
+import { db } from "../prisma";
 
 /**
  * Create Primary Channel

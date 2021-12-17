@@ -1,16 +1,16 @@
-import { db } from "@db";
-import checkGuild from "@lib/checks/guild";
-import { debug } from "@lib/colourfulLogger";
-import { formatChannelName } from "@lib/formatString";
-import { getChannel } from "@lib/getCached";
-import { updateActivityCount } from "@lib/operations/general";
-import { scheduler } from "@lib/scheduler";
 import {
   BaseGuildVoiceChannel,
   GuildChannelManager,
   GuildMember,
 } from "discord.js";
 import { SimpleIntervalJob, Task } from "toad-scheduler";
+import checkGuild from "../checks/guild";
+import { debug } from "../colourfulLogger";
+import { formatChannelName } from "../formatString";
+import { getChannel } from "../getCached";
+import { updateActivityCount } from "../operations/general";
+import { db } from "../prisma";
+import { scheduler } from "../scheduler";
 
 /**
  * Deletes Secondary Channel.

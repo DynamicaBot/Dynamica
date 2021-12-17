@@ -1,4 +1,4 @@
-import { db } from "@db";
+import { db } from "../prisma";
 
 /**
  * Check to see if a guild exists in the database. If it doesn't, create it.

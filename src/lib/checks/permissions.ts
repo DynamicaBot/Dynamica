@@ -1,5 +1,5 @@
-import { getGuildMember } from "@lib/getCached";
 import { CommandInteraction } from "discord.js";
+import { getGuildMember } from "../getCached";
 
 /**
  * Checks permissions for admin or Dynamica Manager role.

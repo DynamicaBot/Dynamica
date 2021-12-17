@@ -1,6 +1,6 @@
 import { Embed, hyperlink, SlashCommandBuilder } from "@discordjs/builders";
-import { getCommands } from "@lib/getCached";
 import { CommandInteraction } from "discord.js";
+import { getCommands } from "../lib/getCached";
 import { Command } from "./command";
 
 export const help: Command = {

@@ -1,5 +1,5 @@
-import { db } from "@db";
 import { BaseGuildVoiceChannel, GuildMember } from "discord.js";
+import { db } from "../prisma";
 
 /**
  * Checks if a guild member is the creator of the secondary channel.

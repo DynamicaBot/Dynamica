@@ -1,11 +1,11 @@
 import { SlashCommandBuilder } from "@discordjs/builders";
-import { checkOwner } from "@lib/checks/owner";
-import { checkPermissions } from "@lib/checks/permissions";
-import { checkSecondary } from "@lib/checks/validSecondary";
-import { ErrorEmbed, SuccessEmbed } from "@lib/discordEmbeds";
-import { getGuildMember } from "@lib/getCached";
-import { db } from "@lib/prisma";
 import { CommandInteraction } from "discord.js";
+import { checkOwner } from "../lib/checks/owner";
+import { checkPermissions } from "../lib/checks/permissions";
+import { checkSecondary } from "../lib/checks/validSecondary";
+import { ErrorEmbed, SuccessEmbed } from "../lib/discordEmbeds";
+import { getGuildMember } from "../lib/getCached";
+import { db } from "../lib/prisma";
 import { Command } from "./command";
 
 export const transfer: Command = {

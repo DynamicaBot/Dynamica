@@ -1,10 +1,10 @@
 import { SlashCommandBuilder } from "@discordjs/builders";
-import { checkPermissions } from "@lib/checks/permissions";
-import { checkSecondary } from "@lib/checks/validSecondary";
-import { ErrorEmbed, SuccessEmbed } from "@lib/discordEmbeds";
-import { updatePrimary } from "@lib/operations/primary";
-import { db } from "@lib/prisma";
 import { CommandInteraction } from "discord.js";
+import { checkPermissions } from "../lib/checks/permissions";
+import { checkSecondary } from "../lib/checks/validSecondary";
+import { ErrorEmbed, SuccessEmbed } from "../lib/discordEmbeds";
+import { updatePrimary } from "../lib/operations/primary";
+import { db } from "../lib/prisma";
 import { Command } from "./command";
 
 export const template: Command = {

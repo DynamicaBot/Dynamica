@@ -1,6 +1,6 @@
-import checkGuild from "@lib/checks/guild";
-import { debug } from "@lib/colourfulLogger";
 import { Guild } from "discord.js";
+import checkGuild from "../lib/checks/guild";
+import { debug } from "../lib/colourfulLogger";
 import { event } from "./event";
 
 export const guildCreate: event = {

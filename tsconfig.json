@@ -19,13 +19,6 @@
       "@discordjs/builders"
     ] /* Specify type package names to be included without being referenced in a source file. */,
     /* Emit */
-    "baseUrl": "src",
-    "paths": {
-      "@lib/*": ["lib/*"],
-      "@commands/*": ["commands/*"],
-      "@events/*": ["events/*"],
-      "@db": ["lib/prisma"]
-    },
     "typeRoots": ["node_modules/@types"],
     "sourceMap": true /* Create source map files for emitted JavaScript files. */,
     "outDir": "./dist" /* Specify an output folder for all emitted files. */,

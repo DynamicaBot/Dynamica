@@ -1,9 +1,9 @@
 import { Embed, quote, SlashCommandBuilder } from "@discordjs/builders";
-import checkGuild from "@lib/checks/guild";
-import { checkPermissions } from "@lib/checks/permissions";
-import { ErrorEmbed, SuccessEmbed } from "@lib/discordEmbeds";
-import { deleteAlias, listAliases, updateAlias } from "@lib/operations/alias";
 import { CommandInteraction } from "discord.js";
+import checkGuild from "../lib/checks/guild";
+import { checkPermissions } from "../lib/checks/permissions";
+import { ErrorEmbed, SuccessEmbed } from "../lib/discordEmbeds";
+import { deleteAlias, listAliases, updateAlias } from "../lib/operations/alias";
 import { Command } from "./command";
 
 // Set General Template

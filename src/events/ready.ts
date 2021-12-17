@@ -1,11 +1,11 @@
-import { debug, info } from "@lib/colourfulLogger";
-import { getChannel } from "@lib/getCached";
-import { updateActivityCount } from "@lib/operations/general";
-import { refreshSecondary } from "@lib/operations/secondary";
-import { db } from "@lib/prisma";
-import { scheduler } from "@lib/scheduler";
 import { Client } from "discord.js";
 import { SimpleIntervalJob, Task } from "toad-scheduler";
+import { debug, info } from "../lib/colourfulLogger";
+import { getChannel } from "../lib/getCached";
+import { updateActivityCount } from "../lib/operations/general";
+import { refreshSecondary } from "../lib/operations/secondary";
+import { db } from "../lib/prisma";
+import { scheduler } from "../lib/scheduler";
 import { event } from "./event";
 
 export const ready: event = {

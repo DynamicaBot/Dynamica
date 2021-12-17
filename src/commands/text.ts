@@ -1,8 +1,8 @@
 import { SlashCommandBuilder } from "@discordjs/builders";
-import { checkPermissions } from "@lib/checks/permissions";
-import { ErrorEmbed, SuccessEmbed } from "@lib/discordEmbeds";
-import { updateGuild } from "@lib/operations/guild";
 import { CommandInteraction } from "discord.js";
+import { checkPermissions } from "../lib/checks/permissions";
+import { ErrorEmbed, SuccessEmbed } from "../lib/discordEmbeds";
+import { updateGuild } from "../lib/operations/guild";
 import { Command } from "./command";
 
 export const text: Command = {

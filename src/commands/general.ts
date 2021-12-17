@@ -1,10 +1,10 @@
 import { SlashCommandBuilder } from "@discordjs/builders";
-import { checkPermissions } from "@lib/checks/permissions";
-import { checkSecondary } from "@lib/checks/validSecondary";
-import { ErrorEmbed, SuccessEmbed } from "@lib/discordEmbeds";
-import { getGuildMember } from "@lib/getCached";
-import { db } from "@lib/prisma";
 import { CommandInteraction } from "discord.js";
+import { checkPermissions } from "../lib/checks/permissions";
+import { checkSecondary } from "../lib/checks/validSecondary";
+import { ErrorEmbed, SuccessEmbed } from "../lib/discordEmbeds";
+import { getGuildMember } from "../lib/getCached";
+import { db } from "../lib/prisma";
 import { Command } from "./command";
 
 // Set General Template
