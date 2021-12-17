@@ -161,7 +161,7 @@ export const refreshSecondary = async (channel: BaseGuildVoiceChannel) => {
   });
   const aliases = await db.alias.findMany({
     where: {
-      guildId: channel.id,
+      guildId: channel.guildId,
     },
   });
   if (!secondary) return;

@@ -2,6 +2,11 @@
   "name": "dynamicabot",
   "version": "1.0.0",
   "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/DynamicaBot/Dynamica"
+  },
+  "readme": "README.md",
   "dependencies": {
     "@discordjs/builders": "^0.9.0",
     "@discordjs/rest": "^0.1.0-canary.0",
