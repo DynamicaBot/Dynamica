@@ -1,7 +1,7 @@
 import { Client } from "discord.js";
 import { SimpleIntervalJob, Task } from "toad-scheduler";
-import { debug, info } from "../lib/colourfulLogger";
 import { getChannel } from "../lib/getCached";
+import { logger } from "../lib/logger";
 import { updateActivityCount } from "../lib/operations/general";
 import { refreshSecondary } from "../lib/operations/secondary";
 import { db } from "../lib/prisma";
@@ -12,7 +12,7 @@ export const ready: event = {
   name: "ready",
   once: true,
   async execute(client: Client) {
-    info(`Ready! Logged in as ${client.user?.tag}`);
+    logger.info(`Ready! Logged in as ${client.user?.tag}`);
     const secondaries = await db.secondary.findMany();
     Promise.all(
       secondaries.map(async (secondary) => {
@@ -34,7 +34,7 @@ export const ready: event = {
       })
     )
       .catch((error) => error(error))
-      .then(() => debug("Channels Restored"));
+      .then(() => logger.debug("Channels Restored"));
     updateActivityCount(client);
   },
 };

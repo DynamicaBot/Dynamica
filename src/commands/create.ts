@@ -19,7 +19,6 @@ export const create: Command = {
         .setRequired(false)
     ),
   async execute(interaction: CommandInteraction) {
-    console.log("test");
     const section = interaction.options.getChannel(
       "section"
     ) as GuildChannel | null;

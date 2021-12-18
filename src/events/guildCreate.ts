@@ -1,6 +1,6 @@
 import { Guild } from "discord.js";
 import checkGuild from "../lib/checks/guild";
-import { debug } from "../lib/colourfulLogger";
+import { logger } from "../lib/logger";
 import { event } from "./event";
 
 export const guildCreate: event = {
@@ -13,6 +13,6 @@ export const guildCreate: event = {
       });
     }
     checkGuild(guild.id);
-    debug(`Joined guild ${guild.id} named: ${guild.name}`);
+    logger.debug(`Joined guild ${guild.id} named: ${guild.name}`);
   },
 };

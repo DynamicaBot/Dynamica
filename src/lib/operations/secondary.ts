@@ -5,9 +5,9 @@ import {
 } from "discord.js";
 import { SimpleIntervalJob, Task } from "toad-scheduler";
 import checkGuild from "../checks/guild";
-import { debug } from "../colourfulLogger";
 import { formatChannelName } from "../formatString";
 import { getChannel } from "../getCached";
+import { logger } from "../logger";
 import { updateActivityCount } from "../operations/general";
 import { db } from "../prisma";
 import { scheduler } from "../scheduler";
@@ -45,7 +45,7 @@ export const deleteDiscordSecondary = async (
   ]);
   scheduler.removeById(id);
   await updateActivityCount(channel.client);
-  await debug(`Secondary channel deleted ${id}.`);
+  await logger.debug(`Secondary channel deleted ${id}.`);
 };
 
 /**
@@ -140,7 +140,7 @@ export const createSecondary = async (
   );
 
   await updateActivityCount(channelManager.client);
-  await debug(
+  await logger.debug(
     `Secondary channel ${secondary.name} created by ${member?.user.tag} in ${channelManager.guild.name}.`
   );
 };
@@ -190,12 +190,12 @@ export const refreshSecondary = async (channel: BaseGuildVoiceChannel) => {
     memberCount: channel.members.size,
   });
   if (channel.name === name) {
-    debug(`Skipped rename for ${channel.name} as name hasn't changed.`);
+    logger.debug(`Skipped rename for ${channel.name} as name hasn't changed.`);
   } else {
     await channel.edit({
       name,
     });
-    debug(
+    logger.debug(
       `Secondary channel ${channel.name} in ${channel.guild.name} refreshed.`
     );
   }

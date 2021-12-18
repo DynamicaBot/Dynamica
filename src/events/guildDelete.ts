@@ -1,5 +1,5 @@
 import { Guild } from "discord.js";
-import { debug } from "../lib/colourfulLogger";
+import { logger } from "../lib/logger";
 import { event } from "./event";
 
 export const guildDelete: event = {
@@ -8,6 +8,6 @@ export const guildDelete: event = {
   async execute(guild: Guild) {
     const manager = await guild.channels.cache.get("Dynamica Manager");
     await manager?.delete();
-    debug(`Left guild ${guild.id} named: ${guild.name}`);
+    logger.debug(`Left guild ${guild.id} named: ${guild.name}`);
   },
 };
