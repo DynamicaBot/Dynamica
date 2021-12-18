@@ -7,7 +7,7 @@ import {
   ThreadChannel,
 } from "discord.js";
 import checkGuild from "../checks/guild";
-import { debug } from "../colourfulLogger";
+import { logger } from "../logger";
 import { db } from "../prisma";
 
 /**
@@ -39,7 +39,7 @@ export const createPrimary = async (
       guildId: channelManager.guild.id,
     },
   });
-  await debug(
+  await logger.debug(
     `New primary channel ${channel.name} created by ${primary.creator}.`
   );
 };
@@ -65,7 +65,7 @@ export const deleteDiscordPrimary = async (
     }),
     channel?.delete(),
   ]);
-  await debug(
+  await logger.debug(
     `Primary channel ${channel.name} in ${channel.guild.name} deleted.`
   );
 };
@@ -80,7 +80,7 @@ export const deletedPrimary = async (channelId: string) => {
     where: { id: channelId },
     include: { secondaries: true },
   });
-  await debug(`Primary channel ${primary.id} deleted.`);
+  await logger.debug(`Primary channel ${primary.id} deleted.`);
 };
 
 /**
@@ -93,7 +93,7 @@ export const updatePrimary = async (channelId: string, data: any) => {
     data,
     where: { id: channelId },
   });
-  await debug(`Primary channel ${primary.id} updated.`);
+  await logger.debug(`Primary channel ${primary.id} updated.`);
 };
 
 export const getPrimary = async (

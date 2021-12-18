@@ -2,8 +2,8 @@ import { Client, Intents } from "discord.js";
 import dotenv from "dotenv";
 import * as commands from "./commands";
 import * as events from "./events";
-import { error, info } from "./lib/colourfulLogger";
 import { ErrorEmbed } from "./lib/discordEmbeds";
+import { logger } from "./lib/logger";
 import { db } from "./lib/prisma";
 import { scheduler } from "./lib/scheduler";
 dotenv.config();
@@ -30,7 +30,7 @@ client.on("interactionCreate", async (interaction) => {
   try {
     await command.execute(interaction);
   } catch (e) {
-    error(e);
+    logger.error(e);
     interaction.reply({
       embeds: [ErrorEmbed("There was an error while executing this command!")],
       ephemeral: true,
@@ -55,5 +55,5 @@ process.on("SIGINT", () => {
   client.destroy();
   scheduler.stop();
   db.$disconnect();
-  info("Bot Stopped");
+  logger.info("Bot Stopped");
 });

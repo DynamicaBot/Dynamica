@@ -3,9 +3,9 @@ import { CommandInteraction } from "discord.js";
 import { checkOwner } from "../lib/checks/owner";
 import { checkPermissions } from "../lib/checks/permissions";
 import { checkSecondary } from "../lib/checks/validSecondary";
-import { info } from "../lib/colourfulLogger";
 import { ErrorEmbed, SuccessEmbed } from "../lib/discordEmbeds";
 import { getGuildMember } from "../lib/getCached";
+import { logger } from "../lib/logger";
 import { Command } from "./command";
 
 // Set lock Template
@@ -111,6 +111,6 @@ export const lock: Command = {
       }
     }
 
-    info(`${channel.id} name changed.`);
+    logger.info(`${channel.id} name changed.`);
   },
 };
