@@ -1,0 +1,50 @@
+name: Bug
+description: File a bug report
+labels:
+  - "bug"
+
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Before opening a bug report, please search for the behaviour in the existing issues. 
+
+        ---
+
+        Thank you for taking the time to file a bug report. To address this bug as fast as possible, we need some information.
+  - type: input
+    id: version
+    attributes:
+      label: Version
+      description: "The version of the bot given by the `/version` command"
+    validations:
+      required: true
+  - type: dropdown
+    id: method
+    attributes:
+      label: Hosting method
+      description: "How the bot is being run. Select the hosting method that is being used to run the bot. If you are using the bot provided on the website select `Hosted`"
+      options:
+        - "Docker"
+        - "NodeJS"
+        - "Hosted"
+    validations:
+      required: true
+  - type: textarea
+    id: bug-description
+    attributes:
+      label: Bug description
+      description: What happened?
+    validations:
+      required: true
+  - type: textarea
+    id: steps
+    attributes:
+      label: Steps to reproduce
+      description: Which steps do we need to take to reproduce this error?
+  - type: textarea
+    id: logs
+    attributes:
+      label: Relevant log output
+      description: If applicable, provide relevant log output. No need for backticks here.
+      render: shell

@@ -19,6 +19,7 @@
       "@discordjs/builders"
     ] /* Specify type package names to be included without being referenced in a source file. */,
     /* Emit */
+    "resolveJsonModule": true,
     "typeRoots": ["node_modules/@types"],
     "sourceMap": true /* Create source map files for emitted JavaScript files. */,
     "outDir": "./dist" /* Specify an output folder for all emitted files. */,
