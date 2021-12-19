@@ -1,6 +1,8 @@
 import { Client, Intents } from "discord.js";
 import dotenv from "dotenv";
+import * as commands from "./commands";
 import * as events from "./events";
+import { ErrorEmbed } from "./lib/discordEmbeds";
 import { logger } from "./lib/logger";
 import { db } from "./lib/prisma";
 import { scheduler } from "./lib/scheduler";
@@ -16,6 +18,19 @@ const client = new Client({
 });
 
 const eventList = Object.values(events);
+
+client.on("interactionCreate", async (interaction) => {
+  if (!interaction.isCommand()) return;
+  try {
+    await commands[interaction.commandName].execute(interaction);
+  } catch (e) {
+    logger.error(e);
+    interaction.reply({
+      embeds: [ErrorEmbed("There was an error while executing this command!")],
+      ephemeral: true,
+    });
+  }
+});
 
 // Register event handlers
 for (const event of eventList) {

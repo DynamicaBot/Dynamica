@@ -23,10 +23,18 @@ if (!TOKEN || !CLIENT_ID) {
         await rest.put(Routes.applicationGuildCommands(CLIENT_ID, GUILD_ID), {
           body: commandList,
         });
+        await logger.debug(
+          "Updated commands: ",
+          commandList.map((c) => c.name).join(", ")
+        );
       } else {
         await rest.put(Routes.applicationCommands(CLIENT_ID), {
           body: commandList,
         });
+        await logger.debug(
+          "Updated commands: ",
+          commandList.map((c) => c.name).join(", ")
+        );
       }
 
       await logger.info("Successfully reloaded application (/) commands.");
