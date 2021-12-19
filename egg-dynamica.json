@@ -13,7 +13,7 @@
         "ghcr.io\/parkervcp\/yolks:nodejs_16"
     ],
     "file_denylist": [],
-    "startup": "yarn start",
+    "startup": "yarn prisma migrate deploy && yarn start",
     "config": {
         "files": "{}",
         "startup": "{\r\n    \"done\": \"Ready! Logged in as \"\r\n}",
@@ -22,7 +22,7 @@
     },
     "scripts": {
         "installation": {
-            "script": "apt-get update\r\napt-get install openssl unzip wget -y -qq\r\nwget https://github.com/DynamicaBot/Dynamica/releases/latest/download/release.zip\r\nunzip release.zip\r\nrm release.zip\r\nyarn install --frozen-lockfile --production\r\nyarn deploy\r\nyarn prisma migrate deploy",
+            "script": "apt-get update\r\napt-get install openssl unzip wget -y -qq\r\ncd \/mnt\/server\r\nshopt -s extglob\r\nrm -rf !(dynamica|node_modules)\r\nwget https://github.com/DynamicaBot/Dynamica/releases/latest/download/release.zip\r\nunzip release.zip\r\nrm release.zip\r\nyarn install --frozen-lockfile --production\r\nyarn deploy",
             "container": "node:16-buster-slim",
             "entrypoint": "bash"
         }
