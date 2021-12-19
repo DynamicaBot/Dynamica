@@ -22,7 +22,7 @@
     },
     "scripts": {
         "installation": {
-            "script": "apt-get update\r\napt-get install openssl unzip wget -y -qq\r\nwget https://github.com/DynamicaBot/Dynamica/releases/latest/download/release.zip\r\nunzip build.zip\r\nrm build.zip\r\nyarn install --frozen-lockfile --production\r\nyarn build\r\nyarn deploy\r\nyarn prisma migrate deploy",
+            "script": "apt-get update\r\napt-get install openssl unzip wget -y -qq\r\nwget https://github.com/DynamicaBot/Dynamica/releases/latest/download/release.zip\r\nunzip release.zip\r\nrm release.zip\r\nyarn install --frozen-lockfile --production\r\nyarn deploy\r\nyarn prisma migrate deploy",
             "container": "node:16-buster-slim",
             "entrypoint": "bash"
         }
