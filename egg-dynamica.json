@@ -18,7 +18,7 @@
         "files": "{}",
         "startup": "{\r\n    \"done\": \"Ready! Logged in as \"\r\n}",
         "logs": "{}",
-        "stop": "^C"
+        "stop": "^^C"
     },
     "scripts": {
         "installation": {
