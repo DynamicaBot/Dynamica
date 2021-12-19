@@ -103,7 +103,7 @@ volumes:
       path: /tmp/cache
 ---
 kind: "pipeline"
-name: "Publish Github Release"
+name: "Publish GHCR.io Release"
 type: "docker"
 trigger:
   when:
