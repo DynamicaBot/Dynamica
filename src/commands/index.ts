@@ -15,3 +15,4 @@ export { ping } from "./ping";
 export { template } from "./template";
 export { text } from "./text";
 export { transfer } from "./transfer";
+export { version } from "./version";
