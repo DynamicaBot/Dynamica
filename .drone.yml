@@ -42,11 +42,10 @@ kind: "pipeline"
 name: "Publish Github Release"
 type: "docker"
 trigger:
-  when:
-    event:
-      - tag
-    branch:
-      - master
+  event:
+    - tag
+  branch:
+    - master
 steps:
   - name: Restore Cache
     pull: if-not-exists
@@ -106,11 +105,10 @@ kind: "pipeline"
 name: "Publish GHCR.io Release"
 type: "docker"
 trigger:
-  when:
-    event:
-      - tag
-    branch:
-      - master
+  event:
+    - tag
+  branch:
+    - master
 steps:
   - name: Publish Bot on ghcr.io
     pull: if-not-exists
@@ -137,6 +135,6 @@ volumes:
       path: /tmp/cache
 ---
 kind: signature
-hmac: da207c026c9068332d85460d7f63e501a662e8c5f093038605c79ed157472942
+hmac: 5b0beb318ea51bb78660d362eb36de67d431b7b8ccdc1030e6ded1c0d73c86f9
 
 ...
