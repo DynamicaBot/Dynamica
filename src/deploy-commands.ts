@@ -18,7 +18,7 @@ if (!TOKEN || !CLIENT_ID) {
 
   (async () => {
     try {
-      logger.info("Started refreshing application (/) commands.");
+      await logger.info("Started refreshing application (/) commands.");
       if (GUILD_ID) {
         await rest.put(Routes.applicationGuildCommands(CLIENT_ID, GUILD_ID), {
           body: commandList,
@@ -29,9 +29,9 @@ if (!TOKEN || !CLIENT_ID) {
         });
       }
 
-      logger.info("Successfully reloaded application (/) commands.");
+      await logger.info("Successfully reloaded application (/) commands.");
     } catch (error) {
-      logger.error(error);
+      await logger.error(error);
     }
   })();
 }
