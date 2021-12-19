@@ -13,16 +13,16 @@
         "ghcr.io\/parkervcp\/yolks:nodejs_16"
     ],
     "file_denylist": [],
-    "startup": "if [[ -d .git ]] && [[ {{AUTO_UPDATE}} == \"1\" ]]; then git pull --rebase; yarn install --frozen-lockfile; fi; yarn build; yarn deploy; yarn prisma migrate deploy; yarn start",
+    "startup": "yarn start",
     "config": {
         "files": "{}",
         "startup": "{\r\n    \"done\": \"Ready! Logged in as \"\r\n}",
         "logs": "{}",
-        "stop": "^^C"
+        "stop": "^C"
     },
     "scripts": {
         "installation": {
-            "script": "apt-get update\r\napt-get install openssl git -y -qq\r\n\r\ncd \/mnt\/server\r\n\r\nif [ -d .git ]; then\r\n    git pull\r\nelse\r\n    git clone https:\/\/github.com\/DynamicaBot\/dynamica.git .;\r\nfi;\r\nyarn install --frozen-lockfile",
+            "script": "apt-get update\r\napt-get install openssl unzip wget -y -qq\r\nwget https://github.com/DynamicaBot/Dynamica/releases/latest/download/release.zip\r\nunzip build.zip\r\nrm build.zip\r\nyarn install --frozen-lockfile --production\r\nyarn build\r\nyarn deploy\r\nyarn prisma migrate deploy",
             "container": "node:16-buster-slim",
             "entrypoint": "bash"
         }
@@ -54,15 +54,6 @@
             "user_viewable": true,
             "user_editable": true,
             "rules": "required|string|size:18"
-        },
-        {
-            "name": "Auto Updater",
-            "description": "Set to 1 to auto update with the github repo.",
-            "env_variable": "AUTO_UPDATE",
-            "default_value": "0",
-            "user_viewable": true,
-            "user_editable": true,
-            "rules": "required|boolean"
         }
     ]
 }
