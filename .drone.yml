@@ -41,6 +41,8 @@ volumes:
 kind: "pipeline"
 name: "Publish Github Release"
 type: "docker"
+depends_on:
+  - "Build"
 trigger:
   event:
     - tag
@@ -103,6 +105,8 @@ volumes:
 ---
 kind: "pipeline"
 name: "Publish GHCR.io Release"
+depends_on:
+  - "Build"
 type: "docker"
 trigger:
   event:
