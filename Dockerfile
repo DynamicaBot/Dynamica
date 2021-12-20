@@ -8,6 +8,7 @@ RUN apt-get update && \
     rm -rf /var/lib/apt/lists/*
 
 COPY package.json .
+COPY prisma prisma
 COPY yarn.lock .
 
 # Build
@@ -16,7 +17,6 @@ WORKDIR /app
 
 COPY tsconfig.json .
 COPY src ./src
-COPY prisma/schema.prisma prisma/schema.prisma
 RUN yarn install --immutable
 RUN yarn build
 
@@ -27,6 +27,5 @@ WORKDIR /app
 ENV NODE_ENV="production"
 ENV DATABASE_URL "file:/app/config/db.sqlite"
 COPY --from=build /app/dist dist
-COPY prisma/schema.prisma prisma/schema.prisma
 RUN yarn install --production --frozen-lockfile
 CMD yarn deploy && yarn prisma migrate deploy && yarn start
