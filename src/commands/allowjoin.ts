@@ -39,7 +39,7 @@ export const allowjoin: Command = {
     await interaction.reply({
       ephemeral: true,
       embeds: [
-        SuccessEmbed(`${state ? "Disabled" : "Enabled"} Join Requests"`),
+        SuccessEmbed(`${!state ? "Disabled" : "Enabled"} Join Requests`),
       ],
     });
   },

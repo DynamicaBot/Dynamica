@@ -35,7 +35,7 @@ export const text: Command = {
       embeds: [
         SuccessEmbed(
           `Temporary text channels ${
-            state ? "disabled" : "disabled"
+            !state ? "disabled" : "disabled"
           } for all future created channels.`
         ),
       ],
