@@ -1,9 +1,11 @@
 import { SlashCommandBuilder } from "@discordjs/builders";
-import { CommandInteraction } from "discord.js";
+import {
+  CommandInteraction,
+  MessageActionRow,
+  MessageSelectMenu,
+} from "discord.js";
 import { checkPermissions } from "../lib/checks/permissions";
-import { checkSecondary } from "../lib/checks/validSecondary";
-import { ErrorEmbed, SuccessEmbed } from "../lib/discordEmbeds";
-import { getGuildMember } from "../lib/getCached";
+import { ErrorEmbed, InfoEmbed, SuccessEmbed } from "../lib/discordEmbeds";
 import { db } from "../lib/prisma";
 import { Command } from "./command";
 
@@ -20,43 +22,17 @@ export const general: Command = {
     ),
   async execute(interaction: CommandInteraction) {
     const name = interaction.options.getString("name", true);
+    const primaries = await db.primary.findMany({
+      where: { guildId: interaction.guild.id },
+    });
 
     if (!interaction.guild) return;
 
-    const guildMember = await getGuildMember(
-      interaction.guild?.members,
-      interaction.user.id
+    const discordChannels = [...interaction.guild.channels.cache.values()];
+
+    const availablePrimaryChannels = discordChannels.filter((discordChannel) =>
+      primaries.find((primary) => discordChannel.id === primary.id)
     );
-
-    const voiceId = guildMember?.voice.channelId;
-
-    // Check if the user is in a voice channel.
-    if (!voiceId) {
-      interaction.reply({
-        ephemeral: true,
-        embeds: [ErrorEmbed("Must be in a Dynamica-controlled voice channel.")],
-      });
-      return;
-    }
-
-    // Find a valid secondary channel
-    const secondary = await db.secondary.findUnique({
-      where: {
-        id: voiceId,
-      },
-      include: {
-        primary: true,
-      },
-    });
-
-    // Error response for no secondary
-    if (!(await checkSecondary(interaction))) {
-      await interaction.reply({
-        ephemeral: true,
-        embeds: [ErrorEmbed("Not a valid Dynamica channel.")],
-      });
-      return;
-    }
 
     // Check dynamica role
     if (!(await checkPermissions(interaction))) {
@@ -67,16 +43,48 @@ export const general: Command = {
       return;
     }
 
-    if (!secondary) return;
-    // Update channel list
-    await db.primary.update({
-      where: { id: secondary.primary.id },
-      data: { generalName: name },
+    if (availablePrimaryChannels.length === 0) {
+      interaction.reply({
+        embeds: [InfoEmbed("No Primary channels.")],
+        ephemeral: true,
+      });
+      return;
+    }
+
+    const row = new MessageActionRow().addComponents(
+      new MessageSelectMenu().setCustomId("generalchannelselect").addOptions(
+        availablePrimaryChannels.map((primaryChannel) => ({
+          label: primaryChannel.name,
+          value: primaryChannel.id,
+        }))
+      )
+    );
+
+    await interaction.reply({
+      content: "Available Channels",
+      components: [row],
+      ephemeral: true,
     });
 
-    // Reply with template
-    await interaction.reply({
-      embeds: [SuccessEmbed(`General template Changed to ${name}`)],
-    });
+    interaction.channel
+      .createMessageComponentCollector({
+        componentType: "SELECT_MENU",
+        filter: (collected) => collected.user.id === interaction.user.id,
+      })
+      .once("collect", async (collected) => {
+        const selectedChannel = collected.values[0];
+        await db.primary.update({
+          where: { id: selectedChannel },
+          data: { generalName: name },
+        });
+        await collected.update({
+          components: null,
+        });
+        await interaction.editReply({
+          content: null,
+          components: [],
+          embeds: [SuccessEmbed(`General template Changed to ${name}.`)],
+        });
+      });
   },
 };
