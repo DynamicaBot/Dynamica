@@ -8,6 +8,7 @@ export { general } from "./general";
 export { help } from "./help";
 export { info } from "./info";
 export { invite } from "./invite";
+export { join } from "./join";
 export { limit } from "./limit";
 export { lock } from "./lock";
 export { name } from "./name";
