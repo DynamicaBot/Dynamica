@@ -1,4 +1,4 @@
-import { Embed } from "@discordjs/builders";
+import { Embed, hyperlink } from "@discordjs/builders";
 import { Guild } from "discord.js";
 import checkGuild from "../lib/checks/guild";
 import { logger } from "../lib/logger";
@@ -51,7 +51,12 @@ const botInfoEmbed = new Embed()
   .addField({
     name: "Basic Commands",
     value: basicCommands
-      .map((command) => `\`${command.command}\` - ${command.description}`)
+      .map(
+        (command) =>
+          `${hyperlink(`\`${command.command}\``, command.help)} - ${
+            command.description
+          }`
+      )
       .join("\n"),
     inline: false,
   })
@@ -65,7 +70,7 @@ const botInfoEmbed = new Embed()
   })
   .setAuthor({
     name: "Dynamica",
-    iconURL: "https://dynamica.dev/dynamica.png",
+    iconURL: "https://dynamica.dev/img/dynamica.png",
   });
 
 export const guildCreate: event = {
@@ -73,7 +78,6 @@ export const guildCreate: event = {
   once: false,
   async execute(guild: Guild) {
     guild.systemChannel.send({
-      content: "test",
       embeds: [botInfoEmbed],
     });
     checkGuild(guild.id);
