@@ -33,7 +33,7 @@ export const ready: event = {
           : Promise.reject("Failed to refresh channels.");
       })
     )
-      .catch((error) => error(error))
+      .catch((error) => logger.error(error))
       .then(() => logger.debug("Channels Restored"));
     updateActivityCount(client);
   },
