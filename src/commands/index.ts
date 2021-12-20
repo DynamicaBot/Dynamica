@@ -1,5 +1,6 @@
 export { about } from "./about";
 export { alias } from "./alias";
+export { allowjoin } from "./allowjoin";
 export { allyourbase } from "./allyourbase";
 export { avc } from "./avc";
 export { bitrate } from "./bitrate";

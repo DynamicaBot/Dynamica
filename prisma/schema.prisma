@@ -15,6 +15,7 @@ model Guild {
   primaryChannels  Primary[]
   secondaryChannels  Secondary[]
   textChannelsEnabled Boolean @default(false)
+  allowJoinRequests Boolean @default(false)
   aliases Alias[] @relation("AliasOnGuild")
 }
 

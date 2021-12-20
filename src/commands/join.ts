@@ -24,9 +24,17 @@ export const join: Command = {
     const channel = interaction.options.getChannel("channel", true);
     const channelConfig = await db.secondary.findUnique({
       where: { id: channel.id },
+      include: { guild: true },
     });
     if (!channelConfig) {
       interaction.reply("Not a valid Dynamica channel.");
+      return;
+    }
+    if (!channelConfig.guild.allowJoinRequests) {
+      interaction.reply({
+        ephemeral: true,
+        embeds: [ErrorEmbed("Join requests are not enabled on this server.")],
+      });
       return;
     }
 
