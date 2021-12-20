@@ -40,11 +40,7 @@ export function formatChannelName(
 
   const activityList = uniq(activities);
 
-  const filteredActivityList = activityList
-    .filter((activity) => activity !== "Spotify")
-    .filter((activity) => activity !== "Custom Status");
-
-  const aliasedActivities = filteredActivityList.map((activity) => {
+  const aliasedActivities = activityList.map((activity) => {
     const alias = aliases.find((a) => a.activity === activity);
     if (alias) {
       return alias.alias;

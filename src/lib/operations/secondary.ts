@@ -79,7 +79,11 @@ export const createSecondary = async (
     return entry[1].presence?.activities.map((activity) => activity.name);
   });
 
-  const str = !activities.length
+  const filteredActivityList = activities
+    .filter((activity) => activity !== "Spotify")
+    .filter((activity) => activity !== "Custom Status");
+
+  const str = !filteredActivityList.length
     ? primaryConfig.generalName
     : primaryConfig.template;
 
@@ -87,7 +91,7 @@ export const createSecondary = async (
     formatChannelName(str, {
       creator: member?.displayName as string,
       channelNumber: primaryConfig.secondaries.length + 1,
-      activities: activities,
+      activities: filteredActivityList,
       aliases,
       memberCount: primaryChannel.members.size,
     }),
@@ -177,16 +181,19 @@ export const refreshSecondary = async (channel: BaseGuildVoiceChannel) => {
     if (!entry[1].presence) return [];
     return entry[1].presence?.activities.map((activity) => activity.name);
   });
+  const filteredActivityList = activities
+    .filter((activity) => activity !== "Spotify")
+    .filter((activity) => activity !== "Custom Status");
   const str = secondary.name
     ? secondary.name
-    : !activities.length
+    : !filteredActivityList.length
     ? secondary.primary.generalName
     : secondary.primary.template;
   const name = formatChannelName(str, {
     creator: creator ? creator : "",
     aliases: aliases,
     channelNumber: 1,
-    activities,
+    activities: filteredActivityList,
     memberCount: channel.members.size,
   });
   if (channel.name !== name) {
