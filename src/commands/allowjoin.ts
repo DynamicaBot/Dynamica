@@ -31,7 +31,7 @@ export const allowjoin: Command = {
     }
     const state = interaction.options.getBoolean("state", true);
     await db.guild.update({
-      where: { id: interaction.id },
+      where: { id: interaction.guild.id },
       data: {
         allowJoinRequests: state,
       },
