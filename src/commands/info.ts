@@ -40,6 +40,10 @@ export const info: Command = {
               {
                 name: "Total Members",
                 value: `${interaction.guild?.memberCount}`,
+              },
+              {
+                name: "Shard Count",
+                value: `${interaction.client.shard.count}`,
               }
             )
             .setColor(3447003),
