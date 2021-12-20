@@ -189,13 +189,11 @@ export const refreshSecondary = async (channel: BaseGuildVoiceChannel) => {
     activities,
     memberCount: channel.members.size,
   });
-  if (channel.name === name) {
-    logger.debug(`Skipped rename for ${channel.name} as name hasn't changed.`);
-  } else {
+  if (channel.name !== name) {
     await channel.edit({
       name,
     });
-    logger.debug(
+    await logger.debug(
       `Secondary channel ${channel.name} in ${channel.guild.name} refreshed.`
     );
   }
