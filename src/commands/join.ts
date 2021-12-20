@@ -57,17 +57,11 @@ export const join: Command = {
       content: `Does <@${interaction.user.id}> have permission to join <#${channel.id}> ? As the creator <@${creator}>, are they allowed to join?`,
     });
     interaction.channel
-      .createMessageComponentCollector({ componentType: "BUTTON" })
+      .createMessageComponentCollector({
+        componentType: "BUTTON",
+        filter: (filteritem) => filteritem.user.id === channelConfig.creator,
+      })
       .once("collect", async (collected) => {
-        if (collected.user.id !== channelConfig.creator) {
-          collected.reply({
-            ephemeral: true,
-            embeds: [
-              SuccessEmbed("You're not the user who created the channel."),
-            ],
-          });
-          return;
-        }
         const button = collected;
         if (button.customId === "channeljoinaccept") {
           const discordChannel = await getChannel(
