@@ -1,5 +1,6 @@
 import { Embed, SlashCommandBuilder } from "@discordjs/builders";
-import { CommandInteraction } from "discord.js";
+import Cluster from "discord-hybrid-sharding";
+import { Base, CommandInteraction } from "discord.js";
 import { Command } from "./command";
 
 export const info: Command = {
@@ -29,6 +30,9 @@ export const info: Command = {
         );
       }
     } else if (interaction.options.getSubcommand() === "server") {
+      const client = interaction.client as Base["client"] & {
+        cluster: Cluster.Client;
+      };
       await interaction.reply({
         embeds: [
           new Embed()
@@ -40,10 +44,6 @@ export const info: Command = {
               {
                 name: "Total Members",
                 value: `${interaction.guild?.memberCount}`,
-              },
-              {
-                name: "Shard Count",
-                value: `${interaction.client.shard.count}`,
               }
             )
             .setColor(3447003),
