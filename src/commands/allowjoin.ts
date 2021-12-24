@@ -5,6 +5,7 @@ import { db } from "../lib/prisma";
 import { Command } from "./command";
 
 export const allowjoin: Command = {
+  conditions: [checkPermissions],
   data: new SlashCommandBuilder()
     .setName("allowjoin")
     .setDescription("Allow users to request to join a locked channel.")

@@ -6,6 +6,7 @@ import { updateGuild } from "../lib/operations/guild";
 import { Command } from "./command";
 
 export const text: Command = {
+  conditions: [checkPermissions],
   data: new SlashCommandBuilder()
     .setName("text")
     .setDescription("Enable or disable temporary text channels")

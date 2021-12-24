@@ -1,7 +1,6 @@
 import { SlashCommandBuilder } from "@discordjs/builders";
 import { CommandInteraction } from "discord.js";
 import { checkOwner } from "../lib/checks/owner";
-import { checkPermissions } from "../lib/checks/permissions";
 import { checkSecondary } from "../lib/checks/validSecondary";
 import { ErrorEmbed, SuccessEmbed } from "../lib/discordEmbeds";
 import { getGuildMember } from "../lib/getCached";
@@ -10,6 +9,7 @@ import { Command } from "./command";
 
 // Set lock Template
 export const lock: Command = {
+  conditions: [checkOwner, checkSecondary],
   data: new SlashCommandBuilder()
     .setName("lock")
     .setDescription("Lock a channel to a certain role or user.")
@@ -47,27 +47,6 @@ export const lock: Command = {
     const channel = guildMember?.voice.channel;
 
     if (!channel) return;
-
-    if (
-      !(
-        (await checkOwner(guildMember.voice.channel, guildMember)) ||
-        (await checkPermissions(interaction))
-      )
-    ) {
-      interaction.reply({
-        embeds: [ErrorEmbed("You are not the current owner of this channel.")],
-        ephemeral: true,
-      });
-      return;
-    }
-
-    if (!(await checkSecondary(interaction))) {
-      await interaction.reply({
-        ephemeral: true,
-        embeds: [ErrorEmbed("Not a valid Dynamica channel.")],
-      });
-      return;
-    }
 
     const { permissionOverwrites } = channel;
 

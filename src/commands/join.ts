@@ -11,6 +11,7 @@ import { db } from "../lib/prisma";
 import { Command } from "./command";
 
 export const join: Command = {
+  conditions: [],
   data: new SlashCommandBuilder()
     .setName("join")
     .setDescription(`Request to join a locked voice channel.`),

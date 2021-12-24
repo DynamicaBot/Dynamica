@@ -5,12 +5,13 @@ import {
   MessageSelectMenu,
 } from "discord.js";
 import { checkPermissions } from "../lib/checks/permissions";
-import { ErrorEmbed, InfoEmbed, SuccessEmbed } from "../lib/discordEmbeds";
+import { InfoEmbed, SuccessEmbed } from "../lib/discordEmbeds";
 import { db } from "../lib/prisma";
 import { Command } from "./command";
 
 // Set General Template
 export const general: Command = {
+  conditions: [checkPermissions],
   data: new SlashCommandBuilder()
     .setName("general")
     .setDescription("Edit the name/template for the default general channel.")
@@ -33,15 +34,6 @@ export const general: Command = {
     const availablePrimaryChannels = discordChannels.filter((discordChannel) =>
       primaries.find((primary) => discordChannel.id === primary.id)
     );
-
-    // Check dynamica role
-    if (!(await checkPermissions(interaction))) {
-      await interaction.reply({
-        ephemeral: true,
-        embeds: [ErrorEmbed("Must have the Dynamica role to manage aliases.")],
-      });
-      return;
-    }
 
     if (availablePrimaryChannels.length === 0) {
       interaction.reply({

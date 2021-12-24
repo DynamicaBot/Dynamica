@@ -8,6 +8,7 @@ import { db } from "../lib/prisma";
 import { Command } from "./command";
 
 export const allyourbase: Command = {
+  conditions: [checkSecondary],
   data: new SlashCommandBuilder()
     .setName("allyourbase")
     .setDescription(
@@ -20,14 +21,6 @@ export const allyourbase: Command = {
       interaction.guild.members,
       interaction.user.id
     );
-
-    if (!(await checkSecondary(interaction))) {
-      await interaction.reply({
-        ephemeral: true,
-        embeds: [ErrorEmbed("Not a valid Dynamica channel.")],
-      });
-      return;
-    }
 
     const channel = guildMember?.voice.channel;
 

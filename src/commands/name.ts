@@ -1,9 +1,8 @@
 import { SlashCommandBuilder } from "@discordjs/builders";
 import { CommandInteraction } from "discord.js";
 import { checkOwner } from "../lib/checks/owner";
-import { checkPermissions } from "../lib/checks/permissions";
 import { checkSecondary } from "../lib/checks/validSecondary";
-import { ErrorEmbed, SuccessEmbed } from "../lib/discordEmbeds";
+import { SuccessEmbed } from "../lib/discordEmbeds";
 import { getGuildMember } from "../lib/getCached";
 import { logger } from "../lib/logger";
 import { db } from "../lib/prisma";
@@ -11,6 +10,7 @@ import { Command } from "./command";
 
 // Set General Template
 export const name: Command = {
+  conditions: [checkSecondary, checkOwner],
   data: new SlashCommandBuilder()
     .setName("name")
     .setDescription("Edit the name of the current channel.")
@@ -30,32 +30,8 @@ export const name: Command = {
       interaction.user.id
     );
 
-    if (!(await checkSecondary(interaction))) {
-      await interaction.reply({
-        ephemeral: true,
-        embeds: [ErrorEmbed("Not a valid Dynamica channel.")],
-      });
-      return;
-    }
-
     const channel = guildMember?.voice.channel;
 
-    if (!channel) return;
-    if (!guildMember?.voice.channel) return;
-
-    // check if current owner
-    if (
-      !(
-        (await checkOwner(guildMember.voice.channel, guildMember)) ||
-        (await checkPermissions(interaction))
-      )
-    ) {
-      interaction.reply({
-        embeds: [ErrorEmbed("You are not the current owner of this channel.")],
-        ephemeral: true,
-      });
-      return;
-    }
     await db.secondary.update({ where: { id: channel.id }, data: { name } });
     await interaction.reply({
       embeds: [
