@@ -3,12 +3,13 @@ import {
   SlashCommandSubcommandsOnlyBuilder,
 } from "@discordjs/builders";
 import { CommandInteraction } from "discord.js";
+import { Check } from "../lib/checks/check";
 
 interface Command {
   /**
-   * Conditions that need to be fulfilled.
+   * Conditions that need to be fulfilled. Commonly permissions checks.
    */
-  conditions: Array<(interaction: CommandInteraction) => Promise<boolean>>;
+  conditions: Check[];
   /**
    * The structure of the command itself.
    */

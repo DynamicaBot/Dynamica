@@ -2,13 +2,13 @@ import { Embed, quote, SlashCommandBuilder } from "@discordjs/builders";
 import { CommandInteraction } from "discord.js";
 import { checkGuild } from "../lib/checks/guild";
 import { checkPermissions } from "../lib/checks/permissions";
-import { ErrorEmbed, SuccessEmbed } from "../lib/discordEmbeds";
+import { SuccessEmbed } from "../lib/discordEmbeds";
 import { deleteAlias, listAliases, updateAlias } from "../lib/operations/alias";
 import { Command } from "./command";
 
 // Set General Template
 export const alias: Command = {
-  conditions: [checkGuild],
+  conditions: [checkGuild, checkPermissions],
   data: new SlashCommandBuilder()
     .setName("alias")
     .setDescription("Manage aliases.")
@@ -48,14 +48,6 @@ export const alias: Command = {
 
   async execute(interaction: CommandInteraction) {
     if (!interaction.guild?.members) return;
-
-    if (!(await checkPermissions(interaction))) {
-      await interaction.reply({
-        ephemeral: true,
-        embeds: [ErrorEmbed("Must have the Dynamica role to manage aliases.")],
-      });
-      return;
-    }
 
     if (interaction.options.getSubcommand() === "add") {
       const activity = interaction.options.getString("activity", true);

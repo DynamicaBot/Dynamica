@@ -1,5 +1,6 @@
 import { SlashCommandBuilder } from "@discordjs/builders";
 import { CommandInteraction } from "discord.js";
+import { checkGuild } from "../lib/checks/guild";
 import { checkPermissions } from "../lib/checks/permissions";
 import { checkSecondary } from "../lib/checks/validSecondary";
 import { ErrorEmbed, SuccessEmbed } from "../lib/discordEmbeds";
@@ -8,7 +9,7 @@ import { db } from "../lib/prisma";
 import { Command } from "./command";
 
 export const allyourbase: Command = {
-  conditions: [checkSecondary],
+  conditions: [checkSecondary, checkGuild],
   data: new SlashCommandBuilder()
     .setName("allyourbase")
     .setDescription(

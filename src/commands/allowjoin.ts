@@ -1,11 +1,12 @@
 import { SlashCommandBuilder } from "@discordjs/builders";
+import { checkGuild } from "../lib/checks/guild";
 import { checkPermissions } from "../lib/checks/permissions";
 import { ErrorEmbed, SuccessEmbed } from "../lib/discordEmbeds";
 import { db } from "../lib/prisma";
 import { Command } from "./command";
 
 export const allowjoin: Command = {
-  conditions: [checkPermissions],
+  conditions: [checkPermissions, checkGuild],
   data: new SlashCommandBuilder()
     .setName("allowjoin")
     .setDescription("Allow users to request to join a locked channel.")
