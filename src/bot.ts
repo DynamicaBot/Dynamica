@@ -1,4 +1,3 @@
-import Cluster from "discord-hybrid-sharding";
 import { Client, Intents } from "discord.js";
 import dotenv from "dotenv";
 import * as commands from "./commands";
@@ -17,11 +16,7 @@ const client = new Client({
     Intents.FLAGS.GUILD_VOICE_STATES,
     Intents.FLAGS.GUILD_PRESENCES,
   ],
-  shards: Cluster.data.SHARD_LIST,
-  shardCount: Cluster.data.TOTAL_SHARDS,
-}) as Client & { cluster: Cluster.Client };
-
-client.cluster = new Cluster.Client(client, true);
+});
 
 const eventList = Object.values(events);
 

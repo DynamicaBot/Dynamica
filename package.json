@@ -1,6 +1,6 @@
 {
   "name": "dynamicabot",
-  "version": "2021.12.19",
+  "version": "2021.12.20",
   "license": "MIT",
   "repository": {
     "type": "git",
@@ -24,7 +24,7 @@
   },
   "scripts": {
     "start": "node dist/index.js",
-    "dev": "nodemon src/index.ts --include src/",
+    "dev": "nodemon src/bot.ts --include src/",
     "build": "tsc -p .",
     "lint": "prettier --write ./src",
     "postinstall": "prisma generate",

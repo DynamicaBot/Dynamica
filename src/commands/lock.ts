@@ -30,7 +30,6 @@ export const lock: Command = {
         .setRequired(false)
     ),
   async execute(interaction: CommandInteraction) {
-    const name = interaction.options.getString("name");
     const role = interaction.options.getRole("role");
     const operation = interaction.options.getString("operation", true) as
       | "add"
@@ -56,14 +55,14 @@ export const lock: Command = {
         await interaction.reply({
           embeds: [
             SuccessEmbed(
-              `Removed permission for ${role.name} to access ${channel.name}.`
+              `Removed permission for <@&${role.id}> to access <#${channel.id}>.`
             ),
           ],
         });
       } else {
         await permissionOverwrites.set([]);
         await interaction.reply({
-          embeds: [SuccessEmbed(`Removed lock on ${channel.name}`)],
+          embeds: [SuccessEmbed(`Removed lock on <#${channel.id}>`)],
         });
       }
     } else if (operation === "add") {
@@ -77,7 +76,7 @@ export const lock: Command = {
         await permissionOverwrites.create(role.id, { CONNECT: true });
         await interaction.reply({
           embeds: [
-            SuccessEmbed(`Locked channel ${channel.name} to ${role.name}.`),
+            SuccessEmbed(`Locked channel <#${channel.id}> to <@&${role.id}>.`),
           ],
         });
       } else {
@@ -90,6 +89,6 @@ export const lock: Command = {
       }
     }
 
-    logger.info(`${channel.id} name changed.`);
+    logger.info(`${channel.id} locked.`);
   },
 };
