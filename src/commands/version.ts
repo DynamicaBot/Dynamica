@@ -4,6 +4,7 @@ import versionFile from "../version.json";
 import { Command } from "./command";
 
 export const version: Command = {
+  conditions: [],
   data: new SlashCommandBuilder()
     .setName("version")
     .setDescription("The version of the bot in use."),

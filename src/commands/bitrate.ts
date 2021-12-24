@@ -1,7 +1,6 @@
 import { SlashCommandBuilder } from "@discordjs/builders";
 import { CommandInteraction } from "discord.js";
 import { checkOwner } from "../lib/checks/owner";
-import { checkPermissions } from "../lib/checks/permissions";
 import { checkSecondary } from "../lib/checks/validSecondary";
 import { ErrorEmbed, SuccessEmbed } from "../lib/discordEmbeds";
 import { getGuildMember } from "../lib/getCached";
@@ -9,6 +8,7 @@ import { Command } from "./command";
 
 // Set General Template
 export const bitrate: Command = {
+  conditions: [checkOwner, checkSecondary],
   data: new SlashCommandBuilder()
     .setName("bitrate")
     .setDescription("Edit the bitrate of the current channel.")
@@ -27,32 +27,10 @@ export const bitrate: Command = {
       interaction.user.id
     );
 
-    if (!(await checkSecondary(interaction))) {
-      await interaction.reply({
-        ephemeral: true,
-        embeds: [ErrorEmbed("Not a valid Dynamica channel.")],
-      });
-      return;
-    }
-
     const channel = guildMember?.voice.channel;
 
     if (!channel) return;
     if (!guildMember?.voice.channel) return;
-
-    // check if current owner
-    if (
-      !(
-        (await checkOwner(guildMember.voice.channel, guildMember)) ||
-        (await checkPermissions(interaction))
-      )
-    ) {
-      interaction.reply({
-        embeds: [ErrorEmbed("You are not the current owner of this channel.")],
-        ephemeral: true,
-      });
-      return;
-    }
 
     if (!bitrate) {
       guildMember.voice.channel.edit({ bitrate: 64000 });

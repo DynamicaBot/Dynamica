@@ -4,6 +4,7 @@ import { getCommands } from "../lib/getCached";
 import { Command } from "./command";
 
 export const help: Command = {
+  conditions: [],
   data: new SlashCommandBuilder()
     .setName("help")
     .setDescription(

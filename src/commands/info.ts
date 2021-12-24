@@ -3,6 +3,7 @@ import { CommandInteraction } from "discord.js";
 import { Command } from "./command";
 
 export const info: Command = {
+  conditions: [],
   data: new SlashCommandBuilder()
     .setName("info")
     .setDescription("Get info about a user or a server!")
@@ -40,10 +41,6 @@ export const info: Command = {
               {
                 name: "Total Members",
                 value: `${interaction.guild?.memberCount}`,
-              },
-              {
-                name: "Shard Count",
-                value: `${interaction.client.shard.count}`,
               }
             )
             .setColor(3447003),

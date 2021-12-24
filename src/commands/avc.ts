@@ -3,6 +3,7 @@ import { CommandInteraction } from "discord.js";
 import { Command } from "./command";
 
 export const avc: Command = {
+  conditions: [],
   data: new SlashCommandBuilder()
     .setName("avc")
     .setDescription("About the original Auto Voice Channels bot by pixaal."),

@@ -1,7 +1,6 @@
 import { SlashCommandBuilder } from "@discordjs/builders";
 import { CommandInteraction } from "discord.js";
 import { checkOwner } from "../lib/checks/owner";
-import { checkPermissions } from "../lib/checks/permissions";
 import { checkSecondary } from "../lib/checks/validSecondary";
 import { ErrorEmbed, SuccessEmbed } from "../lib/discordEmbeds";
 import { getGuildMember } from "../lib/getCached";
@@ -10,6 +9,7 @@ import { Command } from "./command";
 
 // Set lock Template
 export const lock: Command = {
+  conditions: [checkOwner, checkSecondary],
   data: new SlashCommandBuilder()
     .setName("lock")
     .setDescription("Lock a channel to a certain role or user.")
@@ -30,7 +30,6 @@ export const lock: Command = {
         .setRequired(false)
     ),
   async execute(interaction: CommandInteraction) {
-    const name = interaction.options.getString("name");
     const role = interaction.options.getRole("role");
     const operation = interaction.options.getString("operation", true) as
       | "add"
@@ -48,27 +47,6 @@ export const lock: Command = {
 
     if (!channel) return;
 
-    if (
-      !(
-        (await checkOwner(guildMember.voice.channel, guildMember)) ||
-        (await checkPermissions(interaction))
-      )
-    ) {
-      interaction.reply({
-        embeds: [ErrorEmbed("You are not the current owner of this channel.")],
-        ephemeral: true,
-      });
-      return;
-    }
-
-    if (!(await checkSecondary(interaction))) {
-      await interaction.reply({
-        ephemeral: true,
-        embeds: [ErrorEmbed("Not a valid Dynamica channel.")],
-      });
-      return;
-    }
-
     const { permissionOverwrites } = channel;
 
     if (operation === "remove") {
@@ -77,14 +55,14 @@ export const lock: Command = {
         await interaction.reply({
           embeds: [
             SuccessEmbed(
-              `Removed permission for ${role.name} to access ${channel.name}.`
+              `Removed permission for <@&${role.id}> to access <#${channel.id}>.`
             ),
           ],
         });
       } else {
         await permissionOverwrites.set([]);
         await interaction.reply({
-          embeds: [SuccessEmbed(`Removed lock on ${channel.name}`)],
+          embeds: [SuccessEmbed(`Removed lock on <#${channel.id}>`)],
         });
       }
     } else if (operation === "add") {
@@ -98,7 +76,7 @@ export const lock: Command = {
         await permissionOverwrites.create(role.id, { CONNECT: true });
         await interaction.reply({
           embeds: [
-            SuccessEmbed(`Locked channel ${channel.name} to ${role.name}.`),
+            SuccessEmbed(`Locked channel <#${channel.id}> to <@&${role.id}>.`),
           ],
         });
       } else {
@@ -111,6 +89,6 @@ export const lock: Command = {
       }
     }
 
-    logger.info(`${channel.id} name changed.`);
+    logger.info(`${channel.id} locked.`);
   },
 };

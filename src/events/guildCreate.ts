@@ -1,6 +1,5 @@
 import { Embed, hyperlink } from "@discordjs/builders";
 import { Guild } from "discord.js";
-import checkGuild from "../lib/checks/guild";
 import { logger } from "../lib/logger";
 import { event } from "./event";
 
@@ -80,7 +79,6 @@ export const guildCreate: event = {
     guild.systemChannel.send({
       embeds: [botInfoEmbed],
     });
-    checkGuild(guild.id);
     logger.debug(`Joined guild ${guild.id} named: ${guild.name}`);
   },
 };

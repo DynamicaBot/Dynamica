@@ -4,7 +4,6 @@ import {
   GuildMember,
 } from "discord.js";
 import { SimpleIntervalJob, Task } from "toad-scheduler";
-import checkGuild from "../checks/guild";
 import { formatChannelName } from "../formatString";
 import { getChannel } from "../getCached";
 import { logger } from "../logger";
@@ -111,7 +110,6 @@ export const createSecondary = async (
   if (member) {
     member.voice.setChannel(secondary);
   }
-  await checkGuild(channelManager.guild.id);
   const textChannelId = async () => {
     if (primaryConfig.guild?.textChannelsEnabled && member) {
       const textChannel = await channelManager.create("Text Channel", {

@@ -3,6 +3,7 @@ import { CommandInteraction } from "discord.js";
 import { Command } from "./command";
 
 export const ping: Command = {
+  conditions: [],
   data: new SlashCommandBuilder()
     .setName("ping")
     .setDescription("Replies with Pong!"),

@@ -1,11 +1,13 @@
 import { SlashCommandBuilder } from "@discordjs/builders";
 import { CommandInteraction, GuildChannel } from "discord.js";
+import { checkGuild } from "../lib/checks/guild";
 import { checkPermissions } from "../lib/checks/permissions";
 import { ErrorEmbed, SuccessEmbed } from "../lib/discordEmbeds";
 import { createPrimary } from "../lib/operations/primary";
 import { Command } from "./command";
 
 export const create: Command = {
+  conditions: [checkPermissions, checkGuild],
   data: new SlashCommandBuilder()
     .setName("create")
     .setDescription("Create a primary channel.")
@@ -26,13 +28,6 @@ export const create: Command = {
       await interaction.reply({
         ephemeral: true,
         embeds: [ErrorEmbed("Bot requires manage channel permissions.")],
-      });
-      return;
-    }
-    if (!(await checkPermissions(interaction))) {
-      await interaction.reply({
-        ephemeral: true,
-        embeds: [ErrorEmbed("Must have the Dynamica role to manage aliases.")],
       });
       return;
     }

@@ -1,13 +1,16 @@
 import { CommandInteraction } from "discord.js";
 import { getGuildMember } from "../getCached";
 import { db } from "../prisma";
+import { Check } from "./check";
 
 /**
  * Checks to see if the voice channel the user is currently in is a channel that Dynamica manages.
  * @param interaction Discord Interaction
  * @returns Boolean if the secondary channel exists.
  */
-export const checkSecondary = async (interaction: CommandInteraction) => {
+export const checkSecondary: Check = async (
+  interaction: CommandInteraction
+) => {
   if (!interaction.guild?.members) return;
   const guildMember = await getGuildMember(
     interaction.guild?.members,

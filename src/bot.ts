@@ -1,6 +1,7 @@
 import { Client, Intents } from "discord.js";
 import dotenv from "dotenv";
 import * as commands from "./commands";
+import { Command } from "./commands/command";
 import * as events from "./events";
 import { ErrorEmbed } from "./lib/discordEmbeds";
 import { logger } from "./lib/logger";
@@ -22,7 +23,23 @@ const eventList = Object.values(events);
 client.on("interactionCreate", async (interaction) => {
   if (!interaction.isCommand()) return;
   try {
-    await commands[interaction.commandName].execute(interaction);
+    const command: Command = commands[interaction.commandName];
+    const conditions = await Promise.all(
+      command.conditions.map((condition) => condition(interaction))
+    );
+    if (!conditions.every((condition) => condition)) {
+      interaction.reply({
+        embeds: [
+          ErrorEmbed(
+            "You didn't meet one of the conditions to run this command."
+          ),
+        ],
+        ephemeral: true,
+      });
+      return;
+    }
+
+    await command.execute(interaction);
   } catch (e) {
     logger.error(e);
     interaction.reply({

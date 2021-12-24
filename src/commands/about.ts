@@ -3,6 +3,7 @@ import { CommandInteraction } from "discord.js";
 import { Command } from "./command";
 
 export const about: Command = {
+  conditions: [],
   data: new SlashCommandBuilder()
     .setName("about")
     .setDescription(`About the bot.`),

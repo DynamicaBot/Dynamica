@@ -1,12 +1,15 @@
 import { CommandInteraction } from "discord.js";
 import { getGuildMember } from "../getCached";
+import { Check } from "./check";
 
 /**
  * Checks permissions for admin or Dynamica Manager role.
  * @param interaction Discord Interaction
  * @returns Boolean if the member has permission to manage dynamica channels.
  */
-export const checkPermissions = async (interaction: CommandInteraction) => {
+export const checkPermissions: Check = async (
+  interaction: CommandInteraction
+) => {
   if (!interaction.guild) return false;
   const guildMember = await getGuildMember(
     interaction.guild.members,
