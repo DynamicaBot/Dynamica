@@ -14,6 +14,7 @@ export const ready: event = {
   async execute(client: Client) {
     logger.info(`Ready! Logged in as ${client.user?.tag}`);
     const secondaries = await db.secondary.findMany();
+    logger.time("refreshchannels");
     Promise.all(
       secondaries.map(async (secondary) => {
         // const cachedChannel = client.channels.cache.get(secondary.id);
@@ -34,7 +35,7 @@ export const ready: event = {
       })
     )
       .catch((error) => logger.error(error))
-      .then(() => logger.debug("Channels Restored"));
+      .then(() => logger.timeEnd("refreshchannels"));
     updateActivityCount(client);
   },
 };
