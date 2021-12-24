@@ -1,14 +1,13 @@
 import { SlashCommandBuilder } from "@discordjs/builders";
 import { CommandInteraction } from "discord.js";
-import { checkOwner } from "../lib/checks/owner";
-import { checkSecondary } from "../lib/checks/validSecondary";
+import { checkCreator, checkSecondary } from "../lib/checks";
 import { ErrorEmbed, SuccessEmbed } from "../lib/discordEmbeds";
 import { getGuildMember } from "../lib/getCached";
 import { Command } from "./command";
 
 // Set General Template
 export const bitrate: Command = {
-  conditions: [checkOwner, checkSecondary],
+  conditions: [checkCreator, checkSecondary],
   data: new SlashCommandBuilder()
     .setName("bitrate")
     .setDescription("Edit the bitrate of the current channel.")

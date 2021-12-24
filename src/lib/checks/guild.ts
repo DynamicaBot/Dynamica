@@ -8,7 +8,7 @@ import { Check } from "./check";
  * @returns Promise Boolean
  */
 export const checkGuild: Check = async (interaction: CommandInteraction) => {
-  if (!interaction.guild.id) return true;
+  if (!interaction.guild.id) return false;
   const { id } = interaction.guild;
   const guildConfig = await db.guild.findUnique({ where: { id } });
   if (!guildConfig) {
@@ -18,5 +18,6 @@ export const checkGuild: Check = async (interaction: CommandInteraction) => {
       },
     });
   }
+
   return true;
 };

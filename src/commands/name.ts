@@ -1,7 +1,6 @@
 import { SlashCommandBuilder } from "@discordjs/builders";
 import { CommandInteraction } from "discord.js";
-import { checkOwner } from "../lib/checks/owner";
-import { checkSecondary } from "../lib/checks/validSecondary";
+import { checkManager, checkSecondary } from "../lib/checks";
 import { SuccessEmbed } from "../lib/discordEmbeds";
 import { getGuildMember } from "../lib/getCached";
 import { logger } from "../lib/logger";
@@ -10,7 +9,7 @@ import { Command } from "./command";
 
 // Set General Template
 export const name: Command = {
-  conditions: [checkSecondary, checkOwner],
+  conditions: [checkSecondary, checkManager],
   data: new SlashCommandBuilder()
     .setName("name")
     .setDescription("Edit the name of the current channel.")

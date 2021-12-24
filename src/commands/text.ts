@@ -1,12 +1,12 @@
 import { SlashCommandBuilder } from "@discordjs/builders";
+import { checkManager } from "../lib/checks";
 import { checkGuild } from "../lib/checks/guild";
-import { checkPermissions } from "../lib/checks/permissions";
 import { SuccessEmbed } from "../lib/discordEmbeds";
 import { updateGuild } from "../lib/operations/guild";
 import { Command } from "./command";
 
 export const text: Command = {
-  conditions: [checkPermissions, checkGuild],
+  conditions: [checkManager, checkGuild],
   data: new SlashCommandBuilder()
     .setName("text")
     .setDescription("Enable or disable temporary text channels")

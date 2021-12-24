@@ -4,14 +4,14 @@ import {
   MessageActionRow,
   MessageSelectMenu,
 } from "discord.js";
-import { checkPermissions } from "../lib/checks/permissions";
+import { checkManager } from "../lib/checks";
 import { InfoEmbed, SuccessEmbed } from "../lib/discordEmbeds";
 import { db } from "../lib/prisma";
 import { Command } from "./command";
 
 // Set General Template
 export const general: Command = {
-  conditions: [checkPermissions],
+  conditions: [checkManager],
   data: new SlashCommandBuilder()
     .setName("general")
     .setDescription("Edit the name/template for the default general channel.")
