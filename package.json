@@ -1,12 +1,25 @@
 {
-  "name": "dynamicabot",
-  "version": "2021.12.20",
+  "name": "bot",
+  "version": "2021.12.21",
   "license": "MIT",
   "repository": {
     "type": "git",
     "url": "https://github.com/DynamicaBot/Dynamica"
   },
+  "bugs": {
+    "url": "https://github.com/DynamicaBot/Dynamica/issues"
+  },
+  "homepage": "https://dynamica.dev",
   "readme": "README.md",
+  "author": {
+    "name": "Dynamica",
+    "url": "https://dynamica.dev"
+  },
+  "publishConfig": {
+    "access": "public",
+    "registry": "https://npm.pkg.github.com/"
+  },
+  "main": "dist/index.js",
   "dependencies": {
     "@discordjs/builders": "^0.9.0",
     "@discordjs/rest": "^0.1.0-canary.0",
