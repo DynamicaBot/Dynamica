@@ -1,14 +1,12 @@
 import { SlashCommandBuilder } from "@discordjs/builders";
 import { CommandInteraction } from "discord.js";
-import { checkOwner } from "../lib/checks/owner";
-import { checkSecondary } from "../lib/checks/validSecondary";
+import { checkCreator, checkSecondary } from "../lib/checks";
 import { SuccessEmbed } from "../lib/discordEmbeds";
 import { getGuildMember } from "../lib/getCached";
 import { Command } from "./command";
 
-// Set General Template
 export const limit: Command = {
-  conditions: [checkSecondary, checkOwner],
+  conditions: [checkSecondary, checkCreator],
   data: new SlashCommandBuilder()
     .setName("limit")
     .setDescription(

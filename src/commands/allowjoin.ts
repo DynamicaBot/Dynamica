@@ -1,12 +1,11 @@
 import { SlashCommandBuilder } from "@discordjs/builders";
-import { checkGuild } from "../lib/checks/guild";
-import { checkPermissions } from "../lib/checks/permissions";
-import { ErrorEmbed, SuccessEmbed } from "../lib/discordEmbeds";
+import { checkGuild, checkManager } from "../lib/checks";
+import { SuccessEmbed } from "../lib/discordEmbeds";
 import { db } from "../lib/prisma";
 import { Command } from "./command";
 
 export const allowjoin: Command = {
-  conditions: [checkPermissions, checkGuild],
+  conditions: [checkManager, checkGuild],
   data: new SlashCommandBuilder()
     .setName("allowjoin")
     .setDescription("Allow users to request to join a locked channel.")
@@ -17,20 +16,6 @@ export const allowjoin: Command = {
         .setRequired(true)
     ),
   async execute(interaction) {
-    if (!interaction.guild) {
-      interaction.reply({
-        embeds: [ErrorEmbed("Must be in a valid guild.")],
-        ephemeral: true,
-      });
-      return;
-    }
-    if (!(await checkPermissions(interaction))) {
-      interaction.reply({
-        embeds: [ErrorEmbed("You don't have permission.")],
-        ephemeral: true,
-      });
-      return;
-    }
     const state = interaction.options.getBoolean("state", true);
     await db.guild.update({
       where: { id: interaction.guild.id },

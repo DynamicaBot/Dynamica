@@ -1,15 +1,13 @@
 import { SlashCommandBuilder } from "@discordjs/builders";
 import { CommandInteraction } from "discord.js";
-import { checkOwner } from "../lib/checks/owner";
-import { checkSecondary } from "../lib/checks/validSecondary";
+import { checkCreator, checkSecondary } from "../lib/checks";
 import { ErrorEmbed, SuccessEmbed } from "../lib/discordEmbeds";
 import { getGuildMember } from "../lib/getCached";
 import { logger } from "../lib/logger";
 import { Command } from "./command";
 
-// Set lock Template
 export const lock: Command = {
-  conditions: [checkOwner, checkSecondary],
+  conditions: [checkCreator, checkSecondary],
   data: new SlashCommandBuilder()
     .setName("lock")
     .setDescription("Lock a channel to a certain role or user.")

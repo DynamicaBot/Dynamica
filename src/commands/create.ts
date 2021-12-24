@@ -1,13 +1,12 @@
 import { SlashCommandBuilder } from "@discordjs/builders";
 import { CommandInteraction, GuildChannel } from "discord.js";
-import { checkGuild } from "../lib/checks/guild";
-import { checkPermissions } from "../lib/checks/permissions";
+import { checkGuild, checkManager } from "../lib/checks";
 import { ErrorEmbed, SuccessEmbed } from "../lib/discordEmbeds";
 import { createPrimary } from "../lib/operations/primary";
 import { Command } from "./command";
 
 export const create: Command = {
-  conditions: [checkPermissions, checkGuild],
+  conditions: [checkManager, checkGuild],
   data: new SlashCommandBuilder()
     .setName("create")
     .setDescription("Create a primary channel.")
