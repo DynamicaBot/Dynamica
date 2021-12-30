@@ -1,11 +1,7 @@
 import { SlashCommandBuilder } from "@discordjs/builders";
-import {
-  CommandInteraction,
-  MessageActionRow,
-  MessageSelectMenu,
-} from "discord.js";
+import { CommandInteraction } from "discord.js";
 import { checkManager } from "../lib/checks";
-import { InfoEmbed, SuccessEmbed } from "../lib/discordEmbeds";
+import { SuccessEmbed } from "../lib/discordEmbeds";
 import { db } from "../lib/prisma";
 import { Command } from "./command";
 
@@ -17,66 +13,29 @@ export const general: Command = {
     .setDescription("Edit the name/template for the default general channel.")
     .addStringOption((option) =>
       option
+        .setAutocomplete(true)
+        .setName("channel")
+        .setDescription("The channel to change the template for.")
+        .setRequired(true)
+    )
+    .addStringOption((option) =>
+      option
         .setName("name")
         .setDescription("The new template for the general channel.")
         .setRequired(true)
     ),
   async execute(interaction: CommandInteraction) {
     const name = interaction.options.getString("name", true);
-    const primaries = await db.primary.findMany({
-      where: { guildId: interaction.guild.id },
+    const channel = interaction.options.getString("channel", true);
+
+    await db.primary.update({
+      where: { id: channel },
+      data: { generalName: name },
     });
-
-    if (!interaction.guild) return;
-
-    const discordChannels = [...interaction.guild.channels.cache.values()];
-
-    const availablePrimaryChannels = discordChannels.filter((discordChannel) =>
-      primaries.find((primary) => discordChannel.id === primary.id)
-    );
-
-    if (availablePrimaryChannels.length === 0) {
-      interaction.reply({
-        embeds: [InfoEmbed("No Primary channels.")],
-        ephemeral: true,
-      });
-      return;
-    }
-
-    const row = new MessageActionRow().addComponents(
-      new MessageSelectMenu().setCustomId("generalchannelselect").addOptions(
-        availablePrimaryChannels.map((primaryChannel) => ({
-          label: primaryChannel.name,
-          value: primaryChannel.id,
-        }))
-      )
-    );
-
     await interaction.reply({
-      content: "Available Channels",
-      components: [row],
-      ephemeral: true,
+      embeds: [
+        SuccessEmbed(`General template for <#${channel}> changed to ${name}.`),
+      ],
     });
-
-    interaction.channel
-      .createMessageComponentCollector({
-        componentType: "SELECT_MENU",
-        filter: (collected) => collected.user.id === interaction.user.id,
-      })
-      .once("collect", async (collected) => {
-        const selectedChannel = collected.values[0];
-        await db.primary.update({
-          where: { id: selectedChannel },
-          data: { generalName: name },
-        });
-        await collected.update({
-          components: null,
-        });
-        await interaction.editReply({
-          content: null,
-          components: [],
-          embeds: [SuccessEmbed(`General template Changed to ${name}.`)],
-        });
-      });
   },
 };

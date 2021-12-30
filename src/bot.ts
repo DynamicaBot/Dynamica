@@ -1,5 +1,7 @@
 import { Client, Intents } from "discord.js";
 import dotenv from "dotenv";
+import * as autocompletes from "./autocompletes";
+import { Autocomplete } from "./autocompletes/autocomplete";
 import * as commands from "./commands";
 import { Command } from "./commands/command";
 import * as events from "./events";
@@ -46,6 +48,21 @@ client.on("interactionCreate", async (interaction) => {
       embeds: [ErrorEmbed("There was an error while executing this command!")],
       ephemeral: true,
     });
+  }
+});
+
+client.on("interactionCreate", async (interaction) => {
+  if (!interaction.isAutocomplete()) return;
+  try {
+    const autocomplete: Autocomplete = autocompletes[interaction.commandName];
+
+    await autocomplete.execute(interaction);
+  } catch (e) {
+    logger.error(e);
+    // interaction.reply({
+    //   embeds: [ErrorEmbed("There was an error while executing this command!")],
+    //   ephemeral: true,
+    // });
   }
 });
 
