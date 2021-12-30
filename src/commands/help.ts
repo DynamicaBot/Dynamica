@@ -15,6 +15,7 @@ export const help: Command = {
         .setRequired(false)
         .setName("subcommand")
         .setDescription("Subcommand help")
+        .setAutocomplete(true)
     ),
   async execute(interaction: CommandInteraction) {
     const subcommand = interaction.options.getString("subcommand", false);
