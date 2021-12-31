@@ -19,6 +19,7 @@ export const unlock: Command = {
 
     if (!channel) {
       interaction.reply({
+        ephemeral: true,
         embeds: [
           ErrorEmbed(
             "You need to be a member of the secondary channel in order to unlock it."
@@ -30,6 +31,7 @@ export const unlock: Command = {
 
     await channel.lockPermissions();
     await interaction.reply({
+      ephemeral: true,
       embeds: [SuccessEmbed(`Removed lock on <#${channel.id}>`)],
     });
   },

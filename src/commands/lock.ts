@@ -1,7 +1,7 @@
 import { SlashCommandBuilder } from "@discordjs/builders";
 import { CommandInteraction } from "discord.js";
 import { checkCreator, checkSecondary } from "../lib/checks";
-import { ErrorEmbed } from "../lib/discordEmbeds";
+import { SuccessEmbed } from "../lib/discordEmbeds";
 import { getGuildMember } from "../lib/getCached";
 import { logger } from "../lib/logger";
 import { Command } from "./command";
@@ -34,7 +34,7 @@ export const lock: Command = {
     await interaction.reply({
       ephemeral: true,
       embeds: [
-        ErrorEmbed(
+        SuccessEmbed(
           `Only you can access this channel now. Use \`/permission add\` to allow people to access the channels.`
         ),
       ],

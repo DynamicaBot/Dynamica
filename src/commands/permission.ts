@@ -60,6 +60,7 @@ export const permission: Command = {
     if (!user && !role) {
       if (interaction.user === user) {
         interaction.reply({
+          ephemeral: true,
           embeds: [ErrorEmbed("You add yourself silly. You're already added.")],
         });
         return;
@@ -75,6 +76,7 @@ export const permission: Command = {
     } else if (subcommand === "remove") {
       if (interaction.user === user) {
         interaction.reply({
+          ephemeral: true,
           embeds: [
             ErrorEmbed(
               "You can't remove yourself silly. Transfer ownership of the channel and get them to do it."
