@@ -1,13 +1,15 @@
 import { SlashCommandBuilder } from "@discordjs/builders";
 import { Role } from "discord.js";
 import { checkCreator, checkSecondary } from "../lib/checks";
-import { ErrorEmbed } from "../lib/discordEmbeds";
+import { ErrorEmbed, SuccessEmbed } from "../lib/discordEmbeds";
 import { getGuildMember } from "../lib/getCached";
 import { Command } from "./command";
 
 export const permission: Command = {
   conditions: [checkCreator, checkSecondary],
   data: new SlashCommandBuilder()
+    .setName("permission")
+    .setDescription("Edit the permissions of a voice channel.")
     .addSubcommand((subcommand) =>
       subcommand
         .setName("add")
@@ -49,8 +51,7 @@ export const permission: Command = {
   async execute(interaction) {
     const subcommand = interaction.options.getSubcommand(true);
     const user = interaction.options.getUser("user", false);
-    const role = interaction.options.getRole("role", false);
-    if (!(role instanceof Role)) return;
+    const role = interaction.options.getRole("role", false) as Role;
     const guildMember = await getGuildMember(
       interaction.guild.members,
       interaction.user.id
@@ -72,7 +73,17 @@ export const permission: Command = {
       return;
     }
     if (subcommand === "add") {
-      permissionOverwrites.create(user || role, { CONNECT: true });
+      await permissionOverwrites.create(user || role, { CONNECT: true });
+      await interaction.reply({
+        ephemeral: true,
+        embeds: [
+          SuccessEmbed(
+            `You've added permission for ${
+              user ? `<@${user.id}>` : `<@&${role.id}>`
+            } to access the channel you're in.`
+          ),
+        ],
+      });
     } else if (subcommand === "remove") {
       if (interaction.user === user) {
         interaction.reply({
@@ -85,7 +96,17 @@ export const permission: Command = {
         });
         return;
       }
-      permissionOverwrites.create(user || role, { CONNECT: false });
+      await permissionOverwrites.create(user || role, { CONNECT: false });
+      await interaction.reply({
+        ephemeral: true,
+        embeds: [
+          SuccessEmbed(
+            `You've removed permission for ${
+              user ? `<@${user.id}>` : `people with the role <@&${role.id}>`
+            } to access the channel you're in.`
+          ),
+        ],
+      });
     }
   },
 };
