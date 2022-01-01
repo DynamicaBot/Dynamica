@@ -1,8 +1,8 @@
 import { CommandInteraction } from "discord.js";
-import * as commands from "../commands";
-import { ErrorEmbed } from "../lib/discordEmbeds";
-import { logger } from "../lib/logger";
-import { event } from "./event";
+import * as commands from "../commands/index.js";
+import { ErrorEmbed } from "../lib/discordEmbeds.js";
+import { logger } from "../lib/logger.js";
+import { event } from "./event.js";
 
 export const commandListener: event = {
   name: "interactionCreate",

@@ -1,5 +1,5 @@
 import { Client } from "discord.js";
-import { db } from "../prisma";
+import { db } from "../prisma.js";
 
 /**
  * Refresh Channel Activity Count

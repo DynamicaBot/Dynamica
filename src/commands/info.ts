@@ -1,6 +1,6 @@
 import { Embed, SlashCommandBuilder } from "@discordjs/builders";
 import { CommandInteraction } from "discord.js";
-import { Command } from "./command";
+import { Command } from "./command.js";
 
 export const info: Command = {
   conditions: [],

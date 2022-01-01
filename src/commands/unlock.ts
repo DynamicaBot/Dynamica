@@ -1,8 +1,10 @@
 import { SlashCommandBuilder } from "@discordjs/builders";
-import { checkCreator, checkSecondary } from "../lib/checks";
-import { ErrorEmbed, SuccessEmbed } from "../lib/discordEmbeds";
-import { getGuildMember } from "../lib/getCached";
-import { Command } from "./command";
+import { checkCreator, checkSecondary } from "../lib/checks/index.js";
+import { ErrorEmbed, SuccessEmbed } from "../lib/discordEmbeds.js";
+import { getGuildMember } from "../lib/getCached.js";
+import { db } from "../lib/prisma.js";
+import { bree } from "../lib/scheduler.js";
+import { Command } from "./command.js";
 
 export const unlock: Command = {
   conditions: [checkSecondary, checkCreator],
@@ -28,6 +30,14 @@ export const unlock: Command = {
       });
       return;
     }
+
+    await db.secondary.update({
+      where: { id: channel.id },
+      data: {
+        locked: false,
+      },
+    });
+    bree.run(channel.id);
 
     await channel.lockPermissions();
     await interaction.reply({

@@ -2,9 +2,9 @@ import { VoiceState } from "discord.js";
 import {
   createSecondary,
   deleteDiscordSecondary,
-} from "../lib/operations/secondary";
-import { db } from "../lib/prisma";
-import { event } from "./event";
+} from "../lib/operations/secondary.js";
+import { db } from "../lib/prisma.js";
+import { event } from "./event.js";
 
 export const voiceStateUpdate: event = {
   name: "voiceStateUpdate",

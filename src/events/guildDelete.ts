@@ -1,6 +1,6 @@
 import { Guild } from "discord.js";
-import { logger } from "../lib/logger";
-import { event } from "./event";
+import { logger } from "../lib/logger.js";
+import { event } from "./event.js";
 
 export const guildDelete: event = {
   name: "guildDelete",

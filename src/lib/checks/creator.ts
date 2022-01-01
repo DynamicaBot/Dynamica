@@ -1,7 +1,7 @@
-import { ErrorEmbed } from "../discordEmbeds";
-import { getGuildMember } from "../getCached";
-import { db } from "../prisma";
-import { Check } from "./check";
+import { ErrorEmbed } from "../discordEmbeds.js";
+import { getGuildMember } from "../getCached.js";
+import { db } from "../prisma.js";
+import { Check } from "./check.js";
 
 /**
  * Checks if a guild member is the creator of the secondary channel. (overridden by manager and admin)

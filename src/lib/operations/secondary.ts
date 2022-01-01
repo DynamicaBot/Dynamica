@@ -3,13 +3,16 @@ import {
   GuildChannelManager,
   GuildMember,
 } from "discord.js";
-import { SimpleIntervalJob, Task } from "toad-scheduler";
-import { formatChannelName } from "../formatString";
-import { getChannel } from "../getCached";
-import { logger } from "../logger";
-import { updateActivityCount } from "../operations/general";
-import { db } from "../prisma";
-import { scheduler } from "../scheduler";
+import path from "path";
+import { fileURLToPath } from "url";
+import { formatChannelName } from "../formatString.js";
+import { getChannel } from "../getCached.js";
+import { logger } from "../logger.js";
+import { updateActivityCount } from "../operations/general.js";
+import { db } from "../prisma.js";
+import { bree } from "../scheduler.js";
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
 
 /**
  * Deletes Secondary Channel.
@@ -42,7 +45,7 @@ export const deleteDiscordSecondary = async (
     channel?.delete(),
     (await textChannel())?.delete(),
   ]);
-  scheduler.removeById(id);
+  bree.remove(id);
   await updateActivityCount(channel.client);
   await logger.debug(`Secondary channel deleted ${id}.`);
 };
@@ -135,75 +138,20 @@ export const createSecondary = async (
     },
   });
 
-  scheduler.addSimpleIntervalJob(
-    new SimpleIntervalJob(
-      { minutes: 5 },
-      new Task(secondary.id, () => refreshSecondary(secondary))
-    )
-  );
+  bree.add({
+    name: secondary.id,
+    timeout: false,
+    worker: {
+      workerData: {
+        channel: await secondary,
+        channelManager,
+      },
+    },
+    path: path.join(__dirname, "../../jobs", "refreshSecondary.js"),
+  });
 
   await updateActivityCount(channelManager.client);
   await logger.debug(
     `Secondary channel ${secondary.name} created by ${member?.user.tag} in ${channelManager.guild.name}.`
   );
-};
-
-/**
- * Retrieves data from db and changes channel name with formatting.
- * @param id Secondary channel id.
- * @param channelManager Discord Channel Manager
- */
-export const refreshSecondary = async (channel: BaseGuildVoiceChannel) => {
-  const { id } = channel;
-  const secondary = await db.secondary.findUnique({
-    where: { id },
-    include: {
-      primary: true,
-      guild: true,
-    },
-  });
-  const aliases = await db.alias.findMany({
-    where: {
-      guildId: channel.guildId,
-    },
-  });
-  if (!secondary) return;
-
-  const { locked } = secondary;
-
-  const channelCreator = secondary.creator
-    ? channel.members.get(secondary.creator)?.displayName
-    : "";
-  const creator = channelCreator
-    ? channelCreator
-    : channel.members.at(0)?.displayName;
-  if (!channel?.manageable) return;
-  const activities = Array.from(channel.members).flatMap((entry) => {
-    if (!entry[1].presence) return [];
-    return entry[1].presence?.activities.map((activity) => activity.name);
-  });
-  const filteredActivityList = activities
-    .filter((activity) => activity !== "Spotify")
-    .filter((activity) => activity !== "Custom Status");
-  const str = secondary.name
-    ? secondary.name
-    : !filteredActivityList.length
-    ? secondary.primary.generalName
-    : secondary.primary.template;
-  const name = formatChannelName(str, {
-    creator: creator ? creator : "",
-    aliases: aliases,
-    channelNumber: 1,
-    activities: filteredActivityList,
-    memberCount: channel.members.size,
-    locked,
-  });
-  if (channel.name !== name) {
-    await channel.edit({
-      name,
-    });
-    await logger.debug(
-      `Secondary channel ${channel.name} in ${channel.guild.name} refreshed.`
-    );
-  }
 };

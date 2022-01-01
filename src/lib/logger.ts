@@ -1,4 +1,6 @@
-import { Signale } from "signale";
+import signaleLogger from "signale";
+
+const { Signale } = signaleLogger;
 
 export const logger = new Signale({
   disabled: false,

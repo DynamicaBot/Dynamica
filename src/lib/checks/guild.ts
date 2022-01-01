@@ -1,5 +1,5 @@
 import { CommandInteraction } from "discord.js";
-import { Check } from "./check";
+import { Check } from "./check.js";
 
 /**
  * Check to see if a guild exists in the database. If it doesn't, create it.

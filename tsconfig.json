@@ -6,12 +6,12 @@
     "incremental": true /* Enable incremental compilation */,
     "tsBuildInfoFile": "./dist/.tsbuildinfo" /* Specify the folder for .tsbuildinfo incremental compilation files. */,
     /* Language and Environment */
-    "target": "es2020" /* Set the JavaScript language version for emitted JavaScript and include compatible library declarations. */,
+    "target": "ES2020" /* Set the JavaScript language version for emitted JavaScript and include compatible library declarations. */,
     "lib": [
       "es2020",
       "DOM"
     ] /* Specify a set of bundled library declaration files that describe the target runtime environment. */,
-    "module": "commonjs" /* Specify what module code is generated. */,
+    "module": "ESNext" /* Specify what module code is generated. */,
     "rootDir": "./src" /* Specify the root folder within your source files. */,
     "moduleResolution": "Node" /* Specify how TypeScript looks up a file from a given module specifier. */ /* Allow multiple folders to be treated as one when resolving modules. */,
     "types": [

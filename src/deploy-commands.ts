@@ -1,8 +1,8 @@
 import { REST } from "@discordjs/rest";
 import { Routes } from "discord-api-types/v9";
 import { config } from "dotenv";
-import * as commands from "./commands";
-import { logger } from "./lib/logger";
+import * as commands from "./commands/index.js";
+import { logger } from "./lib/logger.js";
 config();
 
 const { TOKEN, CLIENT_ID, GUILD_ID } = process.env;
