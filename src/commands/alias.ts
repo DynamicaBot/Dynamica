@@ -1,13 +1,13 @@
 import { Embed, quote, SlashCommandBuilder } from "@discordjs/builders";
 import { CommandInteraction } from "discord.js";
-import { checkGuild, checkManager } from "../lib/checks";
+import { checkManager } from "../lib/checks";
 import { SuccessEmbed } from "../lib/discordEmbeds";
 import { deleteAlias, listAliases, updateAlias } from "../lib/operations/alias";
 import { Command } from "./command";
 
 // Set General Template
 export const alias: Command = {
-  conditions: [checkGuild, checkManager],
+  conditions: [checkManager],
   data: new SlashCommandBuilder()
     .setName("alias")
     .setDescription("Manage aliases.")

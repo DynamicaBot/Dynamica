@@ -1,5 +1,4 @@
 import { CommandInteraction } from "discord.js";
-import { db } from "../prisma";
 import { Check } from "./check";
 
 /**
@@ -7,17 +6,5 @@ import { Check } from "./check";
  * @param interaction Interaction
  * @returns Promise Boolean
  */
-export const checkGuild: Check = async (interaction: CommandInteraction) => {
-  if (!interaction.guild.id) return false;
-  const { id } = interaction.guild;
-  const guildConfig = await db.guild.findUnique({ where: { id } });
-  if (!guildConfig) {
-    await db.guild.create({
-      data: {
-        id,
-      },
-    });
-  }
-
-  return true;
-};
+export const checkGuild: Check = async (interaction: CommandInteraction) =>
+  !!interaction.guild;

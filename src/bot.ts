@@ -5,6 +5,7 @@ import { Autocomplete } from "./autocompletes/autocomplete";
 import * as commands from "./commands";
 import { Command } from "./commands/command";
 import * as events from "./events";
+import { checkGuild } from "./lib/checks";
 import { ErrorEmbed } from "./lib/discordEmbeds";
 import { logger } from "./lib/logger";
 import { db } from "./lib/prisma";
@@ -27,7 +28,9 @@ client.on("interactionCreate", async (interaction) => {
   try {
     const command: Command = commands[interaction.commandName];
     const conditions = await Promise.all(
-      command.conditions.map((condition) => condition(interaction))
+      command.conditions
+        .concat([checkGuild])
+        .map((condition) => condition(interaction))
     );
     if (!conditions.every((condition) => condition)) {
       interaction.reply({
@@ -59,10 +62,6 @@ client.on("interactionCreate", async (interaction) => {
     await autocomplete.execute(interaction);
   } catch (e) {
     logger.error(e);
-    // interaction.reply({
-    //   embeds: [ErrorEmbed("There was an error while executing this command!")],
-    //   ephemeral: true,
-    // });
   }
 });
 
