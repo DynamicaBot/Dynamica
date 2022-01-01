@@ -34,9 +34,14 @@ export function formatChannelName(
      * The number of members in the channel.
      */
     memberCount: Number;
+    /**
+     * If a channel is locked or not.
+     */
+    locked: boolean;
   }
 ) {
-  const { creator, channelNumber, activities, aliases, memberCount } = options;
+  const { creator, channelNumber, activities, aliases, memberCount, locked } =
+    options;
 
   const activityList = uniq(activities);
 
@@ -51,16 +56,19 @@ export function formatChannelName(
 
   const plurals = str.split(/<<(.+)\/(.+)>>/g);
 
-  return str
-    .replace(/###/g, channelNumber.toString().padStart(3, "0")) // 001
-    .replace(/##/g, `#${channelNumber}`) // #1
-    .replace(/\$#/g, channelNumber.toString()) // 1
-    .replace(/\+#/g, romanize(channelNumber)) // I
-    .replace(/@@nato@@/g, nato[channelNumber - 1]) // Alpha
-    .replace(/@@num@@/g, memberCount.toString()) // number of channel members
-    .replace(/@@game@@/g, aliasedActivities.join(", ")) // Activities
-    .replace(/@@creator@@/g, creator) // Creator
-    .replace(/<<(.+)\/(.+)>>/g, memberCount === 1 ? plurals[1] : plurals[2]); // Plurals
+  return (
+    `${locked ? "🔒" : null} ` +
+    str
+      .replace(/###/g, channelNumber.toString().padStart(3, "0")) // 001
+      .replace(/##/g, `#${channelNumber}`) // #1
+      .replace(/\$#/g, channelNumber.toString()) // 1
+      .replace(/\+#/g, romanize(channelNumber)) // I
+      .replace(/@@nato@@/g, nato[channelNumber - 1]) // Alpha
+      .replace(/@@num@@/g, memberCount.toString()) // number of channel members
+      .replace(/@@game@@/g, aliasedActivities.join(", ")) // Activities
+      .replace(/@@creator@@/g, creator) // Creator
+      .replace(/<<(.+)\/(.+)>>/g, memberCount === 1 ? plurals[1] : plurals[2])
+  ); // Plurals
 }
 
 const nato = [

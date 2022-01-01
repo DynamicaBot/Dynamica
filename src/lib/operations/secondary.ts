@@ -93,6 +93,7 @@ export const createSecondary = async (
       activities: filteredActivityList,
       aliases,
       memberCount: primaryChannel.members.size,
+      locked: false,
     }),
     {
       type: "GUILD_VOICE",
@@ -168,6 +169,8 @@ export const refreshSecondary = async (channel: BaseGuildVoiceChannel) => {
   });
   if (!secondary) return;
 
+  const { locked } = secondary;
+
   const channelCreator = secondary.creator
     ? channel.members.get(secondary.creator)?.displayName
     : "";
@@ -193,6 +196,7 @@ export const refreshSecondary = async (channel: BaseGuildVoiceChannel) => {
     channelNumber: 1,
     activities: filteredActivityList,
     memberCount: channel.members.size,
+    locked,
   });
   if (channel.name !== name) {
     await channel.edit({
