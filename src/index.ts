@@ -21,8 +21,9 @@ export const client = new Client({
   ],
 });
 
-const eventList = Object.values(events);
+// Login to Discord with your client's token
 
+const eventList = Object.values(events);
 client.on("interactionCreate", async (interaction) => {
   if (!interaction.isCommand()) return;
   try {
@@ -74,7 +75,6 @@ for (const event of eventList) {
   }
 }
 
-// Login to Discord with your client's token
 client.login(process.env.TOKEN);
 
 // Handle stop signal

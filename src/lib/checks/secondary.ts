@@ -1,5 +1,6 @@
 import { CommandInteraction } from "discord.js";
 import { getGuildMember } from "../getCached.js";
+import { logger } from "../logger.js";
 import { db } from "../prisma.js";
 import { Check } from "./check.js";
 
@@ -11,19 +12,23 @@ import { Check } from "./check.js";
 export const checkSecondary: Check = async (
   interaction: CommandInteraction
 ) => {
-  if (!interaction.guild?.members) return;
-  const guildMember = await getGuildMember(
-    interaction.guild?.members,
-    interaction.user.id
-  );
+  try {
+    if (!interaction.guild?.members) return;
+    const guildMember = await getGuildMember(
+      interaction.guild?.members,
+      interaction.user.id
+    );
 
-  const channel = guildMember?.voice.channel;
-  if (!channel) return false;
+    const channel = guildMember?.voice.channel;
+    if (!channel) return false;
 
-  const channelConfig = await db.secondary.findUnique({
-    where: {
-      id: channel.id,
-    },
-  });
-  return !!channelConfig;
+    const channelConfig = await db.secondary.findUnique({
+      where: {
+        id: channel.id,
+      },
+    });
+    return !!channelConfig;
+  } catch (error) {
+    logger.error("error in secondary check", error);
+  }
 };

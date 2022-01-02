@@ -22,9 +22,11 @@
   "type": "module",
   "exports": "./dist/index.js",
   "dependencies": {
+    "@breejs/ts-worker": "^1.0.1",
     "@discordjs/builders": "^0.9.0",
     "@discordjs/rest": "^0.1.0-canary.0",
     "@prisma/client": "^3.6.0",
+    "add": "^2.0.6",
     "bree": "^7.1.4",
     "chalk": "4.1.2",
     "discord-api-types": "^0.25.2",
@@ -36,11 +38,13 @@
     "p-throttle": "^5.0.0",
     "romans": "^2.0.3",
     "signale": "^1.4.0",
-    "toad-scheduler": "^1.6.0"
+    "toad-scheduler": "^1.6.0",
+    "yarn": "^1.22.17"
   },
   "scripts": {
-    "start": "node dist/index.js",
-    "dev": "TS_NODE=true nodemon src/index.ts --include src/",
+    "start": "node ./dist/index.js",
+    "dev:watch": "nodemon",
+    "dev": "node --experimental-specifier-resolution=node --loader ts-node/esm src/index.ts",
     "build": "tsc -p .",
     "lint": "prettier --write ./src",
     "postinstall": "prisma generate",

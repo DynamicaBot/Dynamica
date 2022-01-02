@@ -7,6 +7,7 @@ import {
   GuildMemberManager,
   GuildResolvable,
 } from "discord.js";
+import { logger } from "./logger.js";
 
 /**
  * Get a channel that might be cached.
@@ -18,8 +19,12 @@ export const getChannel = async (
   channelManager: ChannelManager,
   id: string
 ) => {
-  const cachedChannel = channelManager.cache.get(id);
-  return cachedChannel ?? (await channelManager.fetch(id));
+  try {
+    const cachedChannel = channelManager.cache.get(id);
+    return cachedChannel ?? (await channelManager.fetch(id));
+  } catch (error) {
+    logger.error("Error getting channel:", error);
+  }
 };
 
 /**
@@ -32,11 +37,15 @@ export const getGuildMember = async (
   guildMemberManager: GuildMemberManager,
   id: string
 ) => {
-  if (!guildMemberManager) return;
-  const cachedGuildMember = guildMemberManager.cache.find(
-    (guildMember) => guildMember.id === id
-  );
-  return cachedGuildMember ?? (await guildMemberManager.fetch(id));
+  try {
+    if (!guildMemberManager) return;
+    const cachedGuildMember = guildMemberManager.cache.find(
+      (guildMember) => guildMember.id === id
+    );
+    return cachedGuildMember ?? (await guildMemberManager.fetch(id));
+  } catch (error) {
+    logger.error("Error getting guild member:", error);
+  }
 };
 
 /**
@@ -57,6 +66,10 @@ export const getCommands: (
     >
   | undefined
 > = async (guildCommandManager, applicationCommandManager) => {
+  try {
+  } catch (error) {
+    logger.error("Error getting commands:", error);
+  }
   if (!guildCommandManager || !applicationCommandManager) return;
   const cachedGuildCommands = guildCommandManager.cache;
   const guildCommands =

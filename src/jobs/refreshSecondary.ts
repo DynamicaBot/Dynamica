@@ -1,20 +1,27 @@
+import { Client, Intents } from "discord.js";
 import { workerData } from "worker_threads";
 import { formatChannelName } from "../lib/formatString.js";
 import { getChannel } from "../lib/getCached.js";
 import { logger } from "../lib/logger.js";
 import { db } from "../lib/prisma.js";
-import { renameThrottle } from "../lib/scheduler.js";
 
-renameThrottle(async () => {
-  // const channel: AnyChannel = workerData.channel;
-  // console.log({ channels: client.channels, id: workerData.channel.id });
-  console.log("test", workerData.channelManager, workerData.channel.id);
-  const channel = await getChannel(
-    workerData.channelManager,
-    workerData.channel.id
-  );
+const client = new Client({
+  intents: [
+    Intents.FLAGS.GUILDS,
+    Intents.FLAGS.GUILD_VOICE_STATES,
+    Intents.FLAGS.GUILD_PRESENCES,
+  ],
+});
 
-  if (!channel.isVoice()) return;
+client.login(process.env.TOKEN).then(async () => {
+  const channel = await getChannel(client.channels, workerData.channel.id);
+
+  if (!channel) {
+    console.debug("No channel");
+    process.exit(1);
+  }
+  if (!channel.isVoice()) process.exit(1);
+
   const { id } = channel;
   const secondary = await db.secondary.findUnique({
     where: { id },
@@ -28,7 +35,7 @@ renameThrottle(async () => {
       guildId: channel.guildId,
     },
   });
-  if (!secondary) return;
+  if (!secondary) process.exit(1);
 
   const { locked } = secondary;
 
@@ -38,7 +45,7 @@ renameThrottle(async () => {
   const creator = channelCreator
     ? channelCreator
     : channel.members.at(0)?.displayName;
-  if (!channel?.manageable) return;
+  if (!channel?.manageable) process.exit(1);
   const activities = Array.from(channel.members).flatMap((entry) => {
     if (!entry[1].presence) return [];
     return entry[1].presence?.activities.map((activity) => activity.name);
@@ -51,7 +58,6 @@ renameThrottle(async () => {
     : !filteredActivityList.length
     ? secondary.primary.generalName
     : secondary.primary.template;
-  logger.log({ locked });
   const name = formatChannelName(str, {
     creator: creator ? creator : "",
     aliases: aliases,
@@ -65,7 +71,9 @@ renameThrottle(async () => {
       name,
     });
     await logger.debug(
-      `Secondary channel ${channel.name} in ${channel.guild.name} refreshed.`
+      `Secondary channel ${channel.name} in ${channel.guild.name} name changed.`
     );
   }
-})();
+});
+
+// TODO: At the moment you need to login every time a channel name needs to be changed. This can get ratelimited. Maybe send a message back to the client with channel if etc.

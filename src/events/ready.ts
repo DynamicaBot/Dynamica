@@ -15,7 +15,6 @@ export const ready: event = {
   name: "ready",
   once: true,
   async execute(client: Client) {
-    console.log(client.channels);
     logger.info(`Ready! Logged in as ${client.user?.tag}`);
     const secondaries = await db.secondary.findMany();
     const workers = await Promise.all(
@@ -26,7 +25,7 @@ export const ready: event = {
           worker: {
             workerData: {
               channel,
-              channelManager: client.channels,
+              token: process.env.TOKEN,
             },
           },
           path: path.join(__dirname, "../jobs", "refreshSecondary.js"),

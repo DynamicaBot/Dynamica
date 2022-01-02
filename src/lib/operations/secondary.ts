@@ -144,7 +144,7 @@ export const createSecondary = async (
     worker: {
       workerData: {
         channel: await secondary,
-        channelManager,
+        token: process.env.TOKEN,
       },
     },
     path: path.join(__dirname, "../../jobs", "refreshSecondary.js"),

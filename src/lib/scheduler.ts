@@ -1,8 +1,9 @@
+import breeTS from "@breejs/ts-worker";
 import Bree from "bree";
 import pThrottle from "p-throttle";
 import { logger } from "./logger.js";
+Bree.extend(breeTS);
 
-// 👇️ "/home/john/Desktop/javascript"
 export const bree = new Bree({
   root: false,
   logger: false,

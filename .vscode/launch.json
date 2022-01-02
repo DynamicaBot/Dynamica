@@ -5,7 +5,7 @@
       "type": "node-terminal",
       "name": "Run Script: dev",
       "request": "launch",
-      "command": "yarn dev",
+      "command": "yarn dev:watch",
       "cwd": "${workspaceFolder}",
       "skipFiles": ["node_modules"]
     }
