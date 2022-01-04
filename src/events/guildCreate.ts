@@ -79,9 +79,12 @@ export const guildCreate: event = {
   once: false,
   async execute(guild: Guild) {
     const logger = container.resolve<Signale>(kLogger);
-    guild.systemChannel.send({
-      embeds: [botInfoEmbed],
-    });
+    if (guild.systemChannel) {
+      guild.systemChannel.send({
+        embeds: [botInfoEmbed],
+      });
+    }
+
     logger.debug(`Joined guild ${guild.id} named: ${guild.name}`);
   },
 };
