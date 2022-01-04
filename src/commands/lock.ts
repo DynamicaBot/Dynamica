@@ -25,21 +25,27 @@ export const lock: Command = {
 
     const everyone = interaction.guild?.roles.everyone;
     const channel = guildMember?.voice.channel;
+    const currentlyActive = [...channel.members.values()];
 
     const { permissionOverwrites } = channel;
 
-    if (everyone) {
-      await permissionOverwrites.create(everyone.id, { CONNECT: false });
-    }
-
-    await permissionOverwrites.create(interaction.user.id, {
-      CONNECT: true,
+    Promise.all(
+      currentlyActive.map((member) =>
+        permissionOverwrites.create(member.id, {
+          CONNECT: true,
+        })
+      )
+    ).then(() => {
+      if (everyone) {
+        permissionOverwrites.create(everyone.id, { CONNECT: false });
+      }
     });
+
     await interaction.reply({
       ephemeral: true,
       embeds: [
         SuccessEmbed(
-          `Only you can access this channel now. Use \`/permission add\` to allow people to access the channels.`
+          `Use \`/permission add\` to allow people to access the channels. Or, \`/permission remove\` to remove people.`
         ),
       ],
     });

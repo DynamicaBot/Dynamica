@@ -17,6 +17,9 @@ dotenv.config();
 
 const { Signale } = signale;
 
+/**
+ * Signale Logger instance
+ */
 const logger = new Signale({
   disabled: false,
   interactive: false,
@@ -66,6 +69,7 @@ container.register(Client, { useValue: client });
 container.register(kBree, { useValue: bree });
 
 const eventList = Object.values(events);
+
 client.on("interactionCreate", async (interaction) => {
   if (!interaction.isCommand()) return;
   try {
@@ -100,8 +104,7 @@ client.on("interactionCreate", async (interaction) => {
   if (!interaction.isAutocomplete()) return;
   try {
     const autocomplete: Autocomplete = autocompletes[interaction.commandName];
-
-    await autocomplete.execute(interaction);
+    autocomplete.execute(interaction);
   } catch (e) {
     logger.error(e);
   }
