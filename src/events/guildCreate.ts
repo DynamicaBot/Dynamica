@@ -1,6 +1,8 @@
 import { Embed, hyperlink } from "@discordjs/builders";
 import { Guild } from "discord.js";
-import { logger } from "../lib/logger.js";
+import type { Signale } from "signale";
+import { container } from "tsyringe";
+import { kLogger } from "../tokens.js";
 import { event } from "./event.js";
 
 /**
@@ -76,6 +78,7 @@ export const guildCreate: event = {
   name: "guildCreate",
   once: false,
   async execute(guild: Guild) {
+    const logger = container.resolve<Signale>(kLogger);
     guild.systemChannel.send({
       embeds: [botInfoEmbed],
     });

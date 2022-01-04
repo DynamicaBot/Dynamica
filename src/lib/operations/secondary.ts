@@ -1,16 +1,20 @@
+import type Bree from "bree";
 import {
   BaseGuildVoiceChannel,
   GuildChannelManager,
   GuildMember,
 } from "discord.js";
 import path from "path";
+import "reflect-metadata";
+import type { Signale } from "signale";
+import { container } from "tsyringe";
 import { fileURLToPath } from "url";
+import { kBree, kLogger } from "../../tokens.js";
 import { formatChannelName } from "../formatString.js";
 import { getChannel } from "../getCached.js";
-import { logger } from "../logger.js";
 import { updateActivityCount } from "../operations/general.js";
 import { db } from "../prisma.js";
-import { bree } from "../scheduler.js";
+
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
@@ -22,6 +26,8 @@ const __dirname = path.dirname(__filename);
 export const deleteDiscordSecondary = async (
   channel: BaseGuildVoiceChannel
 ) => {
+  const logger = container.resolve<Signale>(kLogger);
+  const bree = container.resolve<Bree>(kBree);
   const { id } = channel;
   const channelConfig = await db.secondary.findUnique({
     where: { id },
@@ -40,12 +46,11 @@ export const deleteDiscordSecondary = async (
     }
     return undefined;
   };
-  await Promise.all([
-    db.secondary.delete({ where: { id } }),
-    channel?.delete(),
-    (await textChannel())?.delete(),
-  ]);
-  bree.remove(id);
+
+  await db.secondary.delete({ where: { id } });
+  await channel?.delete();
+  await (await textChannel())?.delete();
+  await bree.remove(id);
   await updateActivityCount(channel.client);
   await logger.debug(`Secondary channel deleted ${id}.`);
 };
@@ -61,6 +66,8 @@ export const createSecondary = async (
   primaryId: string,
   member?: GuildMember
 ) => {
+  const logger = container.resolve<Signale>(kLogger);
+  const bree = container.resolve<Bree>(kBree);
   const primaryConfig = await db.primary.findUnique({
     where: { id: primaryId },
     include: { guild: true, secondaries: true },
@@ -143,8 +150,8 @@ export const createSecondary = async (
     timeout: false,
     worker: {
       workerData: {
-        channel: await secondary,
-        token: process.env.TOKEN,
+        id: (await secondary).id,
+        guildId: (await secondary).guildId,
       },
     },
     path: path.join(__dirname, "../../jobs", "refreshSecondary.js"),

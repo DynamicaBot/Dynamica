@@ -6,7 +6,9 @@ import {
   GuildChannelManager,
   ThreadChannel,
 } from "discord.js";
-import { logger } from "../logger.js";
+import type { Signale } from "signale";
+import { container } from "tsyringe";
+import { kLogger } from "../../tokens.js";
 import { db } from "../prisma.js";
 
 /**
@@ -25,6 +27,7 @@ export const createPrimary = async (
     | APIInteractionDataResolvedChannel
     | null
 ) => {
+  const logger = container.resolve<Signale>(kLogger);
   const parent = section?.id;
   const channel = await channelManager.create("➕ New Session", {
     type: "GUILD_VOICE",
@@ -52,6 +55,7 @@ export const deleteDiscordPrimary = async (
   channel: BaseGuildVoiceChannel,
   channelId: string
 ) => {
+  const logger = container.resolve<Signale>(kLogger);
   const channelConfig = await db.primary.findUnique({
     where: { id: channelId },
   });
@@ -74,6 +78,7 @@ export const deleteDiscordPrimary = async (
  * @returns Promise
  */
 export const deletedPrimary = async (channelId: string) => {
+  const logger = container.resolve<Signale>(kLogger);
   const primary = await db.primary.delete({
     where: { id: channelId },
     include: { secondaries: true },
@@ -87,6 +92,7 @@ export const deletedPrimary = async (channelId: string) => {
  * @param data
  */
 export const updatePrimary = async (channelId: string, data: any) => {
+  const logger = container.resolve<Signale>(kLogger);
   const primary = await db.primary.update({
     data,
     where: { id: channelId },

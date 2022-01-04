@@ -1,6 +1,8 @@
+import type { Signale } from "signale";
+import { container } from "tsyringe";
+import { kLogger } from "../../tokens.js";
 import { ErrorEmbed } from "../discordEmbeds.js";
 import { getGuildMember } from "../getCached.js";
-import { logger } from "../logger.js";
 import { db } from "../prisma.js";
 import { Check } from "./check.js";
 
@@ -10,6 +12,7 @@ import { Check } from "./check.js";
  * @returns Promise Boolean if the person who triggered the interaction is the owner of the voice channel that they're in.
  */
 export const checkCreator: Check = async (interaction) => {
+  const logger = container.resolve<Signale>(kLogger);
   try {
     const guildMember = await getGuildMember(
       interaction.guild.members,

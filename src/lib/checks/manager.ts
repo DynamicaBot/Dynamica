@@ -1,7 +1,9 @@
 import { CommandInteraction } from "discord.js";
+import type { Signale } from "signale";
+import { container } from "tsyringe";
+import { kLogger } from "../../tokens.js";
 import { ErrorEmbed } from "../discordEmbeds.js";
 import { getGuildMember } from "../getCached.js";
-import { logger } from "../logger.js";
 import { Check } from "./check.js";
 
 /**
@@ -10,6 +12,7 @@ import { Check } from "./check.js";
  * @returns Boolean if the member has permission to manage dynamica channels.
  */
 export const checkManager: Check = async (interaction: CommandInteraction) => {
+  const logger = container.resolve<Signale>(kLogger);
   try {
     if (!interaction.guild) return false;
     const guildMember = await getGuildMember(

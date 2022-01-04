@@ -1,5 +1,9 @@
+import Bree from "bree";
 import { Client, Intents } from "discord.js";
 import dotenv from "dotenv";
+import "reflect-metadata";
+import signale from "signale";
+import { container } from "tsyringe";
 import { Autocomplete } from "./autocompletes/autocomplete.js";
 import * as autocompletes from "./autocompletes/index.js";
 import { Command } from "./commands/command.js";
@@ -7,13 +11,28 @@ import * as commands from "./commands/index.js";
 import * as events from "./events/index.js";
 import { checkGuild } from "./lib/checks/index.js";
 import { ErrorEmbed } from "./lib/discordEmbeds.js";
-import { logger } from "./lib/logger.js";
 import { db } from "./lib/prisma.js";
-import { bree } from "./lib/scheduler.js";
+import { kBree, kLogger } from "./tokens.js";
 dotenv.config();
 
-// Create a new client instance
-export const client = new Client({
+const { Signale } = signale;
+
+const logger = new Signale({
+  disabled: false,
+  interactive: false,
+  logLevel: process.env.LOG_LEVEL || "info",
+  secrets: [
+    process.env.TOKEN,
+    process.env.CLIENT_ID,
+    process.env.GUILD_ID,
+    process.env.DATABASE_URL,
+  ],
+});
+
+/**
+ * DiscordJS Client instance
+ */
+const client = new Client({
   intents: [
     Intents.FLAGS.GUILDS,
     Intents.FLAGS.GUILD_VOICE_STATES,
@@ -21,7 +40,30 @@ export const client = new Client({
   ],
 });
 
-// Login to Discord with your client's token
+/**
+ * Bree instance
+ */
+const bree = new Bree({
+  root: false,
+  logger: false,
+  errorHandler: (error, workerMetadata) => {
+    if (workerMetadata.threadId) {
+      logger.info(
+        `There was an error while running a worker ${workerMetadata.name} with thread ID: ${workerMetadata.threadId}`
+      );
+    } else {
+      logger.info(
+        `There was an error while running a worker ${workerMetadata.name}`
+      );
+    }
+
+    logger.error(error);
+  },
+});
+
+container.register(kLogger, { useValue: logger });
+container.register(Client, { useValue: client });
+container.register(kBree, { useValue: bree });
 
 const eventList = Object.values(events);
 client.on("interactionCreate", async (interaction) => {
@@ -42,10 +84,9 @@ client.on("interactionCreate", async (interaction) => {
         ],
         ephemeral: true,
       });
-      return;
+    } else {
+      await command.execute(interaction);
     }
-
-    await command.execute(interaction);
   } catch (e) {
     logger.error(e);
     interaction.reply({

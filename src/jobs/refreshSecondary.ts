@@ -1,79 +1,34 @@
-import { Client, Intents } from "discord.js";
-import { workerData } from "worker_threads";
-import { formatChannelName } from "../lib/formatString.js";
-import { getChannel } from "../lib/getCached.js";
-import { logger } from "../lib/logger.js";
+import "reflect-metadata";
+import { parentPort, workerData } from "worker_threads";
 import { db } from "../lib/prisma.js";
 
-const client = new Client({
-  intents: [
-    Intents.FLAGS.GUILDS,
-    Intents.FLAGS.GUILD_VOICE_STATES,
-    Intents.FLAGS.GUILD_PRESENCES,
-  ],
+// TODO: At the moment it isn't possible to share the djs socket with the parent process Vladdy#0002 has said this feature is in the planning stage as of 3/1/2022
+// Lioness100 has a solution https://github.com/Naval-Base/yuudachi/blob/main/src/jobs.ts
+
+const { id, guildId } = workerData;
+/**
+ * Return secondary
+ */
+const secondary = await db.secondary.findUnique({
+  where: { id },
+  include: {
+    primary: true,
+    guild: true,
+  },
 });
 
-client.login(process.env.TOKEN).then(async () => {
-  const channel = await getChannel(client.channels, workerData.channel.id);
-
-  if (!channel) {
-    console.debug("No channel");
-    process.exit(1);
-  }
-  if (!channel.isVoice()) process.exit(1);
-
-  const { id } = channel;
-  const secondary = await db.secondary.findUnique({
-    where: { id },
-    include: {
-      primary: true,
-      guild: true,
-    },
-  });
-  const aliases = await db.alias.findMany({
-    where: {
-      guildId: channel.guildId,
-    },
-  });
-  if (!secondary) process.exit(1);
-
-  const { locked } = secondary;
-
-  const channelCreator = secondary.creator
-    ? channel.members.get(secondary.creator)?.displayName
-    : "";
-  const creator = channelCreator
-    ? channelCreator
-    : channel.members.at(0)?.displayName;
-  if (!channel?.manageable) process.exit(1);
-  const activities = Array.from(channel.members).flatMap((entry) => {
-    if (!entry[1].presence) return [];
-    return entry[1].presence?.activities.map((activity) => activity.name);
-  });
-  const filteredActivityList = activities
-    .filter((activity) => activity !== "Spotify")
-    .filter((activity) => activity !== "Custom Status");
-  const str = secondary.name
-    ? secondary.name
-    : !filteredActivityList.length
-    ? secondary.primary.generalName
-    : secondary.primary.template;
-  const name = formatChannelName(str, {
-    creator: creator ? creator : "",
-    aliases: aliases,
-    channelNumber: 1,
-    activities: filteredActivityList,
-    memberCount: channel.members.size,
-    locked,
-  });
-  if (channel.name !== name) {
-    await channel.edit({
-      name,
-    });
-    await logger.debug(
-      `Secondary channel ${channel.name} in ${channel.guild.name} name changed.`
-    );
-  }
+/**
+ * Return aliases
+ */
+const aliases = await db.alias.findMany({
+  where: {
+    guildId: guildId,
+  },
 });
+if (!secondary) process.exit(1);
 
-// TODO: At the moment you need to login every time a channel name needs to be changed. This can get ratelimited. Maybe send a message back to the client with channel if etc.
+parentPort.postMessage({
+  aliases,
+  secondary,
+  id,
+});

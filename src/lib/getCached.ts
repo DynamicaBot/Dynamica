@@ -7,7 +7,9 @@ import {
   GuildMemberManager,
   GuildResolvable,
 } from "discord.js";
-import { logger } from "./logger.js";
+import type { Signale } from "signale";
+import { container } from "tsyringe";
+import { kLogger } from "../tokens.js";
 
 /**
  * Get a channel that might be cached.
@@ -19,6 +21,7 @@ export const getChannel = async (
   channelManager: ChannelManager,
   id: string
 ) => {
+  const logger = container.resolve<Signale>(kLogger);
   try {
     const cachedChannel = channelManager.cache.get(id);
     return cachedChannel ?? (await channelManager.fetch(id));
@@ -37,6 +40,7 @@ export const getGuildMember = async (
   guildMemberManager: GuildMemberManager,
   id: string
 ) => {
+  const logger = container.resolve<Signale>(kLogger);
   try {
     if (!guildMemberManager) return;
     const cachedGuildMember = guildMemberManager.cache.find(
@@ -66,6 +70,7 @@ export const getCommands: (
     >
   | undefined
 > = async (guildCommandManager, applicationCommandManager) => {
+  const logger = container.resolve<Signale>(kLogger);
   try {
   } catch (error) {
     logger.error("Error getting commands:", error);
