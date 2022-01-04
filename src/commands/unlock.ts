@@ -1,8 +1,12 @@
 import { SlashCommandBuilder } from "@discordjs/builders";
-import { checkCreator, checkSecondary } from "../lib/checks";
-import { ErrorEmbed, SuccessEmbed } from "../lib/discordEmbeds";
-import { getGuildMember } from "../lib/getCached";
-import { Command } from "./command";
+import type Bree from "bree";
+import { container } from "tsyringe";
+import { checkCreator, checkSecondary } from "../lib/checks/index.js";
+import { SuccessEmbed } from "../lib/discordEmbeds.js";
+import { getGuildMember } from "../lib/getCached.js";
+import { db } from "../lib/prisma.js";
+import { kBree } from "../tokens.js";
+import { Command } from "./command.js";
 
 export const unlock: Command = {
   conditions: [checkSecondary, checkCreator],
@@ -10,6 +14,7 @@ export const unlock: Command = {
     .setName("unlock")
     .setDescription("Remove any existing locks on locked secondary channels."),
   async execute(interaction) {
+    const bree = container.resolve<Bree>(kBree);
     const guildMember = await getGuildMember(
       interaction.guild.members,
       interaction.user.id
@@ -17,17 +22,13 @@ export const unlock: Command = {
 
     const channel = guildMember?.voice.channel;
 
-    if (!channel) {
-      interaction.reply({
-        ephemeral: true,
-        embeds: [
-          ErrorEmbed(
-            "You need to be a member of the secondary channel in order to unlock it."
-          ),
-        ],
-      });
-      return;
-    }
+    await db.secondary.update({
+      where: { id: channel.id },
+      data: {
+        locked: false,
+      },
+    });
+    bree.run(channel.id);
 
     await channel.lockPermissions();
     await interaction.reply({

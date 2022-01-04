@@ -1,6 +1,6 @@
 import Fuse from "fuse.js";
-import { getCommands } from "../lib/getCached";
-import { Autocomplete } from "./autocomplete";
+import { getCommands } from "../lib/getCached.js";
+import { Autocomplete } from "./autocomplete.js";
 
 export const help: Autocomplete = {
   async execute(interaction) {

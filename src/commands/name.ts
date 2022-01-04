@@ -1,11 +1,13 @@
 import { SlashCommandBuilder } from "@discordjs/builders";
 import { CommandInteraction } from "discord.js";
-import { checkManager, checkSecondary } from "../lib/checks";
-import { SuccessEmbed } from "../lib/discordEmbeds";
-import { getGuildMember } from "../lib/getCached";
-import { logger } from "../lib/logger";
-import { db } from "../lib/prisma";
-import { Command } from "./command";
+import type { Signale } from "signale";
+import { container } from "tsyringe";
+import { checkManager, checkSecondary } from "../lib/checks/index.js";
+import { SuccessEmbed } from "../lib/discordEmbeds.js";
+import { getGuildMember } from "../lib/getCached.js";
+import { db } from "../lib/prisma.js";
+import { kLogger } from "../tokens.js";
+import { Command } from "./command.js";
 
 // Set General Template
 export const name: Command = {
@@ -20,6 +22,7 @@ export const name: Command = {
         .setRequired(true)
     ),
   async execute(interaction: CommandInteraction) {
+    const logger = container.resolve<Signale>(kLogger);
     const name = interaction.options.getString("name");
 
     if (!interaction.guild) return;

@@ -1,7 +1,7 @@
 import { SlashCommandBuilder } from "@discordjs/builders";
 import { CommandInteraction } from "discord.js";
-import versionFile from "../version.json";
-import { Command } from "./command";
+import { version as w } from "../version.js";
+import { Command } from "./command.js";
 
 export const version: Command = {
   conditions: [],
@@ -10,7 +10,7 @@ export const version: Command = {
     .setDescription("The version of the bot in use."),
   async execute(interaction: CommandInteraction) {
     interaction.reply({
-      content: `The version of the bot is \`${versionFile.version}\`.`,
+      content: `The version of the bot is \`${w}\`.`,
     });
   },
 };

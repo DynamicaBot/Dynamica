@@ -1,10 +1,10 @@
 import { SlashCommandBuilder } from "@discordjs/builders";
 import { CommandInteraction } from "discord.js";
-import { checkCreator, checkSecondary } from "../lib/checks";
-import { SuccessEmbed } from "../lib/discordEmbeds";
-import { getGuildMember } from "../lib/getCached";
-import { db } from "../lib/prisma";
-import { Command } from "./command";
+import { checkCreator, checkSecondary } from "../lib/checks/index.js";
+import { SuccessEmbed } from "../lib/discordEmbeds.js";
+import { getGuildMember } from "../lib/getCached.js";
+import { db } from "../lib/prisma.js";
+import { Command } from "./command.js";
 
 export const transfer: Command = {
   conditions: [checkSecondary, checkCreator],

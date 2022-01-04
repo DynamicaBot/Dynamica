@@ -4,10 +4,10 @@ import {
   MessageActionRow,
   MessageButton,
 } from "discord.js";
-import { ErrorEmbed, SuccessEmbed } from "../lib/discordEmbeds";
-import { getChannel } from "../lib/getCached";
-import { db } from "../lib/prisma";
-import { Command } from "./command";
+import { ErrorEmbed, SuccessEmbed } from "../lib/discordEmbeds.js";
+import { getChannel } from "../lib/getCached.js";
+import { db } from "../lib/prisma.js";
+import { Command } from "./command.js";
 
 export const join: Command = {
   conditions: [],

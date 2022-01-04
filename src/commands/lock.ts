@@ -1,10 +1,13 @@
 import { SlashCommandBuilder } from "@discordjs/builders";
+import type Bree from "bree";
 import { CommandInteraction } from "discord.js";
-import { checkCreator, checkSecondary } from "../lib/checks";
-import { SuccessEmbed } from "../lib/discordEmbeds";
-import { getGuildMember } from "../lib/getCached";
-import { logger } from "../lib/logger";
-import { Command } from "./command";
+import { container } from "tsyringe";
+import { checkCreator, checkSecondary } from "../lib/checks/index.js";
+import { SuccessEmbed } from "../lib/discordEmbeds.js";
+import { getGuildMember } from "../lib/getCached.js";
+import { db } from "../lib/prisma.js";
+import { kBree } from "../tokens.js";
+import { Command } from "./command.js";
 
 export const lock: Command = {
   conditions: [checkCreator, checkSecondary],
@@ -12,6 +15,7 @@ export const lock: Command = {
     .setName("lock")
     .setDescription("Lock a channel to a certain role or user."),
   async execute(interaction: CommandInteraction) {
+    const bree = container.resolve<Bree>(kBree);
     if (!interaction.guild?.members) return;
 
     const guildMember = await getGuildMember(
@@ -21,25 +25,36 @@ export const lock: Command = {
 
     const everyone = interaction.guild?.roles.everyone;
     const channel = guildMember?.voice.channel;
+    const currentlyActive = [...channel.members.values()];
 
     const { permissionOverwrites } = channel;
 
-    if (everyone) {
-      await permissionOverwrites.create(everyone.id, { CONNECT: false });
-    }
-
-    await permissionOverwrites.create(interaction.user.id, {
-      CONNECT: true,
+    Promise.all(
+      currentlyActive.map((member) =>
+        permissionOverwrites.create(member.id, {
+          CONNECT: true,
+        })
+      )
+    ).then(() => {
+      if (everyone) {
+        permissionOverwrites.create(everyone.id, { CONNECT: false });
+      }
     });
+
     await interaction.reply({
       ephemeral: true,
       embeds: [
         SuccessEmbed(
-          `Only you can access this channel now. Use \`/permission add\` to allow people to access the channels.`
+          `Use \`/permission add\` to allow people to access the channels. Or, \`/permission remove\` to remove people.`
         ),
       ],
     });
-
-    logger.info(`${channel.id} locked.`);
+    await db.secondary.update({
+      where: { id: channel.id },
+      data: {
+        locked: true,
+      },
+    });
+    bree.run(channel.id);
   },
 };

@@ -1,9 +1,9 @@
 import { SlashCommandBuilder } from "@discordjs/builders";
 import { CommandInteraction } from "discord.js";
-import { checkManager } from "../lib/checks";
-import { SuccessEmbed } from "../lib/discordEmbeds";
-import { db } from "../lib/prisma";
-import { Command } from "./command";
+import { checkManager } from "../lib/checks/index.js";
+import { SuccessEmbed } from "../lib/discordEmbeds.js";
+import { db } from "../lib/prisma.js";
+import { Command } from "./command.js";
 
 export const template: Command = {
   conditions: [checkManager],

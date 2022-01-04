@@ -1,9 +1,19 @@
 import { REST } from "@discordjs/rest";
 import { Routes } from "discord-api-types/v9";
 import { config } from "dotenv";
-import { logger } from "./lib/logger";
+import { Signale } from "signale";
 config();
-
+const logger = new Signale({
+  disabled: false,
+  interactive: false,
+  logLevel: process.env.LOG_LEVEL || "info",
+  secrets: [
+    process.env.TOKEN,
+    process.env.CLIENT_ID,
+    process.env.GUILD_ID,
+    process.env.DATABASE_URL,
+  ],
+});
 const { TOKEN, CLIENT_ID, GUILD_ID } = process.env;
 
 if (!TOKEN || !CLIENT_ID) {

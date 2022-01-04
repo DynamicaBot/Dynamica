@@ -1,5 +1,6 @@
-export { channelDelete } from "./channelDelete";
-export { guildCreate } from "./guildCreate";
-export { guildDelete } from "./guildDelete";
-export { ready } from "./ready";
-export { voiceStateUpdate } from "./voiceStateUpdate";
+export { channelDelete } from "./channelDelete.js";
+export { guildCreate } from "./guildCreate.js";
+export { guildDelete } from "./guildDelete.js";
+export { presenceUpdate } from "./presenceUpdate.js";
+export { ready } from "./ready.js";
+export { voiceStateUpdate } from "./voiceStateUpdate.js";

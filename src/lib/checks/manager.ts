@@ -1,7 +1,10 @@
 import { CommandInteraction } from "discord.js";
-import { ErrorEmbed } from "../discordEmbeds";
-import { getGuildMember } from "../getCached";
-import { Check } from "./check";
+import type { Signale } from "signale";
+import { container } from "tsyringe";
+import { kLogger } from "../../tokens.js";
+import { ErrorEmbed } from "../discordEmbeds.js";
+import { getGuildMember } from "../getCached.js";
+import { Check } from "./check.js";
 
 /**
  * Checks permissions for Dynamica Manager role. (admin overrides)
@@ -9,24 +12,29 @@ import { Check } from "./check";
  * @returns Boolean if the member has permission to manage dynamica channels.
  */
 export const checkManager: Check = async (interaction: CommandInteraction) => {
-  if (!interaction.guild) return false;
-  const guildMember = await getGuildMember(
-    interaction.guild.members,
-    interaction.user.id
-  );
-  const dynamicaManager = guildMember?.roles.cache.some(
-    (role) => role.name === "Dynamica Manager"
-  );
-  const admin = guildMember.permissions.has("ADMINISTRATOR");
-  if (!dynamicaManager && !admin) {
-    await interaction.reply({
-      embeds: [
-        ErrorEmbed(
-          "You must have the Dynamica Manager role to execute this command."
-        ),
-      ],
-    });
-  }
+  const logger = container.resolve<Signale>(kLogger);
+  try {
+    if (!interaction.guild) return false;
+    const guildMember = await getGuildMember(
+      interaction.guild.members,
+      interaction.user.id
+    );
+    const dynamicaManager = guildMember?.roles.cache.some(
+      (role) => role.name === "Dynamica Manager"
+    );
+    const admin = guildMember.permissions.has("ADMINISTRATOR");
+    if (!dynamicaManager && !admin) {
+      await interaction.reply({
+        embeds: [
+          ErrorEmbed(
+            "You must have the Dynamica Manager role to execute this command."
+          ),
+        ],
+      });
+    }
 
-  return dynamicaManager || admin;
+    return dynamicaManager || admin;
+  } catch (error) {
+    logger.error("error in manager check", error);
+  }
 };

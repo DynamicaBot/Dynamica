@@ -1,4 +1,4 @@
-export { checkCreator } from "./creator";
-export { checkGuild } from "./guild";
-export { checkManager } from "./manager";
-export { checkSecondary } from "./secondary";
+export { checkCreator } from "./creator.js";
+export { checkGuild } from "./guild.js";
+export { checkManager } from "./manager.js";
+export { checkSecondary } from "./secondary.js";

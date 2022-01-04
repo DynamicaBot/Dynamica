@@ -3,7 +3,7 @@ import {
   SlashCommandSubcommandsOnlyBuilder,
 } from "@discordjs/builders";
 import { CommandInteraction } from "discord.js";
-import { Check } from "../lib/checks/check";
+import { Check } from "../lib/checks/check.js";
 
 interface Command {
   /**

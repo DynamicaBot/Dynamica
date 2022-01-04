@@ -1,6 +1,8 @@
 import { Alias } from "@prisma/client";
-import { uniq } from "lodash";
+import lodash from "lodash";
 import { romanize } from "romans";
+
+const { uniq } = lodash;
 
 /**
  * Format a string according to template values.
@@ -57,7 +59,7 @@ export function formatChannelName(
   const plurals = str.split(/<<(.+)\/(.+)>>/g);
 
   return (
-    `${locked ? "🔒" : null} ` +
+    `${locked ? "🔒" : ""} ` +
     str
       .replace(/###/g, channelNumber.toString().padStart(3, "0")) // 001
       .replace(/##/g, `#${channelNumber}`) // #1
