@@ -2,7 +2,7 @@ import { SlashCommandBuilder } from "@discordjs/builders";
 import type Bree from "bree";
 import { container } from "tsyringe";
 import { checkCreator, checkSecondary } from "../lib/checks/index.js";
-import { ErrorEmbed, SuccessEmbed } from "../lib/discordEmbeds.js";
+import { SuccessEmbed } from "../lib/discordEmbeds.js";
 import { getGuildMember } from "../lib/getCached.js";
 import { db } from "../lib/prisma.js";
 import { kBree } from "../tokens.js";
@@ -21,18 +21,6 @@ export const unlock: Command = {
     );
 
     const channel = guildMember?.voice.channel;
-
-    if (!channel) {
-      interaction.reply({
-        ephemeral: true,
-        embeds: [
-          ErrorEmbed(
-            "You need to be a member of the secondary channel in order to unlock it."
-          ),
-        ],
-      });
-      return;
-    }
 
     await db.secondary.update({
       where: { id: channel.id },
