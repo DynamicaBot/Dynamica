@@ -131,7 +131,6 @@ const renameThrottle = pThrottle({
 const throttledRename = renameThrottle(editChannel);
 const renameDebounce = pDebounce(throttledRename, 5000);
 
-// TODO: basically, probably don't even need scheduling. Just a class that emits events on change and throttles stuff with lodash
 export function startJobs() {
   const logger = container.resolve<Signale>(kLogger);
   logger.info("Started Jobs");
