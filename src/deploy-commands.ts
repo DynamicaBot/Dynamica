@@ -1,8 +1,9 @@
 import { REST } from "@discordjs/rest";
 import { Routes } from "discord-api-types/v9";
 import { config } from "dotenv";
-import { Signale } from "signale";
+import signale from "signale";
 import * as commands from "./commands/index.js";
+const { Signale } = signale;
 config();
 
 const logger = new Signale({
