@@ -1,12 +1,12 @@
 import { SlashCommandBuilder } from "@discordjs/builders";
 import type Bree from "bree";
 import { container } from "tsyringe";
-import { checkCreator, checkSecondary } from "../lib/checks/index.js";
-import { SuccessEmbed } from "../lib/discordEmbeds.js";
-import { getGuildMember } from "../lib/getCached.js";
-import { db } from "../lib/prisma.js";
-import { kBree } from "../tokens.js";
-import { Command } from "./command.js";
+import { checkCreator, checkSecondary } from "../lib/checks";
+import { SuccessEmbed } from "../lib/discordEmbeds";
+import { getGuildMember } from "../lib/getCached";
+import { db } from "../lib/prisma";
+import { kBree } from "../tokens";
+import { Command } from "./";
 
 export const unlock: Command = {
   conditions: [checkSecondary, checkCreator],

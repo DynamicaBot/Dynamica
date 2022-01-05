@@ -1,10 +1,10 @@
 import { Guild } from "discord.js";
 import type { Signale } from "signale";
 import { container } from "tsyringe";
-import { kLogger } from "../tokens.js";
-import { event } from "./event.js";
+import { Event } from ".";
+import { kLogger } from "../tokens";
 
-export const guildDelete: event = {
+export const guildDelete: Event = {
   name: "guildDelete",
   once: false,
   async execute(guild: Guild) {

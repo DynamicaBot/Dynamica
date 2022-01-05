@@ -2,11 +2,11 @@ import { CommandInteraction } from "discord.js";
 import type { Signale } from "signale";
 import { container } from "tsyringe";
 import * as commands from "../commands/index.js";
-import { ErrorEmbed } from "../lib/discordEmbeds.js";
-import { kLogger } from "../tokens.js";
-import { event } from "./event.js";
+import { ErrorEmbed } from "../lib/discordEmbeds";
+import { kLogger } from "../tokens";
+import { Event } from "./";
 
-export const commandListener: event = {
+export const commandListener: Event = {
   name: "interactionCreate",
   once: false,
   async execute(interaction: CommandInteraction) {

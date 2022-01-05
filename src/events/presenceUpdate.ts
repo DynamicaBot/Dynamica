@@ -2,11 +2,11 @@ import type Bree from "bree";
 import { Presence } from "discord.js";
 import type { Signale } from "signale";
 import { container } from "tsyringe";
-import { db } from "../lib/prisma.js";
-import { kBree, kLogger } from "../tokens.js";
-import { event } from "./event.js";
+import { Event } from ".";
+import { db } from "../lib/prisma";
+import { kBree, kLogger } from "../tokens";
 
-export const presenceUpdate: event = {
+export const presenceUpdate: Event = {
   once: false,
   name: "presenceUpdate",
   async execute(oldPresence: Presence, newPresence: Presence) {

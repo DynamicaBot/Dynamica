@@ -8,8 +8,8 @@ import {
 } from "discord.js";
 import type { Signale } from "signale";
 import { container } from "tsyringe";
-import { kLogger } from "../../tokens.js";
-import { db } from "../prisma.js";
+import { kLogger } from "../../tokens";
+import { db } from "../prisma";
 
 /**
  * Create Primary Channel

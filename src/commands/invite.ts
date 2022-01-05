@@ -1,6 +1,6 @@
 import { SlashCommandBuilder } from "@discordjs/builders";
 import { CommandInteraction } from "discord.js";
-import { Command } from "./command.js";
+import { Command } from "./";
 
 export const invite: Command = {
   conditions: [],

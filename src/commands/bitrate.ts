@@ -1,9 +1,9 @@
 import { SlashCommandBuilder } from "@discordjs/builders";
 import { CommandInteraction } from "discord.js";
-import { checkCreator, checkSecondary } from "../lib/checks/index.js";
-import { ErrorEmbed, SuccessEmbed } from "../lib/discordEmbeds.js";
-import { getGuildMember } from "../lib/getCached.js";
-import { Command } from "./command.js";
+import { checkCreator, checkSecondary } from "../lib/checks";
+import { ErrorEmbed, SuccessEmbed } from "../lib/discordEmbeds";
+import { getGuildMember } from "../lib/getCached";
+import { Command } from "./";
 
 // Set General Template
 export const bitrate: Command = {

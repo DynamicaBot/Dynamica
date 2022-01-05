@@ -1,5 +1,4 @@
-import Prisma from "@prisma/client";
-const { PrismaClient } = Prisma;
+import { PrismaClient } from "@prisma/client";
 /**
  * Prisma Client from Prisma
  */

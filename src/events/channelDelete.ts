@@ -1,8 +1,8 @@
 import { GuildChannel } from "discord.js";
-import { db } from "../lib/prisma.js";
-import { event } from "./event.js";
+import { db } from "../lib/prisma";
+import { Event } from "./";
 
-export const channelDelete: event = {
+export const channelDelete: Event = {
   name: "channelDelete",
   once: false,
   async execute({ id }: GuildChannel) {

@@ -1,6 +1,6 @@
 import Fuse from "fuse.js";
-import { db } from "../lib/prisma.js";
-import { Autocomplete } from "./autocomplete.js";
+import { db } from "../lib/prisma";
+import type { Autocomplete } from "./";
 
 export const general: Autocomplete = {
   async execute(interaction) {

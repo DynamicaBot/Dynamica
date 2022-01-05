@@ -1,9 +1,9 @@
 import { SlashCommandBuilder } from "@discordjs/builders";
 import { CommandInteraction, GuildChannel } from "discord.js";
-import { checkManager } from "../lib/checks/index.js";
-import { ErrorEmbed, SuccessEmbed } from "../lib/discordEmbeds.js";
-import { createPrimary } from "../lib/operations/primary.js";
-import { Command } from "./command.js";
+import { checkManager } from "../lib/checks";
+import { ErrorEmbed, SuccessEmbed } from "../lib/discordEmbeds";
+import { createPrimary } from "../lib/operations/primary";
+import { Command } from "./";
 
 export const create: Command = {
   conditions: [checkManager],

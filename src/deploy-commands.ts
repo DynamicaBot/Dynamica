@@ -3,7 +3,7 @@ import { Routes } from "discord-api-types/v9";
 import { config } from "dotenv";
 import "reflect-metadata";
 import signale from "signale";
-import * as commands from "./commands/index.js";
+import * as commands from "./commands";
 const { Signale } = signale;
 config();
 

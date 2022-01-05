@@ -1,7 +1,7 @@
 import { SlashCommandBuilder } from "@discordjs/builders";
 import { CommandInteraction } from "discord.js";
 import { version as w } from "../version.js";
-import { Command } from "./command.js";
+import { Command } from "./";
 
 export const version: Command = {
   conditions: [],

@@ -1,5 +1,4 @@
 {
   "typescript.tsdk": "node_modules/typescript/lib",
-  "cSpell.words": ["Dynamica", "secondaries"],
-  "typescript.preferences.importModuleSpecifierEnding": "js"
+  "cSpell.words": ["Dynamica", "secondaries"]
 }

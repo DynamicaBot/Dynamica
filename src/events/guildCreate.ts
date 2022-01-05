@@ -2,9 +2,8 @@ import { Embed, hyperlink } from "@discordjs/builders";
 import { Guild } from "discord.js";
 import type { Signale } from "signale";
 import { container } from "tsyringe";
-import { kLogger } from "../tokens.js";
-import { event } from "./event.js";
-
+import { Event } from ".";
+import { kLogger } from "../tokens";
 /**
  * The list of basic commands to display.
  */
@@ -74,7 +73,7 @@ const botInfoEmbed = new Embed()
     iconURL: "https://dynamica.dev/img/dynamica.png",
   });
 
-export const guildCreate: event = {
+export const guildCreate: Event = {
   name: "guildCreate",
   once: false,
   async execute(guild: Guild) {
