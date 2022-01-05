@@ -1,14 +1,15 @@
-import { ClientEvents } from "discord.js";
+import { channelDelete } from "./channelDelete";
+import { guildCreate } from "./guildCreate";
+import { guildDelete } from "./guildDelete";
+import { presenceUpdate } from "./presenceUpdate";
+import { ready } from "./ready";
+import { voiceStateUpdate } from "./voiceStateUpdate";
 
-export { channelDelete } from "./channelDelete";
-export { guildCreate } from "./guildCreate";
-export { guildDelete } from "./guildDelete";
-export { presenceUpdate } from "./presenceUpdate";
-export { ready } from "./ready";
-export { voiceStateUpdate } from "./voiceStateUpdate";
-
-export interface Event {
-  name: keyof ClientEvents;
-  once: boolean;
-  execute: (...args: any) => Promise<any>;
-}
+export default {
+  channelDelete,
+  guildCreate,
+  guildDelete,
+  presenceUpdate,
+  ready,
+  voiceStateUpdate,
+};

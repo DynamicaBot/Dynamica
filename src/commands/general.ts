@@ -1,9 +1,9 @@
 import { SlashCommandBuilder } from "@discordjs/builders";
 import { CommandInteraction } from "discord.js";
+import { CommandBuilder } from "../lib/builders";
 import { checkManager } from "../lib/conditions";
 import { SuccessEmbed } from "../lib/discordEmbeds";
 import { db } from "../lib/prisma";
-import { CommandBuilder } from "./";
 
 export const general = new CommandBuilder()
   .setConditions([checkManager])

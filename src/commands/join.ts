@@ -1,9 +1,9 @@
 import { SlashCommandBuilder } from "@discordjs/builders";
 import { MessageActionRow, MessageButton } from "discord.js";
+import { CommandBuilder } from "../lib/builders";
 import { ErrorEmbed, SuccessEmbed } from "../lib/discordEmbeds";
 import { getChannel } from "../lib/getCached";
 import { db } from "../lib/prisma";
-import { CommandBuilder } from "./";
 
 export const join = new CommandBuilder()
   .setConditions([])

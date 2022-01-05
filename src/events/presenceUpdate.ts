@@ -2,15 +2,17 @@ import type Bree from "bree";
 import { Presence } from "discord.js";
 import type { Signale } from "signale";
 import { container } from "tsyringe";
-import { Event } from ".";
+import { EventBuilder } from "../lib/builders";
 import { db } from "../lib/prisma";
 import { kBree, kLogger } from "../tokens";
 
-export const presenceUpdate: Event = {
-  once: false,
-  name: "presenceUpdate",
-  async execute(oldPresence: Presence, newPresence: Presence) {
-    if (oldPresence?.activities[0]?.name === newPresence?.activities[0]?.name)
+export const presenceUpdate = new EventBuilder()
+  .setName("presenceUpdate")
+  .setOnce(false)
+  .setResponse(async (oldPresence: Presence, newPresence: Presence) => {
+    if (
+      oldPresence?.activities[0]?.name === newPresence?.activities?.at(0)?.name
+    )
       return;
     const logger = container.resolve<Signale>(kLogger);
     const bree = container.resolve<Bree>(kBree);
@@ -26,5 +28,4 @@ export const presenceUpdate: Event = {
     } catch (error) {
       logger.error("failed channel name refresh (run) ", error);
     }
-  },
-};
+  });

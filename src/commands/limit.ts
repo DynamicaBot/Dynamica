@@ -1,8 +1,8 @@
 import { SlashCommandBuilder } from "@discordjs/builders";
+import { CommandBuilder } from "../lib/builders";
 import { checkCreator, checkSecondary } from "../lib/conditions";
 import { SuccessEmbed } from "../lib/discordEmbeds";
 import { getGuildMember } from "../lib/getCached";
-import { CommandBuilder } from "./";
 
 export const limit = new CommandBuilder()
   .setConditions([checkSecondary, checkCreator])

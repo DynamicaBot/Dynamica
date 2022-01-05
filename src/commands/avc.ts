@@ -1,6 +1,6 @@
 import { hyperlink, SlashCommandBuilder } from "@discordjs/builders";
 import { CommandInteraction } from "discord.js";
-import { CommandBuilder } from "./";
+import { CommandBuilder } from "../lib/builders";
 
 export const avc = new CommandBuilder()
   .setConditions([])

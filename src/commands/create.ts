@@ -1,9 +1,9 @@
 import { SlashCommandBuilder } from "@discordjs/builders";
 import { GuildChannel } from "discord.js";
+import { CommandBuilder } from "../lib/builders";
 import { checkManager } from "../lib/conditions";
 import { ErrorEmbed, SuccessEmbed } from "../lib/discordEmbeds";
 import { createPrimary } from "../lib/operations/primary";
-import { CommandBuilder } from "./";
 
 export const create = new CommandBuilder()
   .setConditions([checkManager])

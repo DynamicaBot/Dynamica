@@ -1,9 +1,9 @@
 import { Embed, quote, SlashCommandBuilder } from "@discordjs/builders";
 import { CommandInteraction } from "discord.js";
+import { CommandBuilder } from "../lib/builders";
 import { checkManager } from "../lib/conditions";
 import { SuccessEmbed } from "../lib/discordEmbeds";
 import { deleteAlias, listAliases, updateAlias } from "../lib/operations/alias";
-import { CommandBuilder } from "./";
 
 // Set General Template
 export const alias = new CommandBuilder()

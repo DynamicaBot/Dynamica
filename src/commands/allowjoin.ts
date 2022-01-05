@@ -1,8 +1,8 @@
 import { SlashCommandBuilder } from "@discordjs/builders";
+import { CommandBuilder } from "../lib/builders";
 import { checkManager } from "../lib/conditions";
 import { SuccessEmbed } from "../lib/discordEmbeds";
 import { db } from "../lib/prisma";
-import { CommandBuilder } from "./";
 
 export const allowjoin = new CommandBuilder()
   .setConditions([checkManager])

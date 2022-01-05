@@ -1,7 +1,7 @@
 import { SlashCommandBuilder } from "@discordjs/builders";
 import { CommandInteraction } from "discord.js";
+import { CommandBuilder } from "../lib/builders.js";
 import { version as w } from "../version.js";
-import { CommandBuilder } from "./";
 
 export const version = new CommandBuilder()
   .setConditions([])

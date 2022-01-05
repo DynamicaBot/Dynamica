@@ -4,11 +4,11 @@ import dotenv from "dotenv";
 import "reflect-metadata";
 import signale from "signale";
 import { container } from "tsyringe";
-import type { Autocomplete } from "./autocompletes";
 import * as autocompletes from "./autocompletes";
+import { AutocompleteBuilder } from "./autocompletes";
 import type { CommandBuilder } from "./commands";
 import * as commands from "./commands";
-import * as events from "./events";
+import events from "./events";
 import { checkGuild } from "./lib/conditions";
 import { ErrorEmbed } from "./lib/discordEmbeds";
 import { db } from "./lib/prisma";
@@ -98,8 +98,9 @@ client.on("interactionCreate", async (interaction) => {
 client.on("interactionCreate", async (interaction) => {
   if (!interaction.isAutocomplete()) return;
   try {
-    const autocomplete: Autocomplete = autocompletes[interaction.commandName];
-    autocomplete.execute(interaction);
+    const autocomplete: AutocompleteBuilder =
+      autocompletes[interaction.commandName];
+    autocomplete.run(interaction);
   } catch (e) {
     logger.error(e);
   }
@@ -108,9 +109,9 @@ client.on("interactionCreate", async (interaction) => {
 // Register event handlers
 for (const event of eventList) {
   if (event.once) {
-    client.once(event.name, (...args: any) => event.execute(...args));
+    client.once(event.name, (...args: any) => event.run(...args));
   } else {
-    client.on(event.name, (...args: any) => event.execute(...args));
+    client.on(event.name, (...args: any) => event.run(...args));
   }
 }
 

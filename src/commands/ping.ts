@@ -1,6 +1,6 @@
 import { SlashCommandBuilder } from "@discordjs/builders";
 import { CommandInteraction } from "discord.js";
-import { CommandBuilder } from "./";
+import { CommandBuilder } from "../lib/builders";
 
 export const ping = new CommandBuilder()
   .setConditions([])

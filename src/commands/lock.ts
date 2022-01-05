@@ -2,12 +2,12 @@ import { SlashCommandBuilder } from "@discordjs/builders";
 import type Bree from "bree";
 import { CommandInteraction } from "discord.js";
 import { container } from "tsyringe";
+import { CommandBuilder } from "../lib/builders";
 import { checkCreator, checkSecondary } from "../lib/conditions";
 import { SuccessEmbed } from "../lib/discordEmbeds";
 import { getGuildMember } from "../lib/getCached";
 import { db } from "../lib/prisma";
 import { kBree } from "../tokens";
-import { CommandBuilder } from "./";
 
 export const lock = new CommandBuilder()
   .setConditions([checkCreator, checkSecondary])

@@ -1,8 +1,8 @@
 import { SlashCommandBuilder } from "@discordjs/builders";
+import { CommandBuilder } from "../lib/builders";
 import { checkManager } from "../lib/conditions";
 import { SuccessEmbed } from "../lib/discordEmbeds";
 import { updateGuild } from "../lib/operations/guild.js";
-import { CommandBuilder } from "./";
 
 export const text = new CommandBuilder()
   .setConditions([checkManager])

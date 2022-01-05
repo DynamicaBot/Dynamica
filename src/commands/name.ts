@@ -2,12 +2,12 @@ import { SlashCommandBuilder } from "@discordjs/builders";
 import { CommandInteraction } from "discord.js";
 import type { Signale } from "signale";
 import { container } from "tsyringe";
+import { CommandBuilder } from "../lib/builders";
 import { checkManager, checkSecondary } from "../lib/conditions";
 import { SuccessEmbed } from "../lib/discordEmbeds";
 import { getGuildMember } from "../lib/getCached";
 import { db } from "../lib/prisma";
 import { kLogger } from "../tokens";
-import { CommandBuilder } from "./";
 
 export const name = new CommandBuilder()
   .setConditions([checkSecondary, checkManager])

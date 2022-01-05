@@ -1,5 +1,5 @@
 import { SlashCommandBuilder } from "@discordjs/builders";
-import { CommandBuilder } from "./";
+import { CommandBuilder } from "../lib/builders";
 
 export const invite = new CommandBuilder()
   .setConditions([])

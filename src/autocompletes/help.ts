@@ -1,11 +1,11 @@
 import Fuse from "fuse.js";
+import { AutocompleteBuilder } from "../lib/builders";
 import { getCommands } from "../lib/getCached";
-import type { Autocomplete } from "./";
 
-export const help: Autocomplete = {
-  async execute(interaction) {
-    const { name, value } = interaction.options.getFocused(true);
-    if (name !== "subcommand") return;
+export const help = new AutocompleteBuilder()
+  .setCommandName("help")
+  .setResponse(async (interaction) => {
+    const { value } = interaction.options.getFocused(true);
     const commands = await getCommands(
       interaction.guild?.commands,
       interaction.client.application?.commands
@@ -26,5 +26,4 @@ export const help: Autocomplete = {
     const query = fuse.search(value.toString());
 
     interaction.respond(query.map((result) => result.item));
-  },
-};
+  });

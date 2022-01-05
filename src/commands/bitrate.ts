@@ -1,9 +1,9 @@
 import { SlashCommandBuilder } from "@discordjs/builders";
 import { CommandInteraction } from "discord.js";
+import { CommandBuilder } from "../lib/builders";
 import { checkCreator, checkSecondary } from "../lib/conditions";
 import { ErrorEmbed, SuccessEmbed } from "../lib/discordEmbeds";
 import { getGuildMember } from "../lib/getCached";
-import { CommandBuilder } from "./";
 
 export const bitrate = new CommandBuilder()
   .setConditions([checkCreator, checkSecondary])

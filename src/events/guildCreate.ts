@@ -2,7 +2,7 @@ import { Embed, hyperlink } from "@discordjs/builders";
 import { Guild } from "discord.js";
 import type { Signale } from "signale";
 import { container } from "tsyringe";
-import { Event } from ".";
+import { EventBuilder } from "../lib/builders";
 import { db } from "../lib/prisma";
 import { kLogger } from "../tokens";
 /**
@@ -74,10 +74,10 @@ const botInfoEmbed = new Embed()
     iconURL: "https://dynamica.dev/img/dynamica.png",
   });
 
-export const guildCreate: Event = {
-  name: "guildCreate",
-  once: false,
-  async execute(guild: Guild) {
+export const guildCreate = new EventBuilder()
+  .setName("guildCreate")
+  .setOnce(false)
+  .setResponse(async (guild: Guild) => {
     const logger = container.resolve<Signale>(kLogger);
     if (guild.systemChannel) {
       guild.systemChannel.send({
@@ -90,5 +90,4 @@ export const guildCreate: Event = {
       },
     });
     logger.debug(`Joined guild ${guild.id} named: ${guild.name}`);
-  },
-};
+  });
