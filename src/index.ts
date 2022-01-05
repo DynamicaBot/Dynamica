@@ -6,7 +6,7 @@ import signale from "signale";
 import { container } from "tsyringe";
 import type { Autocomplete } from "./autocompletes";
 import * as autocompletes from "./autocompletes";
-import type { Command } from "./commands";
+import type { CommandBuilder } from "./commands";
 import * as commands from "./commands";
 import * as events from "./events";
 import { checkGuild } from "./lib/conditions";
@@ -68,7 +68,7 @@ const eventList = Object.values(events);
 client.on("interactionCreate", async (interaction) => {
   if (!interaction.isCommand()) return;
   try {
-    const command: Command = commands[interaction.commandName];
+    const command: CommandBuilder = commands[interaction.commandName];
     const conditions = await Promise.all(
       command.conditions
         .concat([checkGuild])
@@ -84,7 +84,7 @@ client.on("interactionCreate", async (interaction) => {
         ephemeral: true,
       });
     } else {
-      await command.execute(interaction);
+      await command.run(interaction);
     }
   } catch (e) {
     logger.error(e);

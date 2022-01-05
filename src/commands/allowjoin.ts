@@ -2,20 +2,22 @@ import { SlashCommandBuilder } from "@discordjs/builders";
 import { checkManager } from "../lib/conditions";
 import { SuccessEmbed } from "../lib/discordEmbeds";
 import { db } from "../lib/prisma";
-import { Command } from "./";
+import { CommandBuilder } from "./";
 
-export const allowjoin: Command = {
-  conditions: [checkManager],
-  data: new SlashCommandBuilder()
-    .setName("allowjoin")
-    .setDescription("Allow users to request to join a locked channel.")
-    .addBooleanOption((option) =>
-      option
-        .setName("state")
-        .setDescription("Whether to enable or disable join requests.")
-        .setRequired(true)
-    ),
-  async execute(interaction) {
+export const allowjoin = new CommandBuilder()
+  .setConditions([checkManager])
+  .setData(
+    new SlashCommandBuilder()
+      .setName("allowjoin")
+      .setDescription("Allow users to request to join a locked channel.")
+      .addBooleanOption((option) =>
+        option
+          .setName("state")
+          .setDescription("Whether to enable or disable join requests.")
+          .setRequired(true)
+      )
+  )
+  .setResponse(async (interaction) => {
     const state = interaction.options.getBoolean("state", true);
     await db.guild.update({
       where: { id: interaction.guild.id },
@@ -29,5 +31,4 @@ export const allowjoin: Command = {
         SuccessEmbed(`${!state ? "Disabled" : "Enabled"} Join Requests`),
       ],
     });
-  },
-};
+  });

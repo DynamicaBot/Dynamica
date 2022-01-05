@@ -6,14 +6,16 @@ import { SuccessEmbed } from "../lib/discordEmbeds";
 import { getGuildMember } from "../lib/getCached";
 import { db } from "../lib/prisma";
 import { kBree } from "../tokens";
-import { Command } from "./";
+import { CommandBuilder } from "./";
 
-export const unlock: Command = {
-  conditions: [checkSecondary, checkCreator],
-  data: new SlashCommandBuilder()
-    .setName("unlock")
-    .setDescription("Remove any existing locks on locked secondary channels."),
-  async execute(interaction) {
+export const unlock = new CommandBuilder()
+  .setConditions([checkCreator, checkSecondary])
+  .setData(
+    new SlashCommandBuilder()
+      .setName("unlock")
+      .setDescription("Remove any existing locks on locked secondary channels.")
+  )
+  .setResponse(async (interaction) => {
     const bree = container.resolve<Bree>(kBree);
     const guildMember = await getGuildMember(
       interaction.guild.members,
@@ -35,5 +37,4 @@ export const unlock: Command = {
       ephemeral: true,
       embeds: [SuccessEmbed(`Removed lock on <#${channel.id}>`)],
     });
-  },
-};
+  });

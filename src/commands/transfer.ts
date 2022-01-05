@@ -4,20 +4,24 @@ import { checkCreator, checkSecondary } from "../lib/conditions";
 import { SuccessEmbed } from "../lib/discordEmbeds";
 import { getGuildMember } from "../lib/getCached";
 import { db } from "../lib/prisma";
-import { Command } from "./";
+import { CommandBuilder } from "./";
 
-export const transfer: Command = {
-  conditions: [checkSecondary, checkCreator],
-  data: new SlashCommandBuilder()
-    .setName("transfer")
-    .setDescription("Transfer ownership of secondary channel to another person")
-    .addUserOption((option) =>
-      option
-        .setName("user")
-        .setDescription("The person to transfer ownership to.")
-        .setRequired(true)
-    ),
-  async execute(interaction: CommandInteraction) {
+export const transfer = new CommandBuilder()
+  .setConditions([checkCreator, checkSecondary])
+  .setData(
+    new SlashCommandBuilder()
+      .setName("transfer")
+      .setDescription(
+        "Transfer ownership of secondary channel to another person"
+      )
+      .addUserOption((option) =>
+        option
+          .setName("user")
+          .setDescription("The person to transfer ownership to.")
+          .setRequired(true)
+      )
+  )
+  .setResponse(async (interaction: CommandInteraction) => {
     const user = interaction.options.getUser("user", true);
     if (!interaction.guild) return;
 
@@ -44,5 +48,4 @@ export const transfer: Command = {
         ),
       ],
     });
-  },
-};
+  });

@@ -28,7 +28,10 @@ export { transfer } from "./transfer";
 export { unlock } from "./unlock";
 export { version } from "./version";
 
-export interface Command {
+/**
+ * Command Builder for Dynamica
+ */
+export class CommandBuilder {
   /**
    * Conditions that need to be fulfilled. Commonly permissions checks.
    */
@@ -43,5 +46,53 @@ export interface Command {
   /**
    * The main function of the command.
    */
-  execute: (interaction: CommandInteraction) => Promise<any>;
+  response: (interaction: CommandInteraction) => Promise<any>;
+
+  setConditions(conditions: Check[]) {
+    this.conditions = conditions;
+    return this;
+  }
+
+  /**
+   * Set the command data and config
+   * @param data DiscordJS Command Builder
+   * @returns builder
+   */
+  setData(
+    data:
+      | SlashCommandBuilder
+      | SlashCommandSubcommandsOnlyBuilder
+      | Omit<SlashCommandBuilder, "addSubcommand" | "addSubcommandGroup">
+  ) {
+    this.data = data;
+    return this;
+  }
+
+  /**
+   * Set the response to the command
+   * @param execute The response to be executed.
+   * @returns builder
+   */
+  setResponse(execute: (interaction: CommandInteraction) => Promise<any>) {
+    this.response = execute;
+    return this;
+  }
+
+  /**
+   * Run the command
+   * @param interaction DiscordJS Interaction
+   * @returns Promise
+   */
+  run(interaction: CommandInteraction) {
+    if (!("conditions" in this)) {
+      throw new Error("Conditions is missing");
+    }
+    if (!("data" in this)) {
+      throw new Error("Data is missing");
+    }
+    if (!("response" in this)) {
+      throw new Error("Response is missing");
+    }
+    return this.response(interaction);
+  }
 }

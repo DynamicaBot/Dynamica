@@ -4,16 +4,18 @@ import { checkManager, checkSecondary } from "../lib/conditions";
 import { SuccessEmbed } from "../lib/discordEmbeds";
 import { getGuildMember } from "../lib/getCached";
 import { db } from "../lib/prisma";
-import { Command } from "./";
+import { CommandBuilder } from "./";
 
-export const allyourbase: Command = {
-  conditions: [checkSecondary, checkManager],
-  data: new SlashCommandBuilder()
-    .setName("allyourbase")
-    .setDescription(
-      "If you are an admin you become the owner of the channel you are in."
-    ),
-  async execute(interaction: CommandInteraction) {
+export const allyourbase = new CommandBuilder()
+  .setConditions([checkManager, checkSecondary])
+  .setData(
+    new SlashCommandBuilder()
+      .setName("allyourbase")
+      .setDescription(
+        "If you are an admin you become the owner of the channel you are in."
+      )
+  )
+  .setResponse(async (interaction: CommandInteraction) => {
     if (!interaction.guild) return;
 
     const guildMember = await getGuildMember(
@@ -37,5 +39,4 @@ export const allyourbase: Command = {
         ),
       ],
     });
-  },
-};
+  });
