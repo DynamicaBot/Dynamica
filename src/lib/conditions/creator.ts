@@ -1,10 +1,10 @@
 import type { Signale } from "signale";
 import { container } from "tsyringe";
+import { Check } from ".";
 import { kLogger } from "../../tokens";
 import { ErrorEmbed } from "../discordEmbeds";
 import { getGuildMember } from "../getCached";
 import { db } from "../prisma";
-import { Check } from "./";
 
 /**
  * Checks if a guild member is the creator of the secondary channel. (overridden by manager and admin)

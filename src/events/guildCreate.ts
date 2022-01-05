@@ -3,6 +3,7 @@ import { Guild } from "discord.js";
 import type { Signale } from "signale";
 import { container } from "tsyringe";
 import { Event } from ".";
+import { db } from "../lib/prisma";
 import { kLogger } from "../tokens";
 /**
  * The list of basic commands to display.
@@ -83,7 +84,11 @@ export const guildCreate: Event = {
         embeds: [botInfoEmbed],
       });
     }
-
+    await db.guild.create({
+      data: {
+        id: guild.id,
+      },
+    });
     logger.debug(`Joined guild ${guild.id} named: ${guild.name}`);
   },
 };

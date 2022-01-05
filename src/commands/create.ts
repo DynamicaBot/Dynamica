@@ -1,6 +1,6 @@
 import { SlashCommandBuilder } from "@discordjs/builders";
 import { CommandInteraction, GuildChannel } from "discord.js";
-import { checkManager } from "../lib/checks";
+import { checkManager } from "../lib/conditions";
 import { ErrorEmbed, SuccessEmbed } from "../lib/discordEmbeds";
 import { createPrimary } from "../lib/operations/primary";
 import { Command } from "./";

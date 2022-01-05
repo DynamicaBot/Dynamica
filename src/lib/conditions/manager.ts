@@ -1,10 +1,10 @@
 import { CommandInteraction } from "discord.js";
 import type { Signale } from "signale";
 import { container } from "tsyringe";
+import { Check } from ".";
 import { kLogger } from "../../tokens";
 import { ErrorEmbed } from "../discordEmbeds";
 import { getGuildMember } from "../getCached";
-import { Check } from "./";
 
 /**
  * Checks permissions for Dynamica Manager role. (admin overrides)

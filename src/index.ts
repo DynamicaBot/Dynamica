@@ -9,7 +9,7 @@ import * as autocompletes from "./autocompletes";
 import type { Command } from "./commands";
 import * as commands from "./commands";
 import * as events from "./events";
-import { checkGuild } from "./lib/checks";
+import { checkGuild } from "./lib/conditions";
 import { ErrorEmbed } from "./lib/discordEmbeds";
 import { db } from "./lib/prisma";
 import { kBree, kLogger } from "./tokens";

@@ -1,5 +1,5 @@
 import { SlashCommandBuilder } from "@discordjs/builders";
-import { checkManager } from "../lib/checks";
+import { checkManager } from "../lib/conditions";
 import { SuccessEmbed } from "../lib/discordEmbeds";
 import { updateGuild } from "../lib/operations/guild.js";
 import { Command } from "./";

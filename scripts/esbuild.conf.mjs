@@ -51,7 +51,7 @@ export async function build(watch = false) {
         : false,
       incremental: watch,
       sourcemap: true,
-      external: [],
+      external: ["@prisma/client"],
       minify: process.env.NODE_ENV === "production",
     }),
     watch
