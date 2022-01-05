@@ -17,9 +17,9 @@ WORKDIR /app
 
 COPY tsconfig.json .
 COPY src ./src
+COPY scripts ./scripts
 RUN yarn install --immutable
 RUN yarn build
-COPY prisma/schema.prisma ./dist/schema.prisma
 
 # Runner
 FROM base as runner
@@ -29,4 +29,5 @@ ENV NODE_ENV="production"
 ENV DATABASE_URL "file:/app/config/db.sqlite"
 COPY --from=build /app/dist dist
 RUN yarn install --production --frozen-lockfile
-CMD yarn deploy && yarn prisma migrate deploy && yarn start
+RUN npx prisma generate
+CMD yarn deploy && npx prisma migrate deploy && yarn start
