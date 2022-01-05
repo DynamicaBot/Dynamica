@@ -4,15 +4,14 @@ import dotenv from "dotenv";
 import "reflect-metadata";
 import signale from "signale";
 import { container } from "tsyringe";
-import { Autocomplete } from "./autocompletes/autocomplete.js";
-import * as autocompletes from "./autocompletes/index.js";
-import { Command } from "./commands/command.js";
-import * as commands from "./commands/index.js";
-import * as events from "./events/index.js";
-import { checkGuild } from "./lib/checks/index.js";
-import { ErrorEmbed } from "./lib/discordEmbeds.js";
-import { db } from "./lib/prisma.js";
-import { kBree, kLogger } from "./tokens.js";
+import * as autocompletes from "./autocompletes";
+import * as commands from "./commands";
+import events from "./events";
+import { AutocompleteBuilder, CommandBuilder } from "./lib/builders";
+import { checkGuild } from "./lib/conditions";
+import { ErrorEmbed } from "./lib/discordEmbeds";
+import { db } from "./lib/prisma";
+import { kBree, kLogger } from "./tokens";
 dotenv.config();
 
 const { Signale } = signale;
@@ -68,7 +67,7 @@ const eventList = Object.values(events);
 client.on("interactionCreate", async (interaction) => {
   if (!interaction.isCommand()) return;
   try {
-    const command: Command = commands[interaction.commandName];
+    const command: CommandBuilder = commands[interaction.commandName];
     const conditions = await Promise.all(
       command.conditions
         .concat([checkGuild])
@@ -84,7 +83,7 @@ client.on("interactionCreate", async (interaction) => {
         ephemeral: true,
       });
     } else {
-      await command.execute(interaction);
+      await command.run(interaction);
     }
   } catch (e) {
     logger.error(e);
@@ -98,8 +97,9 @@ client.on("interactionCreate", async (interaction) => {
 client.on("interactionCreate", async (interaction) => {
   if (!interaction.isAutocomplete()) return;
   try {
-    const autocomplete: Autocomplete = autocompletes[interaction.commandName];
-    autocomplete.execute(interaction);
+    const autocomplete: AutocompleteBuilder =
+      autocompletes[interaction.commandName];
+    autocomplete.run(interaction);
   } catch (e) {
     logger.error(e);
   }
@@ -108,9 +108,9 @@ client.on("interactionCreate", async (interaction) => {
 // Register event handlers
 for (const event of eventList) {
   if (event.once) {
-    client.once(event.name, (...args: any) => event.execute(...args));
+    client.once(event.name, (...args: any) => event.run(...args));
   } else {
-    client.on(event.name, (...args: any) => event.execute(...args));
+    client.on(event.name, (...args: any) => event.run(...args));
   }
 }
 

@@ -1,28 +1,25 @@
 import { SlashCommandBuilder } from "@discordjs/builders";
-import {
-  CommandInteraction,
-  MessageActionRow,
-  MessageButton,
-} from "discord.js";
-import { ErrorEmbed, SuccessEmbed } from "../lib/discordEmbeds.js";
-import { getChannel } from "../lib/getCached.js";
-import { db } from "../lib/prisma.js";
-import { Command } from "./command.js";
+import { MessageActionRow, MessageButton } from "discord.js";
+import { CommandBuilder } from "../lib/builders";
+import { ErrorEmbed, SuccessEmbed } from "../lib/discordEmbeds";
+import { getChannel } from "../lib/getCached";
+import { db } from "../lib/prisma";
 
-export const join: Command = {
-  conditions: [],
-  data: new SlashCommandBuilder()
-    .setName("join")
-    .setDescription(`Request to join a locked voice channel.`)
-    .addStringOption((option) =>
-      option
-        .setAutocomplete(true)
-        .setName("channel")
-        .setDescription("The channel to request to join.")
-        .setRequired(true)
-    ),
-
-  async execute(interaction: CommandInteraction) {
+export const join = new CommandBuilder()
+  .setConditions([])
+  .setData(
+    new SlashCommandBuilder()
+      .setName("join")
+      .setDescription(`Request to join a locked voice channel.`)
+      .addStringOption((option) =>
+        option
+          .setAutocomplete(true)
+          .setName("channel")
+          .setDescription("The channel to request to join.")
+          .setRequired(true)
+      )
+  )
+  .setResponse(async (interaction) => {
     const channel = interaction.options.getString("channel", true);
 
     if (!interaction.guild) return;
@@ -105,5 +102,4 @@ export const join: Command = {
           interaction.reply("Wrong button");
         }
       });
-  },
-};
+  });

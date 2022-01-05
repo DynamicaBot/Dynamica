@@ -1,10 +1,10 @@
 import { CommandInteraction } from "discord.js";
 import type { Signale } from "signale";
 import { container } from "tsyringe";
-import { kLogger } from "../../tokens.js";
-import { getGuildMember } from "../getCached.js";
-import { db } from "../prisma.js";
-import { Check } from "./check.js";
+import { Check } from ".";
+import { kLogger } from "../../tokens";
+import { getGuildMember } from "../getCached";
+import { db } from "../prisma";
 
 /**
  * Checks to see if the voice channel the user is currently in is a channel that Dynamica manages.

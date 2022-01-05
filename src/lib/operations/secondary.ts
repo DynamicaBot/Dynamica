@@ -4,19 +4,15 @@ import {
   GuildChannelManager,
   GuildMember,
 } from "discord.js";
-import path from "path";
 import "reflect-metadata";
 import type { Signale } from "signale";
 import { container } from "tsyringe";
-import { fileURLToPath } from "url";
-import { kBree, kLogger } from "../../tokens.js";
-import { formatChannelName } from "../formatString.js";
-import { getChannel } from "../getCached.js";
-import { updateActivityCount } from "../operations/general.js";
-import { db } from "../prisma.js";
-
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = path.dirname(__filename);
+import refreshSecondary from "../../jobs/refreshSecondary";
+import { kBree, kLogger } from "../../tokens";
+import { formatChannelName } from "../formatString";
+import { getChannel } from "../getCached";
+import { updateActivityCount } from "../operations/general";
+import { db } from "../prisma";
 
 /**
  * Deletes Secondary Channel.
@@ -154,7 +150,7 @@ export const createSecondary = async (
         guildId: (await secondary).guildId,
       },
     },
-    path: path.join(__dirname, "../../jobs", "refreshSecondary.js"),
+    path: refreshSecondary,
   });
 
   await updateActivityCount(channelManager.client);

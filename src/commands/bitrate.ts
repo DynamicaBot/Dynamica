@@ -1,22 +1,23 @@
 import { SlashCommandBuilder } from "@discordjs/builders";
 import { CommandInteraction } from "discord.js";
-import { checkCreator, checkSecondary } from "../lib/checks/index.js";
-import { ErrorEmbed, SuccessEmbed } from "../lib/discordEmbeds.js";
-import { getGuildMember } from "../lib/getCached.js";
-import { Command } from "./command.js";
+import { CommandBuilder } from "../lib/builders";
+import { checkCreator, checkSecondary } from "../lib/conditions";
+import { ErrorEmbed, SuccessEmbed } from "../lib/discordEmbeds";
+import { getGuildMember } from "../lib/getCached";
 
-// Set General Template
-export const bitrate: Command = {
-  conditions: [checkCreator, checkSecondary],
-  data: new SlashCommandBuilder()
-    .setName("bitrate")
-    .setDescription("Edit the bitrate of the current channel.")
-    .addIntegerOption((option) =>
-      option
-        .setDescription("The bitrate to set the channel to.")
-        .setName("number")
-    ),
-  async execute(interaction: CommandInteraction) {
+export const bitrate = new CommandBuilder()
+  .setConditions([checkCreator, checkSecondary])
+  .setData(
+    new SlashCommandBuilder()
+      .setName("bitrate")
+      .setDescription("Edit the bitrate of the current channel.")
+      .addIntegerOption((option) =>
+        option
+          .setDescription("The bitrate to set the channel to.")
+          .setName("number")
+      )
+  )
+  .setResponse(async (interaction: CommandInteraction) => {
     const bitrate = interaction.options.getInteger("number");
 
     if (!interaction.guild) return;
@@ -59,5 +60,4 @@ export const bitrate: Command = {
         SuccessEmbed(`Channel bitrate changed to ${bitrate ?? "default"}kbps.`),
       ],
     });
-  },
-};
+  });

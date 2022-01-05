@@ -1,15 +1,15 @@
 import { Alias, Guild, Primary, Secondary } from "@prisma/client";
 import type Bree from "bree";
 import { Client } from "discord.js";
-import { fileURLToPath, URL } from "node:url";
 import pDebounce from "p-debounce";
 import pThrottle from "p-throttle";
 import type { Signale } from "signale";
 import { container } from "tsyringe";
-import { kBree, kLogger } from "../tokens.js";
-import { formatChannelName } from "./formatString.js";
-import { getChannel } from "./getCached.js";
-import { db } from "./prisma.js";
+import refreshSecondary from "../jobs/refreshSecondary";
+import { kBree, kLogger } from "../tokens";
+import { formatChannelName } from "./formatString";
+import { getChannel } from "./getCached";
+import { db } from "./prisma";
 
 export async function registerJobs() {
   const bree = container.resolve<Bree>(kBree);
@@ -24,9 +24,7 @@ export async function registerJobs() {
             guildId: secondary.guildId,
           },
         },
-        path: fileURLToPath(
-          new URL("../jobs/refreshSecondary.js", import.meta.url)
-        ),
+        path: refreshSecondary,
       }))
     );
     logger.info("Registered Secondaries");

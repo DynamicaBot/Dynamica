@@ -1,9 +1,9 @@
 import Fuse from "fuse.js";
-import { db } from "../lib/prisma.js";
-import { Autocomplete } from "./autocomplete.js";
-
-export const join: Autocomplete = {
-  async execute(interaction) {
+import { AutocompleteBuilder } from "../lib/builders";
+import { db } from "../lib/prisma";
+export const join = new AutocompleteBuilder()
+  .setCommandName("channel")
+  .setResponse(async (interaction) => {
     const { name, value } = interaction.options.getFocused(true);
     if (name !== "channel") return;
     const secondaries = await db.secondary.findMany({
@@ -25,5 +25,4 @@ export const join: Autocomplete = {
     const fuse = new Fuse(options, { keys: ["name", "id"] });
     const query = fuse.search(value.toString());
     interaction.respond(query.map((result) => result.item));
-  },
-};
+  });

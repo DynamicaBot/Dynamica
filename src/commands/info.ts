@@ -1,24 +1,26 @@
 import { Embed, SlashCommandBuilder } from "@discordjs/builders";
 import { CommandInteraction } from "discord.js";
-import { Command } from "./command.js";
+import { CommandBuilder } from "../lib/builders";
 
-export const info: Command = {
-  conditions: [],
-  data: new SlashCommandBuilder()
-    .setName("info")
-    .setDescription("Get info about a user or a server!")
-    .addSubcommand((subcommand) =>
-      subcommand
-        .setName("user")
-        .setDescription("Info about a user")
-        .addUserOption((option) =>
-          option.setName("target").setDescription("The user")
-        )
-    )
-    .addSubcommand((subcommand) =>
-      subcommand.setName("server").setDescription("Info about the server")
-    ),
-  async execute(interaction: CommandInteraction) {
+export const info = new CommandBuilder()
+  .setConditions([])
+  .setData(
+    new SlashCommandBuilder()
+      .setName("info")
+      .setDescription("Get info about a user or a server!")
+      .addSubcommand((subcommand) =>
+        subcommand
+          .setName("user")
+          .setDescription("Info about a user")
+          .addUserOption((option) =>
+            option.setName("target").setDescription("The user")
+          )
+      )
+      .addSubcommand((subcommand) =>
+        subcommand.setName("server").setDescription("Info about the server")
+      )
+  )
+  .setResponse(async (interaction: CommandInteraction) => {
     if (interaction.options.getSubcommand() === "user") {
       const user = interaction.options.getUser("target");
 
@@ -47,5 +49,4 @@ export const info: Command = {
         ],
       });
     }
-  },
-};
+  });

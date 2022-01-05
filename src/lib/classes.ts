@@ -1,7 +1,7 @@
 import { Client } from "discord.js";
 import { container } from "tsyringe";
-import { getChannel } from "./getCached.js";
-import { db } from "./prisma.js";
+import { getChannel } from "./getCached";
+import { db } from "./prisma";
 
 export class Primary {
   /**

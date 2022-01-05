@@ -2,19 +2,21 @@ import { SlashCommandBuilder } from "@discordjs/builders";
 import type Bree from "bree";
 import { CommandInteraction } from "discord.js";
 import { container } from "tsyringe";
-import { checkCreator, checkSecondary } from "../lib/checks/index.js";
-import { SuccessEmbed } from "../lib/discordEmbeds.js";
-import { getGuildMember } from "../lib/getCached.js";
-import { db } from "../lib/prisma.js";
-import { kBree } from "../tokens.js";
-import { Command } from "./command.js";
+import { CommandBuilder } from "../lib/builders";
+import { checkCreator, checkSecondary } from "../lib/conditions";
+import { SuccessEmbed } from "../lib/discordEmbeds";
+import { getGuildMember } from "../lib/getCached";
+import { db } from "../lib/prisma";
+import { kBree } from "../tokens";
 
-export const lock: Command = {
-  conditions: [checkCreator, checkSecondary],
-  data: new SlashCommandBuilder()
-    .setName("lock")
-    .setDescription("Lock a channel to a certain role or user."),
-  async execute(interaction: CommandInteraction) {
+export const lock = new CommandBuilder()
+  .setConditions([checkCreator, checkSecondary])
+  .setData(
+    new SlashCommandBuilder()
+      .setName("lock")
+      .setDescription("Lock a channel to a certain role or user.")
+  )
+  .setResponse(async (interaction: CommandInteraction) => {
     const bree = container.resolve<Bree>(kBree);
     if (!interaction.guild?.members) return;
 
@@ -56,5 +58,4 @@ export const lock: Command = {
       },
     });
     bree.run(channel.id);
-  },
-};
+  });

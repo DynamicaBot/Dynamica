@@ -1,11 +1,11 @@
 import { GuildChannel } from "discord.js";
-import { db } from "../lib/prisma.js";
-import { event } from "./event.js";
+import { EventBuilder } from "../lib/builders";
+import { db } from "../lib/prisma";
 
-export const channelDelete: event = {
-  name: "channelDelete",
-  once: false,
-  async execute({ id }: GuildChannel) {
+export const channelDelete = new EventBuilder()
+  .setName("channelDelete")
+  .setOnce(false)
+  .setResponse(async ({ id }: GuildChannel) => {
     const primary = await db.primary.findUnique({ where: { id } });
     const secondary = await db.secondary.findUnique({ where: { id } });
 
@@ -17,5 +17,4 @@ export const channelDelete: event = {
     } else if (secondary) {
       await db.secondary.delete({ where: { id } });
     }
-  },
-};
+  });

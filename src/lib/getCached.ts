@@ -9,7 +9,7 @@ import {
 } from "discord.js";
 import type { Signale } from "signale";
 import { container } from "tsyringe";
-import { kLogger } from "../tokens.js";
+import { kLogger } from "../tokens";
 
 /**
  * Get a channel that might be cached.

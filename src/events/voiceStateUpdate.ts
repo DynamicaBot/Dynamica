@@ -1,15 +1,15 @@
 import { VoiceState } from "discord.js";
+import { EventBuilder } from "../lib/builders";
 import {
   createSecondary,
   deleteDiscordSecondary,
-} from "../lib/operations/secondary.js";
-import { db } from "../lib/prisma.js";
-import { event } from "./event.js";
+} from "../lib/operations/secondary";
+import { db } from "../lib/prisma";
 
-export const voiceStateUpdate: event = {
-  name: "voiceStateUpdate",
-  once: false,
-  async execute(oldVoiceState: VoiceState, newVoiceState: VoiceState) {
+export const voiceStateUpdate = new EventBuilder()
+  .setName("voiceStateUpdate")
+  .setOnce(false)
+  .setResponse(async (oldVoiceState: VoiceState, newVoiceState: VoiceState) => {
     if (oldVoiceState.channelId === newVoiceState.channelId) return;
     // If the channel doesn't change then just ignore it.
 
@@ -57,5 +57,4 @@ export const voiceStateUpdate: event = {
         );
       }
     }
-  },
-};
+  });
