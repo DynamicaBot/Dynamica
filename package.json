@@ -47,7 +47,8 @@
     "lint": "prettier --write ./src",
     "postinstall": "prisma generate",
     "deploy": "node dist/deploy-commands.js",
-    "undeploy": "node dist/remove-commands.js"
+    "undeploy": "node dist/remove-commands.js",
+    "build": "yarn clean && yarn build:esbuild"
   },
   "devDependencies": {
     "@types/bree": "^7.1.0",

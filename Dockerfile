@@ -19,6 +19,7 @@ COPY tsconfig.json .
 COPY src ./src
 RUN yarn install --immutable
 RUN yarn build
+COPY prisma/schema.prisma ./dist/schema.prisma
 
 # Runner
 FROM base as runner

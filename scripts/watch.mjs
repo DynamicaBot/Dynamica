@@ -1,3 +1,3 @@
 import { build } from "./esbuild.conf.mjs";
 
-build(true);
+await build(true);

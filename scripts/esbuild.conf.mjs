@@ -18,6 +18,7 @@ async function* scan(path, cb) {
 }
 
 export async function build(watch = false) {
+  console.log("watching", watch);
   const rootFolder = new URL("../", import.meta.url);
   const distFolder = new URL("dist/", rootFolder);
   const srcFolder = new URL("src/", rootFolder);
@@ -32,6 +33,7 @@ export async function build(watch = false) {
       ],
       bundle: true,
       format: "cjs",
+      splitting: process.env.NODE_ENV === "production",
       write: true,
       outdir: fileURLToPath(distFolder),
       platform: "node",
@@ -52,6 +54,8 @@ export async function build(watch = false) {
       external: [],
       minify: process.env.NODE_ENV === "production",
     }),
-    nodemon({ exec: "yarn start", nodeArgs: ["--enable-source-maps"] }),
+    watch
+      ? nodemon({ exec: "yarn start", nodeArgs: ["--enable-source-maps"] })
+      : Promise.resolve(),
   ]);
 }
