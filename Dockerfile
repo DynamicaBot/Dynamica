@@ -28,6 +28,5 @@ WORKDIR /app
 ENV NODE_ENV="production"
 ENV DATABASE_URL "file:/app/config/db.sqlite"
 COPY --from=build /app/dist dist
-RUN yarn install --production --frozen-lockfile
-RUN npx prisma generate
+COPY --from=build /app/node_modules/.prisma node_modules/.prisma
 CMD yarn deploy && npx prisma migrate deploy && yarn start

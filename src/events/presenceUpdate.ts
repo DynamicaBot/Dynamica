@@ -11,7 +11,8 @@ export const presenceUpdate = new EventBuilder()
   .setOnce(false)
   .setResponse(async (oldPresence: Presence, newPresence: Presence) => {
     if (
-      oldPresence?.activities[0]?.name === newPresence?.activities?.at(0)?.name
+      oldPresence?.activities?.at(0)?.name ===
+      newPresence?.activities?.at(0)?.name
     )
       return;
     const logger = container.resolve<Signale>(kLogger);
