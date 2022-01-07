@@ -1,52 +1,50 @@
 import { Embed, quote, SlashCommandBuilder } from "@discordjs/builders";
 import { CommandInteraction } from "discord.js";
-import { CommandBuilder } from "../lib/builders";
+import { Command } from "../Command";
 import { checkManager } from "../lib/conditions";
 import { SuccessEmbed } from "../lib/discordEmbeds";
 import { deleteAlias, listAliases, updateAlias } from "../lib/operations/alias";
 
-// Set General Template
-export const alias = new CommandBuilder()
-  .setConditions([checkManager])
-  .setData(
-    new SlashCommandBuilder()
-      .setName("alias")
-      .setDescription("Manage aliases.")
-      .addSubcommand((subcommand) =>
-        subcommand
-          .setName("add")
-          .setDescription("Add a new alias.")
-          .addStringOption((option) =>
-            option
-              .setName("activity")
-              .setRequired(true)
-              .setDescription("The target activity.")
-          )
-          .addStringOption((option) =>
-            option
-              .setName("alias")
-              .setDescription("The alias the game should be known by.")
-              .setRequired(true)
-          )
-      )
-      .addSubcommand((subcommand) =>
-        subcommand
-          .setName("remove")
-          .setDescription("Remove an alias.")
-          .addStringOption((option) =>
-            option
-              .setName("activity")
-              .setDescription(
-                "Name of the activity you want to reset the alias for."
-              )
-              .setRequired(true)
-          )
-      )
-      .addSubcommand((subcommand) =>
-        subcommand.setName("list").setDescription("List currently set aliases.")
-      )
-  )
-  .setResponse(async (interaction: CommandInteraction) => {
+export const alias: Command = {
+  conditions: [checkManager],
+  data: new SlashCommandBuilder()
+    .setName("alias")
+    .setDescription("Manage aliases.")
+    .addSubcommand((subcommand) =>
+      subcommand
+        .setName("add")
+        .setDescription("Add a new alias.")
+        .addStringOption((option) =>
+          option
+            .setName("activity")
+            .setRequired(true)
+            .setDescription("The target activity.")
+        )
+        .addStringOption((option) =>
+          option
+            .setName("alias")
+            .setDescription("The alias the game should be known by.")
+            .setRequired(true)
+        )
+    )
+    .addSubcommand((subcommand) =>
+      subcommand
+        .setName("remove")
+        .setDescription("Remove an alias.")
+        .addStringOption((option) =>
+          option
+            .setName("activity")
+            .setDescription(
+              "Name of the activity you want to reset the alias for."
+            )
+            .setRequired(true)
+        )
+    )
+    .addSubcommand((subcommand) =>
+      subcommand.setName("list").setDescription("List currently set aliases.")
+    ),
+
+  async execute(interaction: CommandInteraction) {
     if (!interaction.guild?.members) return;
 
     if (interaction.options.getSubcommand() === "add") {
@@ -82,4 +80,5 @@ export const alias = new CommandBuilder()
         embeds: [new Embed().addFields(...aliases).setTitle("Alias List")],
       });
     }
-  });
+  },
+};

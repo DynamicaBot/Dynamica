@@ -1,21 +1,20 @@
 import { SlashCommandBuilder } from "@discordjs/builders";
 import { CommandInteraction } from "discord.js";
-import { CommandBuilder } from "../lib/builders";
+import { Command } from "../Command";
 import { checkManager, checkSecondary } from "../lib/conditions";
 import { SuccessEmbed } from "../lib/discordEmbeds";
 import { getGuildMember } from "../lib/getCached";
 import { db } from "../lib/prisma";
 
-export const allyourbase = new CommandBuilder()
-  .setConditions([checkManager, checkSecondary])
-  .setData(
-    new SlashCommandBuilder()
-      .setName("allyourbase")
-      .setDescription(
-        "If you are an admin you become the owner of the channel you are in."
-      )
-  )
-  .setResponse(async (interaction: CommandInteraction) => {
+export const allyourbase: Command = {
+  conditions: [checkManager, checkSecondary],
+  data: new SlashCommandBuilder()
+    .setName("allyourbase")
+    .setDescription(
+      "If you are an admin you become the owner of the channel you are in."
+    ),
+
+  async execute(interaction: CommandInteraction): Promise<void> {
     if (!interaction.guild) return;
 
     const guildMember = await getGuildMember(
@@ -39,4 +38,5 @@ export const allyourbase = new CommandBuilder()
         ),
       ],
     });
-  });
+  },
+};

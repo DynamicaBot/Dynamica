@@ -1,15 +1,8 @@
-import { channelDelete } from "./channelDelete";
-import { guildCreate } from "./guildCreate";
-import { guildDelete } from "./guildDelete";
-import { presenceUpdate } from "./presenceUpdate";
-import { ready } from "./ready";
-import { voiceStateUpdate } from "./voiceStateUpdate";
-
-export default {
-  channelDelete,
-  guildCreate,
-  guildDelete,
-  presenceUpdate,
-  ready,
-  voiceStateUpdate,
-};
+export { autocomplete } from "./autocomplete";
+export { channelDelete } from "./channelDelete";
+export { command } from "./command";
+export { guildCreate } from "./guildCreate";
+export { guildDelete } from "./guildDelete";
+export { presenceUpdate } from "./presenceUpdate";
+export { ready } from "./ready";
+export { voiceStateUpdate } from "./voiceStateUpdate";

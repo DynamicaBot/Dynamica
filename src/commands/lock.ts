@@ -1,23 +1,18 @@
 import { SlashCommandBuilder } from "@discordjs/builders";
-import type Bree from "bree";
 import { CommandInteraction } from "discord.js";
-import { container } from "tsyringe";
-import { CommandBuilder } from "../lib/builders";
+import { Command } from "../Command";
 import { checkCreator, checkSecondary } from "../lib/conditions";
 import { SuccessEmbed } from "../lib/discordEmbeds";
 import { getGuildMember } from "../lib/getCached";
 import { db } from "../lib/prisma";
-import { kBree } from "../tokens";
 
-export const lock = new CommandBuilder()
-  .setConditions([checkCreator, checkSecondary])
-  .setData(
-    new SlashCommandBuilder()
-      .setName("lock")
-      .setDescription("Lock a channel to a certain role or user.")
-  )
-  .setResponse(async (interaction: CommandInteraction) => {
-    const bree = container.resolve<Bree>(kBree);
+export const lock: Command = {
+  conditions: [checkCreator, checkSecondary],
+  data: new SlashCommandBuilder()
+    .setName("lock")
+    .setDescription("Lock a channel to a certain role or user."),
+
+  async execute(interaction: CommandInteraction): Promise<void> {
     if (!interaction.guild?.members) return;
 
     const guildMember = await getGuildMember(
@@ -57,5 +52,6 @@ export const lock = new CommandBuilder()
         locked: true,
       },
     });
-    bree.run(channel.id);
-  });
+    this.bree.run(channel.id);
+  },
+};

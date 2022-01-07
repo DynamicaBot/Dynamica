@@ -1,10 +1,10 @@
 import Fuse from "fuse.js";
-import { AutocompleteBuilder } from "../lib/builders";
+import { Autocomplete } from "../Autocomplete";
 import { db } from "../lib/prisma";
 
-export const general = new AutocompleteBuilder()
-  .setCommandName("channel")
-  .setResponse(async (interaction) => {
+export const general: Autocomplete = {
+  name: "channel",
+  execute: async (interaction) => {
     const { value } = interaction.options.getFocused(true);
     const primaries = await db.primary.findMany({
       where: { guildId: interaction.guild.id },
@@ -24,4 +24,5 @@ export const general = new AutocompleteBuilder()
     const fuse = new Fuse(options, { keys: ["name", "id"] });
     const query = fuse.search(value.toString());
     interaction.respond(query.map((result) => result.item));
-  });
+  },
+};

@@ -1,10 +1,8 @@
 import { REST } from "@discordjs/rest";
 import { Routes } from "discord-api-types/v9";
 import { config } from "dotenv";
-import "reflect-metadata";
 import signale from "signale";
 import * as commands from "./commands";
-import { CommandBuilder } from "./lib/builders";
 const { Signale } = signale;
 config();
 
@@ -20,7 +18,7 @@ const { TOKEN, CLIENT_ID, GUILD_ID } = process.env;
 if (!TOKEN || !CLIENT_ID) {
   logger.error("Missing env vars.");
 } else {
-  const commandList = Object.values(commands).map((command: CommandBuilder) =>
+  const commandList = Object.values(commands).map((command) =>
     command.data.toJSON()
   );
 

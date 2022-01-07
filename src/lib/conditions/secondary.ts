@@ -1,8 +1,6 @@
 import { CommandInteraction } from "discord.js";
-import type { Signale } from "signale";
-import { container } from "tsyringe";
 import { Check } from ".";
-import { kLogger } from "../../tokens";
+import { logger } from "../..";
 import { getGuildMember } from "../getCached";
 import { db } from "../prisma";
 
@@ -14,7 +12,6 @@ import { db } from "../prisma";
 export const checkSecondary: Check = async (
   interaction: CommandInteraction
 ) => {
-  const logger = container.resolve<Signale>(kLogger);
   try {
     if (!interaction.guild?.members) return;
     const guildMember = await getGuildMember(

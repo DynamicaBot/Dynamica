@@ -1,20 +1,14 @@
 import { Alias, Guild, Primary, Secondary } from "@prisma/client";
-import type Bree from "bree";
-import { Client } from "discord.js";
 import pDebounce from "p-debounce";
 import pThrottle from "p-throttle";
-import type { Signale } from "signale";
-import { container } from "tsyringe";
-import refreshSecondary from "../jobs/refreshSecondary";
-import { kBree, kLogger } from "../tokens";
-import { formatChannelName } from "./formatString";
-import { getChannel } from "./getCached";
-import { db } from "./prisma";
+import { bree, client, logger } from ".";
+import refreshSecondary from "./jobs/refreshSecondary";
+import { formatChannelName } from "./lib/formatString";
+import { getChannel } from "./lib/getCached";
+import { db } from "./lib/prisma";
 
 export async function registerJobs() {
-  const bree = container.resolve<Bree>(kBree);
   db.secondary.findMany().then((secondaries) => {
-    const logger = container.resolve<Signale>(kLogger);
     bree.add(
       secondaries.map((secondary) => ({
         name: secondary.id,
@@ -43,8 +37,6 @@ async function editChannel({
   };
   id?: string;
 }) {
-  const client = container.resolve<Client<true>>(Client);
-  const logger = container.resolve<Signale>(kLogger);
   /**
    * The discord channel to be refreshed
    */
@@ -130,9 +122,7 @@ const throttledRename = renameThrottle(editChannel);
 const renameDebounce = pDebounce(throttledRename, 5000);
 
 export function startJobs() {
-  const logger = container.resolve<Signale>(kLogger);
   logger.info("Started Jobs");
-  const bree = container.resolve<Bree>(kBree);
   bree.on("worker created", (name) => {
     bree.workers[name]?.on("message", renameDebounce);
   });

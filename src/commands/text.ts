@@ -1,25 +1,25 @@
 import { SlashCommandBuilder } from "@discordjs/builders";
-import { CommandBuilder } from "../lib/builders";
+import { CommandInteraction } from "discord.js";
+import { Command } from "../Command";
 import { checkManager } from "../lib/conditions";
 import { SuccessEmbed } from "../lib/discordEmbeds";
 import { updateGuild } from "../lib/operations/guild.js";
 
-export const text = new CommandBuilder()
-  .setConditions([checkManager])
-  .setData(
-    new SlashCommandBuilder()
-      .setName("text")
-      .setDescription("Enable or disable temporary text channels")
-      .addBooleanOption((option) =>
-        option
-          .setName("state")
-          .setDescription(
-            "Set to true to enable text channels. Set to false to disable them."
-          )
-          .setRequired(true)
-      )
-  )
-  .setResponse(async (interaction) => {
+export const text: Command = {
+  conditions: [checkManager],
+  data: new SlashCommandBuilder()
+    .setName("text")
+    .setDescription("Enable or disable temporary text channels")
+    .addBooleanOption((option) =>
+      option
+        .setName("state")
+        .setDescription(
+          "Set to true to enable text channels. Set to false to disable them."
+        )
+        .setRequired(true)
+    ),
+
+  async execute(interaction: CommandInteraction): Promise<void> {
     const state = interaction.options.getBoolean("state", true);
     if (!interaction.guildId) return;
 
@@ -34,4 +34,5 @@ export const text = new CommandBuilder()
         ),
       ],
     });
-  });
+  },
+};

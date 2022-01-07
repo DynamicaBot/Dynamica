@@ -1,13 +1,14 @@
 import { Embed, SlashCommandBuilder } from "@discordjs/builders";
 import { CommandInteraction } from "discord.js";
-import { CommandBuilder } from "../lib/builders";
+import { Command } from "../Command";
 
-export const about = new CommandBuilder()
-  .setConditions([])
-  .setData(
-    new SlashCommandBuilder().setName("about").setDescription(`About the bot.`)
-  )
-  .setResponse(async (interaction: CommandInteraction) => {
+export const about: Command = {
+  conditions: [],
+  data: new SlashCommandBuilder()
+    .setName("about")
+    .setDescription(`About the bot.`),
+
+  async execute(interaction: CommandInteraction) {
     interaction.reply({
       embeds: [
         new Embed()
@@ -20,4 +21,5 @@ export const about = new CommandBuilder()
           .setURL("https://github.com/DynamicaBot/Dynamica"),
       ],
     });
-  });
+  },
+};

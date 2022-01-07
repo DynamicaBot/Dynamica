@@ -1,13 +1,11 @@
 import { RateLimitData } from "discord.js";
-import type { Signale } from "signale";
-import { container } from "tsyringe";
-import { EventBuilder } from "../lib/builders";
-import { kLogger } from "../tokens";
+import { logger } from "..";
+import { Event } from "../Event";
 
-export const rateLimit = new EventBuilder()
-  .setName("rateLimit")
-  .setOnce(false)
-  .setResponse(async (data: RateLimitData) => {
-    const logger = container.resolve<Signale>(kLogger);
+export const guildCreate: Event = {
+  once: false,
+  event: "guildCreate",
+  async execute(data: RateLimitData) {
     logger.info(data);
-  });
+  },
+};

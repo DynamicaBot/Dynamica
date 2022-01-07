@@ -1,16 +1,17 @@
 import { VoiceState } from "discord.js";
-import { EventBuilder } from "../lib/builders";
+import { bree } from "..";
+import { Event } from "../Event";
 import {
   createSecondary,
   deleteDiscordSecondary,
 } from "../lib/operations/secondary";
 import { db } from "../lib/prisma";
 
-export const voiceStateUpdate = new EventBuilder()
-  .setName("voiceStateUpdate")
-  .setOnce(false)
-  .setResponse(async (oldVoiceState: VoiceState, newVoiceState: VoiceState) => {
-    if (oldVoiceState.channelId === newVoiceState.channelId) return;
+export const voiceStateUpdate: Event = {
+  event: "voiceStateUpdate",
+  once: false,
+  async execute(oldVoiceState: VoiceState, newVoiceState: VoiceState) {
+    if (oldVoiceState?.channelId === newVoiceState?.channelId) return;
     // If the channel doesn't change then just ignore it.
 
     // User joins channel
@@ -20,6 +21,12 @@ export const voiceStateUpdate = new EventBuilder()
         newVoiceState.channelId,
         newVoiceState.member
       );
+      const secondaryConfig = await db.secondary.findUnique({
+        where: { id: newVoiceState.channelId },
+      });
+      if (secondaryConfig && !(newVoiceState.channel.members.size === 1)) {
+        bree.run(newVoiceState.channelId);
+      }
     }
 
     // User leaves subchannel
@@ -33,6 +40,9 @@ export const voiceStateUpdate = new EventBuilder()
         where: { id: oldVoiceState.channelId },
         include: { guild: true },
       });
+      if (secondaryConfig && oldVoiceState.channel?.members.size !== 0) {
+        bree.run(oldVoiceState.channelId);
+      }
 
       if (
         secondaryConfig?.guild.textChannelsEnabled &&
@@ -57,4 +67,5 @@ export const voiceStateUpdate = new EventBuilder()
         );
       }
     }
-  });
+  },
+};

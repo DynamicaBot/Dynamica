@@ -1,4 +1,5 @@
 import esbuild from "esbuild";
+import esbuildPluginTsc from "esbuild-plugin-tsc";
 import { opendir } from "fs/promises";
 import nodemon from "nodemon";
 import { join } from "path";
@@ -33,7 +34,6 @@ export async function build(watch = false) {
       ],
       bundle: true,
       format: "cjs",
-      splitting: process.env.NODE_ENV === "production",
       write: true,
       outdir: fileURLToPath(distFolder),
       platform: "node",
@@ -52,9 +52,19 @@ export async function build(watch = false) {
       incremental: watch,
       sourcemap: true,
       minify: process.env.NODE_ENV === "production",
+      plugins: [
+        esbuildPluginTsc({
+          // TODO: Typescript decorators aren't supported by esbuild revert back plz
+          tsconfigPath: join(fileURLToPath(rootFolder), "tsconfig.json"),
+        }),
+      ],
     }),
     watch
-      ? nodemon({ exec: "yarn start", nodeArgs: ["--enable-source-maps"] })
+      ? nodemon({
+          // exec: "yarn start",
+          script: "dist/index.js",
+          nodeArgs: ["--enable-source-maps"],
+        })
       : Promise.resolve(),
   ]);
 }

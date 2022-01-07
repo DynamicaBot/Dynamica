@@ -1,25 +1,24 @@
 import { Embed, hyperlink, SlashCommandBuilder } from "@discordjs/builders";
 import { CommandInteraction } from "discord.js";
-import { CommandBuilder } from "../lib/builders";
+import { Command } from "../Command";
 import { getCommands } from "../lib/getCached";
 
-export const help = new CommandBuilder()
-  .setConditions([])
-  .setData(
-    new SlashCommandBuilder()
-      .setName("help")
-      .setDescription(
-        "A help command that lists all commands available to users of the bot."
-      )
-      .addStringOption((option) =>
-        option
-          .setRequired(false)
-          .setName("subcommand")
-          .setDescription("Subcommand help")
-          .setAutocomplete(true)
-      )
-  )
-  .setResponse(async (interaction: CommandInteraction) => {
+export const help: Command = {
+  conditions: [],
+  data: new SlashCommandBuilder()
+    .setName("help")
+    .setDescription(
+      "A help command that lists all commands available to users of the bot."
+    )
+    .addStringOption((option) =>
+      option
+        .setRequired(false)
+        .setName("subcommand")
+        .setDescription("Subcommand help")
+        .setAutocomplete(true)
+    ),
+
+  async execute(interaction: CommandInteraction): Promise<void> {
     const subcommand = interaction.options.getString("subcommand", false);
 
     const commands = await getCommands(
@@ -63,4 +62,5 @@ export const help = new CommandBuilder()
           .setTitle("Info"),
       ],
     });
-  });
+  },
+};

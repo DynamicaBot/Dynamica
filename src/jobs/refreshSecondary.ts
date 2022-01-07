@@ -1,10 +1,9 @@
-import "reflect-metadata";
 import { parentPort, workerData } from "worker_threads";
 import { db } from "../lib/prisma";
 
 // TODO: At the moment it isn't possible to share the djs socket with the parent process Vladdy#0002 has said this feature is in the planning stage as of 3/1/2022
 // Lioness100 has a solution https://github.com/Naval-Base/yuudachi/blob/main/src/jobs.ts
-export default async function refreshSecondary() {
+export default async () => {
   const { id, guildId } = workerData;
   /**
    * Return secondary
@@ -27,9 +26,13 @@ export default async function refreshSecondary() {
   });
   if (!secondary) process.exit(1);
 
-  parentPort.postMessage({
-    aliases,
-    secondary,
-    id,
-  });
-}
+  if (parentPort) {
+    parentPort.postMessage({
+      aliases,
+      secondary,
+      id,
+    });
+  } else {
+    process.exit(1);
+  }
+};

@@ -1,17 +1,9 @@
 import Bree from "bree";
 import { Client, Intents } from "discord.js";
 import dotenv from "dotenv";
-import "reflect-metadata";
 import signale from "signale";
-import { container } from "tsyringe";
-import * as autocompletes from "./autocompletes";
-import * as commands from "./commands";
-import events from "./events";
-import { AutocompleteBuilder, CommandBuilder } from "./lib/builders";
-import { checkGuild } from "./lib/conditions";
-import { ErrorEmbed } from "./lib/discordEmbeds";
+import * as events from "./events/index";
 import { db } from "./lib/prisma";
-import { kBree, kLogger } from "./tokens";
 dotenv.config();
 
 const { Signale } = signale;
@@ -19,7 +11,7 @@ const { Signale } = signale;
 /**
  * Signale Logger instance
  */
-const logger = new Signale({
+export const logger = new Signale({
   disabled: false,
   interactive: false,
   logLevel: process.env.LOG_LEVEL || "info",
@@ -29,7 +21,7 @@ const logger = new Signale({
 /**
  * DiscordJS Client instance
  */
-const client = new Client({
+export const client = new Client({
   intents: [
     Intents.FLAGS.GUILDS,
     Intents.FLAGS.GUILD_VOICE_STATES,
@@ -40,7 +32,7 @@ const client = new Client({
 /**
  * Bree instance
  */
-const bree = new Bree({
+export const bree = new Bree({
   root: false,
   logger: false,
   errorHandler: (error, workerMetadata) => {
@@ -58,63 +50,21 @@ const bree = new Bree({
   },
 });
 
-container.register(kLogger, { useValue: logger });
-container.register(Client, { useValue: client });
-container.register(kBree, { useValue: bree });
-
 const eventList = Object.values(events);
-
-client.on("interactionCreate", async (interaction) => {
-  if (!interaction.isCommand()) return;
-  try {
-    const command: CommandBuilder = commands[interaction.commandName];
-    const conditions = await Promise.all(
-      command.conditions
-        .concat([checkGuild])
-        .map((condition) => condition(interaction))
-    );
-    if (!conditions.every((condition) => condition)) {
-      interaction.reply({
-        embeds: [
-          ErrorEmbed(
-            "You didn't meet one of the conditions to run this command."
-          ),
-        ],
-        ephemeral: true,
-      });
+try {
+  // Register event handlers
+  for (const event of eventList) {
+    if (event.once) {
+      client.once(event.event, (...args) => event.execute(...args));
     } else {
-      await command.run(interaction);
+      client.on(event.event, (...args) => event.execute(...args));
     }
-  } catch (e) {
-    logger.error(e);
-    interaction.reply({
-      embeds: [ErrorEmbed("There was an error while executing this command!")],
-      ephemeral: true,
-    });
   }
-});
 
-client.on("interactionCreate", async (interaction) => {
-  if (!interaction.isAutocomplete()) return;
-  try {
-    const autocomplete: AutocompleteBuilder =
-      autocompletes[interaction.commandName];
-    autocomplete.run(interaction);
-  } catch (e) {
-    logger.error(e);
-  }
-});
-
-// Register event handlers
-for (const event of eventList) {
-  if (event.once) {
-    client.once(event.name, (...args: any) => event.run(...args));
-  } else {
-    client.on(event.name, (...args: any) => event.run(...args));
-  }
+  client.login(process.env.TOKEN);
+} catch (error) {
+  logger.error(error);
 }
-
-client.login(process.env.TOKEN);
 
 // Handle stop signal
 process.on("SIGINT", () => {

@@ -1,18 +1,14 @@
-import type { Signale } from "signale";
-import { container } from "tsyringe";
 import { Check } from ".";
-import { kLogger } from "../../tokens";
+import { logger } from "../..";
 import { ErrorEmbed } from "../discordEmbeds";
 import { getGuildMember } from "../getCached";
 import { db } from "../prisma";
-
 /**
  * Checks if a guild member is the creator of the secondary channel. (overridden by manager and admin)
  * @param interaction The interaction which to check.
  * @returns Promise Boolean if the person who triggered the interaction is the owner of the voice channel that they're in.
  */
 export const checkCreator: Check = async (interaction) => {
-  const logger = container.resolve<Signale>(kLogger);
   try {
     const guildMember = await getGuildMember(
       interaction.guild.members,

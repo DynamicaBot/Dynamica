@@ -1,14 +1,10 @@
-import type Bree from "bree";
 import {
   BaseGuildVoiceChannel,
   GuildChannelManager,
   GuildMember,
 } from "discord.js";
-import "reflect-metadata";
-import type { Signale } from "signale";
-import { container } from "tsyringe";
+import { bree, logger } from "../..";
 import refreshSecondary from "../../jobs/refreshSecondary";
-import { kBree, kLogger } from "../../tokens";
 import { formatChannelName } from "../formatString";
 import { getChannel } from "../getCached";
 import { updateActivityCount } from "../operations/general";
@@ -22,8 +18,6 @@ import { db } from "../prisma";
 export const deleteDiscordSecondary = async (
   channel: BaseGuildVoiceChannel
 ) => {
-  const logger = container.resolve<Signale>(kLogger);
-  const bree = container.resolve<Bree>(kBree);
   const { id } = channel;
   const channelConfig = await db.secondary.findUnique({
     where: { id },
@@ -43,10 +37,28 @@ export const deleteDiscordSecondary = async (
     return undefined;
   };
 
-  await db.secondary.delete({ where: { id } });
-  await channel?.delete();
-  await (await textChannel())?.delete();
-  await bree.remove(id);
+  try {
+    await db.secondary.delete({ where: { id } });
+  } catch (e) {
+    logger.error("Secondary db entry does not exist:", e);
+  }
+  try {
+    await channel?.delete();
+  } catch (e) {
+    logger.error("Secondary discord channel does not exist:", e);
+  }
+
+  try {
+    await (await textChannel())?.delete();
+  } catch (e) {
+    logger.error("Secondary text channel does not exist:", e);
+  }
+  try {
+    await bree.remove(id);
+  } catch (e) {
+    logger.error("Bree job doesn't exist:", e);
+  }
+
   await updateActivityCount(channel.client);
   await logger.debug(`Secondary channel deleted ${id}.`);
 };
@@ -62,8 +74,6 @@ export const createSecondary = async (
   primaryId: string,
   member?: GuildMember
 ) => {
-  const logger = container.resolve<Signale>(kLogger);
-  const bree = container.resolve<Bree>(kBree);
   const primaryConfig = await db.primary.findUnique({
     where: { id: primaryId },
     include: { guild: true, secondaries: true },

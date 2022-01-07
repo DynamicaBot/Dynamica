@@ -1,27 +1,26 @@
 import { SlashCommandBuilder } from "@discordjs/builders";
-import { GuildChannel } from "discord.js";
-import { CommandBuilder } from "../lib/builders";
+import { CommandInteraction, GuildChannel } from "discord.js";
+import { Command } from "../Command";
 import { checkManager } from "../lib/conditions";
 import { ErrorEmbed, SuccessEmbed } from "../lib/discordEmbeds";
 import { createPrimary } from "../lib/operations/primary";
 
-export const create = new CommandBuilder()
-  .setConditions([checkManager])
-  .setData(
-    new SlashCommandBuilder()
-      .setName("create")
-      .setDescription("Create a primary channel.")
-      .addChannelOption((option) =>
-        option
-          .addChannelType(4)
-          .setName("section")
-          .setDescription(
-            "A section that the voice channel should be created under."
-          )
-          .setRequired(false)
-      )
-  )
-  .setResponse(async (interaction) => {
+export const create: Command = {
+  conditions: [checkManager],
+  data: new SlashCommandBuilder()
+    .setName("create")
+    .setDescription("Create a primary channel.")
+    .addChannelOption((option) =>
+      option
+        .addChannelType(4)
+        .setName("section")
+        .setDescription(
+          "A section that the voice channel should be created under."
+        )
+        .setRequired(false)
+    ),
+
+  async execute(interaction: CommandInteraction): Promise<void> {
     const section = interaction.options.getChannel(
       "section"
     ) as GuildChannel | null;
@@ -41,4 +40,5 @@ export const create = new CommandBuilder()
     await interaction.reply({
       embeds: [SuccessEmbed(`New voice channel successfully created.`)],
     });
-  });
+  },
+};

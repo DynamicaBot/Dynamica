@@ -1,29 +1,24 @@
 import { SlashCommandBuilder } from "@discordjs/builders";
 import { CommandInteraction } from "discord.js";
-import type { Signale } from "signale";
-import { container } from "tsyringe";
-import { CommandBuilder } from "../lib/builders";
+import { Command } from "../Command";
 import { checkManager, checkSecondary } from "../lib/conditions";
 import { SuccessEmbed } from "../lib/discordEmbeds";
 import { getGuildMember } from "../lib/getCached";
 import { db } from "../lib/prisma";
-import { kLogger } from "../tokens";
 
-export const name = new CommandBuilder()
-  .setConditions([checkSecondary, checkManager])
-  .setData(
-    new SlashCommandBuilder()
-      .setName("name")
-      .setDescription("Edit the name of the current channel.")
-      .addStringOption((option) =>
-        option
-          .setName("name")
-          .setDescription("The new name of the channel (can be a template).")
-          .setRequired(true)
-      )
-  )
-  .setResponse(async (interaction: CommandInteraction) => {
-    const logger = container.resolve<Signale>(kLogger);
+export const name: Command = {
+  conditions: [checkManager, checkSecondary],
+  data: new SlashCommandBuilder()
+    .setName("name")
+    .setDescription("Edit the name of the current channel.")
+    .addStringOption((option) =>
+      option
+        .setName("name")
+        .setDescription("The new name of the channel (can be a template).")
+        .setRequired(true)
+    ),
+
+  async execute(interaction: CommandInteraction): Promise<void> {
     const name = interaction.options.getString("name");
 
     if (!interaction.guild) return;
@@ -43,5 +38,6 @@ export const name = new CommandBuilder()
         ),
       ],
     });
-    logger.info(`${channel.id} name changed.`);
-  });
+    this.logger.info(`${channel.id} name changed.`);
+  },
+};
