@@ -1,6 +1,6 @@
 #!/bin/sh
 
-cd /home/container
+cd /app
 
 PARSED=$(echo "${STARTUP}" | sed -e 's/{{/${/g' -e 's/}}/}/g' | eval echo "$(cat -)")
 
