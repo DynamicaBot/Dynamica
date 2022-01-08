@@ -44,4 +44,4 @@ COPY --from=build /app/dist dist
 COPY --from=build /app/node_modules/.prisma node_modules/.prisma
 COPY entrypoint.sh /entrypoint.sh
 USER container
-CMD [ "/bin/ash", "/entrypoint.sh" ]
+CMD [ "/bin/bash", "/entrypoint.sh" ]
