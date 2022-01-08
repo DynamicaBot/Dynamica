@@ -122,7 +122,7 @@ export const createSecondary = async (
     }
   );
 
-  if (secondary.parent) {
+  if (secondary.parent && primaryChannel.permissionsLocked) {
     secondary.lockPermissions();
   }
 
