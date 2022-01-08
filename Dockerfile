@@ -39,10 +39,10 @@ FROM build as pterodactyl
 ENV NODE_ENV="production"
 ENV DATABASE_URL "file:/home/container/dynamica/db.sqlite"
 WORKDIR /app
-RUN adduser -D -h /home/container container
-
-COPY --from=build /app/dist .
+RUN useradd -D -b /home/container container
+USER container
+COPY --from=build /app/dist dist
 COPY --from=build /app/node_modules/.prisma node_modules/.prisma
 COPY entrypoint.sh /entrypoint.sh
-USER container
-CMD [ "/bin/bash", "/entrypoint.sh" ]
+
+CMD [ "/bin/bash", "/app/entrypoint.sh" ]
