@@ -41,8 +41,8 @@ ENV DATABASE_URL "file:/home/container/dynamica/db.sqlite"
 WORKDIR /app
 RUN adduser -D -h /home/container container
 
-COPY --from=build /app/dist /home/container/dist
-COPY --from=build /app/node_modules/.prisma /home/container/node_modules/.prisma
+COPY --from=build /app/dist .
+COPY --from=build /app/node_modules/.prisma node_modules/.prisma
 COPY entrypoint.sh /entrypoint.sh
 USER container
 CMD [ "/bin/bash", "/entrypoint.sh" ]
