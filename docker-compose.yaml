@@ -2,7 +2,7 @@ services:
   discordbot:
     build:
       context: ./
-      target: runner
+      target: pterodactyl
     volumes:
-      - ./config:/app/config
+      - ./config:/home/container
     env_file: .env

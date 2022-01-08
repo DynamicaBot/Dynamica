@@ -39,7 +39,7 @@ FROM build as pterodactyl
 ENV NODE_ENV="production"
 ENV DATABASE_URL "file:/home/container/dynamica/db.sqlite"
 WORKDIR /app
-RUN useradd -D -b /home/container container
+RUN useradd container -m -s /bin/bash 
 USER container
 COPY --from=build /app/dist dist
 COPY --from=build /app/node_modules/.prisma node_modules/.prisma

@@ -1,7 +1,4 @@
-#!/bin/sh
-
 cd /app
 
 PARSED=$(echo "${STARTUP}" | sed -e 's/{{/${/g' -e 's/}}/}/g' | eval echo "$(cat -)")
-
-exec env ${PARSED}
+exec ${PARSED}
