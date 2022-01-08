@@ -3,7 +3,7 @@ import {
   SlashCommandSubcommandsOnlyBuilder,
 } from "@discordjs/builders";
 import { Interaction } from "discord.js";
-import { Check } from "./lib/conditions";
+import { Check } from "./utils/conditions";
 
 export interface Command {
   conditions: Check[];

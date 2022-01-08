@@ -1,9 +1,9 @@
 import { SlashCommandBuilder } from "@discordjs/builders";
 import { CommandInteraction } from "discord.js";
 import { Command } from "../Command";
-import { checkManager } from "../lib/conditions";
-import { SuccessEmbed } from "../lib/discordEmbeds";
-import { updateGuild } from "../lib/operations/guild.js";
+import { checkManager } from "../utils/conditions";
+import { SuccessEmbed } from "../utils/discordEmbeds";
+import { updateGuild } from "../utils/operations/guild.js";
 
 export const text: Command = {
   conditions: [checkManager],

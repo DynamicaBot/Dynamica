@@ -3,7 +3,7 @@ import { Client, Intents } from "discord.js";
 import dotenv from "dotenv";
 import signale from "signale";
 import * as events from "./events/index";
-import { db } from "./lib/prisma";
+import { db } from "./utils/prisma";
 dotenv.config();
 
 const { Signale } = signale;

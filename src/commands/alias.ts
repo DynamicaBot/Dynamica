@@ -1,9 +1,13 @@
 import { Embed, quote, SlashCommandBuilder } from "@discordjs/builders";
 import { CommandInteraction } from "discord.js";
 import { Command } from "../Command";
-import { checkManager } from "../lib/conditions";
-import { SuccessEmbed } from "../lib/discordEmbeds";
-import { deleteAlias, listAliases, updateAlias } from "../lib/operations/alias";
+import { checkManager } from "../utils/conditions";
+import { SuccessEmbed } from "../utils/discordEmbeds";
+import {
+  deleteAlias,
+  listAliases,
+  updateAlias,
+} from "../utils/operations/alias";
 
 export const alias: Command = {
   conditions: [checkManager],

@@ -1,5 +1,5 @@
 import Fuse from "fuse.js";
-import { getCommands } from "../lib/getCached";
+import { getCommands } from "../utils/getCached";
 
 export const help = {
   name: "help",

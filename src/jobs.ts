@@ -1,11 +1,25 @@
 import { Alias, Guild, Primary, Secondary } from "@prisma/client";
 import pDebounce from "p-debounce";
 import pThrottle from "p-throttle";
+import path from "path/posix";
 import { bree, client, logger } from ".";
-import refreshSecondary from "./jobs/refreshSecondary";
-import { formatChannelName } from "./lib/formatString";
-import { getChannel } from "./lib/getCached";
-import { db } from "./lib/prisma";
+import { formatChannelName } from "./utils/formatString";
+import { getChannel } from "./utils/getCached";
+import { db } from "./utils/prisma";
+
+export async function registerNewJob(secondary: Secondary) {
+  const { id, guildId } = secondary;
+  bree.add({
+    name: id,
+    worker: {
+      workerData: {
+        id,
+        guildId,
+      },
+    },
+    path: path.join(__dirname, "jobs", "refreshSecondary.js"),
+  });
+}
 
 export async function registerJobs() {
   db.secondary.findMany().then((secondaries) => {
@@ -18,7 +32,7 @@ export async function registerJobs() {
             guildId: secondary.guildId,
           },
         },
-        path: refreshSecondary,
+        path: path.join(__dirname, "jobs", "refreshSecondary.js"),
       }))
     );
     logger.info("Registered Secondaries");

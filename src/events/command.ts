@@ -1,8 +1,9 @@
 import { CacheType, Interaction } from "discord.js";
+import { logger } from "..";
 import * as commands from "../commands";
 import { Event } from "../Event";
-import { checkGuild } from "../lib/conditions";
-import { ErrorEmbed } from "../lib/discordEmbeds";
+import { checkGuild } from "../utils/conditions";
+import { ErrorEmbed } from "../utils/discordEmbeds";
 
 export const command: Event = {
   event: "interactionCreate",
@@ -30,7 +31,7 @@ export const command: Event = {
         await command.execute(interaction);
       }
     } catch (e) {
-      this.logger.error(e);
+      logger.error(e);
       interaction.reply({
         embeds: [
           ErrorEmbed("There was an error while executing this command!"),

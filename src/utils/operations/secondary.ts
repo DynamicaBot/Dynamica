@@ -4,11 +4,11 @@ import {
   GuildMember,
 } from "discord.js";
 import { bree, logger } from "../..";
-import refreshSecondary from "../../jobs/refreshSecondary";
+import { registerNewJob } from "../../jobs";
 import { formatChannelName } from "../formatString";
 import { getChannel } from "../getCached";
-import { updateActivityCount } from "../operations/general";
 import { db } from "../prisma";
+import { updateActivityCount } from "./general";
 
 /**
  * Deletes Secondary Channel.
@@ -141,7 +141,7 @@ export const createSecondary = async (
     }
   };
 
-  await db.secondary.create({
+  const secondaryDb = await db.secondary.create({
     data: {
       id: secondary.id,
       creator: member?.id,
@@ -150,18 +150,7 @@ export const createSecondary = async (
       textChannelId: await textChannelId(),
     },
   });
-
-  bree.add({
-    name: secondary.id,
-    timeout: false,
-    worker: {
-      workerData: {
-        id: (await secondary).id,
-        guildId: (await secondary).guildId,
-      },
-    },
-    path: refreshSecondary,
-  });
+  await registerNewJob(secondaryDb);
 
   await updateActivityCount(channelManager.client);
   await logger.debug(

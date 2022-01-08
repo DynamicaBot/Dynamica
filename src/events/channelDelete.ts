@@ -1,6 +1,6 @@
 import { Channel, DMChannel } from "discord.js";
 import { Event } from "../Event";
-import { db } from "../lib/prisma";
+import { db } from "../utils/prisma";
 
 export const channelDelete: Event = {
   event: "channelDelete",

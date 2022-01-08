@@ -9,8 +9,8 @@
     // Language and Environment
     "emitDecoratorMetadata": true,
     "experimentalDecorators": true,
-    "lib": ["ESNext", "DOM"],
-    "target": "ES2020",
+    "lib": ["esnext", "DOM"],
+    "target": "esnext",
     "useDefineForClassFields": true,
 
     // Emit

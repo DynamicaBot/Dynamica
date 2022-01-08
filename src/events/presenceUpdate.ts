@@ -1,7 +1,7 @@
 import { Presence } from "discord.js";
 import { bree, logger } from "..";
 import { Event } from "../Event";
-import { db } from "../lib/prisma";
+import { db } from "../utils/prisma";
 
 export const presenceUpdate: Event = {
   event: "presenceUpdate",

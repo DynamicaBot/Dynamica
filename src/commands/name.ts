@@ -1,10 +1,11 @@
 import { SlashCommandBuilder } from "@discordjs/builders";
 import { CommandInteraction } from "discord.js";
+import { logger } from "..";
 import { Command } from "../Command";
-import { checkManager, checkSecondary } from "../lib/conditions";
-import { SuccessEmbed } from "../lib/discordEmbeds";
-import { getGuildMember } from "../lib/getCached";
-import { db } from "../lib/prisma";
+import { checkManager, checkSecondary } from "../utils/conditions";
+import { SuccessEmbed } from "../utils/discordEmbeds";
+import { getGuildMember } from "../utils/getCached";
+import { db } from "../utils/prisma";
 
 export const name: Command = {
   conditions: [checkManager, checkSecondary],
@@ -38,6 +39,6 @@ export const name: Command = {
         ),
       ],
     });
-    this.logger.info(`${channel.id} name changed.`);
+    logger.info(`${channel.id} name changed.`);
   },
 };

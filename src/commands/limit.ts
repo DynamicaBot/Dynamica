@@ -1,9 +1,9 @@
 import { SlashCommandBuilder } from "@discordjs/builders";
 import { CommandInteraction } from "discord.js";
 import { Command } from "../Command";
-import { checkCreator, checkSecondary } from "../lib/conditions";
-import { SuccessEmbed } from "../lib/discordEmbeds";
-import { getGuildMember } from "../lib/getCached";
+import { checkCreator, checkSecondary } from "../utils/conditions";
+import { SuccessEmbed } from "../utils/discordEmbeds";
+import { getGuildMember } from "../utils/getCached";
 
 export const limit: Command = {
   conditions: [checkCreator, checkSecondary],

@@ -1,6 +1,6 @@
 import Fuse from "fuse.js";
 import { Autocomplete } from "../Autocomplete";
-import { db } from "../lib/prisma";
+import { db } from "../utils/prisma";
 
 export const general: Autocomplete = {
   name: "channel",

@@ -1,5 +1,4 @@
 import esbuild from "esbuild";
-import esbuildPluginTsc from "esbuild-plugin-tsc";
 import { opendir } from "fs/promises";
 import nodemon from "nodemon";
 import { join } from "path";
@@ -19,7 +18,6 @@ async function* scan(path, cb) {
 }
 
 export async function build(watch = false) {
-  console.log("watching", watch);
   const rootFolder = new URL("../", import.meta.url);
   const distFolder = new URL("dist/", rootFolder);
   const srcFolder = new URL("src/", rootFolder);
@@ -31,9 +29,9 @@ export async function build(watch = false) {
         "src/index.ts",
         "src/deploy-commands.ts",
         "src/remove-commands.ts",
+        "src/jobs/refreshSecondary.ts",
       ],
       bundle: true,
-      format: "cjs",
       write: true,
       outdir: fileURLToPath(distFolder),
       platform: "node",
@@ -52,12 +50,6 @@ export async function build(watch = false) {
       incremental: watch,
       sourcemap: true,
       minify: process.env.NODE_ENV === "production",
-      plugins: [
-        esbuildPluginTsc({
-          // TODO: Typescript decorators aren't supported by esbuild revert back plz
-          tsconfigPath: join(fileURLToPath(rootFolder), "tsconfig.json"),
-        }),
-      ],
     }),
     watch
       ? nodemon({

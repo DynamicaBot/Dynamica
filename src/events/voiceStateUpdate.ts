@@ -4,8 +4,8 @@ import { Event } from "../Event";
 import {
   createSecondary,
   deleteDiscordSecondary,
-} from "../lib/operations/secondary";
-import { db } from "../lib/prisma";
+} from "../utils/operations/secondary";
+import { db } from "../utils/prisma";
 
 export const voiceStateUpdate: Event = {
   event: "voiceStateUpdate",
