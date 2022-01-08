@@ -22,9 +22,9 @@ RUN apt-get update && \
     rm -rf /var/lib/apt/lists/*
 
 ENV USER=container HOME=/home/container
-COPY package.json .
-COPY prisma prisma
-COPY yarn.lock .
+COPY package.json /home/container/
+COPY prisma /home/container/prisma
+COPY yarn.lock /home/container/
 
 # Build
 FROM base as build
@@ -40,9 +40,9 @@ RUN yarn build
 FROM pterodactylbase as pterodactylbuild
 WORKDIR /home/container
 RUN adduser -D -h /home/container container
-COPY tsconfig.json .
-COPY src ./src
-COPY scripts ./scripts
+COPY tsconfig.json /home/container/
+COPY src /home/container/src
+COPY scripts /home/container/scripts
 RUN yarn install --immutable
 RUN yarn build
 
@@ -66,8 +66,8 @@ ENV DATABASE_URL "file:/home/container/dynamica/db.sqlite"
 WORKDIR /home/container
 RUN adduser -D -h /home/container container
 
-COPY --from=build /app/dist dist
-COPY --from=build /app/node_modules/.prisma node_modules/.prisma
+COPY --from=build /app/dist /home/container/dist
+COPY --from=build /app/node_modules/.prisma /home/container/node_modules/.prisma
 COPY entrypoint.sh /entrypoint.sh
 USER container
 CMD [ "/bin/bash", "/entrypoint.sh" ]
