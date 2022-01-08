@@ -6,8 +6,8 @@ import {
   GuildChannelManager,
   ThreadChannel,
 } from "discord.js";
-import { logger } from "../..";
-import { db } from "../prisma";
+import { db } from "../db";
+import { logger } from "../logger";
 
 /**
  * Create Primary Channel

@@ -5,9 +5,9 @@ import {
   MessageButton,
 } from "discord.js";
 import { Command } from "../Command";
+import { db } from "../utils/db";
 import { ErrorEmbed, SuccessEmbed } from "../utils/discordEmbeds";
 import { getChannel } from "../utils/getCached";
-import { db } from "../utils/prisma";
 
 export const join: Command = {
   conditions: [],

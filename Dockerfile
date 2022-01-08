@@ -29,4 +29,5 @@ ENV NODE_ENV="production"
 ENV DATABASE_URL "file:/app/config/db.sqlite"
 COPY --from=build /app/dist dist
 COPY --from=build /app/node_modules/.prisma node_modules/.prisma
+# CMD yarn deploy && echo "Test" && yarn start
 CMD yarn deploy && npx prisma migrate deploy && yarn start

@@ -1,9 +1,9 @@
 import { CacheType, Interaction } from "discord.js";
-import { logger } from "..";
 import * as commands from "../commands";
 import { Event } from "../Event";
 import { checkGuild } from "../utils/conditions";
 import { ErrorEmbed } from "../utils/discordEmbeds";
+import { logger } from "../utils/logger";
 
 export const command: Event = {
   event: "interactionCreate",

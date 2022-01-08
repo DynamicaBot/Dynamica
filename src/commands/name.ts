@@ -1,11 +1,11 @@
 import { SlashCommandBuilder } from "@discordjs/builders";
 import { CommandInteraction } from "discord.js";
-import { logger } from "..";
 import { Command } from "../Command";
 import { checkManager, checkSecondary } from "../utils/conditions";
+import { db } from "../utils/db";
 import { SuccessEmbed } from "../utils/discordEmbeds";
 import { getGuildMember } from "../utils/getCached";
-import { db } from "../utils/prisma";
+import { logger } from "../utils/logger";
 
 export const name: Command = {
   conditions: [checkManager, checkSecondary],

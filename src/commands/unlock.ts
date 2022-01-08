@@ -1,11 +1,11 @@
 import { SlashCommandBuilder } from "@discordjs/builders";
 import { CommandInteraction } from "discord.js";
-import { bree } from "..";
 import { Command } from "../Command";
+import { bree } from "../utils/bree";
 import { checkCreator } from "../utils/conditions";
+import { db } from "../utils/db";
 import { SuccessEmbed } from "../utils/discordEmbeds";
 import { getGuildMember } from "../utils/getCached";
-import { db } from "../utils/prisma";
 
 export const unlock: Command = {
   conditions: [checkCreator],

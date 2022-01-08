@@ -1,8 +1,8 @@
 import { Check } from ".";
-import { logger } from "../..";
+import { db } from "../db";
 import { ErrorEmbed } from "../discordEmbeds";
 import { getGuildMember } from "../getCached";
-import { db } from "../prisma";
+import { logger } from "../logger";
 /**
  * Checks if a guild member is the creator of the secondary channel. (overridden by manager and admin)
  * @param interaction The interaction which to check.

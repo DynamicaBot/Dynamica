@@ -1,4 +1,4 @@
-import { db } from "../prisma";
+import { db } from "../db";
 
 /**
  * Updates or creates a new alias.

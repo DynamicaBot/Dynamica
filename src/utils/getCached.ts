@@ -7,7 +7,7 @@ import {
   GuildMemberManager,
   GuildResolvable,
 } from "discord.js";
-import { logger } from "..";
+import { logger } from "./logger";
 
 /**
  * Get a channel that might be cached.

@@ -1,6 +1,6 @@
 import { RateLimitData } from "discord.js";
-import { logger } from "..";
 import { Event } from "../Event";
+import { logger } from "../utils/logger";
 
 export const guildCreate: Event = {
   once: false,

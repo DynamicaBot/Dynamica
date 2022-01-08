@@ -1,8 +1,8 @@
 import { CommandInteraction } from "discord.js";
 import { Check } from ".";
-import { logger } from "../..";
 import { ErrorEmbed } from "../discordEmbeds";
 import { getGuildMember } from "../getCached";
+import { logger } from "../logger";
 
 /**
  * Checks permissions for Dynamica Manager role. (admin overrides)

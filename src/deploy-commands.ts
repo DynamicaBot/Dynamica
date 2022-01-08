@@ -1,9 +1,8 @@
 import { REST } from "@discordjs/rest";
 import { Routes } from "discord-api-types/v9";
 import { config } from "dotenv";
-import signale from "signale";
+import { Signale } from "signale";
 import * as commands from "./commands";
-const { Signale } = signale;
 config();
 
 const logger = new Signale({
@@ -26,7 +25,9 @@ if (!TOKEN || !CLIENT_ID) {
 
   (async () => {
     try {
-      await logger.info("Started refreshing application (/) commands.");
+      await logger.info(
+        `Started refreshing ${GUILD_ID ? "guild" : "application"} (/) commands.`
+      );
       if (GUILD_ID) {
         await rest.put(Routes.applicationGuildCommands(CLIENT_ID, GUILD_ID), {
           body: commandList,
@@ -45,7 +46,11 @@ if (!TOKEN || !CLIENT_ID) {
         );
       }
 
-      await logger.info("Successfully reloaded application (/) commands.");
+      await logger.info(
+        `Successfully reloaded ${
+          GUILD_ID ? "guild" : "application"
+        } (/) commands.`
+      );
     } catch (error) {
       await logger.error(error);
     }

@@ -1,11 +1,11 @@
 import { VoiceState } from "discord.js";
-import { bree } from "..";
 import { Event } from "../Event";
+import { bree } from "../utils/bree";
+import { db } from "../utils/db";
 import {
   createSecondary,
   deleteDiscordSecondary,
 } from "../utils/operations/secondary";
-import { db } from "../utils/prisma";
 
 export const voiceStateUpdate: Event = {
   event: "voiceStateUpdate",

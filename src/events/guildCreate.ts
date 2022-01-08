@@ -1,8 +1,8 @@
 import { Embed, hyperlink } from "@discordjs/builders";
 import { Guild } from "discord.js";
-import { logger } from "..";
 import { Event } from "../Event";
-import { db } from "../utils/prisma";
+import { db } from "../utils/db";
+import { logger } from "../utils/logger";
 /**
  * The list of basic commands to display.
  */

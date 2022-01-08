@@ -1,22 +1,10 @@
-import Bree from "bree";
 import { Client, Intents } from "discord.js";
 import dotenv from "dotenv";
-import signale from "signale";
 import * as events from "./events/index";
-import { db } from "./utils/prisma";
+import { bree } from "./utils/bree";
+import { db } from "./utils/db";
+import { logger } from "./utils/logger";
 dotenv.config();
-
-const { Signale } = signale;
-
-/**
- * Signale Logger instance
- */
-export const logger = new Signale({
-  disabled: false,
-  interactive: false,
-  logLevel: process.env.LOG_LEVEL || "info",
-  secrets: [process.env.TOKEN, process.env.CLIENT_ID],
-});
 
 /**
  * DiscordJS Client instance
@@ -27,27 +15,6 @@ export const client = new Client({
     Intents.FLAGS.GUILD_VOICE_STATES,
     Intents.FLAGS.GUILD_PRESENCES,
   ],
-});
-
-/**
- * Bree instance
- */
-export const bree = new Bree({
-  root: false,
-  logger: false,
-  errorHandler: (error, workerMetadata) => {
-    if (workerMetadata.threadId) {
-      logger.info(
-        `There was an error while running a worker ${workerMetadata.name} with thread ID: ${workerMetadata.threadId}`
-      );
-    } else {
-      logger.info(
-        `There was an error while running a worker ${workerMetadata.name}`
-      );
-    }
-
-    logger.error(error);
-  },
 });
 
 const eventList = Object.values(events);

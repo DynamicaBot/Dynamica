@@ -3,11 +3,12 @@ import {
   GuildChannelManager,
   GuildMember,
 } from "discord.js";
-import { bree, logger } from "../..";
 import { registerNewJob } from "../../jobs";
+import { bree } from "../bree";
+import { db } from "../db";
 import { formatChannelName } from "../formatString";
 import { getChannel } from "../getCached";
-import { db } from "../prisma";
+import { logger } from "../logger";
 import { updateActivityCount } from "./general";
 
 /**
