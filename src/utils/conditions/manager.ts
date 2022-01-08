@@ -1,6 +1,5 @@
 import { CommandInteraction } from "discord.js";
 import { Check } from ".";
-import { ErrorEmbed } from "../discordEmbeds";
 import { getGuildMember } from "../getCached";
 import { logger } from "../logger";
 
@@ -11,7 +10,6 @@ import { logger } from "../logger";
  */
 export const checkManager: Check = async (interaction: CommandInteraction) => {
   try {
-    if (!interaction.guild) return false;
     const guildMember = await getGuildMember(
       interaction.guild.members,
       interaction.user.id
@@ -21,17 +19,20 @@ export const checkManager: Check = async (interaction: CommandInteraction) => {
     );
     const admin = guildMember.permissions.has("ADMINISTRATOR");
     if (!dynamicaManager && !admin) {
-      await interaction.reply({
-        embeds: [
-          ErrorEmbed(
-            "You must have the Dynamica Manager role to execute this command."
-          ),
-        ],
-      });
+      return {
+        success: false,
+        message: "You must have the Dynamica Manager role to use this command.",
+      };
     }
 
-    return dynamicaManager || admin;
+    return dynamicaManager || admin
+      ? { success: true }
+      : {
+          success: false,
+          message: "You must be an admin to use this command.",
+        };
   } catch (error) {
     logger.error("error in manager check", error);
+    return { success: false, message: "An error occured." };
   }
 };

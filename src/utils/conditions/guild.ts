@@ -7,4 +7,9 @@ import { Check } from ".";
  * @returns Promise Boolean
  */
 export const checkGuild: Check = async (interaction: CommandInteraction) =>
-  !!interaction.guild;
+  !!interaction.guild
+    ? { success: true }
+    : {
+        success: false,
+        message: "You must be in a guild to use this command.",
+      };

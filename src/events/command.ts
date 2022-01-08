@@ -1,4 +1,5 @@
 import { CacheType, Interaction } from "discord.js";
+import { Command } from "../Command";
 import * as commands from "../commands";
 import { Event } from "../Event";
 import { checkGuild } from "../utils/conditions";
@@ -11,24 +12,23 @@ export const command: Event = {
   async execute(interaction: Interaction<CacheType>) {
     if (!interaction.isCommand()) return;
     try {
-      const command = commands[interaction.commandName];
-
-      const conditions = await Promise.all(
-        command.conditions
-          .concat([checkGuild])
-          .map((condition) => condition(interaction))
+      const command: Command = commands[interaction.commandName];
+      const { conditions } = command;
+      const conditionResults = await Promise.all(
+        [checkGuild, ...conditions].map((condition) => condition(interaction))
       );
-      if (!conditions.every((condition) => condition)) {
+
+      const failingCondition = conditionResults.find(
+        (condition) => !condition.success
+      );
+
+      if (failingCondition) {
         interaction.reply({
-          embeds: [
-            ErrorEmbed(
-              "You didn't meet one of the conditions to run this command."
-            ),
-          ],
           ephemeral: true,
+          embeds: [ErrorEmbed(failingCondition.message)],
         });
       } else {
-        await command.execute(interaction);
+        command.execute(interaction);
       }
     } catch (e) {
       logger.error(e);
