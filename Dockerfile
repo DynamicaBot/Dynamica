@@ -1,5 +1,5 @@
 # Deps
-FROM node:17-buster-slim as base
+FROM node:16-buster-slim as base
 WORKDIR /app
 RUN apt-get update && \
     apt-get upgrade -y --no-install-recommends && \
@@ -34,10 +34,14 @@ CMD yarn deploy && npx prisma migrate deploy && yarn start
 
 # Runner
 FROM base as pterodactyl
-WORKDIR /app
+
 
 ENV NODE_ENV="production"
-ENV DATABASE_URL "file:/app/config/db.sqlite"
+ENV DATABASE_URL "file:/home/container/dynamica/db.sqlite"
+WORKDIR /home/container
+RUN adduser -D -h /home/container container
 COPY --from=build /app/dist dist
 COPY --from=build /app/node_modules/.prisma node_modules/.prisma
-CMD "/bin/bash"
+COPY entrypoint.sh /entrypoint.sh
+USER container
+CMD [ "/bin/ash", "/entrypoint.sh" ]
