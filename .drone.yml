@@ -133,7 +133,6 @@ steps:
       repo: ghcr.io/dynamicabot/dynamica
       auto_tag: true
       registry: ghcr.io
-      cache_from: ghcr.io/dynamicabot/dynamica
 volumes:
   - name: cache
     host:
@@ -170,7 +169,6 @@ steps:
       auto_tag: true
       registry: ghcr.io
       auto_tag_suffix: pterodactyl
-      cache_from: ghcr.io/dynamicabot/dynamica
 volumes:
   - name: cache
     host:
