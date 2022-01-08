@@ -40,3 +40,4 @@ ENV NODE_ENV="production"
 ENV DATABASE_URL "file:/app/config/db.sqlite"
 COPY --from=build /app/dist dist
 COPY --from=build /app/node_modules/.prisma node_modules/.prisma
+ENTRYPOINT [ "/bin/sh -c" ]
