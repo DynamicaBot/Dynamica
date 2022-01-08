@@ -1,6 +1,8 @@
 services:
   discordbot:
-    build: ./
+    build:
+      context: ./
+      target: runner
     volumes:
       - ./config:/app/config
     env_file: .env

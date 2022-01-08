@@ -138,7 +138,43 @@ volumes:
     host:
       path: /tmp/cache
 ---
+kind: "pipeline"
+name: "Publish GHCR.io Pterodactyl Release"
+depends_on:
+  - "Build"
+type: "docker"
+trigger:
+  event:
+    - tag
+  branch:
+    - master
+steps:
+  - name: Publish Pterodactyl Bot on ghcr.io
+    pull: if-not-exists
+    image: plugins/docker
+    when:
+      branch:
+        - master
+      event:
+        - tag
+    settings:
+      tags: latest
+      target: pterodactyl
+      username:
+        from_secret: github_username
+      password:
+        from_secret: github_token
+      repo: ghcr.io/dynamicabot/dynamica
+      auto_tag: true
+      registry: ghcr.io
+      auto_tag_suffix: pterodactyl
+      cache_from: ghcr.io/dynamicabot/dynamica
+volumes:
+  - name: cache
+    host:
+      path: /tmp/cache
+---
 kind: signature
-hmac: dda02b9017ae5fab523d61c56456f26d1aed8e7cb280c1ce89f978966ff2d8d5
+hmac: 35fc080ab5d33306e5e274ea237ea02dea616dc89207f37b40aad784a824398f
 
 ...
