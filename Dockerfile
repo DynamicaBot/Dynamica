@@ -1,5 +1,5 @@
 # Deps
-FROM node:16-buster-slim as base
+FROM node:17-buster-slim as base
 WORKDIR /app
 RUN apt-get update && \
     apt-get upgrade -y --no-install-recommends && \
@@ -40,4 +40,4 @@ ENV NODE_ENV="production"
 ENV DATABASE_URL "file:/app/config/db.sqlite"
 COPY --from=build /app/dist dist
 COPY --from=build /app/node_modules/.prisma node_modules/.prisma
-ENTRYPOINT [ "/bin/sh -c" ]
+CMD "/bin/bash"
