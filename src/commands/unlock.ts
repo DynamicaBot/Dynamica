@@ -3,12 +3,13 @@ import { CommandInteraction } from "discord.js";
 import { Command } from "../Command";
 import { bree } from "../utils/bree";
 import { checkCreator } from "../utils/conditions";
+import { checkAdminPermissions } from "../utils/conditions/admin";
 import { db } from "../utils/db";
 import { SuccessEmbed } from "../utils/discordEmbeds";
 import { getGuildMember } from "../utils/getCached";
 
 export const unlock: Command = {
-  conditions: [checkCreator],
+  conditions: [checkCreator, checkAdminPermissions],
   data: new SlashCommandBuilder()
     .setName("unlock")
     .setDescription("Remove any existing locks on locked secondary channels."),

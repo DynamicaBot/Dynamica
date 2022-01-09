@@ -115,7 +115,6 @@ export const createSecondary = async (
     {
       type: "GUILD_VOICE",
       parent: primaryChannel?.parent ?? undefined,
-      permissionOverwrites: primaryChannel.permissionOverwrites.cache,
       position: primaryChannel?.position
         ? primaryChannel.position + 1
         : undefined,

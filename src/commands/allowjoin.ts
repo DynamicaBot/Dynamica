@@ -2,11 +2,12 @@ import { SlashCommandBuilder } from "@discordjs/builders";
 import { CommandInteraction } from "discord.js";
 import { Command } from "../Command";
 import { checkManager } from "../utils/conditions";
+import { checkAdminPermissions } from "../utils/conditions/admin";
 import { db } from "../utils/db";
 import { SuccessEmbed } from "../utils/discordEmbeds";
 
 export const allowjoin: Command = {
-  conditions: [checkManager],
+  conditions: [checkManager, checkAdminPermissions],
   data: new SlashCommandBuilder()
     .setName("allowjoin")
     .setDescription("Allow users to request to join a locked channel.")

@@ -3,12 +3,13 @@ import { CommandInteraction } from "discord.js";
 import { Command } from "../Command";
 import { bree } from "../utils/bree";
 import { checkCreator, checkSecondary } from "../utils/conditions";
+import { checkAdminPermissions } from "../utils/conditions/admin";
 import { db } from "../utils/db";
 import { SuccessEmbed } from "../utils/discordEmbeds";
 import { getGuildMember } from "../utils/getCached";
 
 export const lock: Command = {
-  conditions: [checkCreator, checkSecondary],
+  conditions: [checkCreator, checkSecondary, checkAdminPermissions],
   data: new SlashCommandBuilder()
     .setName("lock")
     .setDescription("Lock a channel to a certain role or user."),

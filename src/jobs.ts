@@ -117,7 +117,7 @@ async function editChannel({
 
   if (channel.name === name) return;
   try {
-    channel.edit({
+    await channel.edit({
       name,
     });
   } catch (error) {

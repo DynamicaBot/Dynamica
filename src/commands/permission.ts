@@ -2,11 +2,12 @@ import { SlashCommandBuilder } from "@discordjs/builders";
 import { CommandInteraction, Role } from "discord.js";
 import { Command } from "../Command";
 import { checkCreator, checkSecondary } from "../utils/conditions";
+import { checkAdminPermissions } from "../utils/conditions/admin";
 import { ErrorEmbed, SuccessEmbed } from "../utils/discordEmbeds";
 import { getGuildMember } from "../utils/getCached";
 
 export const permission: Command = {
-  conditions: [checkCreator, checkSecondary],
+  conditions: [checkCreator, checkSecondary, checkAdminPermissions],
   data: new SlashCommandBuilder()
     .setName("permission")
     .setDescription("Edit the permissions of a voice channel.")
