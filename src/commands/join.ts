@@ -1,9 +1,5 @@
 import { SlashCommandBuilder } from "@discordjs/builders";
-import {
-  CommandInteraction,
-  MessageActionRow,
-  MessageButton,
-} from "discord.js";
+import { MessageActionRow, MessageButton } from "discord.js";
 import { Command } from "../Command";
 import { db } from "../utils/db";
 import { ErrorEmbed, SuccessEmbed } from "../utils/discordEmbeds";
@@ -21,8 +17,11 @@ export const join: Command = {
         .setDescription("The channel to request to join.")
         .setRequired(true)
     ),
-
-  async execute(interaction: CommandInteraction): Promise<void> {
+  helpText: {
+    short:
+      "If join requests are enabled then you can request to join locked secondary channels.",
+  },
+  async execute(interaction) {
     const channel = interaction.options.getString("channel", true);
 
     if (!interaction.guild) return;
@@ -32,11 +31,10 @@ export const join: Command = {
       include: { guild: true },
     });
     if (!channelConfig.guild.allowJoinRequests) {
-      interaction.reply({
+      return interaction.reply({
         content: "Error",
         embeds: [ErrorEmbed("Join Requests are not enabled on this server.")],
       });
-      return;
     }
 
     const { creator } = channelConfig;

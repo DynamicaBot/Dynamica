@@ -1,11 +1,10 @@
 import { SlashCommandBuilder } from "@discordjs/builders";
-import { CommandInteraction } from "discord.js";
 import { Command } from "../Command";
 import { bree } from "../utils/bree";
 import { checkCreator } from "../utils/conditions";
 import { checkAdminPermissions } from "../utils/conditions/admin";
 import { db } from "../utils/db";
-import { SuccessEmbed } from "../utils/discordEmbeds";
+import { ErrorEmbed, SuccessEmbed } from "../utils/discordEmbeds";
 import { getGuildMember } from "../utils/getCached";
 
 export const unlock: Command = {
@@ -13,27 +12,35 @@ export const unlock: Command = {
   data: new SlashCommandBuilder()
     .setName("unlock")
     .setDescription("Remove any existing locks on locked secondary channels."),
-
-  async execute(interaction: CommandInteraction): Promise<void> {
+  helpText: {
+    short:
+      "This resets the permissions channel whose permissions have been altered by any of the permissions related command like /lock and /permission.",
+  },
+  async execute(interaction) {
     const guildMember = await getGuildMember(
       interaction.guild.members,
       interaction.user.id
     );
 
-    const channel = guildMember?.voice.channel;
+    const { channel } = guildMember.voice;
 
-    await db.secondary.update({
-      where: { id: channel.id },
-      data: {
-        locked: false,
-      },
-    });
-    bree.run(channel.id);
-
-    await channel.lockPermissions();
-    await interaction.reply({
-      ephemeral: true,
-      embeds: [SuccessEmbed(`Removed lock on <#${channel.id}>`)],
-    });
+    if (channel.manageable) {
+      channel.lockPermissions();
+      db.secondary.update({
+        where: { id: channel.id },
+        data: {
+          locked: false,
+        },
+      });
+      bree.run(channel.id);
+      return interaction.reply({
+        ephemeral: true,
+        embeds: [SuccessEmbed(`Removed lock on <#${channel.id}>`)],
+      });
+    } else {
+      return interaction.reply({
+        embeds: [ErrorEmbed("Couldn't edit channel.")],
+      });
+    }
   },
 };

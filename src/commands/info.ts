@@ -1,5 +1,4 @@
 import { Embed, SlashCommandBuilder } from "@discordjs/builders";
-import { CommandInteraction } from "discord.js";
 import { Command } from "../Command";
 
 export const info: Command = {
@@ -18,20 +17,18 @@ export const info: Command = {
     .addSubcommand((subcommand) =>
       subcommand.setName("server").setDescription("Info about the server")
     ),
-
-  async execute(interaction: CommandInteraction): Promise<void> {
-    if (interaction.options.getSubcommand() === "user") {
+  helpText: { short: "Shows the info of either a user or the current server." },
+  async execute(interaction) {
+    const subcommand = interaction.options.getSubcommand();
+    if (subcommand === "user") {
       const user = interaction.options.getUser("target");
-
-      if (user) {
-        await interaction.reply(`Username: ${user.username}\nID: ${user.id}`);
-      } else {
-        await interaction.reply(
-          `Your username: ${interaction.user.username}\nYour ID: ${interaction.user.id}`
-        );
-      }
-    } else if (interaction.options.getSubcommand() === "server") {
-      await interaction.reply({
+      return user
+        ? interaction.reply(`Username: ${user.username}\nID: ${user.id}`)
+        : interaction.reply(
+            `Your username: ${interaction.user.username}\nYour ID: ${interaction.user.id}`
+          );
+    } else if (subcommand === "server") {
+      return interaction.reply({
         embeds: [
           new Embed()
             .addFields(

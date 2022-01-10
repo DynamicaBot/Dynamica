@@ -1,8 +1,7 @@
 import { SlashCommandBuilder } from "@discordjs/builders";
-import { CommandInteraction } from "discord.js";
 import { Command } from "../Command";
 import { checkCreator, checkSecondary } from "../utils/conditions";
-import { SuccessEmbed } from "../utils/discordEmbeds";
+import { ErrorEmbed, SuccessEmbed } from "../utils/discordEmbeds";
 import { getGuildMember } from "../utils/getCached";
 
 export const limit: Command = {
@@ -20,25 +19,26 @@ export const limit: Command = {
         .setName("number")
         .setRequired(true)
     ),
-
-  async execute(interaction: CommandInteraction): Promise<void> {
+  helpText: { short: "Limit the maximum number of people in the channel." },
+  async execute(interaction) {
     const userLimit = interaction.options.getInteger("number", true);
-
-    if (!interaction.guild) return;
 
     const guildMember = await getGuildMember(
       interaction.guild.members,
       interaction.user.id
     );
 
-    const channel = guildMember?.voice.channel;
+    const { channel } = guildMember.voice;
 
-    if (!channel) return;
-    if (!guildMember?.voice.channel) return;
-
-    await guildMember.voice.channel.edit({ userLimit });
-    await interaction.reply({
-      embeds: [SuccessEmbed(`Channel limit changed to ${userLimit}.`)],
-    });
+    if (!channel.manageable) {
+      return interaction.reply({
+        embeds: [ErrorEmbed("Cannot edit channel.")],
+      });
+    } else {
+      channel.edit({ userLimit });
+      return interaction.reply({
+        embeds: [SuccessEmbed(`Channel limit changed to ${userLimit}.`)],
+      });
+    }
   },
 };

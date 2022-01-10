@@ -17,16 +17,19 @@ export const allowjoin: Command = {
         .setDescription("Whether to enable or disable join requests.")
         .setRequired(true)
     ),
-
+  helpText: {
+    short:
+      "Toggles whether or not members of your sever are allowed to request to join private channels.",
+  },
   async execute(interaction: CommandInteraction) {
     const state = interaction.options.getBoolean("state", true);
-    await db.guild.update({
+    db.guild.update({
       where: { id: interaction.guild.id },
       data: {
         allowJoinRequests: state,
       },
     });
-    await interaction.reply({
+    return interaction.reply({
       ephemeral: true,
       embeds: [
         SuccessEmbed(`${!state ? "Disabled" : "Enabled"} Join Requests`),

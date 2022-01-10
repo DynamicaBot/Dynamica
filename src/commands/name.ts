@@ -1,5 +1,4 @@
 import { SlashCommandBuilder } from "@discordjs/builders";
-import { CommandInteraction } from "discord.js";
 import { Command } from "../Command";
 import { checkManager, checkSecondary } from "../utils/conditions";
 import { db } from "../utils/db";
@@ -18,11 +17,11 @@ export const name: Command = {
         .setDescription("The new name of the channel (can be a template).")
         .setRequired(true)
     ),
-
-  async execute(interaction: CommandInteraction): Promise<void> {
+  helpText: {
+    short: "Changes the name of the Secondary channel you're currently in.",
+  },
+  async execute(interaction) {
     const name = interaction.options.getString("name");
-
-    if (!interaction.guild) return;
 
     const guildMember = await getGuildMember(
       interaction.guild.members,
@@ -31,14 +30,14 @@ export const name: Command = {
 
     const channel = guildMember?.voice.channel;
 
-    await db.secondary.update({ where: { id: channel.id }, data: { name } });
-    await interaction.reply({
+    db.secondary.update({ where: { id: channel.id }, data: { name } });
+    logger.info(`${channel.id} name changed.`);
+    return interaction.reply({
       embeds: [
         SuccessEmbed(
           `Channel name changed to ${name}. Channel may take up to 5 minutes to update.`
         ),
       ],
     });
-    logger.info(`${channel.id} name changed.`);
   },
 };

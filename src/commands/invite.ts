@@ -1,5 +1,4 @@
 import { SlashCommandBuilder } from "@discordjs/builders";
-import { CommandInteraction } from "discord.js";
 import { Command } from "../Command";
 
 export const invite: Command = {
@@ -7,8 +6,8 @@ export const invite: Command = {
   data: new SlashCommandBuilder()
     .setName("invite")
     .setDescription("Get an invite for your own server!"),
-
-  async execute(interaction: CommandInteraction): Promise<void> {
+  helpText: { short: "Sends an invitation to invite the bot to more servers." },
+  async execute(interaction) {
     interaction.reply({
       ephemeral: true,
       content: `https://dynamica.dev/invite`,

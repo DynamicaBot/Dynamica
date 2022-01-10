@@ -1,5 +1,4 @@
 import { SlashCommandBuilder } from "@discordjs/builders";
-import { CommandInteraction } from "discord.js";
 import { Command } from "../Command";
 import { bree } from "../utils/bree";
 import { checkCreator, checkSecondary } from "../utils/conditions";
@@ -13,8 +12,11 @@ export const lock: Command = {
   data: new SlashCommandBuilder()
     .setName("lock")
     .setDescription("Lock a channel to a certain role or user."),
-
-  async execute(interaction: CommandInteraction): Promise<void> {
+  helpText: {
+    short: "Use it to lock your channels away from pesky server members.",
+    long: "Use it to lock your channels away from pesky server members. Locks it to the creator (initially) and permissions can be altered with /permission. \n Channels can be reset to default with /unlock.",
+  },
+  async execute(interaction) {
     if (!interaction.guild?.members) return;
 
     const guildMember = await getGuildMember(
@@ -40,14 +42,6 @@ export const lock: Command = {
       }
     });
 
-    await interaction.reply({
-      ephemeral: true,
-      embeds: [
-        SuccessEmbed(
-          `Use \`/permission add\` to allow people to access the channels. Or, \`/permission remove\` to remove people.`
-        ),
-      ],
-    });
     await db.secondary.update({
       where: { id: channel.id },
       data: {
@@ -55,5 +49,14 @@ export const lock: Command = {
       },
     });
     bree.run(channel.id);
+
+    return interaction.reply({
+      ephemeral: true,
+      embeds: [
+        SuccessEmbed(
+          `Use \`/permission add\` to allow people to access the channels. Or, \`/permission remove\` to remove people.`
+        ),
+      ],
+    });
   },
 };

@@ -1,5 +1,4 @@
 import { SlashCommandBuilder } from "@discordjs/builders";
-import { CommandInteraction } from "discord.js";
 import { Command } from "../Command";
 import { checkCreator, checkSecondary } from "../utils/conditions";
 import { ErrorEmbed, SuccessEmbed } from "../utils/discordEmbeds";
@@ -13,47 +12,47 @@ export const bitrate: Command = {
     .addIntegerOption((option) =>
       option
         .setDescription("The bitrate to set the channel to.")
-        .setName("number")
+        .setName("bitrate")
     ),
-
-  async execute(interaction: CommandInteraction): Promise<void> {
-    const bitrate = interaction.options.getInteger("number");
-
-    if (!interaction.guild) return;
+  helpText: { short: "Changes the bitrate of the current channel." },
+  async execute(interaction) {
+    const bitrate = interaction.options.getInteger("bitrate");
 
     const guildMember = await getGuildMember(
       interaction.guild.members,
       interaction.user.id
     );
 
-    const channel = guildMember?.voice.channel;
+    const { channel } = guildMember.voice;
 
-    if (!channel) return;
-    if (!guildMember?.voice.channel) return;
+    if (!channel.manageable) {
+      return interaction.reply({
+        embeds: [ErrorEmbed("Unable to manage channel.")],
+      });
+    }
 
     if (!bitrate) {
-      guildMember.voice.channel.edit({ bitrate: 64000 });
-      interaction.reply({
-        ephemeral: true,
-        embeds: [SuccessEmbed("Set bitrate to default.")],
+      return channel.edit({ bitrate: 64000 }).then(() => {
+        interaction.reply({
+          ephemeral: true,
+          embeds: [SuccessEmbed("Set bitrate to default.")],
+        });
       });
-      return;
     }
 
     if (!(bitrate <= 96 && bitrate >= 8)) {
-      interaction.reply({
+      return interaction.reply({
         embeds: [
           ErrorEmbed(
             "Bitrate (in kbps) should be greater than or equal to 4 or less than or equal to 96."
           ),
         ],
       });
-      return;
     }
-    await guildMember.voice.channel.edit({
+    await channel.edit({
       bitrate: bitrate ? bitrate * 1000 : 64000,
     });
-    await interaction.reply({
+    return interaction.reply({
       ephemeral: true,
       embeds: [
         SuccessEmbed(`Channel bitrate changed to ${bitrate ?? "default"}kbps.`),

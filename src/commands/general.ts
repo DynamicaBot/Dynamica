@@ -1,5 +1,4 @@
 import { SlashCommandBuilder } from "@discordjs/builders";
-import { CommandInteraction } from "discord.js";
 import { Command } from "../Command";
 import { checkManager } from "../utils/conditions";
 import { db } from "../utils/db";
@@ -23,8 +22,11 @@ export const general: Command = {
         .setDescription("The new template for the general channel.")
         .setRequired(true)
     ),
-
-  async execute(interaction: CommandInteraction): Promise<void> {
+  helpText: {
+    short:
+      "Using the /general command you can set the template for the channel name of the channel you're in when nobody is playing a game.",
+  },
+  async execute(interaction) {
     const name = interaction.options.getString("name", true);
     const channel = interaction.options.getString("channel", true);
 

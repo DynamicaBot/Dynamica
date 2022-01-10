@@ -19,17 +19,20 @@ export const create: Command = {
         )
         .setRequired(false)
     ),
-
+  helpText: {
+    short:
+      "It creates a new Primary channel which your users are able to join in order to create more secondary channels.",
+  },
   async execute(interaction: CommandInteraction): Promise<void> {
     const section = interaction.options.getChannel(
       "section"
     ) as GuildChannel | null;
+
     if (!interaction.guild?.me?.permissions.has("MANAGE_CHANNELS")) {
-      await interaction.reply({
+      return interaction.reply({
         ephemeral: true,
         embeds: [ErrorEmbed("Bot requires manage channel permissions.")],
       });
-      return;
     }
 
     await createPrimary(
@@ -37,7 +40,8 @@ export const create: Command = {
       interaction.user.id,
       section
     );
-    await interaction.reply({
+
+    return interaction.reply({
       embeds: [SuccessEmbed(`New voice channel successfully created.`)],
     });
   },

@@ -1,5 +1,4 @@
 import { Embed, SlashCommandBuilder } from "@discordjs/builders";
-import { CommandInteraction } from "discord.js";
 import { Command } from "../Command";
 
 export const about: Command = {
@@ -7,8 +6,8 @@ export const about: Command = {
   data: new SlashCommandBuilder()
     .setName("about")
     .setDescription(`About the bot.`),
-
-  async execute(interaction: CommandInteraction) {
+  helpText: { short: `A command that links to the bot's website.` },
+  async execute(interaction) {
     interaction.reply({
       embeds: [
         new Embed()

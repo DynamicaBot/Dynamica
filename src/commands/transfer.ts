@@ -1,5 +1,4 @@
 import { SlashCommandBuilder } from "@discordjs/builders";
-import { CommandInteraction } from "discord.js";
 import { Command } from "../Command";
 import { checkCreator } from "../utils/conditions";
 import { db } from "../utils/db";
@@ -17,19 +16,24 @@ export const transfer: Command = {
         .setDescription("The person to transfer ownership to.")
         .setRequired(true)
     ),
-
-  async execute(interaction: CommandInteraction): Promise<void> {
+  helpText: {
+    short: "Transfer ownership to another user.",
+    long: "Transfer ownership to another user. \n You need to be the owner of the channel in order to transfer ownership.",
+  },
+  async execute(interaction) {
     const user = interaction.options.getUser("user", true);
-    if (!interaction.guild) return;
 
     const guildMember = await getGuildMember(
       interaction.guild?.members,
       interaction.user.id
     );
-    if (!guildMember?.voice.channel) return;
+
+    const { channel } = guildMember.voice;
+
+    if (!channel) return;
 
     // set new owner
-    await db.secondary.update({
+    db.secondary.update({
       where: {
         id: guildMember.voice.channel.id,
       },
@@ -37,7 +41,7 @@ export const transfer: Command = {
         creator: user.id,
       },
     });
-    await interaction.reply({
+    return interaction.reply({
       ephemeral: true,
       embeds: [
         SuccessEmbed(

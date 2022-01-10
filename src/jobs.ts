@@ -116,13 +116,13 @@ async function editChannel({
   });
 
   if (channel.name === name) return;
-  try {
-    await channel.edit({
-      name,
-    });
-  } catch (error) {
-    logger.error("Was unable to edit the name of a channel", error);
+  if (!channel.manageable) {
+    await logger.debug(`Failed to edit channel ${channel.id}.`);
+    return;
   }
+  await channel.edit({
+    name,
+  });
 
   await logger.debug(
     `Secondary channel ${channel.name} in ${channel.guild.name} name changed.`

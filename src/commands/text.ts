@@ -1,5 +1,4 @@
 import { SlashCommandBuilder } from "@discordjs/builders";
-import { CommandInteraction } from "discord.js";
 import { Command } from "../Command";
 import { checkManager } from "../utils/conditions";
 import { checkAdminPermissions } from "../utils/conditions/admin";
@@ -19,13 +18,16 @@ export const text: Command = {
         )
         .setRequired(true)
     ),
-
-  async execute(interaction: CommandInteraction): Promise<void> {
+  helpText: {
+    short: "Enables or disabled temporary text channels.",
+    long: "Enables or disabled temporary text channels. \n Said channels are created at the same time as secondary channels and may only be accessed by members inside the voice channel. \n The name of the channel remains the same no matter the template used.",
+  },
+  async execute(interaction) {
     const state = interaction.options.getBoolean("state", true);
-    if (!interaction.guildId) return;
 
-    await updateGuild(interaction.guildId, { textChannelsEnabled: state });
-    await interaction.reply({
+    updateGuild(interaction.guildId, { textChannelsEnabled: state });
+
+    return interaction.reply({
       ephemeral: true,
       embeds: [
         SuccessEmbed(

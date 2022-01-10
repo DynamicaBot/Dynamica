@@ -1,7 +1,6 @@
-import { Embed, hyperlink, SlashCommandBuilder } from "@discordjs/builders";
-import { CommandInteraction } from "discord.js";
+import { Embed, SlashCommandBuilder } from "@discordjs/builders";
 import { Command } from "../Command";
-import { getCommands } from "../utils/getCached";
+import * as commandsList from "../commands";
 
 export const help: Command = {
   conditions: [],
@@ -17,50 +16,49 @@ export const help: Command = {
         .setDescription("Subcommand help")
         .setAutocomplete(true)
     ),
-
-  async execute(interaction: CommandInteraction): Promise<void> {
+  helpText: {
+    short: "Shows a list of commands and their asociated descriptions. ",
+  },
+  async execute(interaction) {
     const subcommand = interaction.options.getString("subcommand", false);
-
-    const commands = await getCommands(
-      interaction.guild?.commands,
-      interaction.client.application?.commands
-    );
-
-    const subcommandList = commands
-      ? commands
-          ?.find((command) => command.name === subcommand)
-          ?.options.map((option) => ({
-            name: option.name,
-            value: `${option.description} - ${hyperlink(
-              `Docs - ${option.name}`,
-              `https://dynamica.dev/docs/commands/${subcommand}#${option.name}`
-            )}`,
-          }))
-      : [];
-    const commandList = commands
-      ? commands?.map((command) => ({
-          name: command.name,
-          value: `${command.description} - ${hyperlink(
-            `Docs - ${command.name}`,
-            `https://dynamica.dev/docs/commands/${command.name}`
-          )}`,
-        }))
-      : [];
-    const list = !subcommand
-      ? commandList
-      : subcommandList
-      ? subcommandList
-      : [];
-
-    await interaction.reply({
-      ephemeral: true,
-      embeds: [
-        new Embed()
-          .setDescription("Command List")
-          .addFields(...list)
-          .setColor(3447003)
-          .setTitle("Info"),
-      ],
-    });
+    const subcommandFile: Command = commandsList[subcommand];
+    if (subcommand) {
+      const { helpText } = subcommandFile;
+      const embed = new Embed()
+        .setAuthor({
+          name: "Dynamica",
+          url: "https://dynamica.dev",
+          iconURL: "https://dynamica.dev/img/dynamica.png",
+        })
+        .setColor(3066993)
+        .setTitle(subcommand)
+        .setFooter({
+          text: `Find out more https://dynamica.dev/docs/commands/${subcommand}`,
+        })
+        .setDescription(helpText.long ?? helpText.short);
+      return interaction.reply({ embeds: [embed], ephemeral: true });
+    } else {
+      const commands: Command[] = Object.values(commandsList);
+      const commandFields = commands.map((command) => ({
+        name: command.data.name,
+        value: commandsList[command.data.name].helpText.short as string,
+      }));
+      return interaction.reply({
+        embeds: [
+          new Embed()
+            .setAuthor({
+              name: "Dynamica",
+              url: "https://dynamica.dev",
+              iconURL: "https://dynamica.dev/img/dynamica.png",
+            })
+            .setColor(3066993)
+            .setTitle("Help")
+            .setFooter({
+              text: `Find out more https://dynamica.dev/docs/commands`,
+            })
+            .addFields(...commandFields),
+        ],
+      });
+    }
   },
 };

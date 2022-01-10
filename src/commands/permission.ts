@@ -1,5 +1,5 @@
 import { SlashCommandBuilder } from "@discordjs/builders";
-import { CommandInteraction, Role } from "discord.js";
+import { Role } from "discord.js";
 import { Command } from "../Command";
 import { checkCreator, checkSecondary } from "../utils/conditions";
 import { checkAdminPermissions } from "../utils/conditions/admin";
@@ -49,34 +49,45 @@ export const permission: Command = {
             .setRequired(false)
         )
     ),
-
-  async execute(interaction: CommandInteraction): Promise<void> {
+  helpText: {
+    short:
+      "Edits the permissions for secondary channels. (Works in conjuction with /lock and /unlock.",
+  },
+  async execute(interaction) {
     const subcommand = interaction.options.getSubcommand(true);
     const user = interaction.options.getUser("user", false);
     const role = interaction.options.getRole("role", false) as Role;
+
     const guildMember = await getGuildMember(
       interaction.guild.members,
       interaction.user.id
     );
+
     const channel = guildMember?.voice.channel;
     const { permissionOverwrites } = channel;
     if (!user && !role) {
-      if (interaction.user === user) {
-        interaction.reply({
-          ephemeral: true,
-          embeds: [ErrorEmbed("You add yourself silly. You're already added.")],
-        });
-        return;
-      }
-      interaction.reply({
+      return interaction.reply({
         ephemeral: true,
         embeds: [ErrorEmbed("You must specify either a role or user.")],
       });
-      return;
     }
+
+    if (interaction.user === user) {
+      return interaction.reply({
+        ephemeral: true,
+        embeds: [
+          ErrorEmbed(
+            `You ${
+              subcommand === "add" ? "add" : "remove"
+            } yourself silly. You're already added.`
+          ),
+        ],
+      });
+    }
+
     if (subcommand === "add") {
-      await permissionOverwrites.create(user || role, { CONNECT: true });
-      await interaction.reply({
+      permissionOverwrites.create(user || role, { CONNECT: true });
+      return interaction.reply({
         ephemeral: true,
         embeds: [
           SuccessEmbed(
@@ -87,19 +98,8 @@ export const permission: Command = {
         ],
       });
     } else if (subcommand === "remove") {
-      if (interaction.user === user) {
-        interaction.reply({
-          ephemeral: true,
-          embeds: [
-            ErrorEmbed(
-              "You can't remove yourself silly. Transfer ownership of the channel and get them to do it."
-            ),
-          ],
-        });
-        return;
-      }
-      await permissionOverwrites.create(user || role, { CONNECT: false });
-      await interaction.reply({
+      permissionOverwrites.create(user || role, { CONNECT: false });
+      return interaction.reply({
         ephemeral: true,
         embeds: [
           SuccessEmbed(

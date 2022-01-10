@@ -1,5 +1,4 @@
 import { hyperlink, SlashCommandBuilder } from "@discordjs/builders";
-import { CommandInteraction } from "discord.js";
 import { Command } from "../Command";
 
 export const avc: Command = {
@@ -7,9 +6,14 @@ export const avc: Command = {
   data: new SlashCommandBuilder()
     .setName("avc")
     .setDescription("About the original Auto Voice Channels bot by pixaal."),
-
-  async execute(interaction: CommandInteraction): Promise<void> {
-    interaction.reply(
+  helpText: {
+    short: `Replies with a reference to the ideas for the bot which can be found ${hyperlink(
+      "here",
+      "https://dynamica.dev/docs/avc"
+    )}.`,
+  },
+  async execute(interaction) {
+    return interaction.reply(
       `This bot was heavily inspired by the ${hyperlink(
         "Auto Voice Channels",
         "https://wiki.dotsbots.com/"

@@ -1,5 +1,4 @@
 import { SlashCommandBuilder } from "@discordjs/builders";
-import { CommandInteraction } from "discord.js";
 import { Command } from "../Command";
 
 export const ping: Command = {
@@ -7,8 +6,10 @@ export const ping: Command = {
   data: new SlashCommandBuilder()
     .setName("ping")
     .setDescription("Replies with Pong!"),
-
-  async execute(interaction: CommandInteraction): Promise<void> {
+  helpText: {
+    short: "Returns the Pong and the ping of the server you're currently in.",
+  },
+  async execute(interaction) {
     await interaction.reply({
       content: `Pong from JavaScript! Bot Latency ${Math.round(
         interaction.client.ws.ping

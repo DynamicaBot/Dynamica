@@ -13,10 +13,11 @@ export const allyourbase: Command = {
     .setDescription(
       "If you are an admin you become the owner of the channel you are in."
     ),
-
+  helpText: {
+    short:
+      "Transfers the ownership of the current channel to the person who ran the command. (Must be an admin)",
+  },
   async execute(interaction: CommandInteraction): Promise<void> {
-    if (!interaction.guild) return;
-
     const guildMember = await getGuildMember(
       interaction.guild.members,
       interaction.user.id
@@ -25,16 +26,16 @@ export const allyourbase: Command = {
     const channel = guildMember?.voice.channel;
 
     if (!channel) return;
-    if (!guildMember?.voice.channel) return;
 
-    await db.secondary.update({
+    db.secondary.update({
       where: { id: channel.id },
       data: { creator: interaction.user.id },
     });
-    await interaction.reply({
+
+    return interaction.reply({
       embeds: [
         SuccessEmbed(
-          `Owner of <#${guildMember.voice.channel.id}> changed to <@${guildMember.user.id}>`
+          `Owner of <#${channel.id}> changed to <@${guildMember.user.id}>`
         ),
       ],
     });

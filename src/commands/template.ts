@@ -1,5 +1,4 @@
 import { SlashCommandBuilder } from "@discordjs/builders";
-import { CommandInteraction } from "discord.js";
 import { Command } from "../Command";
 import { checkManager } from "../utils/conditions";
 import { db } from "../utils/db";
@@ -23,17 +22,21 @@ export const template: Command = {
         .setDescription("The new template for all secondary channels.")
         .setRequired(true)
     ),
-
-  async execute(interaction: CommandInteraction): Promise<void> {
+  helpText: {
+    short:
+      "Using the /template command you can set the template for the channel name target primary channel.",
+    long: "Using the /template command you can set the template for the channel name target primary channel. The default template is @@game@@ ## which will format the name of the channel according to the formatting rules.",
+  },
+  async execute(interaction) {
     const name = interaction.options.getString("template", true);
     const channel = interaction.options.getString("channel", true);
 
-    if (!interaction.guild) return;
-    await db.primary.update({
+    db.primary.update({
       where: { id: channel },
       data: { template: name },
     });
-    await interaction.reply({
+
+    return interaction.reply({
       embeds: [SuccessEmbed(`Template Changed to ${name}.`)],
     });
   },
