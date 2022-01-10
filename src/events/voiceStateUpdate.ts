@@ -2,6 +2,7 @@ import { VoiceState } from "discord.js";
 import { Event } from "../Event";
 import { bree } from "../utils/bree";
 import { db } from "../utils/db";
+import { getChannel } from "../utils/getCached";
 import {
   createSecondary,
   deleteDiscordSecondary,
@@ -45,13 +46,18 @@ export const voiceStateUpdate: Event = {
       }
 
       if (
-        secondaryConfig?.guild.textChannelsEnabled &&
+        secondaryConfig.textChannelId &&
         oldVoiceState.channel?.members.size !== 0
       ) {
-        newVoiceState.channel?.permissionOverwrites.create(
-          oldVoiceState.member?.id,
-          { VIEW_CHANNEL: false }
+        const textChannel = await getChannel(
+          newVoiceState.guild.channels,
+          secondaryConfig.textChannelId
         );
+        if (secondaryConfig.textChannelId && textChannel?.isVoice()) {
+          textChannel.permissionOverwrites.create(oldVoiceState.member?.id, {
+            VIEW_CHANNEL: false,
+          });
+        }
       }
     }
     // User joins secondary channel
@@ -61,10 +67,15 @@ export const voiceStateUpdate: Event = {
         include: { guild: true },
       });
       if (secondaryConfig?.guild.textChannelsEnabled) {
-        newVoiceState.channel?.permissionOverwrites.create(
-          newVoiceState.member?.id,
-          { VIEW_CHANNEL: true }
+        const textChannel = await getChannel(
+          newVoiceState.guild.channels,
+          secondaryConfig.textChannelId
         );
+        if (textChannel.isVoice()) {
+          textChannel?.permissionOverwrites.create(newVoiceState.member?.id, {
+            VIEW_CHANNEL: true,
+          });
+        }
       }
     }
   },
