@@ -57,11 +57,11 @@ async function editChannel({
    * The discord channel to be refreshed
    */
   const channel = await getChannel(client.channels, id);
-
-  if (!channel) {
-    console.debug("No channel");
-    process.exit(1);
-  }
+  if (!channel.isVoice())
+    if (!channel) {
+      console.debug("No channel");
+      process.exit(1);
+    }
   if (!channel.isVoice()) return;
 
   /**
