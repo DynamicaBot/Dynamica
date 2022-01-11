@@ -25,6 +25,7 @@
     "@discordjs/builders": "^0.9.0",
     "@discordjs/rest": "^0.1.0-canary.0",
     "@prisma/client": "3.7.0",
+    "@types/pino-multi-stream": "^5.1.3",
     "bree": "^7.1.4",
     "chalk": "4.1.2",
     "discord-api-types": "^0.25.2",
@@ -36,7 +37,9 @@
     "p-throttle": "^5.0.0",
     "romans": "^2.0.3",
     "signale": "^1.4.0",
-    "toad-scheduler": "^1.6.0"
+    "strip-ansi-stream": "^2.0.1",
+    "toad-scheduler": "^1.6.0",
+    "websocket-stream": "^5.5.2"
   },
   "scripts": {
     "start": "node --enable-source-maps .",

@@ -8,7 +8,7 @@ export const ready: Event = {
   once: true,
   event: "ready",
   async execute(client: Client<true>) {
-    logger.info(`Ready! Logged in as ${client.user?.tag}`);
+    logger.success(`Ready! Logged in as ${client.user?.tag}`);
     registerJobs().then(() => {
       startJobs();
     });

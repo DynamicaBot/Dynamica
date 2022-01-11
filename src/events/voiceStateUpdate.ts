@@ -25,7 +25,7 @@ export const voiceStateUpdate: Event = {
       const secondaryConfig = await db.secondary.findUnique({
         where: { id: newVoiceState.channelId },
       });
-      if (secondaryConfig && !(newVoiceState.channel.members.size === 1)) {
+      if (secondaryConfig && !(newVoiceState.channel?.members.size === 1)) {
         bree.run(newVoiceState.channelId);
       }
     }
@@ -46,7 +46,7 @@ export const voiceStateUpdate: Event = {
       }
 
       if (
-        secondaryConfig.textChannelId &&
+        secondaryConfig?.textChannelId &&
         oldVoiceState.channel?.members.size !== 0
       ) {
         const textChannel = await getChannel(
