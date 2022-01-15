@@ -16,65 +16,95 @@ export const voiceStateUpdate: Event = {
     // If the channel doesn't change then just ignore it.
 
     // User joins channel
-    if (newVoiceState.channelId && newVoiceState.member) {
-      await createSecondary(
-        newVoiceState.guild.channels,
-        newVoiceState.channelId,
-        newVoiceState.member
-      );
+    if (newVoiceState.channel && newVoiceState.member) {
       const secondaryConfig = await db.secondary.findUnique({
         where: { id: newVoiceState.channelId },
       });
-      if (secondaryConfig && !(newVoiceState.channel?.members.size === 1)) {
-        bree.run(newVoiceState.channelId);
+      const primaryConfig = await db.primary.findUnique({
+        where: { id: newVoiceState.channelId },
+      });
+      // Create a new secondary if one doesn't already exist and the user has joined a primary channel
+      if (primaryConfig) {
+        createSecondary(
+          newVoiceState.guild.channels,
+          newVoiceState.channelId,
+          newVoiceState.member
+        );
+      } else if (secondaryConfig) {
+        // If a secondary exists then run rename job.
+        if (newVoiceState.channel.members.size !== 1) {
+          bree.run(newVoiceState.channelId);
+          if (secondaryConfig.textChannelId) {
+            const textChannel = await getChannel(
+              newVoiceState.guild.channels,
+              secondaryConfig.textChannelId
+            );
+
+            // Typeguard voice remove permission for people who have left the voice channel to see the text channel.
+            if (textChannel.type === "GUILD_TEXT") {
+              textChannel.permissionOverwrites.create(
+                oldVoiceState.member?.id,
+                {
+                  VIEW_CHANNEL: true,
+                }
+              );
+            }
+          }
+        }
       }
     }
 
-    // User leaves subchannel
-    if (
-      oldVoiceState.channelId &&
-      oldVoiceState.channel &&
-      oldVoiceState.member
-    ) {
-      await deleteDiscordSecondary(oldVoiceState.channel);
+    // User leaves channel
+    if (oldVoiceState.channel && oldVoiceState.member) {
       const secondaryConfig = await db.secondary.findUnique({
         where: { id: oldVoiceState.channelId },
         include: { guild: true },
       });
-      if (secondaryConfig && oldVoiceState.channel?.members.size !== 0) {
-        bree.run(oldVoiceState.channelId);
-      }
+      if (secondaryConfig) {
+        if (oldVoiceState.channel?.members.size !== 0) {
+          deleteDiscordSecondary(oldVoiceState.channel, secondaryConfig);
+          bree.run(oldVoiceState.channelId);
+          // Get discord text channel
+          if (secondaryConfig.textChannelId) {
+            const textChannel = await getChannel(
+              newVoiceState.guild.channels,
+              secondaryConfig.textChannelId
+            );
 
-      if (
-        secondaryConfig?.textChannelId &&
-        oldVoiceState.channel?.members.size !== 0
-      ) {
-        const textChannel = await getChannel(
-          newVoiceState.guild.channels,
-          secondaryConfig.textChannelId
-        );
-        if (secondaryConfig.textChannelId && textChannel?.isVoice()) {
-          textChannel.permissionOverwrites.create(oldVoiceState.member?.id, {
-            VIEW_CHANNEL: false,
-          });
+            // Typeguard voice remove permission for people who have left the voice channel to see the text channel.
+            if (textChannel.type === "GUILD_TEXT") {
+              textChannel.permissionOverwrites.create(
+                oldVoiceState.member?.id,
+                {
+                  VIEW_CHANNEL: false,
+                }
+              );
+            }
+          }
         }
       }
     }
+
     // User joins secondary channel
     if (newVoiceState.channelId && newVoiceState.member) {
       const secondaryConfig = await db.secondary.findUnique({
         where: { id: newVoiceState.channelId },
         include: { guild: true },
       });
-      if (secondaryConfig?.guild.textChannelsEnabled) {
-        const textChannel = await getChannel(
-          newVoiceState.guild.channels,
+      if (secondaryConfig) {
+        if (
+          secondaryConfig?.guild.textChannelsEnabled &&
           secondaryConfig.textChannelId
-        );
-        if (textChannel.isVoice()) {
-          textChannel?.permissionOverwrites.create(newVoiceState.member?.id, {
-            VIEW_CHANNEL: true,
-          });
+        ) {
+          const textChannel = await getChannel(
+            newVoiceState.guild.channels,
+            secondaryConfig.textChannelId
+          );
+          if (textChannel.type === "GUILD_TEXT") {
+            textChannel.permissionOverwrites.create(newVoiceState.member?.id, {
+              VIEW_CHANNEL: true,
+            });
+          }
         }
       }
     }

@@ -1,3 +1,4 @@
+import { Secondary } from "@prisma/client";
 import {
   BaseGuildVoiceChannel,
   GuildChannelManager,
@@ -17,40 +18,33 @@ import { updateActivityCount } from "./general";
  * @param channelId Channel ID to delete
  */
 export const deleteDiscordSecondary = async (
-  channel: BaseGuildVoiceChannel
+  channel: BaseGuildVoiceChannel,
+  config: Secondary
 ) => {
   const { id } = channel;
-  const channelConfig = await db.secondary.findUnique({
-    where: { id },
-  });
-  if (channel?.members.size !== 0 || !channel?.deletable || !channelConfig)
-    return;
+  if (channel?.members.size !== 0 || !channel?.deletable || !config) return;
 
   const textChannel = async () => {
-    if (channelConfig.textChannelId) {
-      const discordTextChannel = await channel.guild.channels.fetch(
-        channelConfig.textChannelId
+    if (config.textChannelId) {
+      return channel.guild.channels.cache.find(
+        (guildChannel) => guildChannel.id === config.textChannelId
       );
-      if (discordTextChannel?.deletable || discordTextChannel?.isText()) {
-        return await discordTextChannel;
-      }
     }
-    return undefined;
   };
 
   try {
-    await db.secondary.delete({ where: { id } });
+    db.secondary.delete({ where: { id } });
   } catch (e) {
     logger.error("Secondary db entry does not exist:", e);
   }
   try {
-    await channel?.delete();
+    channel?.delete();
   } catch (e) {
     logger.error("Secondary discord channel does not exist:", e);
   }
 
   try {
-    await (await textChannel())?.delete();
+    (await textChannel())?.delete();
   } catch (e) {
     logger.error("Secondary text channel does not exist:", e);
   }
@@ -60,8 +54,8 @@ export const deleteDiscordSecondary = async (
     logger.error("Bree job doesn't exist:", e);
   }
 
-  await updateActivityCount(channel.client);
-  await logger.debug(`Secondary channel deleted ${id}.`);
+  updateActivityCount(channel.client);
+  logger.debug(`Secondary channel deleted ${id}.`);
 };
 
 /**

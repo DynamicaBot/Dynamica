@@ -13,15 +13,3 @@ export const logger = new Signale({
     displayTimestamp: true,
   },
 });
-
-var websocket = require("websocket-stream");
-var wss = websocket.createServer(
-  {
-    perMessageDeflate: false,
-  },
-  handle
-);
-
-function handle(stream) {
-  fs.createReadStream("bigdata.json").pipe(stream);
-}
