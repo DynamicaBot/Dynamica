@@ -37,16 +37,14 @@ export const deleteDiscordSecondary = async (
     logger.error("Secondary discord channel does not exist:", e);
   }
 
-  if (textChannel)
+  if (textChannel) {
     try {
-      const fetchedChannel = await textChannel.fetch();
-      console.log(fetchedChannel.manageable);
-      if (fetchedChannel.manageable) {
-        fetchedChannel.delete();
-      }
+      textChannel.delete();
     } catch (e) {
       logger.error("Secondary text channel does not exist:", e);
     }
+  }
+
   try {
     await bree.remove(id);
   } catch (e) {
