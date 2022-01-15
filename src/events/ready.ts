@@ -9,7 +9,8 @@ export const ready: Event = {
   event: "ready",
   async execute(client: Client<true>) {
     logger.success(`Ready! Logged in as ${client.user?.tag}`);
-    registerJobs().then(() => {
+
+    registerJobs(client.channels).then(() => {
       startJobs();
     });
     updateActivityCount(client);

@@ -61,8 +61,8 @@ export const voiceStateUpdate: Event = {
         include: { guild: true },
       });
       if (secondaryConfig) {
+        console.log(oldVoiceState.channel?.members.size);
         if (oldVoiceState.channel?.members.size !== 0) {
-          deleteDiscordSecondary(oldVoiceState.channel, secondaryConfig);
           bree.run(oldVoiceState.channelId);
           // Get discord text channel
           if (secondaryConfig.textChannelId) {
@@ -81,6 +81,8 @@ export const voiceStateUpdate: Event = {
               );
             }
           }
+        } else {
+          deleteDiscordSecondary(oldVoiceState.channel, secondaryConfig);
         }
       }
     }

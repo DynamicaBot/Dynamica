@@ -1,4 +1,5 @@
 import { Alias, Guild, Primary, Secondary } from "@prisma/client";
+import { ChannelManager } from "discord.js";
 import pDebounce from "p-debounce";
 import pThrottle from "p-throttle";
 import path from "path/posix";
@@ -23,10 +24,20 @@ export async function registerNewJob(secondary: Secondary) {
   });
 }
 
-export async function registerJobs() {
+export async function registerJobs(channels: ChannelManager) {
   db.secondary.findMany().then((secondaries) => {
-    bree.add(
-      secondaries.map((secondary) => ({
+    secondaries.forEach(async (secondary) => {
+      const channel = channels.cache.get(secondary.id);
+      const textChannel = channels.cache.get(secondary.textChannelId);
+      if (!channel) {
+        await db.secondary.delete({ where: { id: secondary.id } });
+        await textChannel?.delete();
+        logger.debug(`Deleted Stale Channel ${secondary.id}`);
+        return;
+      }
+
+      // if (channels.cache.some((channel) => channel.id === secondary.id)) {
+      bree.add({
         name: secondary.id,
         worker: {
           workerData: {
@@ -35,9 +46,12 @@ export async function registerJobs() {
           },
         },
         path: path.join(__dirname, "jobs", "refreshSecondary.js"),
-      }))
-    );
-    logger.info("Registered Secondaries");
+      });
+      logger.debug(`Registered ${secondary.id}`);
+    });
+
+    // logger.info("Registered Secondaries");
+    // console.log(channels);
   });
 }
 
