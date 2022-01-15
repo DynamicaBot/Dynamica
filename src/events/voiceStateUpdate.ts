@@ -83,6 +83,10 @@ export const voiceStateUpdate: Event = {
           }
         } else {
           deleteDiscordSecondary(oldVoiceState.channel, secondaryConfig);
+          const textChannel = oldVoiceState.client.channels.cache.get(
+            secondaryConfig.textChannelId
+          );
+          textChannel?.delete();
         }
       }
     }

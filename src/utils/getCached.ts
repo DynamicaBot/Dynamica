@@ -12,9 +12,7 @@ import {
  * @returns Channel
  */
 export const getChannel = async (channelManager: ChannelManager, id: string) =>
-  channelManager.cache.some((channel) => id === channel.id)
-    ? channelManager.cache.get(id)
-    : undefined;
+  channelManager.cache.get(id);
 
 /**
  * Get a guild member.

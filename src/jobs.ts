@@ -71,12 +71,10 @@ async function editChannel({
    * The discord channel to be refreshed
    */
   const channel = await getChannel(client.channels, id);
-  if (!channel.isVoice())
-    if (!channel) {
-      console.debug("No channel");
-      process.exit(1);
-    }
-  if (!channel.isVoice()) return;
+  if (!channel?.isVoice()) {
+    console.debug("No channel");
+    process.exit(1);
+  }
 
   /**
    * The name of the creator based on the config
