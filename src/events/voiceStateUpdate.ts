@@ -61,7 +61,6 @@ export const voiceStateUpdate: Event = {
         include: { guild: true },
       });
       if (secondaryConfig) {
-        console.log(oldVoiceState.channel?.members.size);
         if (oldVoiceState.channel?.members.size !== 0) {
           bree.run(oldVoiceState.channelId);
           // Get discord text channel
