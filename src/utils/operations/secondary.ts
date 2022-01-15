@@ -24,13 +24,7 @@ export const deleteDiscordSecondary = async (
   const { id } = channel;
   if (channel?.members.size !== 0 || !channel?.deletable || !config) return;
 
-  const textChannel = async () => {
-    if (config.textChannelId) {
-      return channel.guild.channels.cache.find(
-        (guildChannel) => guildChannel.id === config.textChannelId
-      );
-    }
-  };
+  const textChannel = channel.guild.channels.cache.get(config.textChannelId);
 
   try {
     db.secondary.delete({ where: { id } });
@@ -43,11 +37,16 @@ export const deleteDiscordSecondary = async (
     logger.error("Secondary discord channel does not exist:", e);
   }
 
-  try {
-    (await textChannel())?.delete();
-  } catch (e) {
-    logger.error("Secondary text channel does not exist:", e);
-  }
+  if (textChannel)
+    try {
+      const fetchedChannel = await textChannel.fetch();
+      console.log(fetchedChannel.manageable);
+      if (fetchedChannel.manageable) {
+        fetchedChannel.delete();
+      }
+    } catch (e) {
+      logger.error("Secondary text channel does not exist:", e);
+    }
   try {
     await bree.remove(id);
   } catch (e) {

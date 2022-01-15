@@ -73,20 +73,11 @@ export const voiceStateUpdate: Event = {
 
             // Typeguard voice remove permission for people who have left the voice channel to see the text channel.
             if (textChannel.type === "GUILD_TEXT") {
-              textChannel.permissionOverwrites.create(
-                oldVoiceState.member?.id,
-                {
-                  VIEW_CHANNEL: false,
-                }
-              );
+              textChannel.permissionOverwrites.delete(oldVoiceState.member?.id);
             }
           }
         } else {
           deleteDiscordSecondary(oldVoiceState.channel, secondaryConfig);
-          const textChannel = oldVoiceState.client.channels.cache.get(
-            secondaryConfig.textChannelId
-          );
-          textChannel?.delete();
         }
       }
     }
