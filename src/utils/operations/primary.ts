@@ -56,13 +56,19 @@ export const deleteDiscordPrimary = async (
     where: { id: channelId },
   });
   if (!channel?.deletable || !channelConfig) return;
-  await Promise.all([
-    db.primary.delete({
-      where: { id: channelId },
-      include: { secondaries: true },
-    }),
-    channel?.delete(),
-  ]);
+  try {
+    await Promise.all([
+      db.primary.delete({
+        where: { id: channelId },
+        include: { secondaries: true },
+      }),
+
+      channel?.delete(),
+    ]);
+  } catch (error) {
+    logger.error("Failed primary deletion.");
+  }
+
   await logger.debug(
     `Primary channel ${channel.name} in ${channel.guild.name} deleted.`
   );
