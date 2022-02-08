@@ -1,7 +1,6 @@
 import { Client, Intents } from "discord.js";
 import dotenv from "dotenv";
 import * as events from "./events/index";
-import { bree } from "./utils/bree";
 import { db } from "./utils/db";
 import { logger } from "./utils/logger";
 dotenv.config();
@@ -36,7 +35,6 @@ try {
 // Handle stop signal
 process.on("SIGINT", () => {
   client.destroy();
-  bree.stop();
   db.$disconnect();
   logger.info("Bot Stopped");
 });

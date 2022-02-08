@@ -1,11 +1,11 @@
 import { SlashCommandBuilder } from "@discordjs/builders";
 import { Command } from "../Command";
-import { bree } from "../utils/bree";
 import { checkCreator } from "../utils/conditions";
 import { checkAdminPermissions } from "../utils/conditions/admin";
 import { db } from "../utils/db";
 import { ErrorEmbed, SuccessEmbed } from "../utils/discordEmbeds";
 import { getGuildMember } from "../utils/getCached";
+import { editChannel } from "../utils/operations/secondary";
 
 export const unlock: Command = {
   conditions: [checkCreator, checkAdminPermissions],
@@ -32,7 +32,8 @@ export const unlock: Command = {
           locked: false,
         },
       });
-      bree.run(channel.id);
+
+      await editChannel({ channel });
       return interaction.reply({
         ephemeral: true,
         embeds: [SuccessEmbed(`Removed lock on <#${channel.id}>`)],

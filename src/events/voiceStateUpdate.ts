@@ -1,11 +1,11 @@
 import { VoiceState } from "discord.js";
 import { Event } from "../Event";
-import { bree } from "../utils/bree";
 import { db } from "../utils/db";
 import { getChannel } from "../utils/getCached";
 import {
   createSecondary,
   deleteDiscordSecondary,
+  editChannel,
 } from "../utils/operations/secondary";
 
 export const voiceStateUpdate: Event = {
@@ -33,7 +33,7 @@ export const voiceStateUpdate: Event = {
       } else if (secondaryConfig) {
         // If a secondary exists then run rename job.
         if (newVoiceState.channel.members.size !== 1) {
-          bree.run(newVoiceState.channelId);
+          editChannel({ channel: newVoiceState.channel });
           if (secondaryConfig.textChannelId) {
             const textChannel = await getChannel(
               newVoiceState.guild.channels,
@@ -62,7 +62,7 @@ export const voiceStateUpdate: Event = {
       });
       if (secondaryConfig) {
         if (oldVoiceState.channel?.members.size !== 0) {
-          bree.run(oldVoiceState.channelId);
+          await editChannel({ channel: oldVoiceState.channel });
           // Get discord text channel
           if (secondaryConfig.textChannelId) {
             const textChannel = await getChannel(

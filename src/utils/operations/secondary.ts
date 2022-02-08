@@ -4,9 +4,8 @@ import {
   BaseGuildVoiceChannel,
   GuildChannelManager,
   GuildMember,
+  VoiceBasedChannel,
 } from "discord.js";
-import { registerNewJob } from "../../jobs";
-import { bree } from "../bree";
 import { db } from "../db";
 import { formatChannelName } from "../formatString";
 import { getChannel } from "../getCached";
@@ -44,12 +43,6 @@ export const deleteDiscordSecondary = async (
     } catch (e) {
       logger.error("Secondary text channel does not exist:", e);
     }
-  }
-
-  try {
-    await bree.remove(id);
-  } catch (e) {
-    logger.error("Bree job doesn't exist:", e);
   }
 
   updateActivityCount(channel.client);
@@ -159,10 +152,110 @@ export const createSecondary = async (
       textChannelId: await textChannelId(),
     },
   });
-  await registerNewJob(secondaryDb);
 
   await updateActivityCount(channelManager.client);
   await logger.debug(
     `Secondary channel ${secondary.name} created by ${member?.user.tag} in ${channelManager.guild.name}.`
   );
 };
+
+/**
+ * Refresh a voice channel
+ * @param channel
+ * @returns a promise
+ */
+export async function editChannel({ channel }: { channel: VoiceBasedChannel }) {
+  const secondary = await db.secondary.findUnique({
+    where: { id: channel.id },
+    include: {
+      primary: true,
+      guild: true,
+    },
+  });
+
+  /**
+   * Return aliases
+   */
+  const aliases = await db.alias.findMany({
+    where: {
+      guildId: channel.guildId,
+    },
+  });
+  /**
+   * The discord channel to be refreshed
+   */
+
+  /**
+   * The name of the creator based on the config
+   */
+  const channelCreator = secondary.creator
+    ? channel.members.get(secondary.creator)?.displayName
+    : undefined;
+
+  /**
+   * The creator or, alternatively the person who will become the creator.
+   */
+  const creator = channelCreator
+    ? channelCreator
+    : channel.members.at(0)?.displayName;
+
+  /**
+   * Get the activities of all the members of the channel.
+   */
+  const activities = Array.from(channel.members).flatMap((entry) => {
+    if (!entry[1].presence) return [];
+    return entry[1].presence?.activities.map((activity) => activity.name);
+  });
+
+  /**
+   * The activities list minus stuff that should be ignored like Spotify and Custom status // Todo: more complicated logic for people who might be streaming
+   */
+  const filteredActivityList = activities
+    .filter((activity) => activity !== "Spotify")
+    .filter((activity) => activity !== "Custom Status");
+  const { locked } = secondary;
+
+  /**
+   * The template to be used.
+   */
+  const str = secondary.name
+    ? secondary.name
+    : !filteredActivityList.length
+    ? secondary.primary.generalName
+    : secondary.primary.template;
+
+  /**
+   * The formatted name
+   */
+  const name = formatChannelName(str, {
+    creator: creator ? creator : "",
+    aliases: aliases,
+    channelNumber: 1,
+    activities: filteredActivityList,
+    memberCount: channel.members.size, // Get this
+    locked,
+  });
+
+  if (channel.name === name) return;
+  if (!channel.manageable) {
+    await logger.debug(`Failed to edit channel ${channel.id}.`);
+    return;
+  }
+  channel
+    .edit({
+      name,
+    })
+    .then(() => {
+      logger.debug(
+        `Secondary channel ${channel.name} in ${channel.guild.name} name changed.`
+      );
+    });
+}
+
+// const renameThrottle = pThrottle({
+//   limit: 2,
+//   interval: 600000,
+// });
+
+// const throttledRename = renameThrottle(editChannel);
+// const renameDebounce = pDebounce(throttledRename, 5000);
