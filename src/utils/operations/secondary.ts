@@ -1,3 +1,4 @@
+import { Embed } from "@discordjs/builders";
 import { Secondary } from "@prisma/client";
 import {
   BaseGuildVoiceChannel,
@@ -123,11 +124,27 @@ export const createSecondary = async (
     if (primaryConfig.guild?.textChannelsEnabled && member) {
       const textChannel = await channelManager.create("Text Channel", {
         type: "GUILD_TEXT",
+        topic: `Private text channel for members of <#${secondary.id}>.`,
         permissionOverwrites: [
           { id: channelManager.guild.roles.everyone, deny: "VIEW_CHANNEL" },
           { id: member?.id, allow: "VIEW_CHANNEL" },
         ],
         parent: secondary.parent ?? undefined,
+      });
+      await textChannel.send({
+        embeds: [
+          new Embed()
+            .setTitle("Welcome!")
+            .setColor(3447003)
+            .setDescription(
+              `Welcome to your very own private text chat. This channel is only to people in <#${secondary.id}>.`
+            )
+            .setAuthor({
+              name: "Dynamica",
+              url: "https://dynamica.dev",
+              iconURL: "https://dynamica.dev/img/dynamica.png",
+            }),
+        ],
       });
       return textChannel.id;
     }
