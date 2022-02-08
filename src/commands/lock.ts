@@ -1,11 +1,11 @@
 import { SlashCommandBuilder } from "@discordjs/builders";
 import { Command } from "../Command";
-import { bree } from "../utils/bree";
 import { checkCreator, checkSecondary } from "../utils/conditions";
 import { checkAdminPermissions } from "../utils/conditions/admin";
 import { db } from "../utils/db";
 import { SuccessEmbed } from "../utils/discordEmbeds";
 import { getGuildMember } from "../utils/getCached";
+import { editChannel } from "../utils/operations/secondary";
 
 export const lock: Command = {
   conditions: [checkCreator, checkSecondary, checkAdminPermissions],
@@ -48,7 +48,7 @@ export const lock: Command = {
         locked: true,
       },
     });
-    bree.run(channel.id);
+    await editChannel({ channel });
 
     return interaction.reply({
       ephemeral: true,

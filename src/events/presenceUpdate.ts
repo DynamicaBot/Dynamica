@@ -1,8 +1,8 @@
 import { Presence } from "discord.js";
 import { Event } from "../Event";
-import { bree } from "../utils/bree";
 import { db } from "../utils/db";
 import { logger } from "../utils/logger";
+import { editChannel } from "../utils/operations/secondary";
 
 export const presenceUpdate: Event = {
   event: "presenceUpdate",
@@ -21,7 +21,7 @@ export const presenceUpdate: Event = {
     if (!secondaryConfig) return;
 
     try {
-      bree.run(voiceChannel.id);
+      editChannel({ channel: voiceChannel });
     } catch (error) {
       logger.error("failed channel name refresh (run) ", error);
     }
