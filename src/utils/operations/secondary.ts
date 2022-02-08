@@ -246,6 +246,8 @@ export async function editChannel({ channel }: { channel: VoiceBasedChannel }) {
       name,
     })
     .then(() => {
+      logger.debug(channel.name, name);
+
       logger.debug(
         `Secondary channel ${channel.name} in ${channel.guild.name} name changed.`
       );

@@ -33,7 +33,7 @@ export const unlock: Command = {
         },
       });
 
-      await editChannel({ channel });
+      editChannel({ channel });
       return interaction.reply({
         ephemeral: true,
         embeds: [SuccessEmbed(`Removed lock on <#${channel.id}>`)],

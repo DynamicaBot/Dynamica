@@ -48,7 +48,7 @@ export const lock: Command = {
         locked: true,
       },
     });
-    await editChannel({ channel });
+    editChannel({ channel });
 
     return interaction.reply({
       ephemeral: true,

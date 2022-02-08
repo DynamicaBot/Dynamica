@@ -59,7 +59,7 @@ export function formatChannelName(
   const plurals = str.split(/<<(.+)\/(.+)>>/g);
 
   return (
-    `${locked ? "🔒" : ""} ` +
+    `${locked ? "🔒 " : ""}` +
     str
       .replace(/###/g, channelNumber.toString().padStart(3, "0")) // 001
       .replace(/##/g, `#${channelNumber}`) // #1
