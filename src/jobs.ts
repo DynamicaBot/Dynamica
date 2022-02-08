@@ -72,8 +72,7 @@ async function editChannel({
    */
   const channel = await getChannel(client.channels, id);
   if (!channel?.isVoice()) {
-    console.debug("No channel");
-    process.exit(1);
+    return;
   }
 
   /**
