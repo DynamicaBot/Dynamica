@@ -16,7 +16,7 @@ export const ready: Event = {
       if (!channel.isVoice()) return;
       editChannel({ channel });
     }
-    logger.success(`Ready! Logged in as ${client.user?.tag}`);
+    logger.info(`Ready! Logged in as ${client.user?.tag}`);
     updateActivityCount(client);
   },
 };
