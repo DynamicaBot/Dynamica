@@ -11,84 +11,147 @@ dotenv.config();
  * Apollo
  */
 var typeDefs = gql`
+  type PruneResponse {
+    prunedGuildsCount: Int
+    prunedPrimariesCount: Int
+    prunedSecondariesCount: Int
+  }
+
+  type Mutation {
+    prune: PruneResponse!
+  }
+
   type DiscordVoiceChannel {
-    id: String
-    name: String
+    id: String!
+    name: String!
     members: [DiscordUser!]!
   }
 
   type DiscordUser {
-    bot: Boolean
-    id: String
-    username: String
-    tag: String
+    bot: Boolean!
+    id: String!
+    username: String!
+    tag: String!
   }
 
   type DiscordGuild {
-    id: String
-    memberCount: Int
-    owner: DiscordUser
-    name: String
+    id: String!
+    memberCount: Int!
+    owner: DiscordUser!
+    name: String!
   }
 
   type DBGuild {
-    id: String
+    id: String!
     textChannelsEnabled: Boolean
     allowJoinRequests: Boolean
     dbPrimaries: [DBPrimary!]!
     dbAliases: [DBAlias!]!
     dbSecondaries: [DBSecondary!]!
-    discordGuild: DiscordGuild
+    discordGuild: DiscordGuild!
   }
 
   type DBSecondary {
-    id: String
-    name: String
-    discordChannel: DiscordVoiceChannel
-    creator: String
-    locked: Boolean
-    dbGuild: DBGuild
-    guildId: String
+    id: String!
+    name: String!
+    discordChannel: DiscordVoiceChannel!
+    creator: String!
+    locked: Boolean!
+    dbGuild: DBGuild!
+    guildId: String!
     textChannelId: String!
-    dbPrimary: DBPrimary
-    primaryId: String
+    dbPrimary: DBPrimary!
+    primaryId: String!
   }
 
   type DBPrimary {
-    id: String
-    creator: String
-    template: String
-    generalName: String
-    discordChannel: DiscordVoiceChannel
+    id: String!
+    creator: String!
+    template: String!
+    generalName: String!
+    discordChannel: DiscordVoiceChannel!
     dbSecondaries: [DBSecondary!]!
-    dbGuild: DBGuild
-    guildId: String
+    dbGuild: DBGuild!
+    guildId: String!
   }
 
   type DBAlias {
-    id: Int
-    activity: String
-    alias: String
-    dbGuild: DBGuild
-    guildId: String
+    id: Int!
+    activity: String!
+    alias: String!
+    dbGuild: DBGuild!
+    guildId: String!
   }
 
   type Query {
     dbSecondaries: [DBSecondary!]!
-    dbSecondary(id: String!): DBSecondary
+    dbSecondary(id: String!): DBSecondary!
     dbGuilds: [DBGuild!]!
-    dbGuild(id: String!): DBGuild
+    dbGuild(id: String!): DBGuild!
     dbPrimaries: [DBPrimary!]!
-    dbPrimary(id: String!): DBPrimary
+    dbPrimary(id: String!): DBPrimary!
     dbAliases: [DBAlias!]!
-    dbAlias(id: String!): DBAlias
-    serverCount: Int
-    version: String
-    ready: Boolean
+    dbAlias(id: String!): DBAlias!
+    serverCount: Int!
+    version: String!
+    ready: Boolean!
   }
 `;
 
 const resolvers = {
+  Mutation: {
+    prune: async () => {
+      const guilds = await db.guild.findMany();
+      const secondaries = await db.secondary.findMany();
+      const primary = await db.primary.findMany();
+      const checkedGuilds = await Promise.all(
+        guilds.map(async (guild) => {
+          try {
+            const dguild = await client.guilds.cache.get(guild.id);
+            console.log(
+              dguild ? `guild found.` : `guild ${guild.id} not found`
+            );
+            return !guild;
+          } catch (error) {
+            logger.error(error);
+          }
+        })
+      );
+      const checkedSecondaries = await Promise.all(
+        secondaries.map(async (secondary) => {
+          try {
+            const channel = await client.channels.cache.get(secondary.id);
+            console.log(
+              channel ? `channel found.` : `channel ${secondary.id} not found`
+            );
+            return !channel;
+          } catch (error) {
+            logger.error(error);
+          }
+        })
+      );
+      const checkedPrimaries = await Promise.all(
+        primary.map(async (primary) => {
+          try {
+            const channel = await client.channels.cache.get(primary.id);
+            console.log(
+              channel ? `channel found.` : `channel ${primary.id} not found`
+            );
+            return !channel;
+          } catch (error) {
+            logger.error(error);
+          }
+        })
+      );
+      return {
+        prunedGuildsCount: checkedGuilds.filter((guild) => guild).length,
+        prunedPrimariesCount: checkedPrimaries.filter((primary) => primary)
+          .length,
+        prunedSecondariesCount: checkedSecondaries.filter((primary) => primary)
+          .length,
+      };
+    },
+  },
   Query: {
     dbSecondaries: async () => await db.secondary.findMany(),
     dbSecondary: async (parent, { id }, context, info) =>

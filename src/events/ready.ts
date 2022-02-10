@@ -12,8 +12,22 @@ export const ready: Event = {
     const activeSecondaries = await db.secondary.findMany();
     for (let index = 0; index < activeSecondaries.length; index++) {
       const element = activeSecondaries[index];
-      const channel = await client.channels.fetch(element.id);
-      if (!channel.isVoice()) return;
+      const channel = await client.channels.cache.get(element.id);
+      if (!channel) {
+        db.secondary.delete({ where: { id: element.id } }).then((secondary) => {
+          if (secondary.textChannelId) {
+            client.channels.cache.get(secondary.textChannelId).delete();
+          }
+          logger.info(`Deleted Stale Secondary ${element.id}`);
+        });
+
+        return;
+      }
+      if (!channel.isVoice()) {
+        logger.info(`Not a voice channel`);
+        return;
+      }
+      logger.info(`Channel restarted ${channel.id}`);
       editChannel({ channel });
     }
     logger.info(`Ready! Logged in as ${client.user?.tag}`);
