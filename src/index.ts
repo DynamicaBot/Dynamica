@@ -108,10 +108,7 @@ const resolvers = {
         guilds.map(async (guild) => {
           try {
             const dguild = await client.guilds.cache.get(guild.id);
-            console.log(
-              dguild ? `guild found.` : `guild ${guild.id} not found`
-            );
-            return !guild;
+            return !dguild;
           } catch (error) {
             logger.error(error);
           }
@@ -121,9 +118,7 @@ const resolvers = {
         secondaries.map(async (secondary) => {
           try {
             const channel = await client.channels.cache.get(secondary.id);
-            console.log(
-              channel ? `channel found.` : `channel ${secondary.id} not found`
-            );
+
             return !channel;
           } catch (error) {
             logger.error(error);
@@ -134,9 +129,7 @@ const resolvers = {
         primary.map(async (primary) => {
           try {
             const channel = await client.channels.cache.get(primary.id);
-            console.log(
-              channel ? `channel found.` : `channel ${primary.id} not found`
-            );
+
             return !channel;
           } catch (error) {
             logger.error(error);
