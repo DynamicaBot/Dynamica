@@ -53,7 +53,7 @@ export const alias: Command = {
   },
   async execute(interaction) {
     const subcommand = interaction.options.getSubcommand(true);
-    const activity = interaction.options.getString("activity", true);
+    const activity = interaction.options.getString("activity");
     if (subcommand === "add") {
       const alias = interaction.options.getString("alias", true);
       await updateAlias(activity, alias, interaction.guildId);
