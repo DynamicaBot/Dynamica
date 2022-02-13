@@ -27,7 +27,9 @@ export const deleteDiscordSecondary = async (
   const textChannel = channel.guild.channels.cache.get(config.textChannelId);
 
   try {
-    db.secondary.delete({ where: { id } });
+    db.secondary
+      .delete({ where: { id } })
+      .then((secondary) => updateActivityCount(channel.client));
   } catch (e) {
     logger.error("Secondary db entry does not exist:", e);
   }
@@ -45,7 +47,6 @@ export const deleteDiscordSecondary = async (
     }
   }
 
-  updateActivityCount(channel.client);
   logger.debug(`Secondary channel deleted ${id}.`);
 };
 
