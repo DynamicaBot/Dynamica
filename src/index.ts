@@ -19,6 +19,7 @@ var typeDefs = gql`
 
   type Mutation {
     prune: PruneResponse!
+    // TODO: Add the ability to refresh commands like in the scripts
   }
 
   type DiscordVoiceChannel {
