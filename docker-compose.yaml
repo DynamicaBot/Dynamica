@@ -1,8 +1,0 @@
-services:
-  discordbot:
-    build:
-      context: ./
-      target: pterodactyl
-    volumes:
-      - ./config:/home/container
-    env_file: .env
