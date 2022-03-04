@@ -2,7 +2,6 @@ import { SlashCommandBuilder } from "@discordjs/builders";
 import { Command } from "../Command";
 import { checkCreator } from "../utils/conditions";
 import { db } from "../utils/db";
-import { SuccessEmbed } from "../utils/discordEmbeds";
 import { getGuildMember } from "../utils/getCached";
 
 export const transfer: Command = {
@@ -35,19 +34,14 @@ export const transfer: Command = {
     // set new owner
     db.secondary.update({
       where: {
-        id: guildMember.voice.channel.id,
+        id: channel.id,
       },
       data: {
         creator: user.id,
       },
     });
-    return interaction.reply({
-      ephemeral: true,
-      embeds: [
-        SuccessEmbed(
-          `You have transferred ownership of this channel to <@${user.id}>`
-        ),
-      ],
-    });
+    interaction.reply(
+      `Ownership of <#${channel.id}> channel to <@${user.id}>.`
+    );
   },
 };

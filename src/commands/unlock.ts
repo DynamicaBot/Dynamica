@@ -3,7 +3,7 @@ import { Command } from "../Command";
 import { checkCreator } from "../utils/conditions";
 import { checkAdminPermissions } from "../utils/conditions/admin";
 import { db } from "../utils/db";
-import { ErrorEmbed, SuccessEmbed } from "../utils/discordEmbeds";
+import { ErrorEmbed } from "../utils/discordEmbeds";
 import { getGuildMember } from "../utils/getCached";
 import { editChannel } from "../utils/operations/secondary";
 
@@ -34,12 +34,10 @@ export const unlock: Command = {
       });
 
       editChannel({ channel });
-      return interaction.reply({
-        ephemeral: true,
-        embeds: [SuccessEmbed(`Removed lock on <#${channel.id}>`)],
-      });
+      return interaction.reply(`Removed lock on <#${channel.id}>`);
     } else {
       return interaction.reply({
+        ephemeral: true,
         embeds: [ErrorEmbed("Couldn't edit channel.")],
       });
     }

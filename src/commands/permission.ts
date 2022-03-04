@@ -3,7 +3,7 @@ import { Role } from "discord.js";
 import { Command } from "../Command";
 import { checkCreator, checkSecondary } from "../utils/conditions";
 import { checkAdminPermissions } from "../utils/conditions/admin";
-import { ErrorEmbed, SuccessEmbed } from "../utils/discordEmbeds";
+import { ErrorEmbed } from "../utils/discordEmbeds";
 import { getGuildMember } from "../utils/getCached";
 
 export const permission: Command = {
@@ -75,13 +75,7 @@ export const permission: Command = {
     if (interaction.user === user) {
       return interaction.reply({
         ephemeral: true,
-        embeds: [
-          ErrorEmbed(
-            `You ${
-              subcommand === "add" ? "add" : "remove"
-            } yourself silly. You're already added.`
-          ),
-        ],
+        embeds: [ErrorEmbed(`You add yourself silly. You're already added.`)],
       });
     }
 
@@ -89,25 +83,17 @@ export const permission: Command = {
       permissionOverwrites.create(user || role, { CONNECT: true });
       return interaction.reply({
         ephemeral: true,
-        embeds: [
-          SuccessEmbed(
-            `You've added permission for ${
-              user ? `<@${user.id}>` : `<@&${role.id}>`
-            } to access the channel you're in.`
-          ),
-        ],
+        content: `You've added permission for ${
+          user ? `<@${user.id}>` : `<@&${role.id}>`
+        } to access <#${channel.id}>.`,
       });
     } else if (subcommand === "remove") {
       permissionOverwrites.create(user || role, { CONNECT: false });
       return interaction.reply({
         ephemeral: true,
-        embeds: [
-          SuccessEmbed(
-            `You've removed permission for ${
-              user ? `<@${user.id}>` : `people with the role <@&${role.id}>`
-            } to access the channel you're in.`
-          ),
-        ],
+        content: `You've removed permission for ${
+          user ? `<@${user.id}>` : `people with the role <@&${role.id}>`
+        } to access the <#${channel.id}>.`,
       });
     }
   },

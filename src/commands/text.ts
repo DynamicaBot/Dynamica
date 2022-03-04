@@ -2,7 +2,6 @@ import { SlashCommandBuilder } from "@discordjs/builders";
 import { Command } from "../Command";
 import { checkManager } from "../utils/conditions";
 import { checkAdminPermissions } from "../utils/conditions/admin";
-import { SuccessEmbed } from "../utils/discordEmbeds";
 import { updateGuild } from "../utils/operations/guild.js";
 
 export const text: Command = {
@@ -27,15 +26,10 @@ export const text: Command = {
 
     updateGuild(interaction.guildId, { textChannelsEnabled: state });
 
-    return interaction.reply({
-      ephemeral: true,
-      embeds: [
-        SuccessEmbed(
-          `Temporary text channels ${
-            !state ? "disabled" : "enabled"
-          } for all future created channels.`
-        ),
-      ],
-    });
+    return interaction.reply(
+      `Temporary text channels ${
+        !state ? "disabled" : "enabled"
+      } for all future created channels.`
+    );
   },
 };

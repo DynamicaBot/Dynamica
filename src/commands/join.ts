@@ -2,7 +2,7 @@ import { SlashCommandBuilder } from "@discordjs/builders";
 import { MessageActionRow, MessageButton } from "discord.js";
 import { Command } from "../Command";
 import { db } from "../utils/db";
-import { ErrorEmbed, SuccessEmbed } from "../utils/discordEmbeds";
+import { ErrorEmbed } from "../utils/discordEmbeds";
 import { getChannel } from "../utils/getCached";
 
 export const join: Command = {
@@ -72,31 +72,23 @@ export const join: Command = {
           await discordChannel.permissionOverwrites.create(interaction.user, {
             CONNECT: true,
           });
-          await interaction.editReply({
-            content: null,
-            components: [],
-            embeds: [
-              SuccessEmbed(
-                `<@${interaction.user.id}> has been granted access to <#${channel}>.`
-              ),
-            ],
-          });
+          await interaction.editReply(
+            `<@${interaction.user.id}> has been granted access to <#${channel}>.`
+          );
           await collected.reply({
             ephemeral: true,
-            embeds: [
-              SuccessEmbed(
-                `You have granted access for <@${interaction.user.id}> to access <#${channel}>.`
-              ),
-            ],
+            content: `You have granted access for <@${interaction.user.id}> to access <#${channel}>.`,
           });
         } else if (button.customId === "channeljoindeny") {
           await interaction.editReply({
             content: null,
             components: [],
-            embeds: [ErrorEmbed("You have been denied access to the channel.")],
+            embeds: [
+              ErrorEmbed(`You have been denied access to <#${channel}>.`),
+            ],
           });
           await collected.reply({
-            embeds: [SuccessEmbed("You have denied access to the channel.")],
+            content: `You have denied access to <#${channel}>.`,
             ephemeral: true,
           });
         } else {

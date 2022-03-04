@@ -3,7 +3,6 @@ import { Command } from "../Command";
 import { checkCreator, checkSecondary } from "../utils/conditions";
 import { checkAdminPermissions } from "../utils/conditions/admin";
 import { db } from "../utils/db";
-import { SuccessEmbed } from "../utils/discordEmbeds";
 import { getGuildMember } from "../utils/getCached";
 import { editChannel } from "../utils/operations/secondary";
 
@@ -52,11 +51,7 @@ export const lock: Command = {
 
     return interaction.reply({
       ephemeral: true,
-      embeds: [
-        SuccessEmbed(
-          `Use \`/permission add\` to allow people to access the channels. Or, \`/permission remove\` to remove people.`
-        ),
-      ],
+      content: `Use \`/permission add\` to allow people to access the channels. Or, \`/permission remove\` to remove people.`,
     });
   },
 };

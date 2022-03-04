@@ -4,7 +4,6 @@ import { Command } from "../Command";
 import { checkManager } from "../utils/conditions";
 import { checkAdminPermissions } from "../utils/conditions/admin";
 import { db } from "../utils/db";
-import { SuccessEmbed } from "../utils/discordEmbeds";
 
 export const allowjoin: Command = {
   conditions: [checkManager, checkAdminPermissions],
@@ -29,11 +28,6 @@ export const allowjoin: Command = {
         allowJoinRequests: state,
       },
     });
-    return interaction.reply({
-      ephemeral: true,
-      embeds: [
-        SuccessEmbed(`${!state ? "Disabled" : "Enabled"} Join Requests`),
-      ],
-    });
+    return interaction.reply(`${state ? "Enabled" : "Disabled"} Join Requests`);
   },
 };

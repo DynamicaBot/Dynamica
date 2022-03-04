@@ -20,30 +20,35 @@ export const info: Command = {
   helpText: { short: "Shows the info of either a user or the current server." },
   async execute(interaction) {
     const subcommand = interaction.options.getSubcommand();
-    if (subcommand === "user") {
-      const user = interaction.options.getUser("target");
-      return user
-        ? interaction.reply(`Username: ${user.username}\nID: ${user.id}`)
-        : interaction.reply(
-            `Your username: ${interaction.user.username}\nYour ID: ${interaction.user.id}`
-          );
-    } else if (subcommand === "server") {
-      return interaction.reply({
-        embeds: [
-          new Embed()
-            .addFields(
-              {
-                name: "Server Name",
-                value: `${interaction.guild?.name}`,
-              },
-              {
-                name: "Total Members",
-                value: `${interaction.guild?.memberCount}`,
-              }
-            )
-            .setColor(3447003),
-        ],
-      });
+    switch (subcommand) {
+      case "user":
+        const user = interaction.options.getUser("target");
+        user
+          ? interaction.reply(`Username: ${user.username}\nID: ${user.id}`)
+          : interaction.reply(
+              `Your username: ${interaction.user.username}\nYour ID: ${interaction.user.id}`
+            );
+        break;
+      case "server":
+        interaction.reply({
+          embeds: [
+            new Embed()
+              .addFields(
+                {
+                  name: "Server Name",
+                  value: `${interaction.guild?.name}`,
+                },
+                {
+                  name: "Total Members",
+                  value: `${interaction.guild?.memberCount}`,
+                }
+              )
+              .setColor(3447003),
+          ],
+        });
+        break;
+      default:
+        break;
     }
   },
 };

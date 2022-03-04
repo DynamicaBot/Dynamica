@@ -2,7 +2,7 @@ import { SlashCommandBuilder } from "@discordjs/builders";
 import { CommandInteraction, GuildChannel } from "discord.js";
 import { Command } from "../Command";
 import { checkManager } from "../utils/conditions";
-import { ErrorEmbed, SuccessEmbed } from "../utils/discordEmbeds";
+import { ErrorEmbed } from "../utils/discordEmbeds";
 import { createPrimary } from "../utils/operations/primary";
 
 export const create: Command = {
@@ -35,14 +35,14 @@ export const create: Command = {
       });
     }
 
-    await createPrimary(
+    const newPrimary = await createPrimary(
       interaction.guild.channels,
       interaction.user.id,
       section
     );
 
-    return interaction.reply({
-      embeds: [SuccessEmbed(`New voice channel successfully created.`)],
-    });
+    return interaction.reply(
+      `New voice channel <#${newPrimary.id}> successfully created.`
+    );
   },
 };

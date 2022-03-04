@@ -3,7 +3,6 @@ import { CommandInteraction } from "discord.js";
 import { Command } from "../Command";
 import { checkManager, checkSecondary } from "../utils/conditions";
 import { db } from "../utils/db";
-import { SuccessEmbed } from "../utils/discordEmbeds";
 import { getGuildMember } from "../utils/getCached";
 
 export const allyourbase: Command = {
@@ -32,12 +31,8 @@ export const allyourbase: Command = {
       data: { creator: interaction.user.id },
     });
 
-    return interaction.reply({
-      embeds: [
-        SuccessEmbed(
-          `Owner of <#${channel.id}> changed to <@${guildMember.user.id}>`
-        ),
-      ],
-    });
+    interaction.reply(
+      `Owner of <#${channel.id}> changed to <@${guildMember.user.id}>`
+    );
   },
 };
