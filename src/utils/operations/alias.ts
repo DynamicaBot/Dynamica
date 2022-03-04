@@ -1,4 +1,5 @@
 import { db } from "../db";
+import { logger } from "../logger";
 
 /**
  * Updates or creates a new alias.
@@ -11,30 +12,34 @@ export const updateAlias = async (
   alias: string,
   guildId: string
 ) => {
-  const existingAlias = await db.alias.findFirst({
-    where: {
-      activity,
-      guildId,
-    },
-  });
-  if (existingAlias) {
-    await db.alias.update({
+  try {
+    const existingAlias = await db.alias.findFirst({
       where: {
-        id: existingAlias.id,
-      },
-      data: {
         activity,
-        alias,
-      },
-    });
-  } else {
-    await db.alias.create({
-      data: {
-        activity,
-        alias,
         guildId,
       },
     });
+    if (existingAlias) {
+      await db.alias.update({
+        where: {
+          id: existingAlias.id,
+        },
+        data: {
+          activity,
+          alias,
+        },
+      });
+    } else {
+      await db.alias.create({
+        data: {
+          activity,
+          alias,
+          guildId,
+        },
+      });
+    }
+  } catch (error) {
+    logger.error(error);
   }
 };
 
@@ -44,12 +49,16 @@ export const updateAlias = async (
  * @param guildId The guild ID.
  */
 export const deleteAlias = async (activity: string, guildId: string) => {
-  await db.alias.deleteMany({
-    where: {
-      activity,
-      guildId,
-    },
-  });
+  try {
+    await db.alias.deleteMany({
+      where: {
+        activity,
+        guildId,
+      },
+    });
+  } catch (error) {
+    logger.error(error);
+  }
 };
 
 /**
@@ -58,10 +67,17 @@ export const deleteAlias = async (activity: string, guildId: string) => {
  * @returns An array of aliases.
  */
 export const listAliases = async (guildId: string) => {
-  const aliases = await db.alias.findMany({
-    where: {
-      guildId,
-    },
-  });
-  return aliases.map((alias) => ({ name: alias.activity, value: alias.alias }));
+  try {
+    const aliases = await db.alias.findMany({
+      where: {
+        guildId,
+      },
+    });
+    return aliases.map((alias) => ({
+      name: alias.activity,
+      value: alias.alias,
+    }));
+  } catch (error) {
+    logger.error(error);
+  }
 };

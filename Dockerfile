@@ -27,6 +27,7 @@ WORKDIR /app
 
 ENV NODE_ENV="production"
 ENV DATABASE_URL "file:/app/config/db.sqlite"
+ARG DRONE_TAG
 COPY --from=build /app/dist dist
 COPY --from=build /app/node_modules/.prisma node_modules/.prisma
 # CMD yarn deploy && echo "Test" && yarn start
@@ -38,6 +39,7 @@ FROM build as pterodactyl
 
 ENV NODE_ENV="production"
 ENV DATABASE_URL "file:/home/container/dynamica/db.sqlite"
+ARG DRONE_TAG
 WORKDIR /app
 RUN useradd container -m -s /bin/bash 
 USER container

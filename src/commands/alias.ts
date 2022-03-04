@@ -1,7 +1,6 @@
-import { Embed, quote, SlashCommandBuilder } from "@discordjs/builders";
+import { Embed, SlashCommandBuilder } from "@discordjs/builders";
 import { Command } from "../Command";
 import { checkManager } from "../utils/conditions";
-import { SuccessEmbed } from "../utils/discordEmbeds";
 import {
   deleteAlias,
   listAliases,
@@ -54,31 +53,37 @@ export const alias: Command = {
   async execute(interaction) {
     const subcommand = interaction.options.getSubcommand(true);
     const activity = interaction.options.getString("activity");
-    if (subcommand === "add") {
-      const alias = interaction.options.getString("alias", true);
-      await updateAlias(activity, alias, interaction.guildId);
-      await interaction.reply({
-        ephemeral: true,
-        embeds: [
-          SuccessEmbed(
-            `Successfully created alias ${quote(alias)} for ${quote(activity)}`
-          ),
-        ],
-      });
-    } else if (subcommand === "remove") {
-      deleteAlias(activity, interaction.guildId);
-      return interaction.reply({
-        ephemeral: true,
-        embeds: [
-          SuccessEmbed(`Successfully removed alias for ${quote(activity)}`),
-        ],
-      });
-    } else if (subcommand === "list") {
-      const aliases = await listAliases(interaction.guildId);
-      return interaction.reply({
-        ephemeral: true,
-        embeds: [new Embed().addFields(...aliases).setTitle("Alias List")],
-      });
+    switch (subcommand) {
+      case "add":
+        const alias = interaction.options.getString("alias", true);
+        await updateAlias(activity, alias, interaction.guildId);
+        await interaction.reply(
+          `Successfully created alias \`${alias}\` for \`${activity}\``
+        );
+        break;
+      case "remove":
+        deleteAlias(activity, interaction.guildId);
+        interaction.reply(`Successfully removed alias for \`${activity}\``);
+
+        break;
+
+      case "list":
+        const aliases = await listAliases(interaction.guildId);
+        const numsPerGroup = Math.ceil(aliases.length / 25);
+        const results = new Array().map((_, i) =>
+          aliases.slice(i * numsPerGroup, (i + 1) * numsPerGroup)
+        );
+        const embeds = results.map((result) =>
+          new Embed().addFields(...result).setTitle("Alias List")
+        );
+        interaction.reply({
+          content: `Alias List`,
+          embeds,
+        });
+        break;
+
+      default:
+        break;
     }
   },
 };

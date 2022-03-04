@@ -11,7 +11,7 @@ import {
  * @param id The channel ID to get
  * @returns Channel
  */
-export const getChannel = async (channelManager: ChannelManager, id: string) =>
+export const getChannel = (channelManager: ChannelManager, id: string) =>
   channelManager.cache.get(id);
 
 /**
@@ -20,7 +20,7 @@ export const getChannel = async (channelManager: ChannelManager, id: string) =>
  * @param id The ID of the guild member
  * @returns Discord guild member
  */
-export const getGuildMember = async (
+export const getGuildMember = (
   guildMemberManager: GuildMemberManager,
   id: string
 ) =>
@@ -34,7 +34,7 @@ export const getGuildMember = async (
  * @param applicationCommandManager Discord application command manager
  * @returns List of Commands
  */
-export const getCommands = async ({
+export const getCommands = ({
   guildCommandManager,
   applicationCommandManager,
 }: {

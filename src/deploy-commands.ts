@@ -25,14 +25,14 @@ if (!TOKEN || !CLIENT_ID) {
 
   (async () => {
     try {
-      await logger.info(
+      logger.info(
         `Started refreshing ${GUILD_ID ? "guild" : "application"} (/) commands.`
       );
       if (GUILD_ID) {
         await rest.put(Routes.applicationGuildCommands(CLIENT_ID, GUILD_ID), {
           body: commandList,
         });
-        await logger.debug(
+        logger.debug(
           "Updated commands: ",
           commandList.map((c) => c.name).join(", ")
         );
@@ -40,19 +40,19 @@ if (!TOKEN || !CLIENT_ID) {
         await rest.put(Routes.applicationCommands(CLIENT_ID), {
           body: commandList,
         });
-        await logger.debug(
+        logger.debug(
           "Updated commands: ",
           commandList.map((c) => c.name).join(", ")
         );
       }
 
-      await logger.info(
+      logger.info(
         `Successfully reloaded ${
           GUILD_ID ? "guild" : "application"
         } (/) commands.`
       );
     } catch (error) {
-      await logger.error(error);
+      logger.error(error);
     }
   })();
 }

@@ -2,9 +2,9 @@ import { SlashCommandBuilder } from "@discordjs/builders";
 import { Command } from "../Command";
 import { checkManager, checkSecondary } from "../utils/conditions";
 import { db } from "../utils/db";
-import { SuccessEmbed } from "../utils/discordEmbeds";
 import { getGuildMember } from "../utils/getCached";
 import { logger } from "../utils/logger";
+import { editChannel } from "../utils/operations/secondary";
 
 export const name: Command = {
   conditions: [checkManager, checkSecondary],
@@ -32,12 +32,9 @@ export const name: Command = {
 
     db.secondary.update({ where: { id: channel.id }, data: { name } });
     logger.info(`${channel.id} name changed.`);
-    return interaction.reply({
-      embeds: [
-        SuccessEmbed(
-          `Channel name changed to ${name}. Channel may take up to 5 minutes to update.`
-        ),
-      ],
-    });
+    editChannel({ channel });
+    return interaction.reply(
+      `Channel name changed to ${name}. Channel may take up to 10 minutes to update.`
+    );
   },
 };

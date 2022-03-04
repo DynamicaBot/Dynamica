@@ -2,7 +2,7 @@ import { SlashCommandBuilder } from "@discordjs/builders";
 import { Command } from "../Command";
 import { checkManager } from "../utils/conditions";
 import { db } from "../utils/db";
-import { SuccessEmbed } from "../utils/discordEmbeds";
+import { editChannel } from "../utils/operations/secondary";
 
 export const general: Command = {
   conditions: [checkManager],
@@ -34,10 +34,12 @@ export const general: Command = {
       where: { id: channel },
       data: { generalName: name },
     });
-    await interaction.reply({
-      embeds: [
-        SuccessEmbed(`General template for <#${channel}> changed to ${name}.`),
-      ],
-    });
+    const discordChannel = interaction.guild.channels.cache.get(channel);
+    if (discordChannel.isVoice()) {
+      editChannel({ channel: discordChannel });
+    }
+    await interaction.reply(
+      `General template for <#${channel}> changed to ${name}.`
+    );
   },
 };

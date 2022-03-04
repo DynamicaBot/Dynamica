@@ -36,7 +36,7 @@ export const help: Command = {
           text: `Find out more https://dynamica.dev/docs/commands/${subcommand}`,
         })
         .setDescription(helpText.long ?? helpText.short);
-      return interaction.reply({ embeds: [embed], ephemeral: true });
+      return interaction.reply({ embeds: [embed] });
     } else {
       const commands: Command[] = Object.values(commandsList);
       const commandFields = commands.map((command) => ({

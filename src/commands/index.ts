@@ -1,14 +1,11 @@
-export { about } from "./about";
 export { alias } from "./alias";
 export { allowjoin } from "./allowjoin";
 export { allyourbase } from "./allyourbase";
-export { avc } from "./avc";
 export { bitrate } from "./bitrate";
 export { create } from "./create";
 export { general } from "./general";
 export { help } from "./help";
 export { info } from "./info";
-export { invite } from "./invite";
 export { join } from "./join";
 export { limit } from "./limit";
 export { lock } from "./lock";

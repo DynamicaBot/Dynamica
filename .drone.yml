@@ -21,7 +21,7 @@ steps:
       - apt-get update
       - apt-get install openssl -y -qq
       - yarn install --frozen-lockfile
-      - yarn tsc
+      - yarn build
   - name: Rebuild Cache
     pull: if-not-exists
     image: drillster/drone-volume-cache
@@ -58,8 +58,6 @@ steps:
       event:
         - tag
     settings:
-      tags:
-        - latest
       target: runner
       username:
         from_secret: github_username
@@ -68,6 +66,8 @@ steps:
       repo: ghcr.io/dynamicabot/dynamica
       auto_tag: true
       registry: ghcr.io
+      build_args_from_env:
+        - DRONE_TAG
 volumes:
   - name: cache
     host:
@@ -104,6 +104,8 @@ steps:
       auto_tag: true
       registry: ghcr.io
       auto_tag_suffix: pterodactyl
+      build_args_from_env:
+        - DRONE_TAG
 volumes:
   - name: cache
     host:

@@ -2,7 +2,7 @@ import { SlashCommandBuilder } from "@discordjs/builders";
 import { Command } from "../Command";
 import { checkManager } from "../utils/conditions";
 import { db } from "../utils/db";
-import { SuccessEmbed } from "../utils/discordEmbeds";
+import { editChannel } from "../utils/operations/secondary";
 
 export const template: Command = {
   conditions: [checkManager],
@@ -35,9 +35,11 @@ export const template: Command = {
       where: { id: channel },
       data: { template: name },
     });
+    const discordChannel = interaction.guild.channels.cache.get(channel);
+    if (discordChannel.isVoice()) {
+      editChannel({ channel: discordChannel });
+    }
 
-    return interaction.reply({
-      embeds: [SuccessEmbed(`Template Changed to ${name}.`)],
-    });
+    return interaction.reply(`Template Changed to ${name}.`);
   },
 };

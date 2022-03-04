@@ -1,7 +1,7 @@
 import { SlashCommandBuilder } from "@discordjs/builders";
 import { Command } from "../Command";
 import { checkCreator, checkSecondary } from "../utils/conditions";
-import { ErrorEmbed, SuccessEmbed } from "../utils/discordEmbeds";
+import { ErrorEmbed } from "../utils/discordEmbeds";
 import { getGuildMember } from "../utils/getCached";
 
 export const bitrate: Command = {
@@ -33,13 +33,9 @@ export const bitrate: Command = {
 
     if (!bitrate) {
       return channel.edit({ bitrate: 64000 }).then(() => {
-        interaction.reply({
-          ephemeral: true,
-          embeds: [SuccessEmbed("Set bitrate to default.")],
-        });
+        interaction.reply("Set bitrate to default.");
       });
     }
-
     if (!(bitrate <= 96 && bitrate >= 8)) {
       return interaction.reply({
         embeds: [
@@ -52,11 +48,8 @@ export const bitrate: Command = {
     await channel.edit({
       bitrate: bitrate ? bitrate * 1000 : 64000,
     });
-    return interaction.reply({
-      ephemeral: true,
-      embeds: [
-        SuccessEmbed(`Channel bitrate changed to ${bitrate ?? "default"}kbps.`),
-      ],
-    });
+    return interaction.reply(
+      `<#${channel.id}> bitrate changed to ${bitrate ?? "default"}kbps.`
+    );
   },
 };

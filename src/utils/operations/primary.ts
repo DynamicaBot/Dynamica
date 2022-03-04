@@ -25,21 +25,27 @@ export const createPrimary = async (
     | APIInteractionDataResolvedChannel
     | null
 ) => {
-  const parent = section?.id;
-  const channel = await channelManager.create("➕ New Session", {
-    type: "GUILD_VOICE",
-    parent,
-  });
-  const primary = await db.primary.create({
-    data: {
-      id: channel.id,
-      creator: userId,
-      guildId: channelManager.guild.id,
-    },
-  });
-  await logger.debug(
-    `New primary channel ${channel.name} created by ${primary.creator}.`
-  );
+  try {
+    const parent = section?.id;
+    const channel = await channelManager.create("➕ New Session", {
+      type: "GUILD_VOICE",
+      parent,
+    });
+    const primary = await db.primary.create({
+      data: {
+        id: channel.id,
+        creator: userId,
+        guildId: channelManager.guild.id,
+      },
+    });
+
+    logger.debug(
+      `New primary channel ${channel.name} created by ${primary.creator}.`
+    );
+    return channel;
+  } catch (error) {
+    logger.error(error);
+  }
 };
 
 /**
@@ -52,26 +58,30 @@ export const deleteDiscordPrimary = async (
   channel: BaseGuildVoiceChannel,
   channelId: string
 ) => {
-  const channelConfig = await db.primary.findUnique({
-    where: { id: channelId },
-  });
-  if (!channel?.deletable || !channelConfig) return;
   try {
-    await Promise.all([
-      db.primary.delete({
-        where: { id: channelId },
-        include: { secondaries: true },
-      }),
+    const channelConfig = await db.primary.findUnique({
+      where: { id: channelId },
+    });
+    if (!channel?.deletable || !channelConfig) return;
+    try {
+      await Promise.all([
+        db.primary.delete({
+          where: { id: channelId },
+          include: { secondaries: true },
+        }),
 
-      channel?.delete(),
-    ]);
+        channel?.delete(),
+      ]);
+    } catch (error) {
+      logger.error("Failed primary deletion.");
+    }
+
+    logger.debug(
+      `Primary channel ${channel.name} in ${channel.guild.name} deleted.`
+    );
   } catch (error) {
-    logger.error("Failed primary deletion.");
+    logger.error(error);
   }
-
-  await logger.debug(
-    `Primary channel ${channel.name} in ${channel.guild.name} deleted.`
-  );
 };
 
 /**
@@ -80,11 +90,15 @@ export const deleteDiscordPrimary = async (
  * @returns Promise
  */
 export const deletedPrimary = async (channelId: string) => {
-  const primary = await db.primary.delete({
-    where: { id: channelId },
-    include: { secondaries: true },
-  });
-  await logger.debug(`Primary channel ${primary.id} deleted.`);
+  try {
+    const primary = await db.primary.delete({
+      where: { id: channelId },
+      include: { secondaries: true },
+    });
+    logger.debug(`Primary channel ${primary.id} deleted.`);
+  } catch (error) {
+    logger.error(error);
+  }
 };
 
 /**
@@ -93,29 +107,41 @@ export const deletedPrimary = async (channelId: string) => {
  * @param data
  */
 export const updatePrimary = async (channelId: string, data: any) => {
-  const primary = await db.primary.update({
-    data,
-    where: { id: channelId },
-  });
-  await logger.debug(`Primary channel ${primary.id} updated.`);
+  try {
+    const primary = await db.primary.update({
+      data,
+      where: { id: channelId },
+    });
+    logger.debug(`Primary channel ${primary.id} updated.`);
+  } catch (error) {
+    logger.error(error);
+  }
 };
 
 export const getPrimary = async (
   id: string,
   include?: Prisma.PrimaryInclude
 ) => {
-  return await db.primary.findUnique({
-    where: { id },
-    include,
-  });
+  try {
+    return await db.primary.findUnique({
+      where: { id },
+      include,
+    });
+  } catch (error) {
+    logger.error(error);
+  }
 };
 
 export const deletePrimary = async (
   id: string,
   include?: Prisma.PrimaryInclude
 ) => {
-  return await db.primary.delete({
-    where: { id },
-    include,
-  });
+  try {
+    return await db.primary.delete({
+      where: { id },
+      include,
+    });
+  } catch (error) {
+    logger.error();
+  }
 };

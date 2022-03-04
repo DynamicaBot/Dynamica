@@ -1,7 +1,7 @@
 import { SlashCommandBuilder } from "@discordjs/builders";
 import { Command } from "../Command";
 import { checkCreator, checkSecondary } from "../utils/conditions";
-import { ErrorEmbed, SuccessEmbed } from "../utils/discordEmbeds";
+import { ErrorEmbed } from "../utils/discordEmbeds";
 import { getGuildMember } from "../utils/getCached";
 
 export const limit: Command = {
@@ -32,13 +32,13 @@ export const limit: Command = {
 
     if (!channel.manageable) {
       return interaction.reply({
-        embeds: [ErrorEmbed("Cannot edit channel.")],
+        embeds: [ErrorEmbed(`Cannot edit <#${channel.id}>.`)],
       });
     } else {
       channel.edit({ userLimit });
-      return interaction.reply({
-        embeds: [SuccessEmbed(`Channel limit changed to ${userLimit}.`)],
-      });
+      return interaction.reply(
+        `<#${channel.id}> limit changed to ${userLimit}.`
+      );
     }
   },
 };
