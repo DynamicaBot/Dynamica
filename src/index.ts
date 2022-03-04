@@ -4,7 +4,6 @@ import dotenv from "dotenv";
 import * as events from "./events/index";
 import { db } from "./utils/db";
 import { logger } from "./utils/logger";
-import { version } from "./version";
 dotenv.config();
 
 /**
@@ -164,7 +163,7 @@ const resolvers = {
     dbAlias: async (parent, { id }, context, info) =>
       await db.alias.findUnique({ where: { id } }),
     serverCount: () => client.guilds.cache.size,
-    version: () => version,
+    version: () => process.env.DRONE_TAG,
     ready: () => client.isReady(),
   },
   DiscordVoiceChannel: {

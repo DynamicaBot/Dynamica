@@ -29,7 +29,6 @@ export async function build(watch = false) {
         "src/index.ts",
         "src/deploy-commands.ts",
         "src/remove-commands.ts",
-        "src/jobs/refreshSecondary.ts",
       ],
       bundle: true,
       write: true,
