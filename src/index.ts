@@ -1,4 +1,7 @@
-import { ApolloServer, gql } from "apollo-server";
+import { ApolloServer } from 'apollo-server-express';
+import { ApolloServerPluginDrainHttpServer, gql } from 'apollo-server-core';
+import express from 'express';
+import http from 'http';
 import { Client, Intents } from "discord.js";
 import dotenv from "dotenv";
 import * as events from "./events/index";
@@ -18,7 +21,6 @@ var typeDefs = gql`
 
   type Mutation {
     prune: PruneResponse!
-    // TODO: Add the ability to refresh commands like in the scripts
   }
 
   type DiscordVoiceChannel {
@@ -206,9 +208,23 @@ const resolvers = {
     discordChannel: async (parent) => await client.channels.fetch(parent.id),
   },
 };
-
-const server = new ApolloServer({ resolvers, typeDefs });
-server.listen({ port: 4000 });
+(async () => {
+  const app = express()
+  const httpServer = http.createServer(app)
+  const server = new ApolloServer({
+    typeDefs,
+    resolvers,
+    plugins: [ApolloServerPluginDrainHttpServer({httpServer})]
+  })
+  await server.start()
+  server.applyMiddleware({
+    app,
+    path: '/graphql'
+  })
+  await new Promise<void>(resolve => httpServer.listen({ port: 4000 }, resolve));
+    console.log(`🚀 Server ready at http://localhost:4000${server.graphqlPath}`);
+  
+})
 
 /**
  * DiscordJS Client instance
