@@ -37,6 +37,12 @@ volumes:
   - name: cache
     host:
       path: /tmp/cache
+trigger:
+  branches:
+    - master
+  events:
+    - pull_request
+    - tag
 ---
 kind: "pipeline"
 name: "Publish GHCR.io Release"
@@ -52,11 +58,6 @@ steps:
   - name: Publish Bot on ghcr.io
     pull: if-not-exists
     image: plugins/docker
-    when:
-      branch:
-        - master
-      event:
-        - tag
     settings:
       target: runner
       username:
@@ -87,11 +88,6 @@ steps:
   - name: Publish Pterodactyl Bot on ghcr.io
     pull: if-not-exists
     image: plugins/docker
-    when:
-      branch:
-        - master
-      event:
-        - tag
     settings:
       tags:
         - pterodactyl
