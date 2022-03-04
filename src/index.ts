@@ -165,7 +165,7 @@ const resolvers = {
     dbAlias: async (parent, { id }, context, info) =>
       await db.alias.findUnique({ where: { id } }),
     serverCount: () => client.guilds.cache.size,
-    version: () => process.env.DRONE_TAG,
+    version: () => process.env.VERSION,
     ready: () => client.isReady(),
   },
   DiscordVoiceChannel: {

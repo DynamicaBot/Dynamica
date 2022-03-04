@@ -10,7 +10,7 @@ export const version: Command = {
   async execute(interaction) {
     interaction.reply({
       ephemeral: true,
-      content: `The version of the bot is \`${process.env.DRONE_TAG}\`.`,
+      content: `The version of the bot is \`${process.env.VERSION}\`.`,
     });
   },
 };
