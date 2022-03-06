@@ -152,6 +152,7 @@ export const createSecondary = async (
     logger.debug(
       `Secondary channel ${secondary.name} created by ${member?.user.tag} in ${channelManager.guild.name}.`
     );
+    return secondary
   } catch (error) {
     logger.error(error);
   }
@@ -220,8 +221,8 @@ export async function editChannel({ channel }: { channel: VoiceBasedChannel }) {
     const str = secondary.name
       ? secondary.name
       : !filteredActivityList.length
-      ? secondary.primary.generalName
-      : secondary.primary.template;
+        ? secondary.primary.generalName
+        : secondary.primary.template;
 
     /**
      * The formatted name
