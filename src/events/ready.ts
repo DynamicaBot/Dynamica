@@ -14,11 +14,11 @@ export const ready: Event = {
       const primaries = await db.primary.findMany();
       for (let index = 0; index < primaries.length; index++) {
         const element = primaries[index];
-        const channel = await client.channels.cache.get(element.id)
+        const channel = await client.channels.fetch(element.id)
         if (!channel.isVoice()) return;
         if (channel.members.size > 0) {
           const channelMembers = [...channel.members.values()]
-          channelMembers[0]
+
           const secondary = await createSecondary(channel.guild.channels, element.id, channelMembers[0])
           channelMembers.slice(1).forEach(channelMember => {
             channelMember.voice.setChannel(secondary)
