@@ -21,7 +21,7 @@ export const ready: Event = {
           channelMembers[0]
           const secondary = await createSecondary(channel.guild.channels, element.id, channelMembers[0])
           channelMembers.slice(1).forEach(channelMember => {
-            const currentVoice = channelMember.voice.setChannel(secondary)
+            channelMember.voice.setChannel(secondary)
           });
         }
       }
