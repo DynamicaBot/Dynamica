@@ -42,6 +42,7 @@ export const help: Command = {
       const commandFields = commands.map((command) => ({
         name: command.data.name,
         value: commandsList[command.data.name].helpText.short as string,
+        inline: true,
       }));
       return interaction.reply({
         embeds: [
