@@ -1,4 +1,5 @@
 import { VoiceState } from "discord.js";
+import pDebounce from "p-debounce";
 import { Event } from "../Event";
 import { db } from "../utils/db";
 import { getChannel } from "../utils/getCached";
@@ -76,7 +77,8 @@ export const voiceStateUpdate: Event = {
             }
           }
         } else {
-          deleteDiscordSecondary(oldVoiceState.channel, secondaryConfig);
+          const debouncedDelete = pDebounce(deleteDiscordSecondary, 1000);
+          await debouncedDelete(oldVoiceState.channel, secondaryConfig);
         }
       }
     }

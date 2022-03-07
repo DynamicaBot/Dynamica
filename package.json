@@ -32,6 +32,8 @@
     "fuse.js": "^6.5.3",
     "graphql": "^16.3.0",
     "lodash": "^4.17.21",
+    "p-debounce": "^4.0.0",
+    "p-throttle": "^5.0.0",
     "romans": "^2.0.3",
     "signale": "^1.4.0"
   },

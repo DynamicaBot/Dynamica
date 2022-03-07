@@ -29,7 +29,8 @@ export const deleteDiscordSecondary = async (
 
     db.secondary
       .delete({ where: { id } })
-      .then((secondary) => updateActivityCount(channel.client));
+      .then((secondary) => updateActivityCount(channel.client))
+      .catch((e) => logger.error);
 
     channel?.delete();
 
@@ -152,7 +153,7 @@ export const createSecondary = async (
     logger.debug(
       `Secondary channel ${secondary.name} created by ${member?.user.tag} in ${channelManager.guild.name}.`
     );
-    return secondary
+    return secondary;
   } catch (error) {
     logger.error(error);
   }
@@ -221,8 +222,8 @@ export async function editChannel({ channel }: { channel: VoiceBasedChannel }) {
     const str = secondary.name
       ? secondary.name
       : !filteredActivityList.length
-        ? secondary.primary.generalName
-        : secondary.primary.template;
+      ? secondary.primary.generalName
+      : secondary.primary.template;
 
     /**
      * The formatted name
@@ -246,7 +247,6 @@ export async function editChannel({ channel }: { channel: VoiceBasedChannel }) {
         name,
       })
       .then(() => {
-
         logger.debug(
           `Secondary channel ${channel.name} in ${channel.guild.name} name changed.`
         );
