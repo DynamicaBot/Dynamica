@@ -14,14 +14,18 @@ export const ready: Event = {
       const primaries = await db.primary.findMany();
       for (let index = 0; index < primaries.length; index++) {
         const element = primaries[index];
-        const channel = await client.channels.cache.get(element.id)
+        const channel = await client.channels.cache.get(element.id);
         if (!channel?.isVoice()) return;
         if (channel.members.size > 0) {
-          const channelMembers = [...channel.members.values()]
+          const channelMembers = [...channel.members.values()];
 
-          const secondary = await createSecondary(channel.guild.channels, element.id, channelMembers[0])
-          channelMembers.slice(1).forEach(channelMember => {
-            channelMember.voice.setChannel(secondary)
+          const secondary = await createSecondary(
+            channel.guild.channels,
+            element.id,
+            channelMembers[0]
+          );
+          channelMembers.slice(1).forEach((channelMember) => {
+            channelMember.voice.setChannel(secondary);
           });
         }
       }
@@ -29,12 +33,14 @@ export const ready: Event = {
         const element = activeSecondaries[index];
         const channel = await client.channels.cache.get(element.id);
         if (!channel) {
-          db.secondary.delete({ where: { id: element.id } }).then((secondary) => {
-            if (secondary.textChannelId) {
-              client.channels.cache.get(secondary.textChannelId).delete();
-            }
-            logger.info(`Deleted Stale Secondary ${element.id}`);
-          });
+          db.secondary
+            .delete({ where: { id: element.id } })
+            .then((secondary) => {
+              if (secondary.textChannelId) {
+                client.channels.cache.get(secondary.textChannelId).delete();
+              }
+              logger.info(`Deleted Stale Secondary ${element.id}`);
+            });
 
           return;
         }
@@ -48,8 +54,7 @@ export const ready: Event = {
       logger.info(`Ready! Logged in as ${client.user?.tag}`);
       updateActivityCount(client);
     } catch (error) {
-      logger.error(error)
+      logger.error(error);
     }
-
   },
 };

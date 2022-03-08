@@ -20,27 +20,27 @@ const basicCommands: {
    */
   description: string;
 }[] = [
-    {
-      command: "/help",
-      help: "https://dynamica.dev/docs/commands/help",
-      description: "Get a list of commands and their descriptions",
-    },
-    {
-      command: "/invite",
-      help: "https://dynamica.dev/docs/commands/invite",
-      description: "Get an invite link for the bot",
-    },
-    {
-      command: "/create",
-      help: "https://dynamica.dev/docs/commands/create",
-      description: "Create a new channel for people to join",
-    },
-    {
-      command: "/alias",
-      help: "https://dynamica.dev/docs/commands/alias",
-      description: "Create a new alias for an activity",
-    },
-  ];
+  {
+    command: "/help",
+    help: "https://dynamica.dev/docs/commands/help",
+    description: "Get a list of commands and their descriptions",
+  },
+  {
+    command: "/invite",
+    help: "https://dynamica.dev/docs/commands/invite",
+    description: "Get an invite link for the bot",
+  },
+  {
+    command: "/create",
+    help: "https://dynamica.dev/docs/commands/create",
+    description: "Create a new channel for people to join",
+  },
+  {
+    command: "/alias",
+    help: "https://dynamica.dev/docs/commands/alias",
+    description: "Create a new alias for an activity",
+  },
+];
 
 const botInfoEmbed = new Embed()
   .setTitle("Welcome to Dynamica!")
@@ -52,7 +52,8 @@ const botInfoEmbed = new Embed()
     value: basicCommands
       .map(
         (command) =>
-          `${hyperlink(`\`${command.command}\``, command.help)} - ${command.description
+          `${hyperlink(`\`${command.command}\``, command.help)} - ${
+            command.description
           }`
       )
       .join("\n"),
@@ -76,9 +77,14 @@ export const guildCreate: Event = {
   event: "guildCreate",
   async execute(guild: Guild) {
     if (!guild.me.permissions.has("ADMINISTRATOR")) {
-      const owner = await guild.fetchOwner()
-      owner.send(`Hi there, I see you tried to invite me into your server. To make sure that the bot works correctly please allow it to have admin permissions and then re-invite it.\n\nIf you need more info as to why the bot needs admin go ${hyperlink('here', "https://dynamica.dev/docs/faq#why-does-this-random-bot-need-admin")}.`)
-      await guild.leave()
+      const owner = await guild.fetchOwner();
+      owner.send(
+        `Hi there, I see you tried to invite me into your server. To make sure that the bot works correctly please allow it to have admin permissions and then re-invite it.\n\nIf you need more info as to why the bot needs admin go ${hyperlink(
+          "here",
+          "https://dynamica.dev/docs/faq#why-does-this-random-bot-need-admin"
+        )}.`
+      );
+      await guild.leave();
     } else {
       if (guild.systemChannel) {
         guild.systemChannel.send({
@@ -92,6 +98,5 @@ export const guildCreate: Event = {
       });
       logger.debug(`Joined guild ${guild.id} named: ${guild.name}`);
     }
-
   },
 };

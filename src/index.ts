@@ -1,16 +1,10 @@
-import { ApolloServer } from 'apollo-server-express';
-import { ApolloServerPluginDrainHttpServer, gql } from 'apollo-server-core';
-import express from 'express';
-import http from 'http';
 import { Client, Intents } from "discord.js";
 import dotenv from "dotenv";
 import * as events from "./events/index";
+import startExpress from "./server";
 import { db } from "./utils/db";
 import { logger } from "./utils/logger";
-import startExpress from './server';
 dotenv.config();
-
-
 
 /**
  * DiscordJS Client instance
@@ -34,9 +28,9 @@ try {
     }
   }
 
-  client.login(process.env.TOKEN).then(() => {
-    startExpress(client, db)
-  });
+  client.login(process.env.TOKEN);
+
+  startExpress(client, db);
 } catch (error) {
   logger.error(error);
 }

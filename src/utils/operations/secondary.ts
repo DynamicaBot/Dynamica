@@ -27,12 +27,10 @@ export const deleteDiscordSecondary = async (
 
     const textChannel = channel.guild.channels.cache.get(config.textChannelId);
 
-    db.secondary
-      .delete({ where: { id } })
-      .then((secondary) => updateActivityCount(channel.client))
-      .catch((e) => logger.error);
+    await db.secondary.delete({ where: { id } });
+    await updateActivityCount(channel.client);
 
-    channel?.delete();
+    await channel?.delete();
 
     if (textChannel) {
       textChannel.delete();

@@ -3,6 +3,7 @@ import pDebounce from "p-debounce";
 import { Event } from "../Event";
 import { db } from "../utils/db";
 import { getChannel } from "../utils/getCached";
+import { logger } from "../utils/logger";
 import {
   createSecondary,
   deleteDiscordSecondary,
@@ -77,8 +78,12 @@ export const voiceStateUpdate: Event = {
             }
           }
         } else {
-          const debouncedDelete = pDebounce(deleteDiscordSecondary, 1000);
-          await debouncedDelete(oldVoiceState.channel, secondaryConfig);
+          try {
+            const debouncedDelete = pDebounce(deleteDiscordSecondary, 1000);
+            await debouncedDelete(oldVoiceState.channel, secondaryConfig);
+          } catch (error) {
+            logger.error(error);
+          }
         }
       }
     }

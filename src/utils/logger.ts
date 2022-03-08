@@ -1,9 +1,9 @@
 import { config } from "dotenv";
-import { Signale } from "signale";
+import signale from "signale";
 config();
 
 /** Signale Logger instance */
-export const logger = new Signale({
+export const logger = new signale.Signale({
   disabled: false,
   interactive: false,
   stream: [process.stdout],

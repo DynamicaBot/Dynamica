@@ -1,7 +1,7 @@
 import { Embed, SlashCommandBuilder } from "@discordjs/builders";
+import _ from "lodash";
 import { Command } from "../Command";
 import { checkManager } from "../utils/conditions";
-import { logger } from "../utils/logger";
 import {
   deleteAlias,
   listAliases,
@@ -70,21 +70,13 @@ export const alias: Command = {
 
       case "list":
         const aliases = await listAliases(interaction.guildId);
-        const chunk = (arr, size) => {
-          const res = [];
-          for(let i = 0; i < arr.length; i++) {
-             if(i % size === 0){
-                // Push a new array containing the current value to the res array
-                res.push([arr[i]]);
-             }
-             else{
-                // Push the current value to the current array
-                res[res.length-1].push(arr[i]);
-             };
-          };
-          return res;
-       };
-        const embeds = chunk(aliases, 25).map((result) =>
+        const inlineAliases = aliases.map(({ name, value }) => ({
+          name,
+          value,
+          inline: true,
+        }));
+
+        const embeds = _.chunk(inlineAliases, 25).map((result) =>
           new Embed().addFields(...result)
         );
         interaction.reply({

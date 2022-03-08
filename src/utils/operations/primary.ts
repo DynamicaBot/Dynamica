@@ -1,5 +1,4 @@
 import { Prisma } from "@prisma/client";
-import { APIInteractionDataResolvedChannel } from "discord-api-types";
 import {
   BaseGuildVoiceChannel,
   GuildChannel,
@@ -19,11 +18,7 @@ import { logger } from "../logger";
 export const createPrimary = async (
   channelManager: GuildChannelManager,
   userId: string,
-  section?:
-    | GuildChannel
-    | ThreadChannel
-    | APIInteractionDataResolvedChannel
-    | null
+  section?: GuildChannel | ThreadChannel | null
 ) => {
   try {
     const parent = section?.id;

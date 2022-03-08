@@ -1,11 +1,11 @@
 import { REST } from "@discordjs/rest";
 import { Routes } from "discord-api-types/v9";
 import { config } from "dotenv";
-import { Signale } from "signale";
+import signale from "signale";
 import * as commands from "./commands";
 config();
 
-const logger = new Signale({
+const logger = new signale.Signale({
   disabled: false,
   interactive: false,
   logLevel: process.env.LOG_LEVEL || "info",
