@@ -1,8 +1,8 @@
 # Deps
 FROM node:16-alpine as base
 WORKDIR /app
-RUN apk update --no-cache && apk add 
-RUN apk add --no-cache python3 make gcc g++
+RUN apk update --no-cache
+RUN apk add --no-cache python3 make gcc g++ bash
 COPY package.json .
 COPY prisma prisma
 COPY yarn.lock .
@@ -43,7 +43,7 @@ WORKDIR /app
 COPY --from=build /app/dist dist
 RUN yarn install --production --link-duplicates
 RUN yarn cache clean
-RUN adduser -H -D container
+RUN adduser -H -D container -s /bin/bash
 USER container
 
 COPY entrypoint.sh /entrypoint.sh
