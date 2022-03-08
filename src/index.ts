@@ -1,7 +1,6 @@
 import { Client, Intents } from "discord.js";
 import dotenv from "dotenv";
 import * as events from "./events/index";
-import startExpress from "./server";
 import { db } from "./utils/db";
 import { logger } from "./utils/logger";
 dotenv.config();
@@ -29,8 +28,6 @@ try {
   }
 
   client.login(process.env.TOKEN);
-
-  startExpress(client, db);
 } catch (error) {
   logger.error(error);
 }

@@ -1,8 +1,8 @@
 # Deps
 FROM node:16-alpine as base
 WORKDIR /app
-RUN apk update
-RUN apk add python3 make gcc g++
+RUN apk update --no-cache && apk add 
+RUN apk add --no-cache python3 make gcc g++
 COPY package.json .
 COPY prisma prisma
 COPY yarn.lock .
@@ -26,7 +26,7 @@ ENV DATABASE_URL "file:/app/config/db.sqlite"
 ARG DRONE_TAG
 ENV VERSION=$DRONE_TAG
 COPY --from=build /app/dist dist
-RUN yarn install --production
+RUN yarn install --production --link-duplicates
 RUN yarn cache clean
 # CMD yarn deploy && echo "Test" && yarn start
 CMD ls dist && yarn deploy && npx prisma migrate deploy && yarn start
@@ -41,7 +41,7 @@ ARG DRONE_TAG
 ENV VERSION=$DRONE_TAG
 WORKDIR /app
 COPY --from=build /app/dist dist
-RUN yarn install --production
+RUN yarn install --production --link-duplicates
 RUN yarn cache clean
 RUN adduser -H -D container
 USER container
