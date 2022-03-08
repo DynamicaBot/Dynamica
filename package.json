@@ -1,5 +1,5 @@
 {
-  "name": "bot",
+  "name": "dynamica",
   "license": "MIT",
   "version": "2022.3.12",
   "repository": {
@@ -17,7 +17,7 @@
   },
   "publishConfig": {
     "access": "public",
-    "registry": "https://npm.pkg.github.com/"
+    "registry": "https://npm.pkg.github.com"
   },
   "main": "./dist/index.js",
   "type": "module",
