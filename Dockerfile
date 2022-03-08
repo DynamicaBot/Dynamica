@@ -1,11 +1,8 @@
 # Deps
-FROM node:16-buster as base
+FROM node:16-alpine as base
 WORKDIR /app
-# RUN apt-get update && \
-#     apt-get upgrade -y --no-install-recommends && \
-#     apt-get install -y --no-install-recommends openssl && \
-#     apt-get clean && \
-#     rm -rf /var/lib/apt/lists/*
+RUN apk update
+RUN apk add python3 make gcc g++
 COPY package.json .
 COPY prisma prisma
 COPY yarn.lock .
@@ -15,10 +12,9 @@ COPY tsconfig.json .
 # Build
 FROM base as build
 WORKDIR /app
-
-
 COPY src ./src
-RUN yarn install --frozen-lockfile
+RUN yarn install
+RUN yarn cache clean
 RUN yarn build:tsup
 
 # Runner
@@ -30,7 +26,8 @@ ENV DATABASE_URL "file:/app/config/db.sqlite"
 ARG DRONE_TAG
 ENV VERSION=$DRONE_TAG
 COPY --from=build /app/dist dist
-RUN yarn install --frozen-lockfile --production
+RUN yarn install --production
+RUN yarn cache clean
 # CMD yarn deploy && echo "Test" && yarn start
 CMD ls dist && yarn deploy && npx prisma migrate deploy && yarn start
 
@@ -44,8 +41,9 @@ ARG DRONE_TAG
 ENV VERSION=$DRONE_TAG
 WORKDIR /app
 COPY --from=build /app/dist dist
-RUN yarn install --frozen-lockfile --production
-RUN useradd container -m -s /bin/bash 
+RUN yarn install --production
+RUN yarn cache clean
+RUN adduser -H -D container
 USER container
 
 COPY entrypoint.sh /entrypoint.sh

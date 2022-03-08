@@ -9,4 +9,6 @@ export default defineConfig((options) => ({
   platform: "node",
   minify: !options.watch,
   tsconfig: "tsconfig.json",
+  bundle: true,
+  dts: true,
 }));
