@@ -15,7 +15,7 @@ steps:
       mount:
         - ./node_modules
   - name: "Build"
-    image: "node:lts-buster-slim"
+    image: "node:lts-buster"
     pull: if-not-exists
     commands:
       - apt-get update
