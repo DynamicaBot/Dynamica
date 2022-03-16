@@ -1,21 +1,23 @@
 import { SlashCommandBuilder } from "@discordjs/builders";
-import { Command } from "../Command";
+import { Command } from ".";
 import { checkCreator, checkSecondary } from "../utils/conditions";
 import { checkAdminPermissions } from "../utils/conditions/admin";
 import { db } from "../utils/db";
 import { getGuildMember } from "../utils/getCached";
 import { editChannel } from "../utils/operations/secondary";
 
-export const lock: Command = {
-  conditions: [checkCreator, checkSecondary, checkAdminPermissions],
-  data: new SlashCommandBuilder()
-    .setName("lock")
-    .setDescription("Lock a channel to a certain role or user."),
-  helpText: {
-    short: "Use it to lock your channels away from pesky server members.",
-    long: "Use it to lock your channels away from pesky server members. Locks it to the creator (initially) and permissions can be altered with /permission. \n Channels can be reset to default with /unlock.",
-  },
-  async execute(interaction) {
+export const lock = new Command()
+  .setPreconditions([checkCreator, checkSecondary, checkAdminPermissions])
+  .setCommandData(
+    new SlashCommandBuilder()
+      .setName("lock")
+      .setDescription("Lock a channel to a certain role or user.")
+  )
+  .setHelpText(
+    "Use it to lock your channels away from pesky server members.",
+    "Use it to lock your channels away from pesky server members. Locks it to the creator (initially) and permissions can be altered with /permission. \n Channels can be reset to default with /unlock."
+  )
+  .setResponse(async (interaction) => {
     if (!interaction.guild?.members) return;
 
     const guildMember = await getGuildMember(
@@ -53,5 +55,4 @@ export const lock: Command = {
       ephemeral: true,
       content: `Use \`/permission add\` to allow people to access the channels. Or, \`/permission remove\` to remove people.`,
     });
-  },
-};
+  });

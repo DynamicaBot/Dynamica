@@ -1,59 +1,60 @@
 import { SlashCommandBuilder } from "@discordjs/builders";
 import { Role } from "discord.js";
-import { Command } from "../Command";
+import { Command } from ".";
 import { checkCreator, checkSecondary } from "../utils/conditions";
 import { checkAdminPermissions } from "../utils/conditions/admin";
 import { ErrorEmbed } from "../utils/discordEmbeds";
 import { getGuildMember } from "../utils/getCached";
 
-export const permission: Command = {
-  conditions: [checkCreator, checkSecondary, checkAdminPermissions],
-  data: new SlashCommandBuilder()
-    .setName("permission")
-    .setDescription("Edit the permissions of a voice channel.")
-    .addSubcommand((subcommand) =>
-      subcommand
-        .setName("add")
-        .setDescription(
-          "Give permissions for the current voice channel for a role or user."
-        )
-        .addRoleOption((option) =>
-          option
-            .setDescription("The role to add.")
-            .setName("role")
-            .setRequired(false)
-        )
-        .addUserOption((option) =>
-          option
-            .setDescription("The user to add.")
-            .setName("user")
-            .setRequired(false)
-        )
-    )
-    .addSubcommand((subcommand) =>
-      subcommand
-        .setName("remove")
-        .setDescription(
-          "Remove permissions for the current voice channel for a role or user."
-        )
-        .addRoleOption((option) =>
-          option
-            .setDescription("The role to remove.")
-            .setName("role")
-            .setRequired(false)
-        )
-        .addUserOption((option) =>
-          option
-            .setDescription("The user to remove.")
-            .setName("user")
-            .setRequired(false)
-        )
-    ),
-  helpText: {
-    short:
-      "Edits the permissions for secondary channels. (Works in conjuction with /lock and /unlock.",
-  },
-  async execute(interaction) {
+export const permission = new Command()
+  .setPreconditions([checkCreator, checkSecondary, checkAdminPermissions])
+  .setCommandData(
+    new SlashCommandBuilder()
+      .setName("permission")
+      .setDescription("Edit the permissions of a voice channel.")
+      .addSubcommand((subcommand) =>
+        subcommand
+          .setName("add")
+          .setDescription(
+            "Give permissions for the current voice channel for a role or user."
+          )
+          .addRoleOption((option) =>
+            option
+              .setDescription("The role to add.")
+              .setName("role")
+              .setRequired(false)
+          )
+          .addUserOption((option) =>
+            option
+              .setDescription("The user to add.")
+              .setName("user")
+              .setRequired(false)
+          )
+      )
+      .addSubcommand((subcommand) =>
+        subcommand
+          .setName("remove")
+          .setDescription(
+            "Remove permissions for the current voice channel for a role or user."
+          )
+          .addRoleOption((option) =>
+            option
+              .setDescription("The role to remove.")
+              .setName("role")
+              .setRequired(false)
+          )
+          .addUserOption((option) =>
+            option
+              .setDescription("The user to remove.")
+              .setName("user")
+              .setRequired(false)
+          )
+      )
+  )
+  .setHelpText(
+    "Edits the permissions for secondary channels. (Works in conjuction with /lock and /unlock."
+  )
+  .setResponse(async (interaction) => {
     const subcommand = interaction.options.getSubcommand(true);
     const user = interaction.options.getUser("user", false);
     const role = interaction.options.getRole("role", false) as Role;
@@ -96,5 +97,4 @@ export const permission: Command = {
         } to access the <#${channel.id}>.`,
       });
     }
-  },
-};
+  });

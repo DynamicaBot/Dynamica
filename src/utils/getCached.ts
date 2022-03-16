@@ -1,9 +1,4 @@
-import {
-  ApplicationCommandManager,
-  ChannelManager,
-  GuildApplicationCommandManager,
-  GuildMemberManager,
-} from "discord.js";
+import { ChannelManager, GuildMemberManager } from "discord.js";
 
 /**
  * Get a channel that might be cached.
@@ -27,45 +22,3 @@ export const getGuildMember = (
   guildMemberManager.cache.some((member) => member.id === id)
     ? guildMemberManager.cache.get(id)
     : undefined;
-
-/**
- * Gets a list of commands depending on the scope of the bot and cache status.
- * @param guildCommandManager Discord guild command manager
- * @param applicationCommandManager Discord application command manager
- * @returns List of Commands
- */
-export const getCommands = ({
-  guildCommandManager,
-  applicationCommandManager,
-}: {
-  guildCommandManager?: GuildApplicationCommandManager;
-  applicationCommandManager?: ApplicationCommandManager;
-}) => {
-  if (!applicationCommandManager && !guildCommandManager) {
-    return undefined;
-  }
-  if (guildCommandManager) {
-    return guildCommandManager.cache;
-  }
-  if (applicationCommandManager) {
-    return applicationCommandManager.cache;
-  }
-
-  // try {
-  // } catch (error) {
-  //   logger.error("Error getting commands:", error);
-  // }
-  // if (!guildCommandManager || !applicationCommandManager) return;
-  // const cachedGuildCommands = guildCommandManager.cache;
-  // const guildCommands =
-  //   cachedGuildCommands?.size === 0 || undefined
-  //     ? await guildCommandManager.fetch()
-  //     : cachedGuildCommands;
-
-  // const cachedApplicationCommands = applicationCommandManager.cache;
-  // const applicationCommands =
-  //   cachedApplicationCommands?.size === 0 || undefined
-  //     ? await applicationCommandManager.fetch()
-  //     : cachedApplicationCommands;
-  // return process.env.GUILD_ID ? guildCommands : applicationCommands;
-};

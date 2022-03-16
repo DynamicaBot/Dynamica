@@ -1,24 +1,25 @@
 import { Embed, SlashCommandBuilder } from "@discordjs/builders";
-import { Command } from "../Command";
+import { Command } from ".";
 
-export const info: Command = {
-  conditions: [],
-  data: new SlashCommandBuilder()
-    .setName("info")
-    .setDescription("Get info about a user or a server!")
-    .addSubcommand((subcommand) =>
-      subcommand
-        .setName("user")
-        .setDescription("Info about a user")
-        .addUserOption((option) =>
-          option.setName("target").setDescription("The user")
-        )
-    )
-    .addSubcommand((subcommand) =>
-      subcommand.setName("server").setDescription("Info about the server")
-    ),
-  helpText: { short: "Shows the info of either a user or the current server." },
-  async execute(interaction) {
+export const info = new Command()
+  .setCommandData(
+    new SlashCommandBuilder()
+      .setName("info")
+      .setDescription("Get info about a user or a server!")
+      .addSubcommand((subcommand) =>
+        subcommand
+          .setName("user")
+          .setDescription("Info about a user")
+          .addUserOption((option) =>
+            option.setName("target").setDescription("The user")
+          )
+      )
+      .addSubcommand((subcommand) =>
+        subcommand.setName("server").setDescription("Info about the server")
+      )
+  )
+  .setHelpText("Shows the info of either a user or the current server.")
+  .setResponse(async (interaction) => {
     const subcommand = interaction.options.getSubcommand();
     switch (subcommand) {
       case "user":
@@ -50,5 +51,4 @@ export const info: Command = {
       default:
         break;
     }
-  },
-};
+  });

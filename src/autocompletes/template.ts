@@ -1,11 +1,10 @@
 import Fuse from "fuse.js";
-import { Autocomplete } from "../Autocomplete";
+import { Autocomplete } from ".";
 import { db } from "../utils/db";
 
-export const template: Autocomplete = {
-  name: "channel",
-
-  execute: async (interaction) => {
+export const template = new Autocomplete()
+  .setName("channel")
+  .setResponse(async (interaction) => {
     const { value } = interaction.options.getFocused(true);
     const primaries = await db.primary.findMany({
       where: { guildId: interaction.guild.id },
@@ -25,5 +24,4 @@ export const template: Autocomplete = {
     const fuse = new Fuse(options, { keys: ["name", "id"] });
     const query = fuse.search(value.toString());
     interaction.respond(query.map((result) => result.item));
-  },
-};
+  });

@@ -1,19 +1,18 @@
 import { CacheType, Interaction } from "discord.js";
-import { Command } from "../Command";
+import { Event } from ".";
 import * as commands from "../commands";
-import { Event } from "../Event";
 import { checkGuild } from "../utils/conditions";
 import { ErrorEmbed } from "../utils/discordEmbeds";
 import { logger } from "../utils/logger";
 
-export const command: Event = {
-  event: "interactionCreate",
-  once: false,
-  async execute(interaction: Interaction<CacheType>) {
+export const command = new Event()
+  .setOnce(false)
+  .setEvent("interactionCreate")
+  .setResponse(async (interaction: Interaction<CacheType>) => {
     if (!interaction.isCommand()) return;
     try {
-      const command: Command = commands[interaction.commandName];
-      const { conditions } = command;
+      const command = commands[interaction.commandName];
+      const { preconditions: conditions } = command;
       const conditionResults = await Promise.all(
         [checkGuild, ...conditions].map((condition) => condition(interaction))
       );
@@ -39,5 +38,4 @@ export const command: Event = {
         ephemeral: true,
       });
     }
-  },
-};
+  });

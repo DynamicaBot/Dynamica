@@ -1,14 +1,14 @@
 import { Client } from "discord.js";
-import { Event } from "../Event";
+import { Event } from ".";
 import { db } from "../utils/db";
 import { logger } from "../utils/logger";
 import { updateActivityCount } from "../utils/operations/general";
 import { createSecondary, editChannel } from "../utils/operations/secondary";
 
-export const ready: Event = {
-  once: true,
-  event: "ready",
-  async execute(client: Client<true>) {
+export const ready = new Event()
+  .setOnce(true)
+  .setEvent("ready")
+  .setResponse(async (client: Client<true>) => {
     try {
       const activeSecondaries = await db.secondary.findMany();
       const primaries = await db.primary.findMany();
@@ -56,5 +56,4 @@ export const ready: Event = {
     } catch (error) {
       logger.error(error);
     }
-  },
-};
+  });

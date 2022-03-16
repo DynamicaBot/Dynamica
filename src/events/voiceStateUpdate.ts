@@ -1,6 +1,6 @@
 import { VoiceState } from "discord.js";
 import pDebounce from "p-debounce";
-import { Event } from "../Event";
+import { Event } from ".";
 import { db } from "../utils/db";
 import { getChannel } from "../utils/getCached";
 import { logger } from "../utils/logger";
@@ -10,10 +10,10 @@ import {
   editChannel,
 } from "../utils/operations/secondary";
 
-export const voiceStateUpdate: Event = {
-  event: "voiceStateUpdate",
-  once: false,
-  async execute(oldVoiceState: VoiceState, newVoiceState: VoiceState) {
+export const voiceStateUpdate = new Event()
+  .setOnce(false)
+  .setEvent("voiceStateUpdate")
+  .setResponse(async (oldVoiceState: VoiceState, newVoiceState: VoiceState) => {
     if (oldVoiceState?.channelId === newVoiceState?.channelId) return;
     // If the channel doesn't change then just ignore it.
 
@@ -111,5 +111,4 @@ export const voiceStateUpdate: Event = {
         }
       }
     }
-  },
-};
+  });
