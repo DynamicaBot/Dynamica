@@ -16,7 +16,7 @@ export const client = new Client({
   ],
 });
 
-const eventList = Object.values(events);
+const eventList = Object.values(events) as events.Event[];
 try {
   // Register event handlers
   for (const event of eventList) {

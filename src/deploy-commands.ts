@@ -18,7 +18,7 @@ if (!TOKEN || !CLIENT_ID) {
   logger.error("Missing env vars.");
 } else {
   const commandList = Object.values(commands).map((command) =>
-    command.data.toJSON()
+    command.commandData.toJSON()
   );
 
   const rest = new REST({ version: "9" }).setToken(TOKEN);

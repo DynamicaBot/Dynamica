@@ -1,25 +1,26 @@
 import { SlashCommandBuilder } from "@discordjs/builders";
-import { Command } from "../Command";
+import { Command } from ".";
 import { checkCreator } from "../utils/conditions";
 import { db } from "../utils/db";
 import { getGuildMember } from "../utils/getCached";
 
-export const transfer: Command = {
-  conditions: [checkCreator],
-  data: new SlashCommandBuilder()
-    .setName("transfer")
-    .setDescription("Transfer ownership of secondary channel to another person")
-    .addUserOption((option) =>
-      option
-        .setName("user")
-        .setDescription("The person to transfer ownership to.")
-        .setRequired(true)
-    ),
-  helpText: {
-    short: "Transfer ownership to another user.",
-    long: "Transfer ownership to another user. \n You need to be the owner of the channel in order to transfer ownership.",
-  },
-  async execute(interaction) {
+export const transfer = new Command()
+  .setPreconditions([checkCreator])
+  .setCommandData(
+    new SlashCommandBuilder()
+      .setName("transfer")
+      .setDescription(
+        "Transfer ownership of secondary channel to another person"
+      )
+      .addUserOption((option) =>
+        option
+          .setName("user")
+          .setDescription("The person to transfer ownership to.")
+          .setRequired(true)
+      )
+  )
+  .setHelpText("Transfer ownership to another user.")
+  .setResponse(async (interaction) => {
     const user = interaction.options.getUser("user", true);
 
     const guildMember = await getGuildMember(
@@ -43,5 +44,4 @@ export const transfer: Command = {
     interaction.reply(
       `Ownership of <#${channel.id}> channel to <@${user.id}>.`
     );
-  },
-};
+  });

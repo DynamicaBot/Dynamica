@@ -1,16 +1,16 @@
 import Fuse from "fuse.js";
-import { Autocomplete } from "../Autocomplete";
+import { Autocomplete } from ".";
 import * as commands from "../commands";
 
-export const help: Autocomplete = {
-  name: "help",
-  execute: async (interaction) => {
+export const help = new Autocomplete()
+  .setName("help")
+  .setResponse(async (interaction) => {
     const value = interaction.options.getFocused();
-    const commandValues = Object.values(commands);
+    const commandValues = Object.values(commands) as commands.Command[];
 
     const fuse = new Fuse(
-      commandValues?.map(({ data, helpText }) => ({
-        name: data.name,
+      commandValues?.map(({ commandData, helpText }) => ({
+        name: commandData.name,
         short: helpText.short,
         long: helpText.long,
       })),
@@ -30,5 +30,4 @@ export const help: Autocomplete = {
         value: result.item.name,
       }))
     );
-  },
-};
+  });

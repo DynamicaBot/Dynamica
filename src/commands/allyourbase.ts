@@ -1,22 +1,22 @@
 import { SlashCommandBuilder } from "@discordjs/builders";
-import { CommandInteraction } from "discord.js";
-import { Command } from "../Command";
+import { Command } from ".";
 import { checkManager, checkSecondary } from "../utils/conditions";
 import { db } from "../utils/db";
 import { getGuildMember } from "../utils/getCached";
 
-export const allyourbase: Command = {
-  conditions: [checkManager, checkSecondary],
-  data: new SlashCommandBuilder()
-    .setName("allyourbase")
-    .setDescription(
-      "If you are an admin you become the owner of the channel you are in."
-    ),
-  helpText: {
-    short:
-      "Transfers the ownership of the current channel to the person who ran the command. (Must be an admin)",
-  },
-  async execute(interaction: CommandInteraction): Promise<void> {
+export const allyourbase = new Command()
+  .setPreconditions([checkManager, checkSecondary])
+  .setHelpText(
+    "Transfers the ownership of the current channel to the person who ran the command. (Must be an admin)"
+  )
+  .setCommandData(
+    new SlashCommandBuilder()
+      .setName("allyourbase")
+      .setDescription(
+        "If you are an admin you become the owner of the channel you are in."
+      )
+  )
+  .setResponse(async (interaction) => {
     const guildMember = await getGuildMember(
       interaction.guild.members,
       interaction.user.id
@@ -34,5 +34,4 @@ export const allyourbase: Command = {
     interaction.reply(
       `Owner of <#${channel.id}> changed to <@${guildMember.user.id}>`
     );
-  },
-};
+  });

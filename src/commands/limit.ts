@@ -1,26 +1,28 @@
 import { SlashCommandBuilder } from "@discordjs/builders";
-import { Command } from "../Command";
+import { Command } from ".";
 import { checkCreator, checkSecondary } from "../utils/conditions";
 import { ErrorEmbed } from "../utils/discordEmbeds";
 import { getGuildMember } from "../utils/getCached";
 
-export const limit: Command = {
-  conditions: [checkCreator, checkSecondary],
-  data: new SlashCommandBuilder()
-    .setName("limit")
-    .setDescription(
-      "Edit the max number of people allowed in the current channel"
-    )
-    .addIntegerOption((option) =>
-      option
-        .setDescription(
-          "The maximum number of people that are allowed to join the channel."
-        )
-        .setName("number")
-        .setRequired(true)
-    ),
-  helpText: { short: "Limit the maximum number of people in the channel." },
-  async execute(interaction) {
+export const limit = new Command()
+  .setPreconditions([checkCreator, checkSecondary])
+  .setCommandData(
+    new SlashCommandBuilder()
+      .setName("limit")
+      .setDescription(
+        "Edit the max number of people allowed in the current channel"
+      )
+      .addIntegerOption((option) =>
+        option
+          .setDescription(
+            "The maximum number of people that are allowed to join the channel."
+          )
+          .setName("number")
+          .setRequired(true)
+      )
+  )
+  .setHelpText("Limit the maximum number of people in the channel.")
+  .setResponse(async (interaction) => {
     const userLimit = interaction.options.getInteger("number", true);
 
     const guildMember = await getGuildMember(
@@ -40,5 +42,4 @@ export const limit: Command = {
         `<#${channel.id}> limit changed to ${userLimit}.`
       );
     }
-  },
-};
+  });

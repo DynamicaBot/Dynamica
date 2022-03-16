@@ -1,27 +1,27 @@
 import { SlashCommandBuilder } from "@discordjs/builders";
 import { MessageActionRow, MessageButton } from "discord.js";
-import { Command } from "../Command";
+import { Command } from ".";
 import { db } from "../utils/db";
 import { ErrorEmbed } from "../utils/discordEmbeds";
 import { getChannel } from "../utils/getCached";
 
-export const join: Command = {
-  conditions: [],
-  data: new SlashCommandBuilder()
-    .setName("join")
-    .setDescription(`Request to join a locked voice channel.`)
-    .addStringOption((option) =>
-      option
-        .setAutocomplete(true)
-        .setName("channel")
-        .setDescription("The channel to request to join.")
-        .setRequired(true)
-    ),
-  helpText: {
-    short:
-      "If join requests are enabled then you can request to join locked secondary channels.",
-  },
-  async execute(interaction) {
+export const join = new Command()
+  .setHelpText(
+    "If join requests are enabled then you can request to join locked secondary channels."
+  )
+  .setCommandData(
+    new SlashCommandBuilder()
+      .setName("join")
+      .setDescription(`Request to join a locked voice channel.`)
+      .addStringOption((option) =>
+        option
+          .setAutocomplete(true)
+          .setName("channel")
+          .setDescription("The channel to request to join.")
+          .setRequired(true)
+      )
+  )
+  .setResponse(async (interaction) => {
     const channel = interaction.options.getString("channel", true);
 
     if (!interaction.guild) return;
@@ -95,5 +95,4 @@ export const join: Command = {
           interaction.reply("Wrong button");
         }
       });
-  },
-};
+  });

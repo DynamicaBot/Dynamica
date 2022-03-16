@@ -1,6 +1,6 @@
 import { Embed, hyperlink } from "@discordjs/builders";
 import { Guild } from "discord.js";
-import { Event } from "../Event";
+import { Event } from ".";
 import { db } from "../utils/db";
 import { logger } from "../utils/logger";
 /**
@@ -72,10 +72,10 @@ const botInfoEmbed = new Embed()
     iconURL: "https://dynamica.dev/img/dynamica.png",
   });
 
-export const guildCreate: Event = {
-  once: false,
-  event: "guildCreate",
-  async execute(guild: Guild) {
+export const guildCreate = new Event()
+  .setOnce(false)
+  .setEvent("guildCreate")
+  .setResponse(async (guild: Guild) => {
     if (!guild.me.permissions.has("ADMINISTRATOR")) {
       const owner = await guild.fetchOwner();
       owner.send(
@@ -98,5 +98,4 @@ export const guildCreate: Event = {
       });
       logger.debug(`Joined guild ${guild.id} named: ${guild.name}`);
     }
-  },
-};
+  });

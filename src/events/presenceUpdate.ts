@@ -1,13 +1,13 @@
 import { Presence } from "discord.js";
-import { Event } from "../Event";
+import { Event } from ".";
 import { db } from "../utils/db";
 import { logger } from "../utils/logger";
 import { editChannel } from "../utils/operations/secondary";
 
-export const presenceUpdate: Event = {
-  event: "presenceUpdate",
-  once: false,
-  async execute(oldPresence: Presence, newPresence: Presence) {
+export const presenceUpdate = new Event()
+  .setOnce(false)
+  .setEvent("presenceUpdate")
+  .setResponse(async (oldPresence: Presence, newPresence: Presence) => {
     if (
       oldPresence?.activities?.at(0)?.name ===
       newPresence?.activities?.at(0)?.name
@@ -25,5 +25,4 @@ export const presenceUpdate: Event = {
     } catch (error) {
       logger.error("failed channel name refresh (run) ", error);
     }
-  },
-};
+  });
