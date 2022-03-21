@@ -19,7 +19,7 @@ steps:
     pull: if-not-exists
     commands:
       - apk update --no-cache
-      - apk add --no-cache python3 make gcc g++ bash
+      - apk add --no-cache python3 make gcc g++ curl
       - curl -f https://get.pnpm.io/v6.16.js | node - add --global pnpm
       - pnpm install --frozen-lockfile --prod
       - pnpm build
