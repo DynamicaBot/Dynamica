@@ -8,7 +8,16 @@ export const guildDelete = new Event()
   .setEvent("guildDelete")
   .setResponse(async (guild: Guild) => {
     const manager = await guild.channels.cache.get("Dynamica Manager");
-    await manager?.delete();
-    await db.guild.delete({ where: { id: guild.id } });
+    try {
+      await manager?.delete();
+    } catch (error) {
+      logger.error(error);
+    }
+    try {
+      await db.guild.delete({ where: { id: guild.id } });
+    } catch (error) {
+      logger.error(error);
+    }
+
     logger.debug(`Left guild ${guild.id} named: ${guild.name}`);
   });
