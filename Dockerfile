@@ -12,6 +12,7 @@ FROM base as build
 WORKDIR /app
 COPY src ./src
 RUN pnpm install
+RUN pnpm generate
 RUN pnpm build
 
 # Runner
