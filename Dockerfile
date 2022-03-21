@@ -2,7 +2,7 @@
 FROM node:16-alpine as base
 WORKDIR /app
 RUN apk update --no-cache
-RUN apk add --no-cache python3 make gcc g++ bash
+RUN apk add --no-cache python3 make gcc g++ bash curl
 RUN curl -f https://get.pnpm.io/v6.16.js | node - add --global pnpm
 COPY package.json pnpm-lock.yaml tsup.config.js tsconfig.json ./
 COPY prisma prisma
