@@ -24,6 +24,7 @@ ARG DRONE_TAG
 ENV VERSION=$DRONE_TAG
 COPY --from=build /app/dist dist
 RUN pnpm install --frozen-lockfile --prod
+RUN pnpm generate
 CMD ls dist && pnpm deploy && npx prisma migrate deploy && pnpm start
 
 # Runner
@@ -38,6 +39,7 @@ WORKDIR /app
 COPY --from=build /app/dist dist
 RUN pnpm fetch --prod
 RUN pnpm install -r --offline --prod
+RUN pnpm generate
 RUN adduser -H -D container -s /bin/bash
 USER container
 
