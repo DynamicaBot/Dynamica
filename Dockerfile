@@ -23,6 +23,7 @@ ENV NODE_ENV="production"
 ENV DATABASE_URL "file:/app/config/db.sqlite"
 ARG DRONE_TAG
 ENV VERSION=$DRONE_TAG
+COPY --from=build /app/node_modules/.prisma /app/node_modules/.prisma
 COPY --from=build /app/dist dist
 RUN pnpm fetch --prod
 RUN pnpm install -r --offline --prod
@@ -37,6 +38,7 @@ ENV DATABASE_URL "file:/home/container/dynamica/db.sqlite"
 ARG DRONE_TAG
 ENV VERSION=$DRONE_TAG
 WORKDIR /app
+COPY --from=build /app/node_modules/.prisma /app/node_modules/.prisma
 COPY --from=build /app/dist dist
 RUN pnpm fetch --prod
 RUN pnpm install -r --offline --prod
