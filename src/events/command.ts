@@ -1,4 +1,5 @@
 import { CacheType, Interaction } from "discord.js";
+import Command from "../classes/command.js";
 import Event from "../classes/event.js";
 import * as commands from "../commands/index.js";
 import { checkGuild } from "../utils/conditions/index.js";
@@ -11,7 +12,7 @@ export const command = new Event()
   .setResponse(async (interaction: Interaction<CacheType>) => {
     if (!interaction.isCommand()) return;
     try {
-      const command = commands[interaction.commandName];
+      const command: Command = commands[interaction.commandName];
       const { preconditions: conditions } = command;
       const conditionResults = await Promise.all(
         [checkGuild, ...conditions].map((condition) => condition(interaction))

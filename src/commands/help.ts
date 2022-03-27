@@ -20,7 +20,7 @@ export const help = new Command()
   )
   .setResponse(async (interaction) => {
     const subcommand = interaction.options.getString("subcommand", false);
-    const subcommandFile = commandsList[subcommand];
+    const subcommandFile = commandsList[subcommand] as Command;
     if (subcommand) {
       const { helpText } = subcommandFile;
       const embed = new Embed()
@@ -37,13 +37,12 @@ export const help = new Command()
         .setDescription(helpText.long ?? helpText.short);
       return interaction.reply({ embeds: [embed] });
     } else {
-      const commands = Object.values(commandsList) as Command[];
+      const commands = Object.values(commandsList);
       const commandFields: { value: string; name: string; inline: true }[][] =
         _.chunk(
           commands.map((command) => ({
             name: command.commandData.name,
-            value: commandsList[command.commandData.name].helpText
-              .short as string,
+            value: commandsList[command.commandData.name].helpText.short,
             inline: true,
           })),
           25

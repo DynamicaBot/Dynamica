@@ -26,7 +26,10 @@ export default class Command {
     | Omit<SlashCommandBuilder, "addSubcommand" | "addSubcommandGroup">;
   public execute: (interaction: CommandInteraction) => Promise<void>;
 
-  constructor() {}
+  constructor() {
+    this.preconditions = [];
+    this.helpText = { short: "", long: undefined };
+  }
 
   /**
    * Set preconditions.
