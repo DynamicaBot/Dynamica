@@ -1,8 +1,8 @@
 import { SlashCommandBuilder } from "@discordjs/builders";
-import { Command } from ".";
-import { checkCreator } from "../utils/conditions";
-import { db } from "../utils/db";
-import { getGuildMember } from "../utils/getCached";
+import Command from "../classes/command.js";
+import { checkCreator } from "../utils/conditions/index.js";
+import { db } from "../utils/db.js";
+import { getGuildMember } from "../utils/getCached.js";
 
 export const transfer = new Command()
   .setPreconditions([checkCreator])

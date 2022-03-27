@@ -1,6 +1,6 @@
 import Fuse from "fuse.js";
-import { Autocomplete } from ".";
-import { db } from "../utils/db";
+import Autocomplete from "../classes/autocomplete.js";
+import { db } from "../utils/db.js";
 
 export const general = new Autocomplete()
   .setName("channel")

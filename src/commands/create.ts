@@ -1,9 +1,9 @@
 import { SlashCommandBuilder } from "@discordjs/builders";
 import { GuildChannel } from "discord.js";
-import { Command } from ".";
-import { checkManager } from "../utils/conditions";
-import { ErrorEmbed } from "../utils/discordEmbeds";
-import { createPrimary } from "../utils/operations/primary";
+import Command from "../classes/command.js";
+import { checkManager } from "../utils/conditions/index.js";
+import { ErrorEmbed } from "../utils/discordEmbeds.js";
+import { createPrimary } from "../utils/operations/primary.js";
 
 export const create = new Command()
   .setPreconditions([checkManager])

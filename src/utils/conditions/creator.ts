@@ -1,7 +1,7 @@
 import { Check } from ".";
-import { db } from "../db";
-import { getGuildMember } from "../getCached";
-import { logger } from "../logger";
+import { db } from "../db.js";
+import { getGuildMember } from "../getCached.js";
+import { logger } from "../logger.js";
 /**
  * Checks if a guild member is the creator of the secondary channel. (overridden by manager and admin)
  * @param interaction The interaction which to check.

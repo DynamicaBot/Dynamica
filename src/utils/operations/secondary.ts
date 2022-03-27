@@ -6,11 +6,11 @@ import {
   GuildMember,
   VoiceBasedChannel,
 } from "discord.js";
-import { db } from "../db";
-import { formatChannelName } from "../formatString";
-import { getChannel } from "../getCached";
-import { logger } from "../logger";
-import { updateActivityCount } from "./general";
+import { db } from "../db.js";
+import { formatChannelName } from "../formatString.js";
+import { getChannel } from "../getCached.js";
+import { logger } from "../logger.js";
+import { updateActivityCount } from "./general.js";
 
 /**
  * Deletes Secondary Channel.

@@ -1,5 +1,5 @@
-import { db } from "../db";
-import { logger } from "../logger";
+import { db } from "../db.js";
+import { logger } from "../logger.js";
 
 /**
  * Updates or creates a new alias.

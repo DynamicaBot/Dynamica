@@ -1,8 +1,8 @@
 import { CommandInteraction } from "discord.js";
 import { Check } from ".";
-import { db } from "../db";
-import { getGuildMember } from "../getCached";
-import { logger } from "../logger";
+import { db } from "../db.js";
+import { getGuildMember } from "../getCached.js";
+import { logger } from "../logger.js";
 
 /**
  * Checks to see if the voice channel the user is currently in is a channel that Dynamica manages.

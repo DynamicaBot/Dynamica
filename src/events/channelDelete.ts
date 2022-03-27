@@ -1,6 +1,6 @@
 import { Channel, DMChannel } from "discord.js";
-import { Event } from ".";
-import { db } from "../utils/db";
+import Event from "../classes/event.js";
+import { db } from "../utils/db.js";
 
 export const channelDelete = new Event()
   .setOnce(false)

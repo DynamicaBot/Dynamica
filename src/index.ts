@@ -1,8 +1,9 @@
 import { Client, Intents } from "discord.js";
 import dotenv from "dotenv";
-import * as events from "./events/index";
-import { db } from "./utils/db";
-import { logger } from "./utils/logger";
+import Event from "./classes/event.js";
+import * as events from "./events/index.js";
+import { db } from "./utils/db.js";
+import { logger } from "./utils/logger.js";
 dotenv.config();
 
 /**
@@ -16,7 +17,7 @@ export const client = new Client({
   ],
 });
 
-const eventList = Object.values(events) as events.Event[];
+const eventList = Object.values(events) as Event[];
 try {
   // Register event handlers
   for (const event of eventList) {

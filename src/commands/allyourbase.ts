@@ -1,8 +1,8 @@
 import { SlashCommandBuilder } from "@discordjs/builders";
-import { Command } from ".";
-import { checkManager, checkSecondary } from "../utils/conditions";
-import { db } from "../utils/db";
-import { getGuildMember } from "../utils/getCached";
+import Command from "../classes/command.js";
+import { checkManager, checkSecondary } from "../utils/conditions/index.js";
+import { db } from "../utils/db.js";
+import { getGuildMember } from "../utils/getCached.js";
 
 export const allyourbase = new Command()
   .setPreconditions([checkManager, checkSecondary])

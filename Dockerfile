@@ -3,17 +3,15 @@ FROM node:16-alpine as base
 WORKDIR /app
 RUN apk update --no-cache
 RUN apk add --no-cache python3 make gcc g++ bash curl
-RUN curl -f https://get.pnpm.io/v6.16.js | node - add --global pnpm
-COPY package.json pnpm-lock.yaml tsup.config.js tsconfig.json ./
-COPY prisma prisma
+COPY package.json yarn.lock tsconfig.json prisma ./
 
 # Build
 FROM base as build
 WORKDIR /app
 COPY src ./src
-RUN pnpm install
-RUN pnpm generate
-RUN pnpm build
+RUN yarn install
+RUN yarn generate
+RUN yarn build
 
 # Runner
 FROM base as runner
@@ -25,13 +23,11 @@ ARG DRONE_TAG
 ENV VERSION=$DRONE_TAG
 COPY --from=build /app/node_modules/.prisma /app/node_modules/.prisma
 COPY --from=build /app/dist dist
-RUN pnpm fetch --prod
-RUN pnpm install -r --offline --prod
-CMD ls dist && pnpm deploy && npx prisma migrate deploy && pnpm start
+RUN yarn install --production
+CMD yarn deploy && npx prisma migrate deploy && yarn start
 
 # Runner
 FROM build as pterodactyl
-
 
 ENV NODE_ENV="production"
 ENV DATABASE_URL "file:/home/container/dynamica/db.sqlite"
@@ -40,8 +36,7 @@ ENV VERSION=$DRONE_TAG
 WORKDIR /app
 COPY --from=build /app/node_modules/.prisma /app/node_modules/.prisma
 COPY --from=build /app/dist dist
-RUN pnpm fetch --prod
-RUN pnpm install -r --offline --prod
+RUN yarn install --production
 RUN adduser -H -D container -s /bin/bash
 USER container
 

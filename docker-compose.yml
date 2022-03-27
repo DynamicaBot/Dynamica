@@ -1,0 +1,6 @@
+services:
+  dynamica_test:
+    build:
+      context: .
+      target: runner
+    env_file: .env

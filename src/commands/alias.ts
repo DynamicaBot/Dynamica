@@ -1,12 +1,12 @@
 import { Embed, SlashCommandBuilder } from "@discordjs/builders";
 import _ from "lodash";
-import { Command } from ".";
-import { checkManager } from "../utils/conditions";
+import Command from "../classes/command.js";
+import { checkManager } from "../utils/conditions/index.js";
 import {
   deleteAlias,
   listAliases,
   updateAlias,
-} from "../utils/operations/alias";
+} from "../utils/operations/alias.js";
 
 export const alias = new Command()
   .setPreconditions([checkManager])

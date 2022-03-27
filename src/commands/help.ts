@@ -1,7 +1,7 @@
 import { Embed, SlashCommandBuilder } from "@discordjs/builders";
 import _ from "lodash";
-import { Command } from ".";
-import * as commandsList from "../commands";
+import Command from "../classes/command.js";
+import * as commandsList from "../commands/index.js";
 export const help = new Command()
   .setHelpText("Shows a list of commands and their asociated descriptions. ")
   .setCommandData(

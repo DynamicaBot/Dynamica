@@ -1,5 +1,5 @@
 import { Embed, SlashCommandBuilder } from "@discordjs/builders";
-import { Command } from ".";
+import Command from "../classes/command.js";
 
 export const info = new Command()
   .setCommandData(

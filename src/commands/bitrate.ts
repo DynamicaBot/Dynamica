@@ -1,11 +1,22 @@
-import { Command } from ".";
-import { checkCreator, checkSecondary } from "../utils/conditions";
-import { ErrorEmbed } from "../utils/discordEmbeds";
-import { getGuildMember } from "../utils/getCached";
+import { SlashCommandBuilder } from "@discordjs/builders";
+import Command from "../classes/command.js";
+import { checkCreator, checkSecondary } from "../utils/conditions/index.js";
+import { ErrorEmbed } from "../utils/discordEmbeds.js";
+import { getGuildMember } from "../utils/getCached.js";
 
 export const bitrate = new Command()
   .setPreconditions([checkSecondary, checkCreator])
   .setHelpText("Changes the bitrate of the current channel.")
+  .setCommandData(
+    new SlashCommandBuilder()
+      .setName("bitrate")
+      .setDescription("Edit the bitrate of the current channel.")
+      .addIntegerOption((option) =>
+        option
+          .setDescription("The bitrate to set the channel to.")
+          .setName("bitrate")
+      )
+  )
   .setResponse(async (interaction) => {
     const bitrate = interaction.options.getInteger("bitrate");
 

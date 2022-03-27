@@ -1,8 +1,8 @@
 import { SlashCommandBuilder } from "@discordjs/builders";
-import { Command } from ".";
-import { checkManager } from "../utils/conditions";
-import { checkAdminPermissions } from "../utils/conditions/admin";
-import { db } from "../utils/db";
+import Command from "../classes/command.js";
+import { checkAdminPermissions } from "../utils/conditions/admin.js";
+import { checkManager } from "../utils/conditions/index.js";
+import { db } from "../utils/db.js";
 
 export const allowjoin = new Command()
   .setPreconditions([checkManager, checkAdminPermissions])

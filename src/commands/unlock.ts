@@ -1,11 +1,11 @@
 import { SlashCommandBuilder } from "@discordjs/builders";
-import { Command } from ".";
-import { checkCreator } from "../utils/conditions";
-import { checkAdminPermissions } from "../utils/conditions/admin";
-import { db } from "../utils/db";
-import { ErrorEmbed } from "../utils/discordEmbeds";
-import { getGuildMember } from "../utils/getCached";
-import { editChannel } from "../utils/operations/secondary";
+import Command from "../classes/command.js";
+import { checkAdminPermissions } from "../utils/conditions/admin.js";
+import { checkCreator } from "../utils/conditions/index.js";
+import { db } from "../utils/db.js";
+import { ErrorEmbed } from "../utils/discordEmbeds.js";
+import { getGuildMember } from "../utils/getCached.js";
+import { editChannel } from "../utils/operations/secondary.js";
 
 // export const unlock: CommandType = {
 //   preconditions: [checkCreator, checkAdminPermissions],

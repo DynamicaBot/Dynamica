@@ -1,14 +1,14 @@
 import { VoiceState } from "discord.js";
 import pDebounce from "p-debounce";
-import { Event } from ".";
-import { db } from "../utils/db";
-import { getChannel } from "../utils/getCached";
-import { logger } from "../utils/logger";
+import Event from "../classes/event.js";
+import { db } from "../utils/db.js";
+import { getChannel } from "../utils/getCached.js";
+import { logger } from "../utils/logger.js";
 import {
   createSecondary,
   deleteDiscordSecondary,
   editChannel,
-} from "../utils/operations/secondary";
+} from "../utils/operations/secondary.js";
 
 export const voiceStateUpdate = new Event()
   .setOnce(false)
