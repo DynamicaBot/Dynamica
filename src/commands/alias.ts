@@ -3,7 +3,6 @@ import _ from "lodash";
 import Command from "../classes/command.js";
 import { checkManager } from "../utils/conditions/index.js";
 import { db } from "../utils/db.js";
-import { logger } from "../utils/logger.js";
 import { listAliases, updateAlias } from "../utils/operations/alias.js";
 
 export const alias = new Command()
@@ -81,7 +80,6 @@ export const alias = new Command()
         const embeds = _.chunk(inlineAliases, 25).map((result) =>
           new Embed().addFields(...result)
         );
-        logger.debug(aliases);
         interaction.reply({
           content: `Alias List`,
           embeds,

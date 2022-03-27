@@ -174,7 +174,7 @@ export async function editChannel({ channel }: { channel: VoiceBasedChannel }) {
       },
     });
     const secondaries = await db.secondary.findMany({
-      where: { primary: secondary.primary, guild: secondary.guild },
+      where: { primaryId: secondary.primaryId, guild: secondary.guild },
     });
 
     /**
