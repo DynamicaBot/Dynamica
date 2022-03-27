@@ -30,7 +30,7 @@ export const name = new Command()
 
     const channel = guildMember?.voice.channel;
 
-    db.secondary.update({ where: { id: channel.id }, data: { name } });
+    await db.secondary.update({ where: { id: channel.id }, data: { name } });
     logger.info(`${channel.id} name changed.`);
     editChannel({ channel });
     return interaction.reply(

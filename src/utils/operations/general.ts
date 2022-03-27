@@ -9,9 +9,16 @@ export const updateActivityCount = (client: Client) => {
   return db.secondary
     .count()
     .then((count) => {
-      client.user?.setActivity(
-        `with ${count} ${count === 1 ? "channel" : "channels"}.`
-      );
+      client.user.setPresence({
+        status: !!count ? "online" : "idle",
+        afk: !!count,
+        activities: [
+          {
+            type: "PLAYING",
+            name: `with ${count} ${count === 1 ? "channel" : "channels"}.`,
+          },
+        ],
+      });
     })
-    .catch(logger.error);
+    .catch((error) => logger.error(error));
 };
