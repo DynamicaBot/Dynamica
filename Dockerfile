@@ -3,13 +3,13 @@ FROM node:16-alpine as base
 WORKDIR /app
 RUN apk update --no-cache
 RUN apk add --no-cache python3 make gcc g++ bash curl
-COPY package.json yarn.lock tsconfig.json prisma ./
+COPY package.json yarn.lock tsconfig.json tsup.config.js prisma ./
 
 # Build
 FROM base as build
 WORKDIR /app
 COPY src ./src
-RUN yarn install
+RUN yarn install --frozen-lockfile
 RUN yarn generate
 RUN yarn build
 
@@ -23,7 +23,7 @@ ARG DRONE_TAG
 ENV VERSION=$DRONE_TAG
 COPY --from=build /app/node_modules/.prisma /app/node_modules/.prisma
 COPY --from=build /app/dist dist
-RUN yarn install --production
+RUN yarn install --production --frozen-lockfile
 CMD yarn deploy && npx prisma migrate deploy && yarn start
 
 # Runner
@@ -36,7 +36,7 @@ ENV VERSION=$DRONE_TAG
 WORKDIR /app
 COPY --from=build /app/node_modules/.prisma /app/node_modules/.prisma
 COPY --from=build /app/dist dist
-RUN yarn install --production
+RUN yarn install --production --frozen-lockfile
 RUN adduser -H -D container -s /bin/bash
 USER container
 
