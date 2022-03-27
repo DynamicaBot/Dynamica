@@ -1,5 +1,5 @@
-import { db } from "../db";
-import { logger } from "../logger";
+import { db } from "../db.js";
+import { logger } from "../logger.js";
 
 export const updateGuild = async (guildId: string, data: any) => {
   try {

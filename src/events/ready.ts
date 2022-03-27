@@ -1,9 +1,9 @@
 import { Client } from "discord.js";
-import { Event } from ".";
-import { db } from "../utils/db";
-import { logger } from "../utils/logger";
-import { updateActivityCount } from "../utils/operations/general";
-import { createSecondary, editChannel } from "../utils/operations/secondary";
+import Event from "../classes/event.js";
+import { db } from "../utils/db.js";
+import { logger } from "../utils/logger.js";
+import { updateActivityCount } from "../utils/operations/general.js";
+import { createSecondary, editChannel } from "../utils/operations/secondary.js";
 
 export const ready = new Event()
   .setOnce(true)

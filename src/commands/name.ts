@@ -1,10 +1,10 @@
 import { SlashCommandBuilder } from "@discordjs/builders";
-import { Command } from ".";
-import { checkManager, checkSecondary } from "../utils/conditions";
-import { db } from "../utils/db";
-import { getGuildMember } from "../utils/getCached";
-import { logger } from "../utils/logger";
-import { editChannel } from "../utils/operations/secondary";
+import Command from "../classes/command.js";
+import { checkManager, checkSecondary } from "../utils/conditions/index.js";
+import { db } from "../utils/db.js";
+import { getGuildMember } from "../utils/getCached.js";
+import { logger } from "../utils/logger.js";
+import { editChannel } from "../utils/operations/secondary.js";
 
 export const name = new Command()
   .setPreconditions([checkManager, checkSecondary])

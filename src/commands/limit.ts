@@ -1,8 +1,8 @@
 import { SlashCommandBuilder } from "@discordjs/builders";
-import { Command } from ".";
-import { checkCreator, checkSecondary } from "../utils/conditions";
-import { ErrorEmbed } from "../utils/discordEmbeds";
-import { getGuildMember } from "../utils/getCached";
+import Command from "../classes/command.js";
+import { checkCreator, checkSecondary } from "../utils/conditions/index.js";
+import { ErrorEmbed } from "../utils/discordEmbeds.js";
+import { getGuildMember } from "../utils/getCached.js";
 
 export const limit = new Command()
   .setPreconditions([checkCreator, checkSecondary])

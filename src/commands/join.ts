@@ -1,9 +1,9 @@
 import { SlashCommandBuilder } from "@discordjs/builders";
 import { MessageActionRow, MessageButton } from "discord.js";
-import { Command } from ".";
-import { db } from "../utils/db";
-import { ErrorEmbed } from "../utils/discordEmbeds";
-import { getChannel } from "../utils/getCached";
+import Command from "../classes/command.js";
+import { db } from "../utils/db.js";
+import { ErrorEmbed } from "../utils/discordEmbeds.js";
+import { getChannel } from "../utils/getCached.js";
 
 export const join = new Command()
   .setHelpText(

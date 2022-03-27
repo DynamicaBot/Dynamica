@@ -1,9 +1,9 @@
 import { CacheType, Interaction } from "discord.js";
-import { Event } from ".";
-import * as commands from "../commands";
-import { checkGuild } from "../utils/conditions";
-import { ErrorEmbed } from "../utils/discordEmbeds";
-import { logger } from "../utils/logger";
+import Event from "../classes/event.js";
+import * as commands from "../commands/index.js";
+import { checkGuild } from "../utils/conditions/index.js";
+import { ErrorEmbed } from "../utils/discordEmbeds.js";
+import { logger } from "../utils/logger.js";
 
 export const command = new Event()
   .setOnce(false)

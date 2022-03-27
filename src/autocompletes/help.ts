@@ -1,12 +1,13 @@
 import Fuse from "fuse.js";
-import { Autocomplete } from ".";
-import * as commands from "../commands";
+import Autocomplete from "../classes/autocomplete.js";
+import Command from "../classes/command.js";
+import * as commands from "../commands/index.js";
 
 export const help = new Autocomplete()
   .setName("help")
   .setResponse(async (interaction) => {
     const value = interaction.options.getFocused();
-    const commandValues = Object.values(commands) as commands.Command[];
+    const commandValues = Object.values(commands) as Command[];
 
     const fuse = new Fuse(
       commandValues?.map(({ commandData, helpText }) => ({

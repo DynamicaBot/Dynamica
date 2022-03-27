@@ -1,10 +1,10 @@
 import { SlashCommandBuilder } from "@discordjs/builders";
 import { Role } from "discord.js";
-import { Command } from ".";
-import { checkCreator, checkSecondary } from "../utils/conditions";
-import { checkAdminPermissions } from "../utils/conditions/admin";
-import { ErrorEmbed } from "../utils/discordEmbeds";
-import { getGuildMember } from "../utils/getCached";
+import Command from "../classes/command.js";
+import { checkAdminPermissions } from "../utils/conditions/admin.js";
+import { checkCreator, checkSecondary } from "../utils/conditions/index.js";
+import { ErrorEmbed } from "../utils/discordEmbeds.js";
+import { getGuildMember } from "../utils/getCached.js";
 
 export const permission = new Command()
   .setPreconditions([checkCreator, checkSecondary, checkAdminPermissions])

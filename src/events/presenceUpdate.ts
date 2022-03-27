@@ -1,8 +1,8 @@
 import { Presence } from "discord.js";
-import { Event } from ".";
-import { db } from "../utils/db";
-import { logger } from "../utils/logger";
-import { editChannel } from "../utils/operations/secondary";
+import Event from "../classes/event.js";
+import { db } from "../utils/db.js";
+import { logger } from "../utils/logger.js";
+import { editChannel } from "../utils/operations/secondary.js";
 
 export const presenceUpdate = new Event()
   .setOnce(false)

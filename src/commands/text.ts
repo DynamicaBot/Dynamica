@@ -1,7 +1,7 @@
 import { SlashCommandBuilder } from "@discordjs/builders";
-import { Command } from ".";
-import { checkManager } from "../utils/conditions";
-import { checkAdminPermissions } from "../utils/conditions/admin";
+import Command from "../classes/command.js";
+import { checkAdminPermissions } from "../utils/conditions/admin.js";
+import { checkManager } from "../utils/conditions/index.js";
 import { updateGuild } from "../utils/operations/guild.js";
 
 export const text = new Command()

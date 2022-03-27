@@ -1,10 +1,10 @@
 import { SlashCommandBuilder } from "@discordjs/builders";
-import { Command } from ".";
-import { checkCreator, checkSecondary } from "../utils/conditions";
-import { checkAdminPermissions } from "../utils/conditions/admin";
-import { db } from "../utils/db";
-import { getGuildMember } from "../utils/getCached";
-import { editChannel } from "../utils/operations/secondary";
+import Command from "../classes/command.js";
+import { checkAdminPermissions } from "../utils/conditions/admin.js";
+import { checkCreator, checkSecondary } from "../utils/conditions/index.js";
+import { db } from "../utils/db.js";
+import { getGuildMember } from "../utils/getCached.js";
+import { editChannel } from "../utils/operations/secondary.js";
 
 export const lock = new Command()
   .setPreconditions([checkCreator, checkSecondary, checkAdminPermissions])

@@ -2,8 +2,7 @@ import { REST } from "@discordjs/rest";
 import { Routes } from "discord-api-types/v9";
 import { config } from "dotenv";
 import signale from "signale";
-import * as commands from "./commands";
-import { Command } from "./commands";
+import * as commands from "./commands/index.js";
 config();
 
 const logger = new signale.Signale({
@@ -18,7 +17,7 @@ const { TOKEN, CLIENT_ID, GUILD_ID } = process.env;
 if (!TOKEN || !CLIENT_ID) {
   logger.error("Missing env vars.");
 } else {
-  const importedCommands = Object.values(commands) as Command[];
+  const importedCommands = Object.values(commands);
   const commandList = importedCommands.map((command) =>
     command.commandData.toJSON()
   );

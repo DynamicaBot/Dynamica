@@ -12,12 +12,12 @@
     "lib": ["esnext", "DOM"],
     "target": "esnext",
     "useDefineForClassFields": true,
-
+    "incremental": true,
     // Emit
     "rootDir": "./src" /* Specify the root folder within your source files. */,
     "sourceMap": true /* Create source map files for emitted JavaScript files. */,
     "outDir": "./dist" /* Specify an output folder for all emitted files. */,
-    "downlevelIteration": true /* Emit more compliant, but verbose and less performant JavaScript for iteration. */,
+    "downlevelIteration": false /* Emit more compliant, but verbose and less performant JavaScript for iteration. */,
     "esModuleInterop": true /* Emit additional JavaScript to ease support for importing CommonJS modules. This enables `allowSyntheticDefaultImports` for type compatibility. */
   }
 }
