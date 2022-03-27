@@ -61,6 +61,8 @@ steps:
     image: plugins/docker
     settings:
       target: runner
+      cache_from:
+        - ghcr.io/dynamicabot/dynamica:latest
       username:
         from_secret: github_username
       password:
@@ -91,6 +93,8 @@ steps:
     image: plugins/docker
     settings:
       target: pterodactyl
+      cache_from:
+        - ghcr.io/dynamicabot/dynamica:latest
       username:
         from_secret: github_username
       password:
