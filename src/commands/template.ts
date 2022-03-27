@@ -2,6 +2,7 @@ import { SlashCommandBuilder } from "@discordjs/builders";
 import Command from "../classes/command.js";
 import { checkManager } from "../utils/conditions/index.js";
 import { db } from "../utils/db.js";
+import { logger } from "../utils/logger.js";
 import { editChannel } from "../utils/operations/secondary.js";
 
 export const template = new Command()
@@ -32,14 +33,24 @@ export const template = new Command()
     const name = interaction.options.getString("template", true);
     const channel = interaction.options.getString("channel", true);
 
-    db.primary.update({
+    const primary = await db.primary.update({
       where: { id: channel },
       data: { template: name },
+      include: { secondaries: true },
     });
-    const discordChannel = interaction.guild.channels.cache.get(channel);
-    if (discordChannel.isVoice()) {
-      editChannel({ channel: discordChannel });
-    }
+
+    primary.secondaries.forEach((secondary) => {
+      try {
+        const discordChannel = interaction.guild.channels.cache.get(
+          secondary.id
+        );
+        if (discordChannel.isVoice()) {
+          editChannel({ channel: discordChannel });
+        }
+      } catch (error) {
+        logger.error("Failed to update child channels", error);
+      }
+    });
 
     return interaction.reply(`Template Changed to ${name}.`);
   });
