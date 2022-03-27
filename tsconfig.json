@@ -12,7 +12,6 @@
     "lib": ["esnext", "DOM"],
     "target": "esnext",
     "useDefineForClassFields": true,
-    "incremental": true,
     // Emit
     "rootDir": "./src" /* Specify the root folder within your source files. */,
     "sourceMap": true /* Create source map files for emitted JavaScript files. */,
