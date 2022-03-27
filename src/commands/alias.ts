@@ -2,11 +2,9 @@ import { Embed, SlashCommandBuilder } from "@discordjs/builders";
 import _ from "lodash";
 import Command from "../classes/command.js";
 import { checkManager } from "../utils/conditions/index.js";
-import {
-  deleteAlias,
-  listAliases,
-  updateAlias,
-} from "../utils/operations/alias.js";
+import { db } from "../utils/db.js";
+import { logger } from "../utils/logger.js";
+import { listAliases, updateAlias } from "../utils/operations/alias.js";
 
 export const alias = new Command()
   .setPreconditions([checkManager])
@@ -46,6 +44,7 @@ export const alias = new Command()
                 "Name of the activity you want to reset the alias for."
               )
               .setRequired(true)
+              .setAutocomplete(true)
           )
       )
       .addSubcommand((subcommand) =>
@@ -64,8 +63,10 @@ export const alias = new Command()
         );
         break;
       case "remove":
-        deleteAlias(activity, interaction.guildId);
-        interaction.reply(`Successfully removed alias for \`${activity}\``);
+        await db.alias.delete({ where: { id: parseInt(activity) } });
+        await interaction.reply(
+          `Successfully removed alias for \`${activity}\``
+        );
 
         break;
 
@@ -80,6 +81,7 @@ export const alias = new Command()
         const embeds = _.chunk(inlineAliases, 25).map((result) =>
           new Embed().addFields(...result)
         );
+        logger.debug(aliases);
         interaction.reply({
           content: `Alias List`,
           embeds,

@@ -26,9 +26,14 @@ export const help = new Autocomplete()
 
     const query = fuse.search(value.toString());
     interaction.respond(
-      query.map((result) => ({
-        name: result.item.name,
-        value: result.item.name,
-      }))
+      !!value.toString()
+        ? query.map((result) => ({
+            name: result.item.name,
+            value: result.item.name,
+          }))
+        : commandValues?.map(({ commandData }) => ({
+            name: commandData.name,
+            value: commandData.name,
+          }))
     );
   });

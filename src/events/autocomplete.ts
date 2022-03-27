@@ -9,11 +9,8 @@ export const autocomplete = new Event()
   .setEvent("interactionCreate")
   .setResponse(async (interaction: Interaction) => {
     if (!interaction.isAutocomplete()) return;
-
-    if (!interaction.isAutocomplete()) return;
     try {
       const autocomplete: Autocomplete = autocompletes[interaction.commandName];
-
       autocomplete.response(interaction);
     } catch (error) {
       logger.error(error);

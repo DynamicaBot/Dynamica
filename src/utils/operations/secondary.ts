@@ -69,7 +69,9 @@ export const createSecondary = async (
 
     if (!primaryConfig || !primaryChannel?.isVoice()) return;
 
-    const activities = Array.from(primaryChannel.members).flatMap((entry) => {
+    const activities = Array.from(
+      primaryChannel.members.filter((member) => !member.user.bot)
+    ).flatMap((entry) => {
       if (!entry[1].presence) return [];
       return entry[1].presence?.activities.map((activity) => activity.name);
     });
@@ -171,6 +173,9 @@ export async function editChannel({ channel }: { channel: VoiceBasedChannel }) {
         guild: true,
       },
     });
+    const secondaries = await db.secondary.findMany({
+      where: { primary: secondary.primary, guild: secondary.guild },
+    });
 
     /**
      * Return aliases
@@ -217,11 +222,15 @@ export async function editChannel({ channel }: { channel: VoiceBasedChannel }) {
     /**
      * The template to be used.
      */
-    const str = secondary.name
+    const str = !!secondary.name
       ? secondary.name
       : !filteredActivityList.length
       ? secondary.primary.generalName
       : secondary.primary.template;
+    const channelNumber =
+      secondaries
+        .map((secondaryChannel) => secondaryChannel.id)
+        .indexOf(secondary.id) + 1;
 
     /**
      * The formatted name
@@ -229,7 +238,7 @@ export async function editChannel({ channel }: { channel: VoiceBasedChannel }) {
     const name = formatChannelName(str, {
       creator: creator ? creator : "",
       aliases: aliases,
-      channelNumber: 1,
+      channelNumber: channelNumber,
       activities: filteredActivityList,
       memberCount: channel.members.size, // Get this
       locked,
