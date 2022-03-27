@@ -34,6 +34,6 @@ export const name = new Command()
     logger.info(`${channel.id} name changed.`);
     editChannel({ channel });
     return interaction.reply(
-      `Channel name changed to ${name}. Channel may take up to 10 minutes to update.`
+      `Channel name changed to \`${name}\`. Channel may take up to 10 minutes to update.`
     );
   });

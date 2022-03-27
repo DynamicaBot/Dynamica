@@ -52,6 +52,6 @@ export const general = new Command()
     });
 
     await interaction.reply(
-      `General template for <#${channel}> changed to ${name}.`
+      `General template for <#${channel}> changed to \`${name}.\``
     );
   });

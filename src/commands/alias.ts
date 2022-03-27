@@ -62,9 +62,11 @@ export const alias = new Command()
         );
         break;
       case "remove":
-        await db.alias.delete({ where: { id: parseInt(activity) } });
+        const deletedAlias = await db.alias.delete({
+          where: { id: parseInt(activity) },
+        });
         await interaction.reply(
-          `Successfully removed alias for \`${activity}\``
+          `Successfully removed alias for \`${deletedAlias.activity}\`.`
         );
 
         break;

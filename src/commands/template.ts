@@ -52,5 +52,5 @@ export const template = new Command()
       }
     });
 
-    return interaction.reply(`Template Changed to ${name}.`);
+    return interaction.reply(`Template changed to \`${name}\`.`);
   });
