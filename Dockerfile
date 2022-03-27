@@ -8,8 +8,8 @@ COPY package.json yarn.lock tsconfig.json tsup.config.js prisma ./
 # Build
 FROM base as build
 WORKDIR /app
-COPY src ./src
 RUN yarn install --frozen-lockfile
+COPY src ./src
 RUN yarn generate
 RUN yarn build
 
@@ -34,9 +34,9 @@ ENV DATABASE_URL "file:/home/container/dynamica/db.sqlite"
 ARG DRONE_TAG
 ENV VERSION=$DRONE_TAG
 WORKDIR /app
+RUN yarn install --production --frozen-lockfile
 COPY --from=build /app/node_modules/.prisma /app/node_modules/.prisma
 COPY --from=build /app/dist dist
-RUN yarn install --production --frozen-lockfile
 RUN adduser -H -D container -s /bin/bash
 USER container
 
