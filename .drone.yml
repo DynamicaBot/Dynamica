@@ -46,7 +46,7 @@ trigger:
     - tag
 ---
 kind: "pipeline"
-name: "Publish GHCR.io Release"
+name: "Publish GHCR.io Tagged Release"
 depends_on:
   - "Build"
 type: "docker"
@@ -76,7 +76,7 @@ volumes:
       path: /tmp/cache
 ---
 kind: "pipeline"
-name: "Publish GHCR.io Pterodactyl Release"
+name: "Publish GHCR.io Tagged Pterodactyl Release"
 depends_on:
   - "Build"
 type: "docker"
@@ -90,8 +90,6 @@ steps:
     pull: if-not-exists
     image: plugins/docker
     settings:
-      tags:
-        - pterodactyl
       target: pterodactyl
       username:
         from_secret: github_username
@@ -108,5 +106,71 @@ volumes:
     host:
       path: /tmp/cache
 ---
-kind: signature
-hmac: 35fc080ab5d33306e5e274ea237ea02dea616dc89207f37b40aad784a824398f
+kind: "pipeline"
+name: "Publish Latest"
+depends_on:
+  - "Build"
+type: "docker"
+trigger:
+  event:
+    - push
+  branch:
+    - master
+steps:
+  - name: Publish Latest (Latest)
+    pull: if-not-exists
+    image: plugins/docker
+    settings:
+      target: runner
+      cache_from:
+        - ghcr.io/dynamicabot/dynamica:latest
+      tags:
+        - latest
+      username:
+        from_secret: github_username
+      password:
+        from_secret: github_token
+      repo: ghcr.io/dynamicabot/dynamica
+      auto_tag: false
+      registry: ghcr.io
+      build_args_from_env:
+        - DRONE_TAG
+volumes:
+  - name: cache
+    host:
+      path: /tmp/cache
+---
+kind: "pipeline"
+name: "Publish Pterodactyl Latest"
+depends_on:
+  - "Build"
+type: "docker"
+trigger:
+  event:
+    - push
+  branch:
+    - master
+steps:
+  - name: Publish Pterodactyl Bot on ghcr.io
+    pull: if-not-exists
+    image: plugins/docker
+    settings:
+      cache_from:
+        - ghcr.io/dynamicabot/dynamica-pterodactyl:latest
+      tags:
+        - latest
+      target: pterodactyl
+      username:
+        from_secret: github_username
+      password:
+        from_secret: github_token
+      repo: ghcr.io/dynamicabot/dynamica
+      auto_tag: false
+      registry: ghcr.io
+      auto_tag_suffix: pterodactyl
+      build_args_from_env:
+        - DRONE_TAG
+volumes:
+  - name: cache
+    host:
+      path: /tmp/cache
