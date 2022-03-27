@@ -6,6 +6,9 @@ import { updateGuild } from "../utils/operations/guild.js";
 
 export const text = new Command()
   .setPreconditions([checkManager, checkAdminPermissions])
+  .setHelpText(
+    "Enable or Disable private text channels that can only be accessed by people in the same voice channel."
+  )
   .setCommandData(
     new SlashCommandBuilder()
       .setName("text")

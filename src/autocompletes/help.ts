@@ -27,13 +27,17 @@ export const help = new Autocomplete()
     const query = fuse.search(value.toString());
     interaction.respond(
       !!value.toString()
-        ? query.map((result) => ({
-            name: result.item.name,
-            value: result.item.name,
-          }))
-        : commandValues?.map(({ commandData }) => ({
-            name: commandData.name,
-            value: commandData.name,
-          }))
+        ? query
+            .map((result) => ({
+              name: result.item.name,
+              value: result.item.name,
+            }))
+            .slice(0, 24)
+        : commandValues
+            ?.map(({ commandData }) => ({
+              name: commandData.name,
+              value: commandData.name,
+            }))
+            .slice(0, 24)
     );
   });
