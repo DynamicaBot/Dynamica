@@ -1,14 +1,7 @@
 import { VoiceState } from "discord.js";
-import pDebounce from "p-debounce";
 import Event from "../classes/event.js";
-import { db } from "../utils/db.js";
-import { getChannel } from "../utils/getCached.js";
-import { logger } from "../utils/logger.js";
-import {
-  createSecondary,
-  deleteDiscordSecondary,
-  editChannel,
-} from "../utils/operations/secondary.js";
+import DynamicaPrimary from "../classes/primary.js";
+import DynamicaSecondary from "../classes/secondary.js";
 
 export const voiceStateUpdate = new Event()
   .setOnce(false)
@@ -19,38 +12,36 @@ export const voiceStateUpdate = new Event()
 
     // User joins channel
     if (newVoiceState.channel && newVoiceState.member) {
-      const secondaryConfig = await db.secondary.findUnique({
-        where: { id: newVoiceState.channelId },
-      });
-      const primaryConfig = await db.primary.findUnique({
-        where: { id: newVoiceState.channelId },
-      });
+      /** Look for an existing secondary channel */
+      const existingSecondary = await new DynamicaSecondary(
+        newVoiceState.client
+      ).fetch(newVoiceState.channelId);
+
+      /** Look for an existing primary channel */
+      const primary = await new DynamicaPrimary(newVoiceState.client).fetch(
+        newVoiceState.channelId
+      );
+
       // Create a new secondary if one doesn't already exist and the user has joined a primary channel
-      if (primaryConfig) {
-        createSecondary(
-          newVoiceState.guild.channels,
-          newVoiceState.channelId,
+      if (!!primary) {
+        const newSecondary = new DynamicaSecondary(newVoiceState.client);
+        await newSecondary.create(
+          primary,
+          newVoiceState.guild,
           newVoiceState.member
         );
-      } else if (secondaryConfig) {
-        // If a secondary exists then run rename job.
+      } else if (!!existingSecondary) {
+        // If a secondary exists then attempt to update the name;
         if (newVoiceState.channel.members.size !== 1) {
-          editChannel({ channel: newVoiceState.channel });
-          if (secondaryConfig.textChannelId) {
-            const textChannel = await getChannel(
-              newVoiceState.guild.channels,
-              secondaryConfig.textChannelId
-            );
-
+          await existingSecondary.update();
+          if (!!existingSecondary.textChannel) {
             // Typeguard voice remove permission for people who have left the voice channel to see the text channel.
-            if (textChannel.type === "GUILD_TEXT") {
-              textChannel.permissionOverwrites.create(
-                oldVoiceState.member?.id,
-                {
-                  VIEW_CHANNEL: true,
-                }
-              );
-            }
+            existingSecondary.textChannel.permissionOverwrites.create(
+              oldVoiceState.member.id,
+              {
+                VIEW_CHANNEL: true,
+              }
+            );
           }
         }
       }
@@ -58,57 +49,47 @@ export const voiceStateUpdate = new Event()
 
     // User leaves channel
     if (oldVoiceState.channel && oldVoiceState.member) {
-      const secondaryConfig = await db.secondary.findUnique({
-        where: { id: oldVoiceState.channelId },
-        include: { guild: true },
-      });
-      if (secondaryConfig) {
-        if (oldVoiceState.channel?.members.size !== 0) {
-          await editChannel({ channel: oldVoiceState.channel });
-          // Get discord text channel
-          if (secondaryConfig.textChannelId) {
-            const textChannel = await getChannel(
-              newVoiceState.guild.channels,
-              secondaryConfig.textChannelId
-            );
+      const secondary = await new DynamicaSecondary(oldVoiceState.client).fetch(
+        oldVoiceState.channelId
+      );
 
-            // Typeguard voice remove permission for people who have left the voice channel to see the text channel.
-            if (textChannel.type === "GUILD_TEXT") {
-              textChannel.permissionOverwrites.delete(oldVoiceState.member?.id);
-            }
+      if (!!secondary) {
+        if (oldVoiceState.channel.members.size !== 0) {
+          await secondary.update();
+          if (!!secondary.textChannel) {
+            secondary.textChannel.permissionOverwrites.delete(
+              oldVoiceState.member?.id
+            );
           }
         } else {
-          try {
-            const debouncedDelete = pDebounce(deleteDiscordSecondary, 1000);
-            await debouncedDelete(oldVoiceState.channel, secondaryConfig);
-          } catch (error) {
-            logger.error(error);
-          }
+          // const debouncedDelete = pDebounce(secondary.delete, 1000);
+          // await debouncedDelete();
+          secondary.delete();
         }
       }
     }
 
-    // User joins secondary channel
-    if (newVoiceState.channelId && newVoiceState.member) {
-      const secondaryConfig = await db.secondary.findUnique({
-        where: { id: newVoiceState.channelId },
-        include: { guild: true },
-      });
-      if (secondaryConfig) {
-        if (
-          secondaryConfig?.guild.textChannelsEnabled &&
-          secondaryConfig.textChannelId
-        ) {
-          const textChannel = await getChannel(
-            newVoiceState.guild.channels,
-            secondaryConfig.textChannelId
-          );
-          if (textChannel.type === "GUILD_TEXT") {
-            textChannel.permissionOverwrites.create(newVoiceState.member?.id, {
-              VIEW_CHANNEL: true,
-            });
-          }
-        }
-      }
-    }
+    // // User joins secondary channel
+    // if (newVoiceState.channel && newVoiceState.member) {
+    //   const secondaryConfig = await db.secondary.findUnique({
+    //     where: { id: newVoiceState.channelId },
+    //     include: { guild: true },
+    //   });
+    //   if (secondaryConfig) {
+    //     if (
+    //       secondaryConfig?.guild.textChannelsEnabled &&
+    //       secondaryConfig.textChannelId
+    //     ) {
+    //       const textChannel = await getChannel(
+    //         newVoiceState.guild.channels,
+    //         secondaryConfig.textChannelId
+    //       );
+    //       if (textChannel.type === "GUILD_TEXT") {
+    //         textChannel.permissionOverwrites.create(newVoiceState.member?.id, {
+    //           VIEW_CHANNEL: true,
+    //         });
+    //       }
+    //     }
+    //   }
+    // }
   });

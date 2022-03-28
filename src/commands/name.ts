@@ -1,10 +1,10 @@
 import { SlashCommandBuilder } from "@discordjs/builders";
 import Command from "../classes/command.js";
+import DynamicaSecondary from "../classes/secondary.js";
 import { checkManager, checkSecondary } from "../utils/conditions/index.js";
 import { db } from "../utils/db.js";
 import { getGuildMember } from "../utils/getCached.js";
 import { logger } from "../utils/logger.js";
-import { editChannel } from "../utils/operations/secondary.js";
 
 export const name = new Command()
   .setPreconditions([checkManager, checkSecondary])
@@ -32,8 +32,10 @@ export const name = new Command()
 
     await db.secondary.update({ where: { id: channel.id }, data: { name } });
     logger.info(`${channel.id} name changed.`);
-    editChannel({ channel });
-    return interaction.reply(
-      `Channel name changed to \`${name}\`. Channel may take up to 10 minutes to update.`
+
+    const secondary = await new DynamicaSecondary(interaction.client).fetch(
+      channel.id
     );
+    secondary.update();
+    return interaction.reply(`Channel name changed to \`${name}\`.`);
   });

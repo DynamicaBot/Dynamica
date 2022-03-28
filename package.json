@@ -42,7 +42,7 @@
   },
   "scripts": {
     "start": "node --enable-source-maps .",
-    "watch": "tsup src/index.ts --watch --onSuccess \"node dist/index.js\"",
+    "watch": "tsup src/index.ts --watch --onSuccess \"node --enable-source-maps dist/index.js\"",
     "lint": "prettier --write ./src",
     "generate": "prisma generate",
     "deploy": "node dist/deploy-commands.js",

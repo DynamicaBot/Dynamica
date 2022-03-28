@@ -1,11 +1,10 @@
 import { SlashCommandBuilder } from "@discordjs/builders";
 import Command from "../classes/command.js";
+import DynamicaSecondary from "../classes/secondary.js";
 import { checkAdminPermissions } from "../utils/conditions/admin.js";
 import { checkCreator } from "../utils/conditions/index.js";
-import { db } from "../utils/db.js";
 import { ErrorEmbed } from "../utils/discordEmbeds.js";
 import { getGuildMember } from "../utils/getCached.js";
-import { editChannel } from "../utils/operations/secondary.js";
 
 // export const unlock: CommandType = {
 //   preconditions: [checkCreator, checkAdminPermissions],
@@ -60,23 +59,19 @@ export const unlock = new Command()
       interaction.user.id
     );
 
-    const { channel } = guildMember.voice;
+    const { channelId } = guildMember.voice;
 
-    if (channel.manageable) {
-      channel.lockPermissions();
-      db.secondary.update({
-        where: { id: channel.id },
-        data: {
-          locked: false,
-        },
-      });
+    const dynamicaSecondary = await new DynamicaSecondary(
+      interaction.client
+    ).fetch(channelId);
 
-      editChannel({ channel });
-      return interaction.reply(`Removed lock on <#${channel.id}>`);
+    if (dynamicaSecondary) {
+      await dynamicaSecondary.unlock();
+      await interaction.reply(`Removed lock on <#${channelId}>`);
     } else {
-      return interaction.reply({
+      await interaction.reply({
         ephemeral: true,
-        embeds: [ErrorEmbed("Couldn't edit channel.")],
+        embeds: [ErrorEmbed("Not a valid Dynamica channel.")],
       });
     }
   });
