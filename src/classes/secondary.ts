@@ -170,10 +170,11 @@ export default class DynamicaSecondary {
     if (channelId) {
       this.id = channelId;
     }
+    const id = this.id ?? channelId;
 
     try {
       let secondary = await db.secondary.findUnique({
-        where: { id: this.id },
+        where: { id },
         include: { guild: true, primary: true },
       });
 
@@ -210,9 +211,9 @@ export default class DynamicaSecondary {
       logger.error("Error fetching secondary channel from database:", error);
     }
     try {
-      let channel = await this.client.channels.cache.get(this.id);
+      let channel = await this.client.channels.cache.get(id);
       if (!channel) {
-        await db.secondary.delete({ where: { id: this.id } });
+        await db.secondary.delete({ where: { id } });
         return undefined;
       }
       if (!channel.isVoice()) {
