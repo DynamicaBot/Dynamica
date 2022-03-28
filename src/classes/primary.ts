@@ -104,8 +104,11 @@ export default class DynamicaPrimary {
       logger.error("Error fetching primary channel from database:", error);
     }
     try {
-      let channel = await this.client.channels.fetch(this.id);
-
+      let channel = await this.client.channels.cache.get(this.id);
+      if (!channel) {
+        this.delete();
+        return undefined;
+      }
       if (!channel.isVoice()) {
         throw new Error("Not a valid voice channel.");
       } else if (channel.type === "GUILD_STAGE_VOICE") {
@@ -121,22 +124,57 @@ export default class DynamicaPrimary {
   }
 
   /**
-   * Delete a primary channel
+   * Delete a primary discord channel. DB & Discord Channel.
    */
   async delete(): Promise<void> {
-    // TODO: if discord channel or db don't exist then ignore
+    await this.fetch();
     if (!this.client) {
       throw new Error("No client defined");
     }
-    if (!this.prisma) {
-      throw new Error("Please fetch");
-    }
     if (!this.discord) {
-      throw new Error("Please fetch");
+      try {
+        await this.deletePrisma();
+      } catch (error) {
+        logger.error("Failed to delete prisma secondary entry:", error);
+      }
+    } else if (!this.prisma) {
+      try {
+        await this.deleteDiscord();
+      } catch (error) {
+        logger.error("Failed to delete discord secondary:", error);
+      }
+    } else if (this.discord && this.prisma) {
+      try {
+        await this.deletePrisma();
+        await this.deleteDiscord();
+      } catch (error) {
+        logger.error("Failed to delete secondary:", error);
+      }
+    }
+  }
+
+  private async deletePrisma(): Promise<void> {
+    if (!this.id) {
+      throw new Error("No id defined.");
+    }
+    await db.primary.delete({ where: { id: this.id } });
+  }
+
+  private async deleteDiscord(): Promise<void> {
+    if (!this.client) {
+      throw new Error("No client defined.");
+    }
+    if (!this.id) {
+      throw new Error("No Id defined.");
     }
     try {
-      await db.primary.delete({ where: { id: this.id } });
+      if (!this.discord.deletable) {
+        throw new Error("The channel is not deletable.");
+      }
+
       await this.discord.delete();
+
+      logger.debug(`Secondary channel deleted ${this.id}.`);
     } catch (error) {
       logger.error("Failed to delete primary:", error);
     }

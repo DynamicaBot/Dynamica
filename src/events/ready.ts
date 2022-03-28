@@ -19,9 +19,11 @@ export const ready = new Event()
           element.id
         );
 
+        if (!existingPrimary) {
+          return;
+        }
         const channel = existingPrimary.discord;
 
-        if (!channel?.isVoice()) return;
         if (channel.members.size > 0) {
           const channelMembers = [...channel.members.values()];
 
@@ -42,7 +44,7 @@ export const ready = new Event()
           element.id
         );
 
-        await secondaryChannel.update();
+        await secondaryChannel?.update();
       });
 
       logger.info(`Ready! Logged in as ${client.user?.tag}`);

@@ -5,6 +5,7 @@ import {
   Guild,
   GuildMember,
   TextChannel,
+  User,
   VoiceChannel,
 } from "discord.js";
 import { db } from "../utils/db";
@@ -184,10 +185,12 @@ export default class DynamicaSecondary {
       this.prismaPrimary = secondary.primary;
       if (secondary.textChannelId) {
         try {
-          let textChannel = await this.client.channels.fetch(
+          let textChannel = await this.client.channels.cache.get(
             this.prisma.textChannelId
           );
-          if (textChannel) {
+          if (!textChannel) {
+            this.textChannel = undefined;
+          } else {
             if (
               textChannel.isText() &&
               textChannel.type !== "DM" &&
@@ -207,8 +210,11 @@ export default class DynamicaSecondary {
       logger.error("Error fetching secondary channel from database:", error);
     }
     try {
-      let channel = await this.client.channels.fetch(this.id);
-
+      let channel = await this.client.channels.cache.get(this.id);
+      if (!channel) {
+        await db.secondary.delete({ where: { id: this.id } });
+        return undefined;
+      }
       if (!channel.isVoice()) {
         throw new Error("Not a valid voice channel.");
       } else if (channel.type === "GUILD_STAGE_VOICE") {
@@ -454,5 +460,23 @@ export default class DynamicaSecondary {
     } catch (error) {
       logger.error("Failed to unlock channel:", error);
     }
+  }
+
+  async changeOwner(user: User): Promise<void> {
+    if (!this.client) {
+      throw new Error("No client defined");
+    }
+    if (!this.discord || !this.prisma) {
+      throw new Error("Please fetch");
+    }
+    try {
+      await db.secondary.update({
+        where: { id: this.id },
+        data: { creator: user.id },
+      });
+    } catch (error) {
+      logger.error("Failed to set owner of channel:", error);
+    }
+    this.fetch();
   }
 }

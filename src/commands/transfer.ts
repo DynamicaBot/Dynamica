@@ -1,7 +1,7 @@
 import { SlashCommandBuilder } from "@discordjs/builders";
 import Command from "../classes/command.js";
+import DynamicaSecondary from "../classes/secondary.js";
 import { checkCreator } from "../utils/conditions/index.js";
-import { db } from "../utils/db.js";
 import { getGuildMember } from "../utils/getCached.js";
 
 export const transfer = new Command()
@@ -28,20 +28,17 @@ export const transfer = new Command()
       interaction.user.id
     );
 
-    const { channel } = guildMember.voice;
+    const { channelId } = guildMember.voice;
 
-    if (!channel) return;
-
-    // set new owner
-    db.secondary.update({
-      where: {
-        id: channel.id,
-      },
-      data: {
-        creator: user.id,
-      },
-    });
-    interaction.reply(
-      `Ownership of <#${channel.id}> channel to <@${user.id}>.`
-    );
+    const secondaryChannel = await new DynamicaSecondary(
+      interaction.client
+    ).fetch(channelId);
+    if (secondaryChannel) {
+      await secondaryChannel.changeOwner(user);
+      interaction.reply(
+        `Ownership of <#${channelId}> channel to <@${user.id}>.`
+      );
+    } else {
+      interaction.reply(`Not a valid secondary channel.`);
+    }
   });
