@@ -1,9 +1,8 @@
 import { SlashCommandBuilder } from "@discordjs/builders";
 import Command from "../classes/command.js";
+import DynamicaSecondary from "../classes/secondary.js";
 import { checkManager } from "../utils/conditions/index.js";
 import { db } from "../utils/db.js";
-import { logger } from "../utils/logger.js";
-import { editChannel } from "../utils/operations/secondary.js";
 
 export const general = new Command()
   .setPreconditions([checkManager])
@@ -38,20 +37,14 @@ export const general = new Command()
       include: { secondaries: true },
     });
 
-    updatedPrimary.secondaries.forEach((secondary) => {
-      try {
-        const discordChannel = interaction.guild.channels.cache.get(
-          secondary.id
-        );
-        if (discordChannel.isVoice()) {
-          editChannel({ channel: discordChannel });
-        }
-      } catch (error) {
-        logger.error("Failed to update child channels", error);
-      }
+    updatedPrimary.secondaries.forEach(async (secondary) => {
+      const dynamicaSecondary = await new DynamicaSecondary(
+        interaction.client
+      ).fetch(secondary.id);
+      dynamicaSecondary?.update();
     });
 
     await interaction.reply(
-      `General template for <#${channel}> changed to \`${name}.\``
+      `General template for <#${channel}> changed to \`${name}\`.`
     );
   });

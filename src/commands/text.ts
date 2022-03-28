@@ -2,7 +2,7 @@ import { SlashCommandBuilder } from "@discordjs/builders";
 import Command from "../classes/command.js";
 import { checkAdminPermissions } from "../utils/conditions/admin.js";
 import { checkManager } from "../utils/conditions/index.js";
-import { updateGuild } from "../utils/operations/guild.js";
+import { db } from "../utils/db.js";
 
 export const text = new Command()
   .setPreconditions([checkManager, checkAdminPermissions])
@@ -25,7 +25,10 @@ export const text = new Command()
   .setResponse(async (interaction) => {
     const state = interaction.options.getBoolean("state", true);
 
-    updateGuild(interaction.guildId, { textChannelsEnabled: state });
+    db.guild.update({
+      where: { id: interaction.guildId },
+      data: { textChannelsEnabled: state },
+    });
 
     return interaction.reply(
       `Temporary text channels ${

@@ -1,8 +1,6 @@
 import { Presence } from "discord.js";
 import Event from "../classes/event.js";
-import { db } from "../utils/db.js";
-import { logger } from "../utils/logger.js";
-import { editChannel } from "../utils/operations/secondary.js";
+import DynamicaSecondary from "../classes/secondary.js";
 
 export const presenceUpdate = new Event()
   .setOnce(false)
@@ -13,16 +11,12 @@ export const presenceUpdate = new Event()
       newPresence?.activities?.at(0)?.name
     )
       return;
-    const voiceChannel = newPresence.member.voice.channel;
-    if (!voiceChannel) return;
-    const secondaryConfig = await db.secondary.findUnique({
-      where: { id: voiceChannel.id },
-    });
-    if (!secondaryConfig) return;
+    const { channelId } = newPresence.member.voice;
+    const dynamicaSecondary = await new DynamicaSecondary(
+      newPresence.client
+    ).fetch(channelId);
 
-    try {
-      editChannel({ channel: voiceChannel });
-    } catch (error) {
-      logger.error("failed channel name refresh (run) ", error);
+    if (dynamicaSecondary) {
+      dynamicaSecondary.update();
     }
   });

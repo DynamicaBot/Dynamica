@@ -1,9 +1,9 @@
 import { SlashCommandBuilder } from "@discordjs/builders";
 import { GuildChannel } from "discord.js";
 import Command from "../classes/command.js";
+import DynamicaPrimary from "../classes/primary.js";
 import { checkManager } from "../utils/conditions/index.js";
 import { ErrorEmbed } from "../utils/discordEmbeds.js";
-import { createPrimary } from "../utils/operations/primary.js";
 
 export const create = new Command()
   .setPreconditions([checkManager])
@@ -36,11 +36,13 @@ export const create = new Command()
       });
     }
 
-    const newPrimary = await createPrimary(
-      interaction.guild.channels,
-      interaction.user.id,
-      section
-    );
+    // const newPrimary = await createPrimary(
+    //   interaction.guild.channels,
+    //   interaction.user.id,
+    //   section
+    // );
+    const newPrimary = new DynamicaPrimary(interaction.client);
+    await newPrimary.create(interaction.guild, interaction.user, section);
 
     return interaction.reply(
       `New voice channel <#${newPrimary.id}> successfully created.`

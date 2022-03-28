@@ -1,56 +1,50 @@
 import { Client } from "discord.js";
 import Event from "../classes/event.js";
+import DynamicaPrimary from "../classes/primary.js";
+import DynamicaSecondary from "../classes/secondary.js";
 import { db } from "../utils/db.js";
 import { logger } from "../utils/logger.js";
 import { updateActivityCount } from "../utils/operations/general.js";
-import { createSecondary, editChannel } from "../utils/operations/secondary.js";
 
 export const ready = new Event()
   .setOnce(true)
   .setEvent("ready")
   .setResponse(async (client: Client<true>) => {
     try {
-      const activeSecondaries = await db.secondary.findMany();
+      const secondaries = await db.secondary.findMany();
       const primaries = await db.primary.findMany();
-      for (let index = 0; index < primaries.length; index++) {
-        const element = primaries[index];
-        const channel = await client.channels.cache.get(element.id);
+
+      primaries.forEach(async (element) => {
+        const existingPrimary = await new DynamicaPrimary(client).fetch(
+          element.id
+        );
+
+        const channel = existingPrimary.discord;
+
         if (!channel?.isVoice()) return;
         if (channel.members.size > 0) {
           const channelMembers = [...channel.members.values()];
 
-          const secondary = await createSecondary(
-            channel.guild.channels,
-            element.id,
+          const secondary = new DynamicaSecondary(client);
+          await secondary.create(
+            existingPrimary,
+            channel.guild,
             channelMembers[0]
           );
           channelMembers.slice(1).forEach((channelMember) => {
-            channelMember.voice.setChannel(secondary);
+            channelMember.voice.setChannel(secondary.discord);
           });
         }
-      }
-      for (let index = 0; index < activeSecondaries.length; index++) {
-        const element = activeSecondaries[index];
-        const channel = await client.channels.cache.get(element.id);
-        if (!channel) {
-          db.secondary
-            .delete({ where: { id: element.id } })
-            .then((secondary) => {
-              if (secondary.textChannelId) {
-                client.channels.cache.get(secondary.textChannelId).delete();
-              }
-              logger.info(`Deleted Stale Secondary ${element.id}`);
-            });
+      });
 
-          return;
-        }
-        if (!channel.isVoice()) {
-          logger.info(`Not a voice channel`);
-          return;
-        }
-        logger.info(`Channel restarted ${channel.id}`);
-        editChannel({ channel });
-      }
+      secondaries.forEach(async (element) => {
+        const secondaryChannel = await new DynamicaSecondary(client).fetch(
+          element.id
+        );
+
+        await secondaryChannel.update();
+      });
+
       logger.info(`Ready! Logged in as ${client.user?.tag}`);
       updateActivityCount(client);
     } catch (error) {
