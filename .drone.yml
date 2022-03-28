@@ -14,9 +14,11 @@ steps:
       restore: true
       mount:
         - ./node_modules
-  - name: "Build"
+  - name: "Build & Check Types"
     image: "node:16-alpine"
     pull: if-not-exists
+    environment:
+      TYPE_CHECKING: "true"
     commands:
       - apk update --no-cache
       - apk add --no-cache python3 make gcc g++ curl

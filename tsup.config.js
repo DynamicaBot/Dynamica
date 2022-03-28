@@ -10,6 +10,6 @@ export default defineConfig((options) => ({
   minify: !options.watch,
   tsconfig: "tsconfig.json",
   bundle: true,
-  dts: false,
+  dts: !!process.env.TYPE_CHECKING,
   metafile: true,
 }));
