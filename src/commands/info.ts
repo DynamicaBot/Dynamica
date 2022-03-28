@@ -1,53 +1,101 @@
 import { Embed, SlashCommandBuilder } from "@discordjs/builders";
 import Command from "../classes/command.js";
+import DynamicaPrimary from "../classes/primary.js";
+import DynamicaSecondary from "../classes/secondary.js";
 
 export const info = new Command()
   .setCommandData(
     new SlashCommandBuilder()
       .setName("info")
-      .setDescription("Get info about a user or a server!")
+      .setDescription("Get info about a primary or secondary channel.")
       .addSubcommand((subcommand) =>
         subcommand
-          .setName("user")
-          .setDescription("Info about a user")
-          .addUserOption((option) =>
-            option.setName("target").setDescription("The user")
+          .setName("primary")
+          .addStringOption((option) =>
+            option
+              .setAutocomplete(true)
+              .setName("primarychannel")
+              .setDescription("Primary channel to get info about.")
           )
+          .setDescription("Get info about a primary channel.")
       )
       .addSubcommand((subcommand) =>
-        subcommand.setName("server").setDescription("Info about the server")
+        subcommand
+          .setName("secondary")
+          .addStringOption((option) =>
+            option
+              .setAutocomplete(true)
+              .setName("secondarychannel")
+              .setDescription("Secondary channel to get info about.")
+          )
+          .setDescription("Get info about a secondary channel.")
       )
   )
   .setHelpText("Shows the info of either a user or the current server.")
   .setResponse(async (interaction) => {
-    const subcommand = interaction.options.getSubcommand();
+    const subcommand = interaction.options.getSubcommand(true);
     switch (subcommand) {
-      case "user":
-        const user = interaction.options.getUser("target");
-        user
-          ? interaction.reply(`Username: ${user.username}\nID: ${user.id}`)
-          : interaction.reply(
-              `Your username: ${interaction.user.username}\nYour ID: ${interaction.user.id}`
-            );
-        break;
-      case "server":
+      case "primary":
+        const chosenPrimary = interaction.options.getString("primarychannel");
+        const primary = await new DynamicaPrimary(interaction.client).fetch(
+          chosenPrimary
+        );
         interaction.reply({
+          ephemeral: true,
+          content: `Here's the current info for <#${primary.id}>`,
           embeds: [
-            new Embed()
-              .addFields(
-                {
-                  name: "Server Name",
-                  value: `${interaction.guild?.name}`,
-                },
-                {
-                  name: "Total Members",
-                  value: `${interaction.guild?.memberCount}`,
-                }
-              )
-              .setColor(3447003),
+            new Embed().addFields(
+              {
+                name: "General Template",
+                value: primary.prisma.generalName,
+              },
+              {
+                name: "Activity Template",
+                value: primary.prisma.template,
+              },
+              {
+                name: "# of Secondary channels",
+                value: primary.prisma.secondaries.length.toString(),
+              }
+            ),
+          ],
+        });
+        // logger.debug(chosenPrimary);
+        break;
+      case "secondary":
+        const chosenSecondary =
+          interaction.options.getString("secondarychannel");
+        const secondary = await new DynamicaSecondary(interaction.client).fetch(
+          chosenSecondary
+        );
+        interaction.reply({
+          ephemeral: true,
+          content: `Here's the current info for <#${secondary.id}>`,
+          embeds: [
+            new Embed().addFields(
+              {
+                name: "Name Override",
+                value: secondary.prisma.name ?? "`Not set`",
+              },
+              {
+                name: "Locked",
+                value: secondary.prisma.locked
+                  ? "🔒 - Locked"
+                  : "🔓 - Unlocked",
+              },
+              {
+                name: "Owner",
+                value: (
+                  await interaction.guild.members.cache.get(
+                    secondary.prisma.creator
+                  )
+                ).user.tag,
+              }
+            ),
           ],
         });
         break;
+
       default:
         break;
     }

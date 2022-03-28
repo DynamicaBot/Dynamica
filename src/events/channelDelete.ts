@@ -1,20 +1,21 @@
 import { Channel, DMChannel } from "discord.js";
 import Event from "../classes/event.js";
-import { db } from "../utils/db.js";
+import DynamicaPrimary from "../classes/primary.js";
+import DynamicaSecondary from "../classes/secondary.js";
 
 export const channelDelete = new Event()
   .setOnce(false)
   .setEvent("channelDelete")
-  .setResponse(async ({ id }: Channel | DMChannel) => {
-    const primary = await db.primary.findUnique({ where: { id } });
-    const secondary = await db.secondary.findUnique({ where: { id } });
+  .setResponse(async (channel: Channel | DMChannel) => {
+    // logger.debug(channel);
+    const primary = await new DynamicaPrimary(channel.client).fetch(channel.id);
+    const secondary = await new DynamicaSecondary(channel.client).fetch(
+      channel.id
+    );
 
     if (primary) {
-      await db.primary.delete({
-        where: { id },
-        include: { secondaries: true },
-      });
+      primary.delete();
     } else if (secondary) {
-      await db.secondary.delete({ where: { id } });
+      secondary.delete();
     }
   });
