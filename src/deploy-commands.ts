@@ -1,17 +1,10 @@
-import * as commands from '@commands';
+import commands from '@commands';
 import { REST } from '@discordjs/rest';
+import logger from '@utils/logger';
 import { Routes } from 'discord-api-types/v9';
 import { config } from 'dotenv';
-import signale from 'signale';
 
 config();
-
-const logger = new signale.Signale({
-  disabled: false,
-  interactive: false,
-  logLevel: process.env.LOG_LEVEL || 'info',
-  secrets: [process.env.TOKEN, process.env.CLIENT_ID],
-});
 
 const { TOKEN, CLIENT_ID, GUILD_ID } = process.env;
 

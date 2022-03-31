@@ -1,6 +1,6 @@
 import Autocomplete from '@classes/autocomplete';
 import Command from '@classes/command';
-import * as commands from '@commands';
+import commands from '@commands';
 import Fuse from 'fuse.js';
 
 export default new Autocomplete()

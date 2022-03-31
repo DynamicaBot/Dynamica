@@ -1,4 +1,4 @@
-import * as autocompletes from '@autocompletes';
+import autocompletes from '@autocompletes';
 import Autocomplete from '@classes/autocomplete';
 import Event from '@classes/event';
 import logger from '@utils/logger';
