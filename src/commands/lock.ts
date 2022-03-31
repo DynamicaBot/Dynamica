@@ -1,21 +1,22 @@
-import Command from "@classes/command";
-import DynamicaSecondary from "@classes/secondary";
-import { SlashCommandBuilder } from "@discordjs/builders";
-import { checkCreator, checkSecondary } from "@preconditions";
-import { checkAdminPermissions } from "@preconditions/admin";
+import Command from '@classes/command';
+import DynamicaSecondary from '@classes/secondary';
+import { SlashCommandBuilder } from '@discordjs/builders';
+import checkAdminPermissions from '@preconditions/admin';
+import checkCreator from '@preconditions/creator';
+import checkSecondary from '@preconditions/secondary';
 
-export const lock = new Command()
+export default new Command()
   .setPreconditions([checkCreator, checkSecondary, checkAdminPermissions])
   .setCommandData(
     new SlashCommandBuilder()
-      .setName("lock")
-      .setDescription("Lock a channel to a certain role or user.")
+      .setName('lock')
+      .setDescription('Lock a channel to a certain role or user.')
   )
   .setHelpText(
-    "Use it to lock your channels away from pesky server members.",
-    "Use it to lock your channels away from pesky server members. Locks it to the creator (initially) and permissions can be altered with /permission. \n Channels can be reset to default with /unlock."
+    'Use it to lock your channels away from pesky server members.',
+    'Use it to lock your channels away from pesky server members. Locks it to the creator (initially) and permissions can be altered with /permission. \n Channels can be reset to default with /unlock.'
   )
-  .setResponse(async interaction => {
+  .setResponse(async (interaction) => {
     if (!interaction.guild?.members) return;
 
     const guildMember = await interaction.guild.members.cache.get(
@@ -33,12 +34,13 @@ export const lock = new Command()
       await dynamicaSecondary.lock();
       await interaction.reply({
         ephemeral: true,
-        content: `Use \`/permission add\` to allow people to access the channels. Or, \`/permission remove\` to remove people.`,
+        content:
+          'Use `/permission add` to allow people to access the channels. Or, `/permission remove` to remove people.',
       });
     } else {
-      await interaction.reply({
+      interaction.reply({
         ephemeral: true,
-        content: `This isn't a dynamica channel.`,
+        content: "This isn't a dynamica channel.",
       });
     }
   });

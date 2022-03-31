@@ -1,10 +1,10 @@
-import PrimaryClass from "@classes/primary";
-import db from "@db";
-import { Embed } from "@discordjs/builders";
-import Prisma from "@prisma/client";
-import { updateActivityCount } from "@utils";
-import { formatChannelName } from "@utils/format";
-import logger from "@utils/logger";
+import PrimaryClass from '@classes/primary';
+import db from '@db';
+import { Embed } from '@discordjs/builders';
+import Prisma from '@prisma/client';
+import updateActivityCount from '@utils';
+import formatChannelName from '@utils/format';
+import logger from '@utils/logger';
 import {
   Client,
   Guild,
@@ -12,20 +12,27 @@ import {
   TextChannel,
   User,
   VoiceChannel,
-} from "discord.js";
+} from 'discord.js';
+
 export default class DynamicaSecondary {
   /** The secondary channel as defined by prisma */
   prisma: Prisma.Secondary;
+
   /** The discord channel as defined by discord */
   discord: VoiceChannel;
+
   /** The discordjs client instance */
   client: Client<true>;
+
   /** The channel id as set in fetch */
   id: string;
+
   /** The discord text channel */
   textChannel?: TextChannel;
+
   /** The prisma guild */
   prismaGuild: Prisma.Guild;
+
   /** The prisma primary */
   prismaPrimary: Prisma.Primary;
 
@@ -63,15 +70,17 @@ export default class DynamicaSecondary {
       });
 
       const activities = Array.from(
-        primary.discord.members.filter(member => !member.user.bot)
-      ).flatMap(entry => {
+        primary.discord.members.filter(
+          (discordMember) => !discordMember.user.bot
+        )
+      ).flatMap((entry) => {
         if (!entry[1].presence) return [];
-        return entry[1].presence?.activities.map(activity => activity.name);
+        return entry[1].presence?.activities.map((activity) => activity.name);
       });
 
       const filteredActivityList = activities
-        .filter(activity => activity !== "Spotify")
-        .filter(activity => activity !== "Custom Status");
+        .filter((activity) => activity !== 'Spotify')
+        .filter((activity) => activity !== 'Custom Status');
 
       const str = !filteredActivityList.length
         ? primaryConfig.generalName
@@ -87,7 +96,7 @@ export default class DynamicaSecondary {
           locked: false,
         }),
         {
-          type: "GUILD_VOICE",
+          type: 'GUILD_VOICE',
           parent: primary.discord.parent ?? undefined,
           position: primary.discord.position
             ? primary.discord.position + 1
@@ -111,15 +120,12 @@ export default class DynamicaSecondary {
           },
           include: { guild: true, primary: true },
         })
-        .then(async channel => {
+        .then(async (channel) => {
           this.id = secondary.id;
           this.prisma = channel;
           this.prismaGuild = channel.guild;
           this.prismaPrimary = channel.primary;
-          const guild = await db.guild.findUnique({
-            where: { id: channel.guildId },
-          });
-          if (guild?.textChannelsEnabled) {
+          if (channel.guild?.textChannelsEnabled) {
             this.createTextChannel(member);
           }
           updateActivityCount(this.client);
@@ -141,20 +147,20 @@ export default class DynamicaSecondary {
    */
   async createTextChannel(member: GuildMember) {
     if (!this.id) {
-      throw new Error("No Id defined");
+      throw new Error('No Id defined');
     }
     try {
       const textChannel = await this.discord.guild.channels.create(
-        "Text Channel",
+        'Text Channel',
         {
-          type: "GUILD_TEXT",
+          type: 'GUILD_TEXT',
           topic: `Private text channel for members of <#${this.id}>.`,
           permissionOverwrites: [
             {
               id: this.discord.guild.channels.guild.roles.everyone,
-              deny: "VIEW_CHANNEL",
+              deny: 'VIEW_CHANNEL',
             },
-            { id: member.id, allow: "VIEW_CHANNEL" },
+            { id: member.id, allow: 'VIEW_CHANNEL' },
           ],
           parent: this.discord.parent ?? undefined,
         }
@@ -162,15 +168,15 @@ export default class DynamicaSecondary {
       await textChannel.send({
         embeds: [
           new Embed()
-            .setTitle("Welcome!")
+            .setTitle('Welcome!')
             .setColor(3447003)
             .setDescription(
               `Welcome to your very own private text chat. This channel is only to people in <#${this.id}>.`
             )
             .setAuthor({
-              name: "Dynamica",
-              url: "https://dynamica.dev",
-              iconURL: "https://dynamica.dev/img/dynamica.png",
+              name: 'Dynamica',
+              url: 'https://dynamica.dev',
+              iconURL: 'https://dynamica.dev/img/dynamica.png',
             }),
         ],
       });
@@ -182,7 +188,7 @@ export default class DynamicaSecondary {
         },
       });
     } catch (error) {
-      logger.error("Failed to create text channel:", error);
+      logger.error('Failed to create text channel:', error);
     }
   }
 
@@ -193,10 +199,10 @@ export default class DynamicaSecondary {
   async fetch(): Promise<DynamicaSecondary | undefined> {
     // Variables
     if (!this.client) {
-      throw new Error("No client defined");
+      throw new Error('No client defined');
     }
     if (!this.id) {
-      throw new Error("No Id defined");
+      throw new Error('No Id defined');
     }
 
     const { id } = this;
@@ -208,7 +214,7 @@ export default class DynamicaSecondary {
 
     if (prisma) {
       const discord = await this.client.channels.cache.get(id);
-      if (discord?.type === "GUILD_VOICE") {
+      if (discord?.type === 'GUILD_VOICE') {
         this.discord = discord;
       } else {
         await db.secondary.delete({ where: { id: prisma.id } });
@@ -220,7 +226,7 @@ export default class DynamicaSecondary {
       this.prisma = prisma;
       this.prismaGuild = prisma.guild;
       this.prismaPrimary = prisma.primary;
-      if (textChannel?.type === "GUILD_TEXT") {
+      if (textChannel?.type === 'GUILD_TEXT') {
         this.textChannel = textChannel;
       } else {
         this.textChannel = undefined;
@@ -243,7 +249,7 @@ export default class DynamicaSecondary {
    */
   async update(): Promise<void> {
     if (!this.client) {
-      throw new Error("No client defined");
+      throw new Error('No client defined');
     }
     if (!this.discord || this.discord.members.size === 0) {
       this.delete();
@@ -278,46 +284,44 @@ export default class DynamicaSecondary {
         /**
          * The creator or, alternatively the person who will become the creator.
          */
-        const creator = channelCreator
-          ? channelCreator
-          : this.discord.members.at(0)?.displayName;
+        const creator =
+          channelCreator || this.discord.members.at(0)?.displayName;
 
         /**
          * Get the activities of all the members of the channel.
          */
-        const activities = Array.from(this.discord.members).flatMap(entry => {
+        const activities = Array.from(this.discord.members).flatMap((entry) => {
           if (!entry[1].presence) return [];
-          return entry[1].presence?.activities.map(activity => activity.name);
+          return entry[1].presence?.activities.map((activity) => activity.name);
         });
 
         /**
          * The activities list minus stuff that should be ignored like Spotify and Custom status // Todo: more complicated logic for people who might be streaming
          */
         const filteredActivityList = activities
-          .filter(activity => activity !== "Spotify")
-          .filter(activity => activity !== "Custom Status");
+          .filter((activity) => activity !== 'Spotify')
+          .filter((activity) => activity !== 'Custom Status');
         const { locked } = secondary;
 
         /**
          * The template to be used.
          */
-        const str = !!secondary.name
-          ? secondary.name
-          : !filteredActivityList.length
-          ? this.prismaPrimary.generalName
-          : this.prismaPrimary.template;
+        const str =
+          secondary.name ?? !filteredActivityList.length
+            ? this.prismaPrimary.generalName
+            : this.prismaPrimary.template;
         const channelNumber =
           secondaries
-            .map(secondaryChannel => secondaryChannel.id)
+            .map((secondaryChannel) => secondaryChannel.id)
             .indexOf(secondary.id) + 1;
 
         /**
          * The formatted name
          */
         const name = formatChannelName(str, {
-          creator: creator ? creator : "",
-          aliases: aliases,
-          channelNumber: channelNumber,
+          creator: creator || '',
+          aliases,
+          channelNumber,
           activities: filteredActivityList,
           memberCount: this.discord.members.size, // Get this
           locked,
@@ -325,7 +329,7 @@ export default class DynamicaSecondary {
 
         if (this.discord.name !== name) {
           if (!this.discord.manageable) {
-            throw new Error(`Channel not manageable`);
+            throw new Error('Channel not manageable');
           }
           this.discord
             .edit({
@@ -349,15 +353,16 @@ export default class DynamicaSecondary {
   async delete(): Promise<void> {
     await this.fetch();
     if (!this.client) {
-      throw new Error("No client defined");
+      throw new Error('No client defined');
     }
     if (!this.id) {
-      logger.debug("No id");
+      logger.debug('No id');
     }
     try {
       if (!this.discord && !this.prisma) {
         return;
-      } else if (!this.discord && !!this.prisma) {
+      }
+      if (!this.discord && !!this.prisma) {
         await this.deletePrisma();
       } else if (!this.prisma && !!this.discord) {
         await this.deleteDiscord();
@@ -375,21 +380,21 @@ export default class DynamicaSecondary {
 
   private async deletePrisma(): Promise<void> {
     if (!this.id) {
-      throw new Error("No id defined.");
+      throw new Error('No id defined.');
     }
     await db.secondary.delete({ where: { id: this.id } });
   }
 
   private async deleteDiscord(): Promise<void> {
     if (!this.client) {
-      throw new Error("No client defined.");
+      throw new Error('No client defined.');
     }
     if (!this.id) {
-      throw new Error("No Id defined.");
+      throw new Error('No Id defined.');
     }
     try {
       if (!this.discord.deletable) {
-        throw new Error("The channel is not deletable.");
+        throw new Error('The channel is not deletable.');
       }
 
       await updateActivityCount(this.client);
@@ -403,25 +408,25 @@ export default class DynamicaSecondary {
         await textChannel.delete();
       }
     } catch (error) {
-      logger.error("Failed to delete secondary:", error);
+      logger.error('Failed to delete secondary:', error);
     }
   }
 
   async lock(): Promise<void> {
     if (!this.client) {
-      throw new Error("No client defined");
+      throw new Error('No client defined');
     }
     if (!this.discord || !this.prisma) {
-      throw new Error("Please fetch");
+      throw new Error('Please fetch');
     }
     try {
-      const everyone = this.discord.guild.roles.everyone;
+      const { everyone } = this.discord.guild.roles;
       const currentlyActive = [...this.discord.members.values()];
 
       const { permissionOverwrites } = this.discord;
 
       await Promise.all(
-        currentlyActive.map(member =>
+        currentlyActive.map((member) =>
           permissionOverwrites.create(member.id, {
             CONNECT: true,
           })
@@ -441,16 +446,16 @@ export default class DynamicaSecondary {
 
       await this.update();
     } catch (error) {
-      logger.error("Failed to lock channel:", error);
+      logger.error('Failed to lock channel:', error);
     }
   }
 
   async unlock(): Promise<void> {
     if (!this.client) {
-      throw new Error("No client defined");
+      throw new Error('No client defined');
     }
     if (!this.discord || !this.prisma) {
-      throw new Error("Please fetch");
+      throw new Error('Please fetch');
     }
     try {
       await this.discord.lockPermissions();
@@ -464,16 +469,16 @@ export default class DynamicaSecondary {
 
       await this.update();
     } catch (error) {
-      logger.error("Failed to unlock channel:", error);
+      logger.error('Failed to unlock channel:', error);
     }
   }
 
   async changeOwner(user: User): Promise<void> {
     if (!this.client) {
-      throw new Error("No client defined");
+      throw new Error('No client defined');
     }
     if (!this.discord || !this.prisma) {
-      throw new Error("Please fetch");
+      throw new Error('Please fetch');
     }
     try {
       await db.secondary.update({
@@ -481,7 +486,7 @@ export default class DynamicaSecondary {
         data: { creator: user.id },
       });
     } catch (error) {
-      logger.error("Failed to set owner of channel:", error);
+      logger.error('Failed to set owner of channel:', error);
     }
     this.fetch();
   }

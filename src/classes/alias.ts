@@ -1,9 +1,14 @@
-import db from "@db";
+import db from '@db';
+
 export default class DynamicaAlias {
   private guildId: string;
+
   private id: number;
+
   public activity: string;
+
   public alias: string;
+
   constructor(guildId: string, id?: number) {
     this.guildId = guildId;
     if (id) {
@@ -18,7 +23,7 @@ export default class DynamicaAlias {
    */
   async fetch() {
     if (!this.id) {
-      throw new Error("No Id defined");
+      throw new Error('No Id defined');
     }
     const alias = await db.alias.findUnique({ where: { id: this.id } });
     this.activity = alias.activity;
@@ -53,14 +58,9 @@ export default class DynamicaAlias {
    * @param data The different things to update.
    * @returns this
    */
-  async update(
-    id: number,
-    data: {
-      alias: string;
-      activity: string;
-    }
-  ) {
+  async update(data: { alias: string; activity: string }) {
     if (!this.id) {
+      throw new Error('No Id defined');
     }
 
     const { alias, activity } = data;
@@ -69,7 +69,7 @@ export default class DynamicaAlias {
         activity,
         alias,
       },
-      where: { id },
+      where: { id: this.id },
     });
 
     this.activity = dbAlias.activity;
@@ -83,7 +83,7 @@ export default class DynamicaAlias {
    */
   async delete() {
     if (!this.id) {
-      throw new Error("No Id defined");
+      throw new Error('No Id defined');
     }
     await db.alias.delete({ where: { id: this.id } });
   }

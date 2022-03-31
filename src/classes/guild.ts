@@ -1,11 +1,15 @@
-import db from "@db";
-import { Alias, Guild as PrismaGuild } from "@prisma/client";
-import logger from "@utils/logger";
-import { Client, Guild as DiscordGuild } from "discord.js";
+import db from '@db';
+import { Alias, Guild as PrismaGuild } from '@prisma/client';
+import logger from '@utils/logger';
+import { Client, Guild as DiscordGuild } from 'discord.js';
+
 export default class DynamicaGuild {
   private client: Client<true>;
+
   private id: string;
+
   public discord: DiscordGuild;
+
   public prisma: PrismaGuild & { aliases: Alias[] };
 
   constructor(client: Client<true>, id?: string) {
@@ -19,12 +23,12 @@ export default class DynamicaGuild {
    * Fetch the guild db & discord
    * @returns this
    */
-  async fetch(): Promise<DynamicaGuild> {
+  async fetch() {
     if (!this.client) {
-      throw new Error("No client defined.");
+      throw new Error('No client defined.');
     }
     if (!this.id) {
-      throw new Error("No Id defined.");
+      throw new Error('No Id defined.');
     }
     try {
       const guild = await db.guild.findUnique({
@@ -35,13 +39,12 @@ export default class DynamicaGuild {
       if (guild && discordGuild) {
         this.prisma = guild;
         this.discord = discordGuild;
-        return this;
-      } else {
-        return undefined;
       }
+      return undefined;
     } catch (error) {
       logger.error("Couldn't fetch guild:", error);
     }
+    return this;
   }
 
   /**
@@ -51,10 +54,10 @@ export default class DynamicaGuild {
    */
   async setAllowJoin(enabled: boolean) {
     if (!this.client) {
-      throw new Error("No client defined");
+      throw new Error('No client defined');
     }
     if (!this.id) {
-      throw new Error("No Id defined");
+      throw new Error('No Id defined');
     }
     const updatedGuild = await db.guild.update({
       where: { id: this.id },
@@ -77,10 +80,10 @@ export default class DynamicaGuild {
    */
   async setTextEnabled(enabled: boolean) {
     if (!this.client) {
-      throw new Error("No client defined");
+      throw new Error('No client defined');
     }
     if (!this.id) {
-      throw new Error("No Id defined");
+      throw new Error('No Id defined');
     }
     const updatedGuild = await db.guild.update({
       where: { id: this.id },

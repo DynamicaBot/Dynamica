@@ -1,23 +1,23 @@
-import db from "@db";
-import logger from "@utils/logger";
-import { Check } from ".";
+import db from '@db';
+import logger from '@utils/logger';
 /**
  * Checks if a guild member is the creator of the secondary channel. (overridden by manager and admin)
  * @param interaction The interaction which to check.
  * @returns Promise Boolean if the person who triggered the interaction is the owner of the voice channel that they're in.
  */
-export const checkCreator: Check = async interaction => {
+export default async (interaction) => {
   try {
     const guildMember = await interaction.guild.members.cache.get(
       interaction.user.id
     );
 
     const id = guildMember.voice.channelId;
-    if (!id)
+    if (!id) {
       return {
         success: false,
-        message: "You need to be in a voice channel to use this command.",
+        message: 'You need to be in a voice channel to use this command.',
       };
+    }
     const channelProperties = await db.secondary.findUnique({
       where: { id },
     });
@@ -26,15 +26,15 @@ export const checkCreator: Check = async interaction => {
       return {
         success: false,
         message:
-          "You must be in a voice channel managed by the bot to use this command.",
+          'You must be in a voice channel managed by the bot to use this command.',
       };
     }
 
     const dynamicaManager = guildMember?.roles.cache.some(
-      role => role.name === "Dynamica Manager"
+      (role) => role.name === 'Dynamica Manager'
     );
 
-    const admin = guildMember.permissions.has("ADMINISTRATOR");
+    const admin = guildMember.permissions.has('ADMINISTRATOR');
 
     const creator = guildMember.id === channelProperties?.creator;
 
@@ -43,11 +43,10 @@ export const checkCreator: Check = async interaction => {
         success: false,
         message: `You must be the creator of <#${id}> to use this command.`,
       };
-    } else {
-      return { success: true };
     }
+    return { success: true };
   } catch (error) {
     logger.error(error);
-    return { success: false, message: "An error occured." };
+    return { success: false, message: 'An error occured.' };
   }
 };

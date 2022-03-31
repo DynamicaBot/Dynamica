@@ -1,21 +1,21 @@
-import Command from "@classes/command";
-import DynamicaSecondary from "@classes/secondary";
-import { SlashCommandBuilder } from "@discordjs/builders";
-import { checkCreator } from "@preconditions";
-import { checkAdminPermissions } from "@preconditions/admin";
-import { ErrorEmbed } from "@utils/discordEmbeds";
+import Command from '@classes/command';
+import DynamicaSecondary from '@classes/secondary';
+import { SlashCommandBuilder } from '@discordjs/builders';
+import checkAdminPermissions from '@preconditions/admin';
+import checkCreator from '@preconditions/creator';
+import { ErrorEmbed } from '@utils/discordEmbeds';
 
-export const unlock = new Command()
+export default new Command()
   .setPreconditions([checkCreator, checkAdminPermissions])
   .setCommandData(
     new SlashCommandBuilder()
-      .setName("unlock")
-      .setDescription("Remove any existing locks on locked secondary channels.")
+      .setName('unlock')
+      .setDescription('Remove any existing locks on locked secondary channels.')
   )
   .setHelpText(
-    "This resets the permissions channel whose permissions have been altered by any of the permissions related command like /lock and /permission."
+    'This resets the permissions channel whose permissions have been altered by any of the permissions related command like /lock and /permission.'
   )
-  .setResponse(async interaction => {
+  .setResponse(async (interaction) => {
     const guildMember = await interaction.guild.members.cache.get(
       interaction.user.id
     );
@@ -33,7 +33,7 @@ export const unlock = new Command()
     } else {
       await interaction.reply({
         ephemeral: true,
-        embeds: [ErrorEmbed("Not a valid Dynamica channel.")],
+        embeds: [ErrorEmbed('Not a valid Dynamica channel.')],
       });
     }
   });

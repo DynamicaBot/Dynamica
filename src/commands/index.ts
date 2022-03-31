@@ -1,19 +1,42 @@
-export { alias } from "./alias";
-export { allowjoin } from "./allowjoin";
-export { allyourbase } from "./allyourbase";
-export { bitrate } from "./bitrate";
-export { create } from "./create";
-export { general } from "./general";
-export { help } from "./help";
-export { info } from "./info";
-export { join } from "./join";
-export { limit } from "./limit";
-export { lock } from "./lock";
-export { name } from "./name";
-export { permission } from "./permission";
-export { ping } from "./ping";
-export { template } from "./template";
-export { text } from "./text";
-export { transfer } from "./transfer";
-export { unlock } from "./unlock";
-export { version } from "./version";
+import alias from './alias';
+import allowjoin from './allowjoin';
+import allyourbase from './allyourbase';
+import bitrate from './bitrate';
+import create from './create';
+import general from './general';
+// eslint-disable-next-line import/no-cycle
+import help from './help';
+import info from './info';
+import join from './join';
+import limit from './limit';
+import lock from './lock';
+import name from './name';
+import permission from './permission';
+import ping from './ping';
+import template from './template';
+import text from './text';
+import transfer from './transfer';
+import unlock from './unlock';
+import version from './version';
+
+export default {
+  alias,
+  allowjoin,
+  allyourbase,
+  bitrate,
+  create,
+  general,
+  help,
+  info,
+  join,
+  limit,
+  lock,
+  name,
+  permission,
+  ping,
+  template,
+  text,
+  transfer,
+  unlock,
+  version,
+};

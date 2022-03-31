@@ -1,10 +1,10 @@
-import Event from "@classes/event";
-import DynamicaSecondary from "@classes/secondary";
-import { Presence } from "discord.js";
+import Event from '@classes/event';
+import DynamicaSecondary from '@classes/secondary';
+import { Presence } from 'discord.js';
 
-export const presenceUpdate = new Event()
+export default new Event()
   .setOnce(false)
-  .setEvent("presenceUpdate")
+  .setEvent('presenceUpdate')
   .setResponse(async (oldPresence: Presence, newPresence: Presence) => {
     if (
       oldPresence?.activities?.at(0)?.name ===

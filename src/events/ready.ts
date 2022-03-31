@@ -1,20 +1,20 @@
-import Event from "@classes/event";
-import DynamicaPrimary from "@classes/primary";
-import DynamicaSecondary from "@classes/secondary";
-import db from "@db";
-import { updateActivityCount } from "@utils";
-import logger from "@utils/logger";
-import { Client } from "discord.js";
+import Event from '@classes/event';
+import DynamicaPrimary from '@classes/primary';
+import DynamicaSecondary from '@classes/secondary';
+import db from '@db';
+import updateActivityCount from '@utils';
+import logger from '@utils/logger';
+import { Client } from 'discord.js';
 
-export const ready = new Event()
+export default new Event()
   .setOnce(true)
-  .setEvent("ready")
+  .setEvent('ready')
   .setResponse(async (client: Client<true>) => {
     try {
       const secondaries = await db.secondary.findMany();
       const primaries = await db.primary.findMany();
 
-      primaries.forEach(async element => {
+      primaries.forEach(async (element) => {
         const existingPrimary = await new DynamicaPrimary(
           client,
           element.id
@@ -34,13 +34,13 @@ export const ready = new Event()
             channel.guild,
             channelMembers[0]
           );
-          channelMembers.slice(1).forEach(channelMember => {
+          channelMembers.slice(1).forEach((channelMember) => {
             channelMember.voice.setChannel(secondary.discord);
           });
         }
       });
 
-      secondaries.forEach(async element => {
+      secondaries.forEach(async (element) => {
         const secondaryChannel = await new DynamicaSecondary(
           client,
           element.id

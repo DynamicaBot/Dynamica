@@ -1,38 +1,38 @@
-import Command from "@classes/command";
-import DynamicaPrimary from "@classes/primary";
-import { SlashCommandBuilder } from "@discordjs/builders";
-import { checkManager } from "@preconditions";
-import { ErrorEmbed } from "@utils/discordEmbeds";
-import { GuildChannel } from "discord.js";
+import Command from '@classes/command';
+import DynamicaPrimary from '@classes/primary';
+import { SlashCommandBuilder } from '@discordjs/builders';
+import checkManager from '@preconditions/manager';
+import { ErrorEmbed } from '@utils/discordEmbeds';
+import { GuildChannel } from 'discord.js';
 
-export const create = new Command()
+export default new Command()
   .setPreconditions([checkManager])
   .setCommandData(
     new SlashCommandBuilder()
-      .setName("create")
-      .setDescription("Create a primary channel.")
-      .addChannelOption(option =>
+      .setName('create')
+      .setDescription('Create a primary channel.')
+      .addChannelOption((option) =>
         option
           .addChannelType(4)
-          .setName("section")
+          .setName('section')
           .setDescription(
-            "A section that the voice channel should be created under."
+            'A section that the voice channel should be created under.'
           )
           .setRequired(false)
       )
   )
   .setHelpText(
-    "It creates a new Primary channel which your users are able to join in order to create more secondary channels."
+    'It creates a new Primary channel which your users are able to join in order to create more secondary channels.'
   )
-  .setResponse(async interaction => {
+  .setResponse(async (interaction) => {
     const section = interaction.options.getChannel(
-      "section"
+      'section'
     ) as GuildChannel | null;
 
-    if (!interaction.guild?.me?.permissions.has("MANAGE_CHANNELS")) {
+    if (!interaction.guild?.me?.permissions.has('MANAGE_CHANNELS')) {
       return interaction.reply({
         ephemeral: true,
-        embeds: [ErrorEmbed("Bot requires manage channel permissions.")],
+        embeds: [ErrorEmbed('Bot requires manage channel permissions.')],
       });
     }
 

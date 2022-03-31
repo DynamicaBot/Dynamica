@@ -1,11 +1,11 @@
-import { ClientEvents } from "discord.js";
+import { ClientEvents } from 'discord.js';
 
 export default class Event {
   public once: boolean;
-  public event: keyof ClientEvents;
-  public execute: (...args: any) => Promise<void>;
 
-  constructor() {}
+  public event: keyof ClientEvents;
+
+  public execute: (...args) => Promise<void>;
 
   setOnce(once) {
     this.once = once;
@@ -17,7 +17,7 @@ export default class Event {
     return this;
   }
 
-  setResponse(response: (...args: any) => Promise<void>) {
+  setResponse(response: (...args) => Promise<void>) {
     this.execute = response;
     return this;
   }

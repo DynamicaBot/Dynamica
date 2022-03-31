@@ -1,11 +1,11 @@
-import Autocomplete from "@classes/autocomplete";
-import Command from "@classes/command";
-import * as commands from "@commands";
-import Fuse from "fuse.js";
+import Autocomplete from '@classes/autocomplete';
+import Command from '@classes/command';
+import * as commands from '@commands';
+import Fuse from 'fuse.js';
 
-export const help = new Autocomplete()
-  .setName("help")
-  .setResponse(async interaction => {
+export default new Autocomplete()
+  .setName('help')
+  .setResponse(async (interaction) => {
     const value = interaction.options.getFocused();
     const commandValues = Object.values(commands) as Command[];
 
@@ -17,18 +17,18 @@ export const help = new Autocomplete()
       })),
       {
         keys: [
-          { name: "name", weight: 3 },
-          { name: "short", weight: 2 },
-          { name: "long", weight: 1 },
+          { name: 'name', weight: 3 },
+          { name: 'short', weight: 2 },
+          { name: 'long', weight: 1 },
         ],
       }
     );
 
     const query = fuse.search(value.toString());
     interaction.respond(
-      !!value.toString()
+      value.toString()
         ? query
-            .map(result => ({
+            .map((result) => ({
               name: result.item.name,
               value: result.item.name,
             }))
