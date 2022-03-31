@@ -12,6 +12,9 @@ export const presenceUpdate = new Event()
     )
       return;
     const { channelId } = newPresence.member.voice;
+    if (!channelId) {
+      return;
+    }
     const dynamicaSecondary = await new DynamicaSecondary(
       newPresence.client,
       channelId
