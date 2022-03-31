@@ -1,9 +1,9 @@
+import Command from "@classes/command";
+import DynamicaPrimary from "@classes/primary";
 import { SlashCommandBuilder } from "@discordjs/builders";
+import { checkManager } from "@preconditions";
+import { ErrorEmbed } from "@utils/discordEmbeds.js";
 import { GuildChannel } from "discord.js";
-import Command from "../classes/command.js";
-import DynamicaPrimary from "../classes/primary.js";
-import { checkManager } from "../utils/conditions/index.js";
-import { ErrorEmbed } from "../utils/discordEmbeds.js";
 
 export const create = new Command()
   .setPreconditions([checkManager])
@@ -36,11 +36,6 @@ export const create = new Command()
       });
     }
 
-    // const newPrimary = await createPrimary(
-    //   interaction.guild.channels,
-    //   interaction.user.id,
-    //   section
-    // );
     const newPrimary = new DynamicaPrimary(interaction.client);
     await newPrimary.create(interaction.guild, interaction.user, section);
 

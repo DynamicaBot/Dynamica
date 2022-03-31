@@ -1,9 +1,8 @@
+import Command from "@classes/command";
+import DynamicaSecondary from "@classes/secondary";
 import { SlashCommandBuilder } from "@discordjs/builders";
-import Command from "../classes/command.js";
-import DynamicaSecondary from "../classes/secondary.js";
-import { checkAdminPermissions } from "../utils/conditions/admin.js";
-import { checkCreator, checkSecondary } from "../utils/conditions/index.js";
-import { getGuildMember } from "../utils/getCached.js";
+import { checkCreator, checkSecondary } from "@preconditions";
+import { checkAdminPermissions } from "@preconditions/admin";
 
 export const lock = new Command()
   .setPreconditions([checkCreator, checkSecondary, checkAdminPermissions])
@@ -19,8 +18,7 @@ export const lock = new Command()
   .setResponse(async (interaction) => {
     if (!interaction.guild?.members) return;
 
-    const guildMember = await getGuildMember(
-      interaction.guild.members,
+    const guildMember = await interaction.guild.members.cache.get(
       interaction.user.id
     );
 

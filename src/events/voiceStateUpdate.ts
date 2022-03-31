@@ -1,8 +1,8 @@
+import Event from "@classes/event";
+import DynamicaPrimary from "@classes/primary";
+import DynamicaSecondary from "@classes/secondary";
+import logger from "@utils/logger";
 import { VoiceState } from "discord.js";
-import Event from "../classes/event.js";
-import DynamicaPrimary from "../classes/primary.js";
-import DynamicaSecondary from "../classes/secondary.js";
-import { logger } from "../utils/logger.js";
 
 export const voiceStateUpdate = new Event()
   .setOnce(false)

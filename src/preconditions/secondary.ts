@@ -1,8 +1,7 @@
+import db from "@db";
+import logger from "@utils/logger";
 import { CommandInteraction } from "discord.js";
 import { Check } from ".";
-import { db } from "../db.js";
-import { getGuildMember } from "../getCached.js";
-import { logger } from "../logger.js";
 
 /**
  * Checks to see if the voice channel the user is currently in is a channel that Dynamica manages.
@@ -13,8 +12,7 @@ export const checkSecondary: Check = async (
   interaction: CommandInteraction
 ) => {
   try {
-    const guildMember = await getGuildMember(
-      interaction.guild?.members,
+    const guildMember = await interaction.guild.members.cache.get(
       interaction.user.id
     );
 

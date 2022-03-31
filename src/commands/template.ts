@@ -1,8 +1,8 @@
+import Command from "@classes/command";
+import DynamicaSecondary from "@classes/secondary";
+import db from "@db";
 import { SlashCommandBuilder } from "@discordjs/builders";
-import Command from "../classes/command.js";
-import DynamicaSecondary from "../classes/secondary.js";
-import { checkManager } from "../utils/conditions/index.js";
-import { db } from "../utils/db.js";
+import { checkManager } from "@preconditions";
 
 export const template = new Command()
   .setPreconditions([checkManager])

@@ -1,8 +1,7 @@
+import Command from "@classes/command";
 import { SlashCommandBuilder } from "@discordjs/builders";
-import Command from "../classes/command.js";
-import { checkCreator, checkSecondary } from "../utils/conditions/index.js";
-import { ErrorEmbed } from "../utils/discordEmbeds.js";
-import { getGuildMember } from "../utils/getCached.js";
+import { checkCreator, checkSecondary } from "@preconditions";
+import { ErrorEmbed } from "@utils/discordEmbeds";
 
 export const limit = new Command()
   .setPreconditions([checkCreator, checkSecondary])
@@ -25,8 +24,7 @@ export const limit = new Command()
   .setResponse(async (interaction) => {
     const userLimit = interaction.options.getInteger("number", true);
 
-    const guildMember = await getGuildMember(
-      interaction.guild.members,
+    const guildMember = await interaction.guild.members.cache.get(
       interaction.user.id
     );
 

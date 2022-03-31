@@ -1,10 +1,9 @@
+import Command from "@classes/command";
+import DynamicaSecondary from "@classes/secondary";
+import db from "@db";
 import { SlashCommandBuilder } from "@discordjs/builders";
-import Command from "../classes/command.js";
-import DynamicaSecondary from "../classes/secondary.js";
-import { checkManager, checkSecondary } from "../utils/conditions/index.js";
-import { db } from "../utils/db.js";
-import { getGuildMember } from "../utils/getCached.js";
-import { logger } from "../utils/logger.js";
+import { checkManager, checkSecondary } from "@preconditions";
+import logger from "@utils/logger";
 
 export const name = new Command()
   .setPreconditions([checkManager, checkSecondary])
@@ -23,8 +22,7 @@ export const name = new Command()
   .setResponse(async (interaction) => {
     const name = interaction.options.getString("name");
 
-    const guildMember = await getGuildMember(
-      interaction.guild.members,
+    const guildMember = await interaction.guild.members.cache.get(
       interaction.user.id
     );
 

@@ -1,8 +1,7 @@
+import db from "@db";
 import Prisma from "@prisma/client";
+import logger from "@utils/logger";
 import { Client, Guild, GuildChannel, User, VoiceChannel } from "discord.js";
-import { db } from "../utils/db";
-import { logger } from "../utils/logger";
-
 export default class DynamicaPrimary {
   /** The secondary channel as defined by prisma */
   prisma: Prisma.Primary & {

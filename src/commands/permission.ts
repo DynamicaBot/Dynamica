@@ -1,10 +1,9 @@
+import Command from "@classes/command";
 import { SlashCommandBuilder } from "@discordjs/builders";
+import { checkCreator, checkSecondary } from "@preconditions";
+import { checkAdminPermissions } from "@preconditions/admin";
+import { ErrorEmbed } from "@utils/discordEmbeds";
 import { Role } from "discord.js";
-import Command from "../classes/command.js";
-import { checkAdminPermissions } from "../utils/conditions/admin.js";
-import { checkCreator, checkSecondary } from "../utils/conditions/index.js";
-import { ErrorEmbed } from "../utils/discordEmbeds.js";
-import { getGuildMember } from "../utils/getCached.js";
 
 export const permission = new Command()
   .setPreconditions([checkCreator, checkSecondary, checkAdminPermissions])
@@ -59,8 +58,7 @@ export const permission = new Command()
     const user = interaction.options.getUser("user", false);
     const role = interaction.options.getRole("role", false) as Role;
 
-    const guildMember = await getGuildMember(
-      interaction.guild.members,
+    const guildMember = await interaction.guild.members.cache.get(
       interaction.user.id
     );
 

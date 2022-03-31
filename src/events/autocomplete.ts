@@ -1,8 +1,8 @@
+import * as autocompletes from "@autocompletes";
+import Autocomplete from "@classes/autocomplete";
+import Event from "@classes/event";
+import logger from "@utils/logger";
 import { Interaction } from "discord.js";
-import * as autocompletes from "../autocompletes/index.js";
-import Autocomplete from "../classes/autocomplete.js";
-import Event from "../classes/event.js";
-import { logger } from "../utils/logger.js";
 
 export const autocomplete = new Event()
   .setOnce(false)

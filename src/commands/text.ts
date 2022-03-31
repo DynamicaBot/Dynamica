@@ -1,8 +1,8 @@
+import Command from "@classes/command";
+import DynamicaGuild from "@classes/guild";
 import { SlashCommandBuilder } from "@discordjs/builders";
-import Command from "../classes/command.js";
-import { checkAdminPermissions } from "../utils/conditions/admin.js";
-import { checkManager } from "../utils/conditions/index.js";
-import { db } from "../utils/db.js";
+import { checkManager } from "@preconditions";
+import { checkAdminPermissions } from "@preconditions/admin";
 
 export const text = new Command()
   .setPreconditions([checkManager, checkAdminPermissions])
@@ -24,14 +24,15 @@ export const text = new Command()
   )
   .setResponse(async (interaction) => {
     const state = interaction.options.getBoolean("state", true);
-    const guild = await db.guild.update({
-      where: { id: interaction.guildId },
-      data: { textChannelsEnabled: state },
-    });
+    const guild = await new DynamicaGuild(
+      interaction.client,
+      interaction.guildId
+    ).fetch();
+    guild.setAllowJoin(state);
 
     await interaction.reply(
       `Temporary text channels ${
-        guild.textChannelsEnabled ? "enabled" : "disabled"
+        guild.prisma.textChannelsEnabled ? "enabled" : "disabled"
       } for all future created channels.`
     );
   });

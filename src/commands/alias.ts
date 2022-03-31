@@ -1,9 +1,9 @@
+import Command from "@classes/command";
+import db from "@db";
 import { Embed, SlashCommandBuilder } from "@discordjs/builders";
+import { checkManager } from "@preconditions";
+import { listAliases, updateAlias } from "@utils/alias";
 import _ from "lodash";
-import Command from "../classes/command.js";
-import { checkManager } from "../utils/conditions/index.js";
-import { db } from "../utils/db.js";
-import { listAliases, updateAlias } from "../utils/operations/alias.js";
 
 export const alias = new Command()
   .setPreconditions([checkManager])

@@ -3,7 +3,7 @@ import signale from "signale";
 config();
 
 /** Signale Logger instance */
-export const logger = new signale.Signale({
+const logger = new signale.Signale({
   disabled: false,
   interactive: false,
   stream: [process.stdout],
@@ -13,3 +13,5 @@ export const logger = new signale.Signale({
     displayTimestamp: true,
   },
 });
+
+export default logger;

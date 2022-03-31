@@ -17,6 +17,24 @@
     "sourceMap": true /* Create source map files for emitted JavaScript files. */,
     "outDir": "./dist" /* Specify an output folder for all emitted files. */,
     "downlevelIteration": false /* Emit more compliant, but verbose and less performant JavaScript for iteration. */,
-    "esModuleInterop": true /* Emit additional JavaScript to ease support for importing CommonJS modules. This enables `allowSyntheticDefaultImports` for type compatibility. */
+    "esModuleInterop": true /* Emit additional JavaScript to ease support for importing CommonJS modules. This enables `allowSyntheticDefaultImports` for type compatibility. */,
+    "baseUrl": "src",
+    "paths": {
+      "@": ["./"],
+      "@/*": ["./*"],
+      "@autocompletes/*": ["./autocompletes/*"],
+      "@autocompletes": ["./autocompletes"],
+      "@classes/*": ["./classes/*"],
+      "@classes": ["./classes"],
+      "@commands/*": ["./commands/*"],
+      "@commands": ["./commands"],
+      "@events/*": ["./events/*"],
+      "@events": ["./events"],
+      "@preconditions/*": ["./preconditions/*"],
+      "@preconditions": ["./preconditions"],
+      "@utils/*": ["./utils/*"],
+      "@utils": ["./utils"],
+      "@db": ["./utils/db"]
+    }
   }
 }

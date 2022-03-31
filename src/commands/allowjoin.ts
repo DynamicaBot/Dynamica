@@ -1,8 +1,8 @@
+import Command from "@classes/command.js";
+import DynamicaGuild from "@classes/guild.js";
 import { SlashCommandBuilder } from "@discordjs/builders";
-import Command from "../classes/command.js";
-import { checkAdminPermissions } from "../utils/conditions/admin.js";
-import { checkManager } from "../utils/conditions/index.js";
-import { db } from "../utils/db.js";
+import { checkManager } from "@preconditions";
+import { checkAdminPermissions } from "@preconditions/admin";
 
 export const allowjoin = new Command()
   .setPreconditions([checkManager, checkAdminPermissions])
@@ -22,11 +22,10 @@ export const allowjoin = new Command()
   )
   .setResponse(async (interaction) => {
     const state = interaction.options.getBoolean("state", true);
-    db.guild.update({
-      where: { id: interaction.guild.id },
-      data: {
-        allowJoinRequests: state,
-      },
-    });
+    const guild = await new DynamicaGuild(
+      interaction.client,
+      interaction.guildId
+    ).fetch();
+    guild.setAllowJoin(state);
     return interaction.reply(`${state ? "Enabled" : "Disabled"} Join Requests`);
   });
