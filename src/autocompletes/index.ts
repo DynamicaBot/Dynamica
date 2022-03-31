@@ -1,3 +1,4 @@
+import Autocomplete from '@/classes/autocomplete';
 import alias from './alias';
 import general from './general';
 import help from './help';
@@ -5,7 +6,11 @@ import info from './info';
 import join from './join';
 import template from './template';
 
-export default {
+interface AutocompleteInterface {
+  [key: string]: Autocomplete;
+}
+
+const exports: AutocompleteInterface = {
   alias,
   general,
   help,
@@ -13,3 +18,5 @@ export default {
   join,
   template,
 };
+
+export default exports;

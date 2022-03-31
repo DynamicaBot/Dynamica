@@ -1,6 +1,6 @@
 import Event from '@classes/event';
 import db from '@db';
-import * as events from '@events';
+import events from '@events';
 import logger from '@utils/logger';
 import { Client, Intents } from 'discord.js';
 import dotenv from 'dotenv';

@@ -1,3 +1,4 @@
+import Command from '@/classes/command';
 import alias from './alias';
 import allowjoin from './allowjoin';
 import allyourbase from './allyourbase';
@@ -19,7 +20,11 @@ import transfer from './transfer';
 import unlock from './unlock';
 import version from './version';
 
-export default {
+interface CommandsInterface {
+  [key: string]: Command;
+}
+
+const exports: CommandsInterface = {
   alias,
   allowjoin,
   allyourbase,
@@ -40,3 +45,5 @@ export default {
   unlock,
   version,
 };
+
+export default exports;

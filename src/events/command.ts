@@ -1,6 +1,6 @@
 import Command from '@classes/command';
 import Event from '@classes/event';
-import * as commands from '@commands';
+import commands from '@commands';
 import checkGuild from '@preconditions/guild';
 import { ErrorEmbed } from '@utils/discordEmbeds';
 import logger from '@utils/logger';
