@@ -15,7 +15,7 @@ export const lock = new Command()
     "Use it to lock your channels away from pesky server members.",
     "Use it to lock your channels away from pesky server members. Locks it to the creator (initially) and permissions can be altered with /permission. \n Channels can be reset to default with /unlock."
   )
-  .setResponse(async (interaction) => {
+  .setResponse(async interaction => {
     if (!interaction.guild?.members) return;
 
     const guildMember = await interaction.guild.members.cache.get(

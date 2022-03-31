@@ -15,7 +15,7 @@ export const allyourbase = new Command()
         "If you are an admin you become the owner of the channel you are in."
       )
   )
-  .setResponse(async (interaction) => {
+  .setResponse(async interaction => {
     const guildMember = await interaction.guild.members.cache.get(
       interaction.user.id
     );

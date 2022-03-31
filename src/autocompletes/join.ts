@@ -4,7 +4,7 @@ import Fuse from "fuse.js";
 
 export const join = new Autocomplete()
   .setName("join")
-  .setResponse(async (interaction) => {
+  .setResponse(async interaction => {
     const { name, value } = interaction.options.getFocused(true);
     if (name !== "channel") return;
     const secondaries = await db.secondary.findMany({
@@ -15,11 +15,10 @@ export const join = new Autocomplete()
 
     const discordChannels = [...interaction.guild.channels.cache.values()];
 
-    const availableSecondaryChannels = discordChannels.filter(
-      (discordChannel) =>
-        secondaries.find((secondary) => discordChannel.id === secondary.id)
+    const availableSecondaryChannels = discordChannels.filter(discordChannel =>
+      secondaries.find(secondary => discordChannel.id === secondary.id)
     );
-    const options = availableSecondaryChannels.map((channel) => ({
+    const options = availableSecondaryChannels.map(channel => ({
       name: channel.name,
       value: channel.id,
     }));
@@ -27,7 +26,7 @@ export const join = new Autocomplete()
     const query = fuse.search(value.toString());
     interaction.respond(
       !!value.toString()
-        ? query.map((result) => result.item).slice(0, 24)
+        ? query.map(result => result.item).slice(0, 24)
         : options.slice(0, 24)
     );
   });

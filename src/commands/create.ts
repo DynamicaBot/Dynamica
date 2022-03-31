@@ -11,7 +11,7 @@ export const create = new Command()
     new SlashCommandBuilder()
       .setName("create")
       .setDescription("Create a primary channel.")
-      .addChannelOption((option) =>
+      .addChannelOption(option =>
         option
           .addChannelType(4)
           .setName("section")
@@ -24,7 +24,7 @@ export const create = new Command()
   .setHelpText(
     "It creates a new Primary channel which your users are able to join in order to create more secondary channels."
   )
-  .setResponse(async (interaction) => {
+  .setResponse(async interaction => {
     const section = interaction.options.getChannel(
       "section"
     ) as GuildChannel | null;

@@ -5,7 +5,7 @@ import { Check } from ".";
  * @param interaction Discord interaction
  * @returns success status
  */
-export const checkAdminPermissions: Check = async (interaction) => {
+export const checkAdminPermissions: Check = async interaction => {
   if (!interaction.guild.me.permissions.has("ADMINISTRATOR")) {
     return {
       success: false,

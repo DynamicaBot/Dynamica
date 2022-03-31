@@ -15,28 +15,28 @@ export const alias = new Command()
     new SlashCommandBuilder()
       .setName("alias")
       .setDescription("Manage aliases.")
-      .addSubcommand((subcommand) =>
+      .addSubcommand(subcommand =>
         subcommand
           .setName("add")
           .setDescription("Add a new alias.")
-          .addStringOption((option) =>
+          .addStringOption(option =>
             option
               .setName("activity")
               .setRequired(true)
               .setDescription("The target activity.")
           )
-          .addStringOption((option) =>
+          .addStringOption(option =>
             option
               .setName("alias")
               .setDescription("The alias the game should be known by.")
               .setRequired(true)
           )
       )
-      .addSubcommand((subcommand) =>
+      .addSubcommand(subcommand =>
         subcommand
           .setName("remove")
           .setDescription("Remove an alias.")
-          .addStringOption((option) =>
+          .addStringOption(option =>
             option
               .setName("activity")
               .setDescription(
@@ -46,11 +46,11 @@ export const alias = new Command()
               .setAutocomplete(true)
           )
       )
-      .addSubcommand((subcommand) =>
+      .addSubcommand(subcommand =>
         subcommand.setName("list").setDescription("List currently set aliases.")
       )
   )
-  .setResponse(async (interaction) => {
+  .setResponse(async interaction => {
     const subcommand = interaction.options.getSubcommand(true);
     const activity = interaction.options.getString("activity");
     switch (subcommand) {
@@ -79,7 +79,7 @@ export const alias = new Command()
           inline: true,
         }));
 
-        const embeds = _.chunk(inlineAliases, 25).map((result) =>
+        const embeds = _.chunk(inlineAliases, 25).map(result =>
           new Embed().addFields(...result)
         );
         interaction.reply({

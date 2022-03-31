@@ -8,7 +8,7 @@ import { Client } from "discord.js";
 export const updateActivityCount = (client: Client) => {
   return db.secondary
     .count()
-    .then((count) => {
+    .then(count => {
       client.user.setPresence({
         status: !!count ? "online" : "idle",
         afk: !!count,
@@ -20,5 +20,5 @@ export const updateActivityCount = (client: Client) => {
         ],
       });
     })
-    .catch((error) => logger.error(error));
+    .catch(error => logger.error(error));
 };

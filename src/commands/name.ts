@@ -11,7 +11,7 @@ export const name = new Command()
     new SlashCommandBuilder()
       .setName("name")
       .setDescription("Edit the name of the current channel.")
-      .addStringOption((option) =>
+      .addStringOption(option =>
         option
           .setName("name")
           .setDescription("The new name of the channel (can be a template).")
@@ -19,7 +19,7 @@ export const name = new Command()
       )
   )
   .setHelpText("Changes the name of the Secondary channel you're currently in.")
-  .setResponse(async (interaction) => {
+  .setResponse(async interaction => {
     const name = interaction.options.getString("name");
 
     const guildMember = await interaction.guild.members.cache.get(

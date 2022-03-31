@@ -73,7 +73,7 @@ export const listAliases = async (guildId: string) => {
         guildId,
       },
     });
-    return aliases.map((alias) => ({
+    return aliases.map(alias => ({
       name: alias.activity,
       value: alias.alias,
     }));

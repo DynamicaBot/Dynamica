@@ -6,7 +6,7 @@ import { Check } from ".";
  * @param interaction The interaction which to check.
  * @returns Promise Boolean if the person who triggered the interaction is the owner of the voice channel that they're in.
  */
-export const checkCreator: Check = async (interaction) => {
+export const checkCreator: Check = async interaction => {
   try {
     const guildMember = await interaction.guild.members.cache.get(
       interaction.user.id
@@ -31,7 +31,7 @@ export const checkCreator: Check = async (interaction) => {
     }
 
     const dynamicaManager = guildMember?.roles.cache.some(
-      (role) => role.name === "Dynamica Manager"
+      role => role.name === "Dynamica Manager"
     );
 
     const admin = guildMember.permissions.has("ADMINISTRATOR");

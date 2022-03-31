@@ -13,7 +13,7 @@ export const text = new Command()
     new SlashCommandBuilder()
       .setName("text")
       .setDescription("Enable or disable temporary text channels")
-      .addBooleanOption((option) =>
+      .addBooleanOption(option =>
         option
           .setName("state")
           .setDescription(
@@ -22,7 +22,7 @@ export const text = new Command()
           .setRequired(true)
       )
   )
-  .setResponse(async (interaction) => {
+  .setResponse(async interaction => {
     const state = interaction.options.getBoolean("state", true);
     const guild = await new DynamicaGuild(
       interaction.client,

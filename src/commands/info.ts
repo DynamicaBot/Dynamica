@@ -9,10 +9,10 @@ export const info = new Command()
     new SlashCommandBuilder()
       .setName("info")
       .setDescription("Get info about a primary or secondary channel.")
-      .addSubcommand((subcommand) =>
+      .addSubcommand(subcommand =>
         subcommand
           .setName("primary")
-          .addStringOption((option) =>
+          .addStringOption(option =>
             option
               .setAutocomplete(true)
               .setName("primarychannel")
@@ -20,10 +20,10 @@ export const info = new Command()
           )
           .setDescription("Get info about a primary channel.")
       )
-      .addSubcommand((subcommand) =>
+      .addSubcommand(subcommand =>
         subcommand
           .setName("secondary")
-          .addStringOption((option) =>
+          .addStringOption(option =>
             option
               .setAutocomplete(true)
               .setName("secondarychannel")
@@ -31,14 +31,14 @@ export const info = new Command()
           )
           .setDescription("Get info about a secondary channel.")
       )
-      .addSubcommand((subcommand) =>
+      .addSubcommand(subcommand =>
         subcommand
           .setName("guild")
           .setDescription("Get info about the guil's settings.")
       )
   )
   .setHelpText("Shows the info of either a user or the current server.")
-  .setResponse(async (interaction) => {
+  .setResponse(async interaction => {
     const subcommand = interaction.options.getSubcommand(true);
     switch (subcommand) {
       case "primary":

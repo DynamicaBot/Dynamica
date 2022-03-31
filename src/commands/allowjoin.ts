@@ -10,7 +10,7 @@ export const allowjoin = new Command()
     new SlashCommandBuilder()
       .setName("allowjoin")
       .setDescription("Allow users to request to join a locked channel.")
-      .addBooleanOption((option) =>
+      .addBooleanOption(option =>
         option
           .setName("state")
           .setDescription("Whether to enable or disable join requests.")
@@ -20,7 +20,7 @@ export const allowjoin = new Command()
   .setHelpText(
     "Toggles whether or not members of your sever are allowed to request to join private channels."
   )
-  .setResponse(async (interaction) => {
+  .setResponse(async interaction => {
     const state = interaction.options.getBoolean("state", true);
     const guild = await new DynamicaGuild(
       interaction.client,

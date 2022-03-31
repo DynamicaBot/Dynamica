@@ -8,7 +8,7 @@ export const version = new Command()
       .setDescription("The version of the bot in use.")
   )
   .setHelpText("Sends the running version of Dynamica.")
-  .setResponse(async (interaction) => {
+  .setResponse(async interaction => {
     interaction.reply({
       ephemeral: true,
       content: `The version of the bot is \`${process.env.VERSION}\`.`,

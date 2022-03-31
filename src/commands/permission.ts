@@ -11,38 +11,38 @@ export const permission = new Command()
     new SlashCommandBuilder()
       .setName("permission")
       .setDescription("Edit the permissions of a voice channel.")
-      .addSubcommand((subcommand) =>
+      .addSubcommand(subcommand =>
         subcommand
           .setName("add")
           .setDescription(
             "Give permissions for the current voice channel for a role or user."
           )
-          .addRoleOption((option) =>
+          .addRoleOption(option =>
             option
               .setDescription("The role to add.")
               .setName("role")
               .setRequired(false)
           )
-          .addUserOption((option) =>
+          .addUserOption(option =>
             option
               .setDescription("The user to add.")
               .setName("user")
               .setRequired(false)
           )
       )
-      .addSubcommand((subcommand) =>
+      .addSubcommand(subcommand =>
         subcommand
           .setName("remove")
           .setDescription(
             "Remove permissions for the current voice channel for a role or user."
           )
-          .addRoleOption((option) =>
+          .addRoleOption(option =>
             option
               .setDescription("The role to remove.")
               .setName("role")
               .setRequired(false)
           )
-          .addUserOption((option) =>
+          .addUserOption(option =>
             option
               .setDescription("The user to remove.")
               .setName("user")
@@ -53,7 +53,7 @@ export const permission = new Command()
   .setHelpText(
     "Edits the permissions for secondary channels. (Works in conjuction with /lock and /unlock."
   )
-  .setResponse(async (interaction) => {
+  .setResponse(async interaction => {
     const subcommand = interaction.options.getSubcommand(true);
     const user = interaction.options.getUser("user", false);
     const role = interaction.options.getRole("role", false) as Role;

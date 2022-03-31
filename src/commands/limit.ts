@@ -11,7 +11,7 @@ export const limit = new Command()
       .setDescription(
         "Edit the max number of people allowed in the current channel"
       )
-      .addIntegerOption((option) =>
+      .addIntegerOption(option =>
         option
           .setDescription(
             "The maximum number of people that are allowed to join the channel."
@@ -21,7 +21,7 @@ export const limit = new Command()
       )
   )
   .setHelpText("Limit the maximum number of people in the channel.")
-  .setResponse(async (interaction) => {
+  .setResponse(async interaction => {
     const userLimit = interaction.options.getInteger("number", true);
 
     const guildMember = await interaction.guild.members.cache.get(

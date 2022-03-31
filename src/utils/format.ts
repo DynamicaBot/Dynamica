@@ -47,8 +47,8 @@ export function formatChannelName(
 
   const activityList = uniq(activities);
 
-  const aliasedActivities = activityList.map((activity) => {
-    const alias = aliases.find((a) => a.activity === activity);
+  const aliasedActivities = activityList.map(activity => {
+    const alias = aliases.find(a => a.activity === activity);
     if (alias) {
       return alias.alias;
     } else {

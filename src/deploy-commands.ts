@@ -18,7 +18,7 @@ if (!TOKEN || !CLIENT_ID) {
   logger.error("Missing env vars.");
 } else {
   const importedCommands = Object.values(commands);
-  const commandList = importedCommands.map((command) =>
+  const commandList = importedCommands.map(command =>
     command.commandData.toJSON()
   );
 
@@ -35,7 +35,7 @@ if (!TOKEN || !CLIENT_ID) {
         });
         logger.debug(
           "Updated commands: ",
-          commandList.map((c) => c.name).join(", ")
+          commandList.map(c => c.name).join(", ")
         );
       } else {
         await rest.put(Routes.applicationCommands(CLIENT_ID), {
@@ -43,7 +43,7 @@ if (!TOKEN || !CLIENT_ID) {
         });
         logger.debug(
           "Updated commands: ",
-          commandList.map((c) => c.name).join(", ")
+          commandList.map(c => c.name).join(", ")
         );
       }
 
