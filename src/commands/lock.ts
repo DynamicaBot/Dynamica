@@ -27,8 +27,9 @@ export const lock = new Command()
     const channelId = guildMember?.voice.channelId;
 
     const dynamicaSecondary = await new DynamicaSecondary(
-      interaction.client
-    ).fetch(channelId);
+      interaction.client,
+      channelId
+    ).fetch();
 
     if (dynamicaSecondary) {
       await dynamicaSecondary.lock();

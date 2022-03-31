@@ -25,15 +25,21 @@ export default class DynamicaSecondary {
   id: string;
   /** The discord text channel */
   textChannel?: TextChannel;
-  /** The discord guild */
-  discordGuild: Guild;
   /** The prisma guild */
   prismaGuild: Prisma.Guild;
   /** The prisma primary */
   prismaPrimary: Prisma.Primary;
 
-  constructor(client: Client<true>) {
+  /**
+   * The secondary constructor
+   * @param client DiscordJS client instance
+   * @param id The channel Id
+   */
+  constructor(client: Client<true>, id?: string) {
     this.client = client;
+    if (id) {
+      this.id = id;
+    }
   }
 
   /**
@@ -96,51 +102,32 @@ export default class DynamicaSecondary {
 
       await member.voice.setChannel(secondary);
 
-      const textChannelId = async () => {
-        if (primaryConfig.guild?.textChannelsEnabled && member) {
-          const textChannel = await guild.channels.create("Text Channel", {
-            type: "GUILD_TEXT",
-            topic: `Private text channel for members of <#${secondary.id}>.`,
-            permissionOverwrites: [
-              { id: guild.channels.guild.roles.everyone, deny: "VIEW_CHANNEL" },
-              { id: member?.id, allow: "VIEW_CHANNEL" },
-            ],
-            parent: secondary.parent ?? undefined,
-          });
-          await textChannel.send({
-            embeds: [
-              new Embed()
-                .setTitle("Welcome!")
-                .setColor(3447003)
-                .setDescription(
-                  `Welcome to your very own private text chat. This channel is only to people in <#${secondary.id}>.`
-                )
-                .setAuthor({
-                  name: "Dynamica",
-                  url: "https://dynamica.dev",
-                  iconURL: "https://dynamica.dev/img/dynamica.png",
-                }),
-            ],
-          });
-          return textChannel.id;
-        }
-      };
+      db.secondary
+        .create({
+          data: {
+            id: secondary.id,
+            creator: member.id,
+            primaryId: primary.id,
+            guildId: guild.id,
+          },
+          include: { guild: true, primary: true },
+        })
+        .then(async (channel) => {
+          this.id = secondary.id;
+          this.prisma = channel;
+          this.prismaGuild = channel.guild;
+          this.prismaPrimary = channel.primary;
+          const guild = await db.guild.findUnique({ where: { id: this.id } });
+          if (guild?.textChannelsEnabled) {
+            this.createTextChannel(member);
+          }
+          updateActivityCount(this.client);
+        });
 
-      await db.secondary.create({
-        data: {
-          id: secondary.id,
-          creator: member?.id,
-          primaryId: primary.id,
-          guildId: guild.id,
-          textChannelId: await textChannelId(),
-        },
-      });
-
-      await updateActivityCount(this.client);
-      await this.fetch(secondary.id);
       logger.debug(
         `Secondary channel ${secondary.name} created by ${member?.user.tag} in ${guild.name}.`
       );
+      this.discord = secondary;
     } catch (error) {
       logger.error(error);
     }
@@ -148,85 +135,105 @@ export default class DynamicaSecondary {
   }
 
   /**
-   * Checks the database to see if the channel exists
-   * @param id The channel Id
-   * @returns boolean based on if a secondary channel exists within the database
+   * Create a text channel.
+   * @param member The person who created the channel
    */
-  async exists(id: string): Promise<boolean> {
-    let secondary = await db.secondary.findUnique({
-      where: { id },
-    });
-    return !!secondary;
+  async createTextChannel(member: GuildMember) {
+    if (!this.id) {
+      throw new Error("No Id defined");
+    }
+    try {
+      const textChannel = await this.discord.guild.channels.create(
+        "Text Channel",
+        {
+          type: "GUILD_TEXT",
+          topic: `Private text channel for members of <#${this.id}>.`,
+          permissionOverwrites: [
+            {
+              id: this.discord.guild.channels.guild.roles.everyone,
+              deny: "VIEW_CHANNEL",
+            },
+            { id: member.id, allow: "VIEW_CHANNEL" },
+          ],
+          parent: this.discord.parent ?? undefined,
+        }
+      );
+      await textChannel.send({
+        embeds: [
+          new Embed()
+            .setTitle("Welcome!")
+            .setColor(3447003)
+            .setDescription(
+              `Welcome to your very own private text chat. This channel is only to people in <#${this.id}>.`
+            )
+            .setAuthor({
+              name: "Dynamica",
+              url: "https://dynamica.dev",
+              iconURL: "https://dynamica.dev/img/dynamica.png",
+            }),
+        ],
+      });
+      this.textChannel = textChannel;
+      await db.secondary.update({
+        where: { id: this.id },
+        data: {
+          textChannelId: textChannel.id,
+        },
+      });
+    } catch (error) {
+      logger.error("Failed to create text channel:", error);
+    }
   }
 
   /**
    * Fetch the database entry and discord channels (voice and text).
    * @param channelId The discord channel Id.
    */
-  async fetch(channelId?: string): Promise<DynamicaSecondary | undefined> {
+  async fetch(): Promise<DynamicaSecondary | undefined> {
+    // Variables
     if (!this.client) {
       throw new Error("No client defined");
     }
-    if (channelId) {
-      this.id = channelId;
+    if (!this.id) {
+      throw new Error("No Id defined");
     }
-    const id = this.id ?? channelId;
 
-    try {
-      let secondary = await db.secondary.findUnique({
-        where: { id },
-        include: { guild: true, primary: true },
-      });
+    const { id } = this;
 
-      if (!secondary) return undefined;
+    const prisma = await db.secondary.findUnique({
+      where: { id },
+      include: { guild: true, primary: true },
+    });
 
-      this.prisma = secondary;
-      this.prismaGuild = secondary.guild;
-
-      this.prismaPrimary = secondary.primary;
-      if (secondary.textChannelId) {
-        try {
-          let textChannel = await this.client.channels.cache.get(
-            this.prisma.textChannelId
-          );
-          if (!textChannel) {
-            this.textChannel = undefined;
-          } else {
-            if (
-              textChannel.isText() &&
-              textChannel.type !== "DM" &&
-              textChannel.type !== "GUILD_NEWS" &&
-              !textChannel.isThread()
-            ) {
-              this.textChannel = textChannel;
-            } else {
-              throw new Error("Not a valid text channel.");
-            }
-          }
-        } catch (error) {
-          logger.error("Failed to save text channel:", error);
-        }
-      }
-    } catch (error) {
-      logger.error("Error fetching secondary channel from database:", error);
-    }
-    try {
-      let channel = await this.client.channels.cache.get(id);
-      if (!channel) {
-        await db.secondary.delete({ where: { id } });
+    if (prisma) {
+      const discord = await this.client.channels.cache.get(id);
+      if (discord?.type === "GUILD_VOICE") {
+        this.discord = discord;
+      } else {
+        await db.secondary.delete({ where: { id: prisma.id } });
         return undefined;
       }
-      if (!channel.isVoice()) {
-        throw new Error("Not a valid voice channel.");
-      } else if (channel.type === "GUILD_STAGE_VOICE") {
-        throw new Error("Not a valid voice channel (Stage)");
+      const textChannel = await this.client.channels.cache.get(
+        prisma.textChannelId
+      );
+      this.prisma = prisma;
+      this.prismaGuild = prisma.guild;
+      this.prismaPrimary = prisma.primary;
+      if (textChannel?.type === "GUILD_TEXT") {
+        this.textChannel = textChannel;
       } else {
-        this.discord = channel;
-        this.discordGuild = channel.guild;
+        this.textChannel = undefined;
+        await db.secondary.update({
+          where: { id },
+          data: {
+            textChannelId: undefined,
+          },
+        });
       }
-    } catch (error) {
-      logger.error("Error fetching secondary channel from discord:", error);
+    } else {
+      return undefined;
     }
+
     return this;
   }
 
@@ -343,26 +350,25 @@ export default class DynamicaSecondary {
     if (!this.client) {
       throw new Error("No client defined");
     }
-    if (!this.discord) {
-      try {
-        await this.deletePrisma();
-      } catch (error) {
-        logger.error("Failed to delete prisma secondary entry:", error);
-      }
-    } else if (!this.prisma) {
-      try {
-        await this.deleteDiscord();
-      } catch (error) {
-        logger.error("Failed to delete discord secondary:", error);
-      }
-    } else if (this.discord && this.prisma) {
-      try {
-        await this.deletePrisma();
-        await this.deleteDiscord();
-      } catch (error) {
-        logger.error("Failed to delete secondary:", error);
-      }
+    if (!this.id) {
+      logger.debug("No id");
     }
+    try {
+      if (!this.discord && !this.prisma) {
+        return;
+      } else if (!this.discord && !!this.prisma) {
+        await this.deletePrisma();
+      } else if (!this.prisma && !!this.discord) {
+        await this.deleteDiscord();
+      } else if (this.discord && this.prisma) {
+        await this.deletePrisma();
+        await this.deleteDiscord();
+      }
+      logger.debug(`Secondary channel deleted ${this.id}.`);
+    } catch (error) {
+      logger.error(error);
+    }
+
     await updateActivityCount(this.client);
   }
 
@@ -395,8 +401,6 @@ export default class DynamicaSecondary {
         );
         await textChannel.delete();
       }
-
-      logger.debug(`Secondary channel deleted ${this.id}.`);
     } catch (error) {
       logger.error("Failed to delete secondary:", error);
     }

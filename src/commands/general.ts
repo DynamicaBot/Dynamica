@@ -39,8 +39,9 @@ export const general = new Command()
 
     updatedPrimary.secondaries.forEach(async (secondary) => {
       const dynamicaSecondary = await new DynamicaSecondary(
-        interaction.client
-      ).fetch(secondary.id);
+        interaction.client,
+        secondary.id
+      ).fetch();
       dynamicaSecondary?.update();
     });
 

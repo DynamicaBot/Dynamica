@@ -20,8 +20,11 @@ export default class DynamicaPrimary {
   /** The prisma guild */
   prismaGuild: Prisma.Guild;
 
-  constructor(client: Client<true>) {
+  constructor(client: Client<true>, channelId?: string) {
     this.client = client;
+    if (channelId) {
+      this.id = channelId;
+    }
   }
 
   /**
@@ -52,7 +55,7 @@ export default class DynamicaPrimary {
       logger.debug(
         `New primary channel ${channel.name} created by ${primary.creator}.`
       );
-      await this.fetch(channel.id);
+      await this.fetch();
     } catch (error) {
       logger.error("Error creating new primary channel:", error);
     }
@@ -60,30 +63,15 @@ export default class DynamicaPrimary {
   }
 
   /**
-   * Checks the database to see if the channel exists
-   * @param id The channel Id
-   * @returns boolean based on if a primary channel exists within the database
-   */
-  async exists(id: string): Promise<boolean> {
-    let primary = await db.primary.findUnique({
-      where: { id },
-    });
-    if (!!primary) {
-      this.id = id;
-    }
-    return !!primary;
-  }
-
-  /**
    * Fetch the database entry and discord channels (voice and text).
    * @param channelId The discord channel Id.
    */
-  async fetch(channelId?: string): Promise<DynamicaPrimary | undefined> {
+  async fetch(): Promise<DynamicaPrimary | undefined> {
     if (!this.client) {
       throw new Error("No client defined");
     }
-    if (channelId) {
-      this.id = channelId;
+    if (!this.id) {
+      throw new Error("No id defined");
     }
     let primary = await db.primary.findUnique({
       where: { id: this.id },
@@ -174,7 +162,7 @@ export default class DynamicaPrimary {
 
       await this.discord.delete();
 
-      logger.debug(`Secondary channel deleted ${this.id}.`);
+      logger.debug(`Primary channel deleted ${this.id}.`);
     } catch (error) {
       logger.error("Failed to delete primary:", error);
     }

@@ -33,9 +33,10 @@ export const name = new Command()
     await db.secondary.update({ where: { id: channel.id }, data: { name } });
     logger.info(`${channel.id} name changed.`);
 
-    const secondary = await new DynamicaSecondary(interaction.client).fetch(
+    const secondary = await new DynamicaSecondary(
+      interaction.client,
       channel.id
-    );
+    ).fetch();
     secondary.update();
     return interaction.reply(`Channel name changed to \`${name}\`.`);
   });

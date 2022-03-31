@@ -15,9 +15,10 @@ export const ready = new Event()
       const primaries = await db.primary.findMany();
 
       primaries.forEach(async (element) => {
-        const existingPrimary = await new DynamicaPrimary(client).fetch(
+        const existingPrimary = await new DynamicaPrimary(
+          client,
           element.id
-        );
+        ).fetch();
 
         if (!existingPrimary) {
           return;
@@ -40,9 +41,10 @@ export const ready = new Event()
       });
 
       secondaries.forEach(async (element) => {
-        const secondaryChannel = await new DynamicaSecondary(client).fetch(
+        const secondaryChannel = await new DynamicaSecondary(
+          client,
           element.id
-        );
+        ).fetch();
 
         await secondaryChannel?.update();
       });

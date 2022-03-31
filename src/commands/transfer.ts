@@ -31,8 +31,9 @@ export const transfer = new Command()
     const { channelId } = guildMember.voice;
 
     const secondaryChannel = await new DynamicaSecondary(
-      interaction.client
-    ).fetch(channelId);
+      interaction.client,
+      channelId
+    ).fetch();
     if (secondaryChannel) {
       await secondaryChannel.changeOwner(user);
       interaction.reply(

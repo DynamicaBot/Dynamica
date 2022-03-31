@@ -24,15 +24,14 @@ export const text = new Command()
   )
   .setResponse(async (interaction) => {
     const state = interaction.options.getBoolean("state", true);
-
-    db.guild.update({
+    const guild = await db.guild.update({
       where: { id: interaction.guildId },
       data: { textChannelsEnabled: state },
     });
 
-    return interaction.reply(
+    await interaction.reply(
       `Temporary text channels ${
-        !state ? "disabled" : "enabled"
+        guild.textChannelsEnabled ? "enabled" : "disabled"
       } for all future created channels.`
     );
   });

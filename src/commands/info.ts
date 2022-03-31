@@ -2,6 +2,7 @@ import { Embed, SlashCommandBuilder } from "@discordjs/builders";
 import Command from "../classes/command.js";
 import DynamicaPrimary from "../classes/primary.js";
 import DynamicaSecondary from "../classes/secondary.js";
+import { db } from "../utils/db.js";
 
 export const info = new Command()
   .setCommandData(
@@ -30,6 +31,11 @@ export const info = new Command()
           )
           .setDescription("Get info about a secondary channel.")
       )
+      .addSubcommand((subcommand) =>
+        subcommand
+          .setName("guild")
+          .setDescription("Get info about the guil's settings.")
+      )
   )
   .setHelpText("Shows the info of either a user or the current server.")
   .setResponse(async (interaction) => {
@@ -37,9 +43,10 @@ export const info = new Command()
     switch (subcommand) {
       case "primary":
         const chosenPrimary = interaction.options.getString("primarychannel");
-        const primary = await new DynamicaPrimary(interaction.client).fetch(
+        const primary = await new DynamicaPrimary(
+          interaction.client,
           chosenPrimary
-        );
+        ).fetch();
         interaction.reply({
           ephemeral: true,
           content: `Here's the current info for <#${primary.id}>`,
@@ -65,9 +72,10 @@ export const info = new Command()
       case "secondary":
         const chosenSecondary =
           interaction.options.getString("secondarychannel");
-        const secondary = await new DynamicaSecondary(interaction.client).fetch(
+        const secondary = await new DynamicaSecondary(
+          interaction.client,
           chosenSecondary
-        );
+        ).fetch();
         interaction.reply({
           ephemeral: true,
           content: `Here's the current info for <#${secondary.id}>`,
@@ -95,7 +103,27 @@ export const info = new Command()
           ],
         });
         break;
-
+      case "guild":
+        const prismaGuild = await db.guild.findUnique({
+          where: { id: interaction.guildId },
+        });
+        interaction.reply({
+          ephemeral: true,
+          content: `Here's the current info for the guild`,
+          embeds: [
+            new Embed().addFields(
+              {
+                name: "Text Channels",
+                value: prismaGuild.textChannelsEnabled ? "Enabled" : "Disabled",
+              },
+              {
+                name: "Join Requests",
+                value: prismaGuild.allowJoinRequests ? "Enabled" : "Disabled",
+              }
+            ),
+          ],
+        });
+        break;
       default:
         break;
     }

@@ -62,8 +62,9 @@ export const unlock = new Command()
     const { channelId } = guildMember.voice;
 
     const dynamicaSecondary = await new DynamicaSecondary(
-      interaction.client
-    ).fetch(channelId);
+      interaction.client,
+      channelId
+    ).fetch();
 
     if (dynamicaSecondary) {
       await dynamicaSecondary.unlock();

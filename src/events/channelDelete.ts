@@ -8,10 +8,14 @@ export const channelDelete = new Event()
   .setEvent("channelDelete")
   .setResponse(async (channel: Channel | DMChannel) => {
     // logger.debug(channel);
-    const primary = await new DynamicaPrimary(channel.client).fetch(channel.id);
-    const secondary = await new DynamicaSecondary(channel.client).fetch(
+    const primary = await new DynamicaPrimary(
+      channel.client,
       channel.id
-    );
+    ).fetch();
+    const secondary = await new DynamicaSecondary(
+      channel.client,
+      channel.id
+    ).fetch();
 
     if (primary) {
       primary.delete();

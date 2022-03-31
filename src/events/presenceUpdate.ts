@@ -13,8 +13,9 @@ export const presenceUpdate = new Event()
       return;
     const { channelId } = newPresence.member.voice;
     const dynamicaSecondary = await new DynamicaSecondary(
-      newPresence.client
-    ).fetch(channelId);
+      newPresence.client,
+      channelId
+    ).fetch();
 
     if (dynamicaSecondary) {
       dynamicaSecondary.update();
