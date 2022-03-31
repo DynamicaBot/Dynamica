@@ -34,7 +34,6 @@
     "fuse.js": "^6.5.3",
     "graphql": "^16.3.0",
     "lodash": "^4.17.21",
-    "p-debounce": "^4.0.0",
     "romans": "^2.0.3",
     "signale": "^1.4.0",
     "utf-8-validate": "^5.0.8",
@@ -43,7 +42,7 @@
   "scripts": {
     "start": "node --enable-source-maps .",
     "watch": "tsup src/index.ts --watch --onSuccess \"node --enable-source-maps dist/index.js\"",
-    "lint": "prettier --write ./src",
+    "prettier": "prettier --write ./src",
     "generate": "prisma generate",
     "deploy": "node dist/deploy-commands.js",
     "undeploy": "node dist/remove-commands.js",
