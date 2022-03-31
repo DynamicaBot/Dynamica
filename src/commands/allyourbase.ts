@@ -1,5 +1,5 @@
-import Command from "@classes/command.js";
-import DynamicaSecondary from "@classes/secondary.js";
+import Command from "@classes/command";
+import DynamicaSecondary from "@classes/secondary";
 import { SlashCommandBuilder } from "@discordjs/builders";
 import { checkManager, checkSecondary } from "@preconditions";
 

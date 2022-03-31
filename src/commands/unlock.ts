@@ -3,7 +3,7 @@ import DynamicaSecondary from "@classes/secondary";
 import { SlashCommandBuilder } from "@discordjs/builders";
 import { checkCreator } from "@preconditions";
 import { checkAdminPermissions } from "@preconditions/admin";
-import { ErrorEmbed } from "@utils/discordEmbeds.js";
+import { ErrorEmbed } from "@utils/discordEmbeds";
 
 export const unlock = new Command()
   .setPreconditions([checkCreator, checkAdminPermissions])

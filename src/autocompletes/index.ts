@@ -1,6 +1,6 @@
-export { alias } from "./alias.js";
-export { general } from "./general.js";
-export { help } from "./help.js";
-export { info } from "./info.js";
-export { join } from "./join.js";
-export { template } from "./template.js";
+export { alias } from "./alias";
+export { general } from "./general";
+export { help } from "./help";
+export { info } from "./info";
+export { join } from "./join";
+export { template } from "./template";

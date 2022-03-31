@@ -1,5 +1,5 @@
-import Command from "@classes/command.js";
-import DynamicaGuild from "@classes/guild.js";
+import Command from "@classes/command";
+import DynamicaGuild from "@classes/guild";
 import { SlashCommandBuilder } from "@discordjs/builders";
 import { checkManager } from "@preconditions";
 import { checkAdminPermissions } from "@preconditions/admin";
