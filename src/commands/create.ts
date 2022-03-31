@@ -2,7 +2,7 @@ import Command from "@classes/command";
 import DynamicaPrimary from "@classes/primary";
 import { SlashCommandBuilder } from "@discordjs/builders";
 import { checkManager } from "@preconditions";
-import { ErrorEmbed } from "@utils/discordEmbeds.js";
+import { ErrorEmbed } from "@utils/discordEmbeds";
 import { GuildChannel } from "discord.js";
 
 export const create = new Command()

@@ -1,7 +1,7 @@
-import Command from "@classes/command.js";
+import Command from "@classes/command";
 import { SlashCommandBuilder } from "@discordjs/builders";
 import { checkCreator, checkSecondary } from "@preconditions";
-import { ErrorEmbed } from "../utils/discordEmbeds.js";
+import { ErrorEmbed } from "@utils/discordEmbeds";
 
 export const bitrate = new Command()
   .setPreconditions([checkSecondary, checkCreator])

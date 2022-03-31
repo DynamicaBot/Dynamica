@@ -1,4 +1,4 @@
-import Autocomplete from "@classes/autocomplete.js";
+import Autocomplete from "@classes/autocomplete";
 import db from "@db";
 import Fuse from "fuse.js";
 

@@ -1,4 +1,4 @@
-import Autocomplete from "@classes/autocomplete.js";
+import Autocomplete from "@classes/autocomplete";
 import db from "@db";
 import Fuse from "fuse.js";
 
@@ -6,7 +6,6 @@ export const alias = new Autocomplete()
   .setName("activity")
   .setResponse(async (interaction) => {
     const { value } = interaction.options.getFocused(true);
-
     const aliases = await db.alias.findMany({
       where: { guildId: interaction.guild.id },
     });
