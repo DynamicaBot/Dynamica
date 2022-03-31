@@ -1,7 +1,6 @@
 import Event from "@classes/event";
 import DynamicaPrimary from "@classes/primary";
 import DynamicaSecondary from "@classes/secondary";
-import logger from "@utils/logger";
 import { VoiceState } from "discord.js";
 
 export const voiceStateUpdate = new Event()
@@ -66,35 +65,8 @@ export const voiceStateUpdate = new Event()
             );
           }
         } else {
-          // const debouncedDelete = pDebounce(secondary.delete, 1000);
-          // await debouncedDelete();
-          logger.log("Called delete");
           secondary.delete();
         }
       }
     }
-
-    // // User joins secondary channel
-    // if (newVoiceState.channel && newVoiceState.member) {
-    //   const secondaryConfig = await db.secondary.findUnique({
-    //     where: { id: newVoiceState.channelId },
-    //     include: { guild: true },
-    //   });
-    //   if (secondaryConfig) {
-    //     if (
-    //       secondaryConfig?.guild.textChannelsEnabled &&
-    //       secondaryConfig.textChannelId
-    //     ) {
-    //       const textChannel = await getChannel(
-    //         newVoiceState.guild.channels,
-    //         secondaryConfig.textChannelId
-    //       );
-    //       if (textChannel.type === "GUILD_TEXT") {
-    //         textChannel.permissionOverwrites.create(newVoiceState.member?.id, {
-    //           VIEW_CHANNEL: true,
-    //         });
-    //       }
-    //     }
-    //   }
-    // }
   });
