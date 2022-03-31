@@ -1,8 +1,8 @@
+import Command from "@classes/command";
+import DynamicaPrimary from "@classes/primary";
+import DynamicaSecondary from "@classes/secondary";
+import db from "@db";
 import { Embed, SlashCommandBuilder } from "@discordjs/builders";
-import Command from "../classes/command.js";
-import DynamicaPrimary from "../classes/primary.js";
-import DynamicaSecondary from "../classes/secondary.js";
-import { db } from "../utils/db.js";
 
 export const info = new Command()
   .setCommandData(

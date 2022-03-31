@@ -3,4 +3,6 @@ const { PrismaClient } = prismaClient;
 /**
  * Prisma Client from Prisma
  */
-export const db = new PrismaClient();
+
+const db = new PrismaClient();
+export default db;

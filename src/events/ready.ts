@@ -1,10 +1,10 @@
+import Event from "@classes/event.js";
+import DynamicaPrimary from "@classes/primary.js";
+import DynamicaSecondary from "@classes/secondary.js";
+import db from "@db";
+import { updateActivityCount } from "@utils";
 import { Client } from "discord.js";
-import Event from "../classes/event.js";
-import DynamicaPrimary from "../classes/primary.js";
-import DynamicaSecondary from "../classes/secondary.js";
-import { db } from "../utils/db.js";
-import { logger } from "../utils/logger.js";
-import { updateActivityCount } from "../utils/operations/general.js";
+import logger from "../utils/logger.js";
 
 export const ready = new Event()
   .setOnce(true)

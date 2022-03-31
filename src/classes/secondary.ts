@@ -1,5 +1,10 @@
+import PrimaryClass from "@classes/primary";
+import db from "@db";
 import { Embed } from "@discordjs/builders";
 import Prisma from "@prisma/client";
+import { updateActivityCount } from "@utils";
+import { formatChannelName } from "@utils/format";
+import logger from "@utils/logger";
 import {
   Client,
   Guild,
@@ -8,12 +13,6 @@ import {
   User,
   VoiceChannel,
 } from "discord.js";
-import { db } from "../utils/db";
-import { formatChannelName } from "../utils/format";
-import { logger } from "../utils/logger";
-import { updateActivityCount } from "../utils/operations/general";
-import PrimaryClass from "./primary";
-
 export default class DynamicaSecondary {
   /** The secondary channel as defined by prisma */
   prisma: Prisma.Secondary;

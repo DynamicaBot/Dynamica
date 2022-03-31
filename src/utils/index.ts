@@ -1,6 +1,6 @@
+import db from "@db";
+import logger from "@utils/logger";
 import { Client } from "discord.js";
-import { db } from "../db.js";
-import { logger } from "../logger.js";
 
 /**
  * Refresh Channel Activity Count

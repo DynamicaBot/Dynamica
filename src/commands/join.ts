@@ -1,9 +1,8 @@
+import Command from "@classes/command";
+import db from "@db";
 import { SlashCommandBuilder } from "@discordjs/builders";
+import { ErrorEmbed } from "@utils/discordEmbeds";
 import { MessageActionRow, MessageButton } from "discord.js";
-import Command from "../classes/command.js";
-import { db } from "../utils/db.js";
-import { ErrorEmbed } from "../utils/discordEmbeds.js";
-import { getChannel } from "../utils/getCached.js";
 
 export const join = new Command()
   .setHelpText(
@@ -63,8 +62,7 @@ export const join = new Command()
       .once("collect", async (collected) => {
         const button = collected;
         if (button.customId === "channeljoinaccept") {
-          const discordChannel = await getChannel(
-            interaction.guild.channels,
+          const discordChannel = await collected.guild.channels.cache.get(
             channel
           );
           if (!discordChannel.isVoice()) return;

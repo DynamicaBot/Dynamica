@@ -1,9 +1,9 @@
+import Event from "@classes/event";
+import db from "@db";
+import * as events from "@events";
+import logger from "@utils/logger";
 import { Client, Intents } from "discord.js";
 import dotenv from "dotenv";
-import Event from "./classes/event.js";
-import * as events from "./events/index.js";
-import { db } from "./utils/db.js";
-import { logger } from "./utils/logger.js";
 dotenv.config();
 
 /**

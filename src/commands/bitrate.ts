@@ -1,8 +1,7 @@
+import Command from "@classes/command.js";
 import { SlashCommandBuilder } from "@discordjs/builders";
-import Command from "../classes/command.js";
-import { checkCreator, checkSecondary } from "../utils/conditions/index.js";
+import { checkCreator, checkSecondary } from "@preconditions";
 import { ErrorEmbed } from "../utils/discordEmbeds.js";
-import { getGuildMember } from "../utils/getCached.js";
 
 export const bitrate = new Command()
   .setPreconditions([checkSecondary, checkCreator])
@@ -20,8 +19,7 @@ export const bitrate = new Command()
   .setResponse(async (interaction) => {
     const bitrate = interaction.options.getInteger("bitrate");
 
-    const guildMember = await getGuildMember(
-      interaction.guild.members,
+    const guildMember = await interaction.guild.members.cache.get(
       interaction.user.id
     );
 

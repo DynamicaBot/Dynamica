@@ -1,7 +1,6 @@
+import logger from "@utils/logger";
 import { CommandInteraction } from "discord.js";
 import { Check } from ".";
-import { getGuildMember } from "../getCached.js";
-import { logger } from "../logger.js";
 
 /**
  * Checks permissions for Dynamica Manager role. (admin overrides)
@@ -10,10 +9,10 @@ import { logger } from "../logger.js";
  */
 export const checkManager: Check = async (interaction: CommandInteraction) => {
   try {
-    const guildMember = await getGuildMember(
-      interaction.guild.members,
+    const guildMember = await interaction.guild.members.cache.get(
       interaction.user.id
     );
+
     const dynamicaManager = guildMember?.roles.cache.some(
       (role) => role.name === "Dynamica Manager"
     );

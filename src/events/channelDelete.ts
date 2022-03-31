@@ -1,7 +1,7 @@
+import Event from "@classes/event";
+import DynamicaPrimary from "@classes/primary";
+import DynamicaSecondary from "@classes/secondary";
 import { Channel, DMChannel } from "discord.js";
-import Event from "../classes/event.js";
-import DynamicaPrimary from "../classes/primary.js";
-import DynamicaSecondary from "../classes/secondary.js";
 
 export const channelDelete = new Event()
   .setOnce(false)

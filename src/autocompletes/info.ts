@@ -1,6 +1,6 @@
+import Autocomplete from "@classes/autocomplete";
+import db from "@db";
 import Fuse from "fuse.js";
-import Autocomplete from "../classes/autocomplete";
-import { db } from "../utils/db.js";
 export const info = new Autocomplete()
   .setName("info")
   .setResponse(async (interaction) => {

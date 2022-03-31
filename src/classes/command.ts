@@ -2,8 +2,8 @@ import {
   SlashCommandBuilder,
   SlashCommandSubcommandsOnlyBuilder,
 } from "@discordjs/builders";
+import { Check } from "@preconditions";
 import { CommandInteraction } from "discord.js";
-import { Check } from "../utils/conditions/index.js";
 
 /**
  * The command class for defining new Dynamica commands.

@@ -1,6 +1,6 @@
+import Event from "@classes/event";
+import DynamicaSecondary from "@classes/secondary";
 import { Presence } from "discord.js";
-import Event from "../classes/event.js";
-import DynamicaSecondary from "../classes/secondary.js";
 
 export const presenceUpdate = new Event()
   .setOnce(false)

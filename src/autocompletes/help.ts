@@ -1,7 +1,7 @@
+import Autocomplete from "@classes/autocomplete.js";
+import Command from "@classes/command.js";
+import * as commands from "@commands/index.js";
 import Fuse from "fuse.js";
-import Autocomplete from "../classes/autocomplete.js";
-import Command from "../classes/command.js";
-import * as commands from "../commands/index.js";
 
 export const help = new Autocomplete()
   .setName("help")

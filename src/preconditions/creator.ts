@@ -1,7 +1,6 @@
+import db from "@db";
+import logger from "@utils/logger";
 import { Check } from ".";
-import { db } from "../db.js";
-import { getGuildMember } from "../getCached.js";
-import { logger } from "../logger.js";
 /**
  * Checks if a guild member is the creator of the secondary channel. (overridden by manager and admin)
  * @param interaction The interaction which to check.
@@ -9,8 +8,7 @@ import { logger } from "../logger.js";
  */
 export const checkCreator: Check = async (interaction) => {
   try {
-    const guildMember = await getGuildMember(
-      interaction.guild.members,
+    const guildMember = await interaction.guild.members.cache.get(
       interaction.user.id
     );
 
