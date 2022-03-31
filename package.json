@@ -43,6 +43,7 @@
     "start": "node --enable-source-maps .",
     "watch": "tsup src/index.ts --watch --onSuccess \"node --enable-source-maps dist/index.js\"",
     "prettier": "prettier --write ./src",
+    "lint": "eslint --ext .ts",
     "generate": "prisma generate",
     "deploy": "node dist/deploy-commands.js",
     "undeploy": "node dist/remove-commands.js",
