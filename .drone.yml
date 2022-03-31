@@ -14,7 +14,7 @@ steps:
       restore: true
       mount:
         - ./node_modules
-  - name: "Build & Check Types"
+  - name: "Install Dependancies"
     image: "node:16-alpine"
     pull: if-not-exists
     environment:
@@ -24,6 +24,19 @@ steps:
       - apk add --no-cache python3 make gcc g++ curl
       - yarn install --frozen-lockfile
       - yarn generate
+  - name: "Lint"
+    image: "node:16-alpine"
+    pull: if-not-exists
+    environment:
+      TYPE_CHECKING: "true"
+    commands:
+      - yarn lint
+  - name: "Build"
+    image: "node:16-alpine"
+    pull: if-not-exists
+    environment:
+      TYPE_CHECKING: "true"
+    commands:
       - yarn build
   - name: Rebuild Cache
     pull: if-not-exists
