@@ -117,7 +117,9 @@ export default class DynamicaSecondary {
           this.prisma = channel;
           this.prismaGuild = channel.guild;
           this.prismaPrimary = channel.primary;
-          const guild = await db.guild.findUnique({ where: { id: this.id } });
+          const guild = await db.guild.findUnique({
+            where: { id: channel.guildId },
+          });
           if (guild?.textChannelsEnabled) {
             this.createTextChannel(member);
           }
