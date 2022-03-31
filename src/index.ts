@@ -1,4 +1,3 @@
-import Event from '@classes/event';
 import db from '@db';
 import events from '@events';
 import logger from '@utils/logger';
@@ -18,7 +17,7 @@ const client = new Client({
   ],
 });
 
-const eventList = Object.values(events) as Event[];
+const eventList = Object.values(events);
 try {
   // Register event handlers
   eventList.forEach((event) => {
