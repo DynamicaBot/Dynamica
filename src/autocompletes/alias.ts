@@ -18,7 +18,7 @@ export const alias = new Autocomplete()
     const fuse = new Fuse(options, { keys: ["name"] });
     const query = fuse.search(value.toString());
     interaction.respond(
-      !!value.toString()
+      value.toString()
         ? query.map(result => result.item).slice(0, 24)
         : options.slice(0, 24)
     );
