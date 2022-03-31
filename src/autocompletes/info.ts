@@ -3,7 +3,7 @@ import db from "@db";
 import Fuse from "fuse.js";
 export const info = new Autocomplete()
   .setName("info")
-  .setResponse(async (interaction) => {
+  .setResponse(async interaction => {
     const { value, name } = interaction.options.getFocused(true);
     const discordChannels = [...interaction.guild.channels.cache.values()];
     switch (name) {
@@ -13,10 +13,10 @@ export const info = new Autocomplete()
         });
 
         const availableSecondaryChannels = discordChannels.filter(
-          (discordChannel) =>
-            secondaries.find((secondary) => discordChannel.id === secondary.id)
+          discordChannel =>
+            secondaries.find(secondary => discordChannel.id === secondary.id)
         );
-        const secondaryOptions = availableSecondaryChannels.map((channel) => ({
+        const secondaryOptions = availableSecondaryChannels.map(channel => ({
           name: channel.name,
           value: channel.id,
         }));
@@ -25,7 +25,7 @@ export const info = new Autocomplete()
         // interaction.respond();
         interaction.respond(
           !!value.toString()
-            ? secondaryQuery.map((result) => result.item).slice(0, 24)
+            ? secondaryQuery.map(result => result.item).slice(0, 24)
             : secondaryOptions.slice(0, 24)
         );
         break;
@@ -35,10 +35,10 @@ export const info = new Autocomplete()
         });
 
         const availablePrimaryChannels = discordChannels.filter(
-          (discordChannel) =>
-            primaries.find((secondary) => discordChannel.id === secondary.id)
+          discordChannel =>
+            primaries.find(secondary => discordChannel.id === secondary.id)
         );
-        const primaryOptions = availablePrimaryChannels.map((channel) => ({
+        const primaryOptions = availablePrimaryChannels.map(channel => ({
           name: channel.name,
           value: channel.id,
         }));
@@ -47,7 +47,7 @@ export const info = new Autocomplete()
         // interaction.respond();
         interaction.respond(
           !!value.toString()
-            ? primaryQuery.map((result) => result.item).slice(0, 24)
+            ? primaryQuery.map(result => result.item).slice(0, 24)
             : primaryOptions.slice(0, 24)
         );
         break;

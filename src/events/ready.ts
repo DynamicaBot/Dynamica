@@ -14,7 +14,7 @@ export const ready = new Event()
       const secondaries = await db.secondary.findMany();
       const primaries = await db.primary.findMany();
 
-      primaries.forEach(async (element) => {
+      primaries.forEach(async element => {
         const existingPrimary = await new DynamicaPrimary(
           client,
           element.id
@@ -34,13 +34,13 @@ export const ready = new Event()
             channel.guild,
             channelMembers[0]
           );
-          channelMembers.slice(1).forEach((channelMember) => {
+          channelMembers.slice(1).forEach(channelMember => {
             channelMember.voice.setChannel(secondary.discord);
           });
         }
       });
 
-      secondaries.forEach(async (element) => {
+      secondaries.forEach(async element => {
         const secondaryChannel = await new DynamicaSecondary(
           client,
           element.id

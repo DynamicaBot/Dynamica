@@ -11,7 +11,7 @@ export const transfer = new Command()
       .setDescription(
         "Transfer ownership of secondary channel to another person"
       )
-      .addUserOption((option) =>
+      .addUserOption(option =>
         option
           .setName("user")
           .setDescription("The person to transfer ownership to.")
@@ -19,7 +19,7 @@ export const transfer = new Command()
       )
   )
   .setHelpText("Transfer ownership to another user.")
-  .setResponse(async (interaction) => {
+  .setResponse(async interaction => {
     const user = interaction.options.getUser("user", true);
 
     const guildMember = await interaction.guild.members.cache.get(

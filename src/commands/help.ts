@@ -10,7 +10,7 @@ export const help = new Command()
       .setDescription(
         "A help command that lists all commands available to users of the bot."
       )
-      .addStringOption((option) =>
+      .addStringOption(option =>
         option
           .setRequired(false)
           .setName("subcommand")
@@ -18,7 +18,7 @@ export const help = new Command()
           .setAutocomplete(true)
       )
   )
-  .setResponse(async (interaction) => {
+  .setResponse(async interaction => {
     const subcommand = interaction.options.getString("subcommand", false);
     const subcommandFile = commandsList[subcommand] as Command;
     if (subcommand) {
@@ -40,7 +40,7 @@ export const help = new Command()
       const commands = Object.values(commandsList);
       const commandFields: { value: string; name: string; inline: true }[][] =
         _.chunk(
-          commands.map((command) => ({
+          commands.map(command => ({
             name: command.commandData.name,
             value: commandsList[command.commandData.name].helpText.short,
             inline: true,
@@ -48,7 +48,7 @@ export const help = new Command()
           25
         );
       return interaction.reply({
-        embeds: commandFields.map((commandField) =>
+        embeds: commandFields.map(commandField =>
           new Embed()
             .setAuthor({
               name: "Dynamica",

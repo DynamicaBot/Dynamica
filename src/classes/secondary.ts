@@ -63,15 +63,15 @@ export default class DynamicaSecondary {
       });
 
       const activities = Array.from(
-        primary.discord.members.filter((member) => !member.user.bot)
-      ).flatMap((entry) => {
+        primary.discord.members.filter(member => !member.user.bot)
+      ).flatMap(entry => {
         if (!entry[1].presence) return [];
-        return entry[1].presence?.activities.map((activity) => activity.name);
+        return entry[1].presence?.activities.map(activity => activity.name);
       });
 
       const filteredActivityList = activities
-        .filter((activity) => activity !== "Spotify")
-        .filter((activity) => activity !== "Custom Status");
+        .filter(activity => activity !== "Spotify")
+        .filter(activity => activity !== "Custom Status");
 
       const str = !filteredActivityList.length
         ? primaryConfig.generalName
@@ -111,7 +111,7 @@ export default class DynamicaSecondary {
           },
           include: { guild: true, primary: true },
         })
-        .then(async (channel) => {
+        .then(async channel => {
           this.id = secondary.id;
           this.prisma = channel;
           this.prismaGuild = channel.guild;
@@ -285,17 +285,17 @@ export default class DynamicaSecondary {
         /**
          * Get the activities of all the members of the channel.
          */
-        const activities = Array.from(this.discord.members).flatMap((entry) => {
+        const activities = Array.from(this.discord.members).flatMap(entry => {
           if (!entry[1].presence) return [];
-          return entry[1].presence?.activities.map((activity) => activity.name);
+          return entry[1].presence?.activities.map(activity => activity.name);
         });
 
         /**
          * The activities list minus stuff that should be ignored like Spotify and Custom status // Todo: more complicated logic for people who might be streaming
          */
         const filteredActivityList = activities
-          .filter((activity) => activity !== "Spotify")
-          .filter((activity) => activity !== "Custom Status");
+          .filter(activity => activity !== "Spotify")
+          .filter(activity => activity !== "Custom Status");
         const { locked } = secondary;
 
         /**
@@ -308,7 +308,7 @@ export default class DynamicaSecondary {
           : this.prismaPrimary.template;
         const channelNumber =
           secondaries
-            .map((secondaryChannel) => secondaryChannel.id)
+            .map(secondaryChannel => secondaryChannel.id)
             .indexOf(secondary.id) + 1;
 
         /**
@@ -421,7 +421,7 @@ export default class DynamicaSecondary {
       const { permissionOverwrites } = this.discord;
 
       await Promise.all(
-        currentlyActive.map((member) =>
+        currentlyActive.map(member =>
           permissionOverwrites.create(member.id, {
             CONNECT: true,
           })

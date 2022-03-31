@@ -51,7 +51,7 @@ const botInfoEmbed = new Embed()
     name: "Basic Commands",
     value: basicCommands
       .map(
-        (command) =>
+        command =>
           `${hyperlink(`\`${command.command}\``, command.help)} - ${
             command.description
           }`

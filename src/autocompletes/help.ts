@@ -5,7 +5,7 @@ import Fuse from "fuse.js";
 
 export const help = new Autocomplete()
   .setName("help")
-  .setResponse(async (interaction) => {
+  .setResponse(async interaction => {
     const value = interaction.options.getFocused();
     const commandValues = Object.values(commands) as Command[];
 
@@ -28,7 +28,7 @@ export const help = new Autocomplete()
     interaction.respond(
       !!value.toString()
         ? query
-            .map((result) => ({
+            .map(result => ({
               name: result.item.name,
               value: result.item.name,
             }))

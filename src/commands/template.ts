@@ -10,14 +10,14 @@ export const template = new Command()
     new SlashCommandBuilder()
       .setName("template")
       .setDescription("Edit the template for all secondary channels.")
-      .addStringOption((option) =>
+      .addStringOption(option =>
         option
           .setAutocomplete(true)
           .setName("channel")
           .setDescription("The channel to change the template for.")
           .setRequired(true)
       )
-      .addStringOption((option) =>
+      .addStringOption(option =>
         option
           .setName("template")
           .setDescription("The new template for all secondary channels.")
@@ -28,7 +28,7 @@ export const template = new Command()
     "Using the /template command you can set the template for the channel name target primary channel.",
     "Using the /template command you can set the template for the channel name target primary channel. The default template is @@game@@ ## which will format the name of the channel according to the formatting rules."
   )
-  .setResponse(async (interaction) => {
+  .setResponse(async interaction => {
     const name = interaction.options.getString("template", true);
     const channel = interaction.options.getString("channel", true);
 
@@ -38,7 +38,7 @@ export const template = new Command()
       include: { secondaries: true },
     });
 
-    primary.secondaries.forEach(async (secondary) => {
+    primary.secondaries.forEach(async secondary => {
       const dynamicaSecondary = await new DynamicaSecondary(
         interaction.client,
         secondary.id

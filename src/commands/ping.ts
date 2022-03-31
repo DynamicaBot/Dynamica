@@ -10,7 +10,7 @@ export const ping = new Command()
   .setHelpText(
     "Returns the Pong and the ping of the server you're currently in."
   )
-  .setResponse(async (interaction) => {
+  .setResponse(async interaction => {
     await interaction.reply({
       content: `Pong from JavaScript! Bot Latency ${Math.round(
         interaction.client.ws.ping

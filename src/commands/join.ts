@@ -12,7 +12,7 @@ export const join = new Command()
     new SlashCommandBuilder()
       .setName("join")
       .setDescription(`Request to join a locked voice channel.`)
-      .addStringOption((option) =>
+      .addStringOption(option =>
         option
           .setAutocomplete(true)
           .setName("channel")
@@ -20,7 +20,7 @@ export const join = new Command()
           .setRequired(true)
       )
   )
-  .setResponse(async (interaction) => {
+  .setResponse(async interaction => {
     const channel = interaction.options.getString("channel", true);
 
     if (!interaction.guild) return;
@@ -57,9 +57,9 @@ export const join = new Command()
     interaction.channel
       .createMessageComponentCollector({
         componentType: "BUTTON",
-        filter: (filteritem) => filteritem.user.id === channelConfig.creator,
+        filter: filteritem => filteritem.user.id === channelConfig.creator,
       })
-      .once("collect", async (collected) => {
+      .once("collect", async collected => {
         const button = collected;
         if (button.customId === "channeljoinaccept") {
           const discordChannel = await collected.guild.channels.cache.get(

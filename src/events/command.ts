@@ -15,11 +15,11 @@ export const command = new Event()
       const command: Command = commands[interaction.commandName];
       const { preconditions: conditions } = command;
       const conditionResults = await Promise.all(
-        [checkGuild, ...conditions].map((condition) => condition(interaction))
+        [checkGuild, ...conditions].map(condition => condition(interaction))
       );
 
       const failingCondition = conditionResults.find(
-        (condition) => !condition.success
+        condition => !condition.success
       );
 
       if (failingCondition) {

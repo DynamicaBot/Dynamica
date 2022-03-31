@@ -15,7 +15,7 @@ export const unlock = new Command()
   .setHelpText(
     "This resets the permissions channel whose permissions have been altered by any of the permissions related command like /lock and /permission."
   )
-  .setResponse(async (interaction) => {
+  .setResponse(async interaction => {
     const guildMember = await interaction.guild.members.cache.get(
       interaction.user.id
     );

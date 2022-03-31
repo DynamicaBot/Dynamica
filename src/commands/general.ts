@@ -10,14 +10,14 @@ export const general = new Command()
     new SlashCommandBuilder()
       .setName("general")
       .setDescription("Edit the name/template for the default general channel.")
-      .addStringOption((option) =>
+      .addStringOption(option =>
         option
           .setAutocomplete(true)
           .setName("channel")
           .setDescription("The channel to change the template for.")
           .setRequired(true)
       )
-      .addStringOption((option) =>
+      .addStringOption(option =>
         option
           .setName("name")
           .setDescription("The new template for the general channel.")
@@ -27,7 +27,7 @@ export const general = new Command()
   .setHelpText(
     "Using the /general command you can set the template for the channel name of the channel you're in when nobody is playing a game."
   )
-  .setResponse(async (interaction) => {
+  .setResponse(async interaction => {
     const name = interaction.options.getString("name", true);
     const channel = interaction.options.getString("channel", true);
 
@@ -37,7 +37,7 @@ export const general = new Command()
       include: { secondaries: true },
     });
 
-    updatedPrimary.secondaries.forEach(async (secondary) => {
+    updatedPrimary.secondaries.forEach(async secondary => {
       const dynamicaSecondary = await new DynamicaSecondary(
         interaction.client,
         secondary.id

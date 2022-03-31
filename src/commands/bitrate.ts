@@ -10,13 +10,13 @@ export const bitrate = new Command()
     new SlashCommandBuilder()
       .setName("bitrate")
       .setDescription("Edit the bitrate of the current channel.")
-      .addIntegerOption((option) =>
+      .addIntegerOption(option =>
         option
           .setDescription("The bitrate to set the channel to.")
           .setName("bitrate")
       )
   )
-  .setResponse(async (interaction) => {
+  .setResponse(async interaction => {
     const bitrate = interaction.options.getInteger("bitrate");
 
     const guildMember = await interaction.guild.members.cache.get(

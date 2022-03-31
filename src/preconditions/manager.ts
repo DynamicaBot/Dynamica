@@ -14,7 +14,7 @@ export const checkManager: Check = async (interaction: CommandInteraction) => {
     );
 
     const dynamicaManager = guildMember?.roles.cache.some(
-      (role) => role.name === "Dynamica Manager"
+      role => role.name === "Dynamica Manager"
     );
     const admin = guildMember.permissions.has("ADMINISTRATOR");
     if (!dynamicaManager && !admin) {
