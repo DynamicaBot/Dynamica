@@ -1,26 +1,26 @@
-import Command from "@classes/command";
-import DynamicaSecondary from "@classes/secondary";
-import { SlashCommandBuilder } from "@discordjs/builders";
-import { checkCreator } from "@preconditions";
+import Command from '@classes/command';
+import DynamicaSecondary from '@classes/secondary';
+import { SlashCommandBuilder } from '@discordjs/builders';
+import checkCreator from '@preconditions/creator';
 
-export const transfer = new Command()
+export default new Command()
   .setPreconditions([checkCreator])
   .setCommandData(
     new SlashCommandBuilder()
-      .setName("transfer")
+      .setName('transfer')
       .setDescription(
-        "Transfer ownership of secondary channel to another person"
+        'Transfer ownership of secondary channel to another person'
       )
-      .addUserOption(option =>
+      .addUserOption((option) =>
         option
-          .setName("user")
-          .setDescription("The person to transfer ownership to.")
+          .setName('user')
+          .setDescription('The person to transfer ownership to.')
           .setRequired(true)
       )
   )
-  .setHelpText("Transfer ownership to another user.")
-  .setResponse(async interaction => {
-    const user = interaction.options.getUser("user", true);
+  .setHelpText('Transfer ownership to another user.')
+  .setResponse(async (interaction) => {
+    const user = interaction.options.getUser('user', true);
 
     const guildMember = await interaction.guild.members.cache.get(
       interaction.user.id
@@ -38,6 +38,6 @@ export const transfer = new Command()
         `Ownership of <#${channelId}> channel to <@${user.id}>.`
       );
     } else {
-      interaction.reply(`Not a valid secondary channel.`);
+      interaction.reply('Not a valid secondary channel.');
     }
   });

@@ -1,21 +1,22 @@
-import Command from "@classes/command";
-import DynamicaSecondary from "@classes/secondary";
-import { SlashCommandBuilder } from "@discordjs/builders";
-import { checkManager, checkSecondary } from "@preconditions";
+import Command from '@classes/command';
+import DynamicaSecondary from '@classes/secondary';
+import { SlashCommandBuilder } from '@discordjs/builders';
+import checkManager from '@preconditions/manager';
+import checkSecondary from '@preconditions/secondary';
 
-export const allyourbase = new Command()
+export default new Command()
   .setPreconditions([checkManager, checkSecondary])
   .setHelpText(
-    "Transfers the ownership of the current channel to the person who ran the command. (Must be an admin)"
+    'Transfers the ownership of the current channel to the person who ran the command. (Must be an admin)'
   )
   .setCommandData(
     new SlashCommandBuilder()
-      .setName("allyourbase")
+      .setName('allyourbase')
       .setDescription(
-        "If you are an admin you become the owner of the channel you are in."
+        'If you are an admin you become the owner of the channel you are in.'
       )
   )
-  .setResponse(async interaction => {
+  .setResponse(async (interaction) => {
     const guildMember = await interaction.guild.members.cache.get(
       interaction.user.id
     );
@@ -32,6 +33,6 @@ export const allyourbase = new Command()
         `Owner of <#${channelId}> changed to <@${guildMember.user.id}>`
       );
     } else {
-      await interaction.reply(`Must be a valid secondary channel.`);
+      await interaction.reply('Must be a valid secondary channel.');
     }
   });

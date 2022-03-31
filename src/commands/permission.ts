@@ -1,62 +1,63 @@
-import Command from "@classes/command";
-import { SlashCommandBuilder } from "@discordjs/builders";
-import { checkCreator, checkSecondary } from "@preconditions";
-import { checkAdminPermissions } from "@preconditions/admin";
-import { ErrorEmbed } from "@utils/discordEmbeds";
-import { Role } from "discord.js";
+import Command from '@classes/command';
+import { SlashCommandBuilder } from '@discordjs/builders';
+import checkAdminPermissions from '@preconditions/admin';
+import checkCreator from '@preconditions/creator';
+import checkSecondary from '@preconditions/secondary';
+import { ErrorEmbed } from '@utils/discordEmbeds';
+import { Role } from 'discord.js';
 
-export const permission = new Command()
+export default new Command()
   .setPreconditions([checkCreator, checkSecondary, checkAdminPermissions])
   .setCommandData(
     new SlashCommandBuilder()
-      .setName("permission")
-      .setDescription("Edit the permissions of a voice channel.")
-      .addSubcommand(subcommand =>
+      .setName('permission')
+      .setDescription('Edit the permissions of a voice channel.')
+      .addSubcommand((subcommand) =>
         subcommand
-          .setName("add")
+          .setName('add')
           .setDescription(
-            "Give permissions for the current voice channel for a role or user."
+            'Give permissions for the current voice channel for a role or user.'
           )
-          .addRoleOption(option =>
+          .addRoleOption((option) =>
             option
-              .setDescription("The role to add.")
-              .setName("role")
+              .setDescription('The role to add.')
+              .setName('role')
               .setRequired(false)
           )
-          .addUserOption(option =>
+          .addUserOption((option) =>
             option
-              .setDescription("The user to add.")
-              .setName("user")
+              .setDescription('The user to add.')
+              .setName('user')
               .setRequired(false)
           )
       )
-      .addSubcommand(subcommand =>
+      .addSubcommand((subcommand) =>
         subcommand
-          .setName("remove")
+          .setName('remove')
           .setDescription(
-            "Remove permissions for the current voice channel for a role or user."
+            'Remove permissions for the current voice channel for a role or user.'
           )
-          .addRoleOption(option =>
+          .addRoleOption((option) =>
             option
-              .setDescription("The role to remove.")
-              .setName("role")
+              .setDescription('The role to remove.')
+              .setName('role')
               .setRequired(false)
           )
-          .addUserOption(option =>
+          .addUserOption((option) =>
             option
-              .setDescription("The user to remove.")
-              .setName("user")
+              .setDescription('The user to remove.')
+              .setName('user')
               .setRequired(false)
           )
       )
   )
   .setHelpText(
-    "Edits the permissions for secondary channels. (Works in conjuction with /lock and /unlock."
+    'Edits the permissions for secondary channels. (Works in conjuction with /lock and /unlock.'
   )
-  .setResponse(async interaction => {
+  .setResponse(async (interaction) => {
     const subcommand = interaction.options.getSubcommand(true);
-    const user = interaction.options.getUser("user", false);
-    const role = interaction.options.getRole("role", false) as Role;
+    const user = interaction.options.getUser('user', false);
+    const role = interaction.options.getRole('role', false) as Role;
 
     const guildMember = await interaction.guild.members.cache.get(
       interaction.user.id
@@ -65,30 +66,31 @@ export const permission = new Command()
     const channel = guildMember?.voice.channel;
     const { permissionOverwrites } = channel;
     if (!user && !role) {
-      return interaction.reply({
+      interaction.reply({
         ephemeral: true,
-        embeds: [ErrorEmbed("You must specify either a role or user.")],
+        embeds: [ErrorEmbed('You must specify either a role or user.')],
       });
     }
 
     if (interaction.user === user) {
-      return interaction.reply({
+      interaction.reply({
         ephemeral: true,
-        embeds: [ErrorEmbed(`You add yourself silly. You're already added.`)],
+        embeds: [ErrorEmbed("You add yourself silly. You're already added.")],
       });
     }
 
-    if (subcommand === "add") {
+    if (subcommand === 'add') {
       permissionOverwrites.create(user || role, { CONNECT: true });
-      return interaction.reply({
+      interaction.reply({
         ephemeral: true,
         content: `You've added permission for ${
           user ? `<@${user.id}>` : `<@&${role.id}>`
         } to access <#${channel.id}>.`,
       });
-    } else if (subcommand === "remove") {
+    }
+    if (subcommand === 'remove') {
       permissionOverwrites.create(user || role, { CONNECT: false });
-      return interaction.reply({
+      interaction.reply({
         ephemeral: true,
         content: `You've removed permission for ${
           user ? `<@${user.id}>` : `people with the role <@&${role.id}>`

@@ -1,4 +1,4 @@
-import { AutocompleteInteraction } from "discord.js";
+import { AutocompleteInteraction } from 'discord.js';
 
 /**
  * The autocomplete discordjs class for ease of use.
@@ -13,8 +13,6 @@ export default class Autocomplete {
    * The response to an Autocomplete event.
    */
   public response: (interaction: AutocompleteInteraction) => Promise<void>;
-
-  constructor() {}
 
   /**
    * Set the name of the autocomplete in the API.

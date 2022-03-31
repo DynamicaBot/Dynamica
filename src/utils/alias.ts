@@ -1,5 +1,5 @@
-import db from "@db";
-import logger from "@utils/logger";
+import db from '@db';
+import logger from '@utils/logger';
 
 /**
  * Updates or creates a new alias.
@@ -67,17 +67,13 @@ export const deleteAlias = async (activity: string, guildId: string) => {
  * @returns An array of aliases.
  */
 export const listAliases = async (guildId: string) => {
-  try {
-    const aliases = await db.alias.findMany({
-      where: {
-        guildId,
-      },
-    });
-    return aliases.map(alias => ({
-      name: alias.activity,
-      value: alias.alias,
-    }));
-  } catch (error) {
-    logger.error(error);
-  }
+  const aliases = await db.alias.findMany({
+    where: {
+      guildId,
+    },
+  });
+  return aliases.map((alias) => ({
+    name: alias.activity,
+    value: alias.alias,
+  }));
 };

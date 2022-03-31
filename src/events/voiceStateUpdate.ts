@@ -1,11 +1,11 @@
-import Event from "@classes/event";
-import DynamicaPrimary from "@classes/primary";
-import DynamicaSecondary from "@classes/secondary";
-import { VoiceState } from "discord.js";
+import Event from '@classes/event';
+import DynamicaPrimary from '@classes/primary';
+import DynamicaSecondary from '@classes/secondary';
+import { VoiceState } from 'discord.js';
 
-export const voiceStateUpdate = new Event()
+export default new Event()
   .setOnce(false)
-  .setEvent("voiceStateUpdate")
+  .setEvent('voiceStateUpdate')
   .setResponse(async (oldVoiceState: VoiceState, newVoiceState: VoiceState) => {
     if (oldVoiceState?.channelId === newVoiceState?.channelId) return;
     // If the channel doesn't change then just ignore it.
@@ -25,18 +25,18 @@ export const voiceStateUpdate = new Event()
       ).fetch();
 
       // Create a new secondary if one doesn't already exist and the user has joined a primary channel
-      if (!!primary) {
+      if (primary) {
         const newSecondary = new DynamicaSecondary(newVoiceState.client);
         await newSecondary.create(
           primary,
           newVoiceState.guild,
           newVoiceState.member
         );
-      } else if (!!existingSecondary) {
+      } else if (existingSecondary) {
         // If a secondary exists then attempt to update the name;
         if (newVoiceState.channel.members.size !== 1) {
           await existingSecondary.update();
-          if (!!existingSecondary.textChannel) {
+          if (existingSecondary.textChannel) {
             // Typeguard voice remove permission for people who have left the voice channel to see the text channel.
             existingSecondary.textChannel.permissionOverwrites.create(
               oldVoiceState.member.id,
@@ -56,10 +56,10 @@ export const voiceStateUpdate = new Event()
         oldVoiceState.channelId
       ).fetch();
 
-      if (!!secondary) {
+      if (secondary) {
         if (oldVoiceState.channel.members.size !== 0) {
           await secondary.update();
-          if (!!secondary.textChannel) {
+          if (secondary.textChannel) {
             secondary.textChannel.permissionOverwrites.delete(
               oldVoiceState.member?.id
             );

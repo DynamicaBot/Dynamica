@@ -1,6 +1,15 @@
-export { alias } from "./alias";
-export { general } from "./general";
-export { help } from "./help";
-export { info } from "./info";
-export { join } from "./join";
-export { template } from "./template";
+import alias from './alias';
+import general from './general';
+import help from './help';
+import info from './info';
+import join from './join';
+import template from './template';
+
+export default {
+  alias,
+  general,
+  help,
+  info,
+  join,
+  template,
+};

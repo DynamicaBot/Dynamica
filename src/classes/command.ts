@@ -1,15 +1,15 @@
 import {
   SlashCommandBuilder,
   SlashCommandSubcommandsOnlyBuilder,
-} from "@discordjs/builders";
-import { Check } from "@preconditions";
-import { CommandInteraction } from "discord.js";
+} from '@discordjs/builders';
+import { CommandInteraction } from 'discord.js';
 
 /**
  * The command class for defining new Dynamica commands.
  */
 export default class Command {
-  preconditions: Check[];
+  preconditions;
+
   helpText: {
     /**
      * Short bot description.
@@ -20,22 +20,24 @@ export default class Command {
      */
     long?: string;
   };
+
   public commandData:
     | SlashCommandBuilder
     | SlashCommandSubcommandsOnlyBuilder
-    | Omit<SlashCommandBuilder, "addSubcommand" | "addSubcommandGroup">;
+    | Omit<SlashCommandBuilder, 'addSubcommand' | 'addSubcommandGroup'>;
+
   public execute: (interaction: CommandInteraction) => Promise<void>;
 
   constructor() {
     this.preconditions = [];
-    this.helpText = { short: "", long: undefined };
+    this.helpText = { short: '', long: undefined };
   }
 
   /**
    * Set preconditions.
    * @param preconditions The different preconditions for the command to be run
    */
-  setPreconditions(preconditions?: Check[]) {
+  setPreconditions(preconditions?) {
     this.preconditions = preconditions;
     return this;
   }
@@ -58,7 +60,7 @@ export default class Command {
     commandData:
       | SlashCommandBuilder
       | SlashCommandSubcommandsOnlyBuilder
-      | Omit<SlashCommandBuilder, "addSubcommand" | "addSubcommandGroup">
+      | Omit<SlashCommandBuilder, 'addSubcommand' | 'addSubcommandGroup'>
   ) {
     this.commandData = commandData;
     return this;
