@@ -3,6 +3,7 @@ import {
   SlashCommandSubcommandsOnlyBuilder,
 } from '@discordjs/builders';
 import { CommandInteraction } from 'discord.js';
+import Help from './help';
 
 /**
  * The command class for defining new Dynamica commands.
@@ -10,16 +11,7 @@ import { CommandInteraction } from 'discord.js';
 export default class Command {
   preconditions;
 
-  helpText: {
-    /**
-     * Short bot description.
-     */
-    short: string;
-    /**
-     * Long bot description.
-     */
-    long?: string;
-  };
+  help: Help;
 
   public commandData:
     | SlashCommandBuilder
@@ -30,7 +22,7 @@ export default class Command {
 
   constructor() {
     this.preconditions = [];
-    this.helpText = { short: '', long: undefined };
+    this.help = new Help('', undefined);
   }
 
   /**
@@ -47,8 +39,8 @@ export default class Command {
    * @param short The short command description.
    * @param long The long command description.
    */
-  setHelpText(short: string, long?: string) {
-    this.helpText = { short, long };
+  setHelp(help: Help) {
+    this.help = help;
     return this;
   }
 

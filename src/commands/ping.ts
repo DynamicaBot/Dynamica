@@ -1,3 +1,4 @@
+import help from '@/help/ping';
 import Command from '@classes/command';
 import { SlashCommandBuilder } from '@discordjs/builders';
 
@@ -7,9 +8,7 @@ export default new Command()
       .setName('ping')
       .setDescription('Replies with Pong!')
   )
-  .setHelpText(
-    "Returns the Pong and the ping of the server you're currently in."
-  )
+  .setHelp(help)
   .setResponse(async (interaction) => {
     await interaction.reply({
       content: `Pong from JavaScript! Bot Latency ${Math.round(

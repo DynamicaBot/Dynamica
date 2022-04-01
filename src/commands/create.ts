@@ -1,3 +1,4 @@
+import help from '@/help/create';
 import Command from '@classes/command';
 import DynamicaPrimary from '@classes/primary';
 import { SlashCommandBuilder } from '@discordjs/builders';
@@ -21,9 +22,7 @@ export default new Command()
           .setRequired(false)
       )
   )
-  .setHelpText(
-    'It creates a new Primary channel which your users are able to join in order to create more secondary channels.'
-  )
+  .setHelp(help)
   .setResponse(async (interaction) => {
     const section = interaction.options.getChannel(
       'section'

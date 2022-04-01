@@ -1,4 +1,4 @@
-import Command from '@/classes/command';
+import Help from '@/classes/help';
 import alias from './alias';
 import allowjoin from './allowjoin';
 import allyourbase from './allyourbase';
@@ -19,21 +19,21 @@ import transfer from './transfer';
 import unlock from './unlock';
 import version from './version';
 
-interface CommandsInterface {
-  [key: string]: Command;
+interface HelpInterface {
+  [key: string]: Help;
 }
 
-const exports: CommandsInterface = {
+const exports: HelpInterface = {
   alias,
   allowjoin,
   allyourbase,
-  bitrate,
-  create,
-  general,
-  help,
   info,
   join,
   limit,
+  create,
+  bitrate,
+  general,
+  help,
   lock,
   name,
   permission,
@@ -44,10 +44,5 @@ const exports: CommandsInterface = {
   unlock,
   version,
 };
-
-const commandList = Object.values(exports);
-export const commandData = commandList.map((command) =>
-  command.commandData.toJSON()
-);
 
 export default exports;

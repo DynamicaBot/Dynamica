@@ -1,3 +1,4 @@
+import help from '@/help/allyourbase';
 import Command from '@classes/command';
 import DynamicaSecondary from '@classes/secondary';
 import { SlashCommandBuilder } from '@discordjs/builders';
@@ -6,9 +7,7 @@ import checkSecondary from '@preconditions/secondary';
 
 export default new Command()
   .setPreconditions([checkManager, checkSecondary])
-  .setHelpText(
-    'Transfers the ownership of the current channel to the person who ran the command. (Must be an admin)'
-  )
+  .setHelp(help)
   .setCommandData(
     new SlashCommandBuilder()
       .setName('allyourbase')

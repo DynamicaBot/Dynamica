@@ -1,4 +1,3 @@
-import Command from '@classes/command';
 import Event from '@classes/event';
 import commands from '@commands';
 import checkGuild from '@preconditions/guild';
@@ -12,8 +11,7 @@ export default new Event()
   .setResponse(async (interaction: Interaction<CacheType>) => {
     if (!interaction.isCommand()) return;
     try {
-      // eslint-disable-next-line import/namespace
-      const command: Command = commands[interaction.commandName];
+      const command = commands[interaction.commandName];
       const { preconditions: conditions } = command;
       const conditionResults = await Promise.all(
         [checkGuild, ...conditions].map((condition) => condition(interaction))

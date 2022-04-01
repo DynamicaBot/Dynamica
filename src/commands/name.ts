@@ -1,3 +1,4 @@
+import help from '@/help/name';
 import Command from '@classes/command';
 import DynamicaSecondary from '@classes/secondary';
 import db from '@db';
@@ -19,7 +20,7 @@ export default new Command()
           .setRequired(true)
       )
   )
-  .setHelpText("Changes the name of the Secondary channel you're currently in.")
+  .setHelp(help)
   .setResponse(async (interaction) => {
     const name = interaction.options.getString('name');
 

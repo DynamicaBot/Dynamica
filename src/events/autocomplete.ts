@@ -10,7 +10,6 @@ export default new Event()
   .setResponse(async (interaction: Interaction) => {
     if (!interaction.isAutocomplete()) return;
     try {
-      // eslint-disable-next-line import/namespace
       const autocomplete: Autocomplete = autocompletes[interaction.commandName];
       autocomplete.response(interaction);
     } catch (error) {

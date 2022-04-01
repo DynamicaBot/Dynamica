@@ -1,3 +1,4 @@
+import lock from '@/help/lock';
 import Command from '@classes/command';
 import DynamicaSecondary from '@classes/secondary';
 import { SlashCommandBuilder } from '@discordjs/builders';
@@ -12,10 +13,7 @@ export default new Command()
       .setName('lock')
       .setDescription('Lock a channel to a certain role or user.')
   )
-  .setHelpText(
-    'Use it to lock your channels away from pesky server members.',
-    'Use it to lock your channels away from pesky server members. Locks it to the creator (initially) and permissions can be altered with /permission. \n Channels can be reset to default with /unlock.'
-  )
+  .setHelp(lock)
   .setResponse(async (interaction) => {
     if (!interaction.guild?.members) return;
 

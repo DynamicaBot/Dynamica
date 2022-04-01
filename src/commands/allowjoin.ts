@@ -1,3 +1,4 @@
+import help from '@/help/allowjoin';
 import Command from '@classes/command';
 import DynamicaGuild from '@classes/guild';
 import { SlashCommandBuilder } from '@discordjs/builders';
@@ -17,9 +18,7 @@ export default new Command()
           .setRequired(true)
       )
   )
-  .setHelpText(
-    'Toggles whether or not members of your sever are allowed to request to join private channels.'
-  )
+  .setHelp(help)
   .setResponse(async (interaction) => {
     const state = interaction.options.getBoolean('state', true);
     const guild = await new DynamicaGuild(

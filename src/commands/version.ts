@@ -1,3 +1,4 @@
+import help from '@/help/version';
 import Command from '@classes/command';
 import { SlashCommandBuilder } from '@discordjs/builders';
 
@@ -7,7 +8,7 @@ export default new Command()
       .setName('version')
       .setDescription('The version of the bot in use.')
   )
-  .setHelpText('Sends the running version of Dynamica.')
+  .setHelp(help)
   .setResponse(async (interaction) => {
     interaction.reply({
       ephemeral: true,

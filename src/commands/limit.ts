@@ -1,3 +1,4 @@
+import help from '@/help/limit';
 import Command from '@classes/command';
 import { SlashCommandBuilder } from '@discordjs/builders';
 import checkCreator from '@preconditions/creator';
@@ -21,7 +22,7 @@ export default new Command()
           .setRequired(true)
       )
   )
-  .setHelpText('Limit the maximum number of people in the channel.')
+  .setHelp(help)
   .setResponse(async (interaction) => {
     const userLimit = interaction.options.getInteger('number', true);
 
