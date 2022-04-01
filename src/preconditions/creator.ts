@@ -1,11 +1,8 @@
+import Condition from '@/classes/condition';
 import db from '@db';
 import logger from '@utils/logger';
-/**
- * Checks if a guild member is the creator of the secondary channel. (overridden by manager and admin)
- * @param interaction The interaction which to check.
- * @returns Promise Boolean if the person who triggered the interaction is the owner of the voice channel that they're in.
- */
-export default async (interaction) => {
+
+export default new Condition(async (interaction) => {
   try {
     const guildMember = await interaction.guild.members.cache.get(
       interaction.user.id
@@ -49,4 +46,4 @@ export default async (interaction) => {
     logger.error(error);
     return { success: false, message: 'An error occured.' };
   }
-};
+});

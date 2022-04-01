@@ -1,12 +1,7 @@
+import Condition from '@/classes/condition';
 import logger from '@utils/logger';
-import { CommandInteraction } from 'discord.js';
 
-/**
- * Checks permissions for Dynamica Manager role. (admin overrides)
- * @param interaction Discord Interaction
- * @returns Boolean if the member has permission to manage dynamica channels.
- */
-export default async (interaction: CommandInteraction) => {
+export default new Condition(async (interaction) => {
   try {
     const guildMember = await interaction.guild.members.cache.get(
       interaction.user.id
@@ -33,4 +28,4 @@ export default async (interaction: CommandInteraction) => {
     logger.error('error in manager check', error);
     return { success: false, message: 'An error occured.' };
   }
-};
+});

@@ -3,13 +3,14 @@ import {
   SlashCommandSubcommandsOnlyBuilder,
 } from '@discordjs/builders';
 import { CommandInteraction } from 'discord.js';
+import Condition from './condition';
 import Help from './help';
 
 /**
  * The command class for defining new Dynamica commands.
  */
 export default class Command {
-  preconditions;
+  preconditions: Condition[];
 
   help: Help;
 

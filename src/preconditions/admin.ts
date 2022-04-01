@@ -1,9 +1,6 @@
-/**
- * In order for the bot to manage permission-related commands it needs administrator access (private channels)
- * @param interaction Discord interaction
- * @returns success status
- */
-export default async (interaction) => {
+import Condition from '@/classes/condition';
+
+export default new Condition(async (interaction) => {
   if (!interaction.guild.me.permissions.has('ADMINISTRATOR')) {
     return {
       success: false,
@@ -12,4 +9,4 @@ export default async (interaction) => {
     };
   }
   return { success: true };
-};
+});
