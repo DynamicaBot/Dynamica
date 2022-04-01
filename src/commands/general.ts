@@ -1,3 +1,4 @@
+import help from '@/help/general';
 import Command from '@classes/command';
 import DynamicaSecondary from '@classes/secondary';
 import db from '@db';
@@ -24,9 +25,7 @@ export default new Command()
           .setRequired(true)
       )
   )
-  .setHelpText(
-    "Using the /general command you can set the template for the channel name of the channel you're in when nobody is playing a game."
-  )
+  .setHelp(help)
   .setResponse(async (interaction) => {
     const name = interaction.options.getString('name', true);
     const channel = interaction.options.getString('channel', true);

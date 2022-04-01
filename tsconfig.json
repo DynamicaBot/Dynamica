@@ -30,6 +30,8 @@
       "@commands": ["./commands"],
       "@events/*": ["./events/*"],
       "@events": ["./events"],
+      "@help/*": ["./help/*"],
+      "@help": ["./help"],
       "@preconditions/*": ["./preconditions/*"],
       "@preconditions": ["./preconditions"],
       "@utils/*": ["./utils/*"],

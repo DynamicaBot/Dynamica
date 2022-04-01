@@ -1,3 +1,4 @@
+import help from '@/help/info';
 import Command from '@classes/command';
 import DynamicaPrimary from '@classes/primary';
 import DynamicaSecondary from '@classes/secondary';
@@ -37,7 +38,7 @@ export default new Command()
           .setDescription("Get info about the guil's settings.")
       )
   )
-  .setHelpText('Shows the info of either a user or the current server.')
+  .setHelp(help)
   .setResponse(async (interaction) => {
     const subcommand = interaction.options.getSubcommand(true);
     if (subcommand === 'primary') {

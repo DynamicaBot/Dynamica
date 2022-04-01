@@ -1,3 +1,4 @@
+import help from '@/help/join';
 import Command from '@classes/command';
 import db from '@db';
 import { SlashCommandBuilder } from '@discordjs/builders';
@@ -5,9 +6,7 @@ import { ErrorEmbed } from '@utils/discordEmbeds';
 import { MessageActionRow, MessageButton } from 'discord.js';
 
 export default new Command()
-  .setHelpText(
-    'If join requests are enabled then you can request to join locked secondary channels.'
-  )
+  .setHelp(help)
   .setCommandData(
     new SlashCommandBuilder()
       .setName('join')

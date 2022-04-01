@@ -1,3 +1,4 @@
+import help from '@/help/transfer';
 import Command from '@classes/command';
 import DynamicaSecondary from '@classes/secondary';
 import { SlashCommandBuilder } from '@discordjs/builders';
@@ -18,7 +19,7 @@ export default new Command()
           .setRequired(true)
       )
   )
-  .setHelpText('Transfer ownership to another user.')
+  .setHelp(help)
   .setResponse(async (interaction) => {
     const user = interaction.options.getUser('user', true);
 

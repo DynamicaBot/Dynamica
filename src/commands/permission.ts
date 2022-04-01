@@ -1,3 +1,4 @@
+import help from '@/help/permission';
 import Command from '@classes/command';
 import { SlashCommandBuilder } from '@discordjs/builders';
 import checkAdminPermissions from '@preconditions/admin';
@@ -51,9 +52,7 @@ export default new Command()
           )
       )
   )
-  .setHelpText(
-    'Edits the permissions for secondary channels. (Works in conjuction with /lock and /unlock.'
-  )
+  .setHelp(help)
   .setResponse(async (interaction) => {
     const subcommand = interaction.options.getSubcommand(true);
     const user = interaction.options.getUser('user', false);

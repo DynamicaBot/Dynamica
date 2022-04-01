@@ -1,3 +1,4 @@
+import help from '@/help/bitrate';
 import Command from '@classes/command';
 import { SlashCommandBuilder } from '@discordjs/builders';
 import checkCreator from '@preconditions/creator';
@@ -6,7 +7,7 @@ import { ErrorEmbed } from '@utils/discordEmbeds';
 
 export default new Command()
   .setPreconditions([checkSecondary, checkCreator])
-  .setHelpText('Changes the bitrate of the current channel.')
+  .setHelp(help)
   .setCommandData(
     new SlashCommandBuilder()
       .setName('bitrate')

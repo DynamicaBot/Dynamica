@@ -1,3 +1,4 @@
+import help from '@/help/unlock';
 import Command from '@classes/command';
 import DynamicaSecondary from '@classes/secondary';
 import { SlashCommandBuilder } from '@discordjs/builders';
@@ -12,9 +13,7 @@ export default new Command()
       .setName('unlock')
       .setDescription('Remove any existing locks on locked secondary channels.')
   )
-  .setHelpText(
-    'This resets the permissions channel whose permissions have been altered by any of the permissions related command like /lock and /permission.'
-  )
+  .setHelp(help)
   .setResponse(async (interaction) => {
     const guildMember = await interaction.guild.members.cache.get(
       interaction.user.id

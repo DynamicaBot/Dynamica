@@ -1,11 +1,11 @@
+import helpHelp from '@/help/help';
 import Command from '@classes/command';
-// eslint-disable-next-line import/no-cycle
-import commandsList from '@commands';
 import { Embed, SlashCommandBuilder } from '@discordjs/builders';
+import help from '@help';
 import _ from 'lodash';
 
 export default new Command()
-  .setHelpText('Shows a list of commands and their asociated descriptions. ')
+  .setHelp(helpHelp)
   .setCommandData(
     new SlashCommandBuilder()
       .setName('help')
@@ -22,9 +22,7 @@ export default new Command()
   )
   .setResponse(async (interaction) => {
     const subcommand = interaction.options.getString('subcommand', false);
-    const subcommandFile = commandsList[subcommand] as Command;
     if (subcommand) {
-      const { helpText } = subcommandFile;
       const embed = new Embed()
         .setAuthor({
           name: 'Dynamica',
@@ -36,21 +34,21 @@ export default new Command()
         .setFooter({
           text: `Find out more https://dynamica.dev/docs/commands/${subcommand}`,
         })
-        .setDescription(helpText.long ?? helpText.short);
+        .setDescription(helpHelp.long ?? helpHelp.short);
       return interaction.reply({ embeds: [embed] });
     }
-    const commands = Object.values(commandsList);
-    const commandFields: { value: string; name: string; inline: true }[][] =
+    const helps = Object.values(helpHelp);
+    const helpFields: { value: string; name: string; inline: true }[][] =
       _.chunk(
-        commands.map((command) => ({
-          name: command.commandData.name,
-          value: commandsList[command.commandData.name].helpText.short,
+        helps.map(() => ({
+          name: subcommand,
+          value: help[subcommand].short,
           inline: true,
         })),
         25
       );
     return interaction.reply({
-      embeds: commandFields.map((commandField) =>
+      embeds: helpFields.map((helpField) =>
         new Embed()
           .setAuthor({
             name: 'Dynamica',
@@ -62,7 +60,7 @@ export default new Command()
           .setFooter({
             text: 'Find out more https://dynamica.dev/docs/commands',
           })
-          .addFields(...commandField)
+          .addFields(...helpField)
       ),
     });
   });

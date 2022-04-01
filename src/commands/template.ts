@@ -1,3 +1,4 @@
+import help from '@/help/template';
 import Command from '@classes/command';
 import DynamicaSecondary from '@classes/secondary';
 import db from '@db';
@@ -24,10 +25,7 @@ export default new Command()
           .setRequired(true)
       )
   )
-  .setHelpText(
-    'Using the /template command you can set the template for the channel name target primary channel.',
-    'Using the /template command you can set the template for the channel name target primary channel. The default template is @@game@@ ## which will format the name of the channel according to the formatting rules.'
-  )
+  .setHelp(help)
   .setResponse(async (interaction) => {
     const name = interaction.options.getString('template', true);
     const channel = interaction.options.getString('channel', true);

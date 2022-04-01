@@ -1,3 +1,4 @@
+import text from '@/help/text';
 import Command from '@classes/command';
 import DynamicaGuild from '@classes/guild';
 import { SlashCommandBuilder } from '@discordjs/builders';
@@ -6,9 +7,7 @@ import checkManager from '@preconditions/manager';
 
 export default new Command()
   .setPreconditions([checkManager, checkAdminPermissions])
-  .setHelpText(
-    'Enable or Disable private text channels that can only be accessed by people in the same voice channel.'
-  )
+  .setHelp(text)
   .setCommandData(
     new SlashCommandBuilder()
       .setName('text')
