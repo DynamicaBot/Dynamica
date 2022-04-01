@@ -18,6 +18,7 @@ export default new Command()
               .setAutocomplete(true)
               .setName('primarychannel')
               .setDescription('Primary channel to get info about.')
+              .setRequired(true)
           )
           .setDescription('Get info about a primary channel.')
       )
@@ -28,21 +29,24 @@ export default new Command()
             option
               .setAutocomplete(true)
               .setName('secondarychannel')
-              .setDescription('Secondary channel to get info about.')
+              .setDescription('Secondary channel to get info about.').setRequired(true)
           )
           .setDescription('Get info about a secondary channel.')
       )
       .addSubcommand((subcommand) =>
         subcommand
           .setName('guild')
-          .setDescription("Get info about the guil's settings.")
+          .setDescription("Get info about the guild's settings.")
       )
   )
   .setHelp(help)
   .setResponse(async (interaction) => {
     const subcommand = interaction.options.getSubcommand(true);
     if (subcommand === 'primary') {
-      const chosenPrimary = interaction.options.getString('primarychannel');
+      const chosenPrimary = interaction.options.getString(
+        'primarychannel',
+        true
+      );
       const primary = await new DynamicaPrimary(
         interaction.client,
         chosenPrimary
@@ -68,7 +72,10 @@ export default new Command()
         ],
       });
     } else if (subcommand === 'secondary') {
-      const chosenSecondary = interaction.options.getString('secondarychannel');
+      const chosenSecondary = interaction.options.getString(
+        'secondarychannel',
+        true
+      );
       const secondary = await new DynamicaSecondary(
         interaction.client,
         chosenSecondary
