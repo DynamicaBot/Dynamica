@@ -1,12 +1,8 @@
+import Condition from '@/classes/condition';
 import db from '@db';
 import logger from '@utils/logger';
 
-/**
- * Checks to see if the voice channel the user is currently in is a channel that Dynamica manages.
- * @param interaction Discord Interaction
- * @returns Boolean if the secondary channel exists.
- */
-export default async (interaction) => {
+export default new Condition(async (interaction) => {
   try {
     const guildMember = await interaction.guild.members.cache.get(
       interaction.user.id
@@ -37,4 +33,4 @@ export default async (interaction) => {
     logger.error('error in secondary check', error);
     return { success: false, message: 'An error occured.' };
   }
-};
+});

@@ -1,3 +1,4 @@
+import Condition from '@/classes/condition';
 import Event from '@classes/event';
 import commands from '@commands';
 import checkGuild from '@preconditions/guild';
@@ -14,7 +15,9 @@ export default new Event()
       const command = commands[interaction.commandName];
       const { preconditions: conditions } = command;
       const conditionResults = await Promise.all(
-        [checkGuild, ...conditions].map((condition) => condition(interaction))
+        [checkGuild as Condition, ...conditions].map((condition) =>
+          condition.check(interaction)
+        )
       );
 
       const failingCondition = conditionResults.find(
