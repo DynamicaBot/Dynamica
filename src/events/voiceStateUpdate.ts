@@ -15,13 +15,13 @@ export default new Event()
       /** Look for an existing secondary channel */
       const existingSecondary = await new DynamicaSecondary(
         newVoiceState.client,
-        newVoiceState.channelId
+        newVoiceState.channel.id
       ).fetch();
 
       /** Look for an existing primary channel */
       const primary = await new DynamicaPrimary(
         newVoiceState.client,
-        newVoiceState.channelId
+        newVoiceState.channel.id
       ).fetch();
 
       // Create a new secondary if one doesn't already exist and the user has joined a primary channel
@@ -53,7 +53,7 @@ export default new Event()
     if (oldVoiceState.channel && oldVoiceState.member) {
       const secondary = await new DynamicaSecondary(
         oldVoiceState.client,
-        oldVoiceState.channelId
+        oldVoiceState.channel.id
       ).fetch();
 
       if (secondary) {
@@ -61,7 +61,7 @@ export default new Event()
           await secondary.update();
           if (secondary.textChannel) {
             secondary.textChannel.permissionOverwrites.delete(
-              oldVoiceState.member?.id
+              oldVoiceState.member.id
             );
           }
         } else {
