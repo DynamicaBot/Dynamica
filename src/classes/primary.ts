@@ -60,6 +60,7 @@ export default class DynamicaPrimary {
       logger.debug(
         `New primary channel ${channel.name} created by ${primary.creator}.`
       );
+      this.id = channel.id
       await this.fetch();
     } catch (error) {
       logger.error('Error creating new primary channel:', error);
