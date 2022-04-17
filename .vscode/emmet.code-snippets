@@ -1,0 +1,34 @@
+{
+  "Command": {
+    "prefix": "command",
+    "body": [
+      "import help from '@/help/version';",
+      "import Command from '@classes/command';",
+      "import { SlashCommandBuilder } from '@discordjs/builders';",
+      "import Discord from 'discord.js';",
+      "export default new Command()",
+      "\t.setCommandData(",
+      "\t\tnew SlashCommandBuilder()",
+      "\t\t\t.setName('version')",
+      "\t\t\t.setDescription('The version of the bot in use.')",
+      "\t)",
+      "\t.setHelp(help)",
+      "\t.setResponse(async (interaction) => {",
+      "\t\tinteraction.reply({",
+      "\t\t\tephemeral: true,",
+      "\t\t\tcontent: `The version of the bot is \\`${process.env.VERSION}\\`.\\nThe discord.js version is \\`${Discord.version}\\`.`,",
+      "\t\t});",
+      "\t});"
+    ],
+    "description": "Creates a command"
+  },
+  "Help": {
+    "prefix": "help",
+    "body": [
+      "import Help from '@/classes/help';",
+      "",
+      "export default new Help('Sends the running version of Dynamica.');"
+    ],
+    "description": "Creates help file"
+  }
+}
