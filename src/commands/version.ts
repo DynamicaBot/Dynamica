@@ -2,7 +2,6 @@ import help from '@/help/version';
 import Command from '@classes/command';
 import { SlashCommandBuilder } from '@discordjs/builders';
 import Discord from 'discord.js';
-
 export default new Command()
   .setCommandData(
     new SlashCommandBuilder()
