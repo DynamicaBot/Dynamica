@@ -27,7 +27,7 @@ export default new Command()
       interaction.client,
       interaction.guildId
     ).fetch();
-    guild.setAllowJoin(state);
+    await guild.setTextEnabled(state);
 
     await interaction.reply(
       `Temporary text channels ${
