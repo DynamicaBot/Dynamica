@@ -1,12 +1,11 @@
 import Event from '@classes/event';
 import DynamicaPrimary from '@classes/primary';
 import DynamicaSecondary from '@classes/secondary';
-import { Channel, DMChannel } from 'discord.js';
 
-export default new Event()
+export default new Event<'channelDelete'>()
   .setOnce(false)
   .setEvent('channelDelete')
-  .setResponse(async (channel: Channel | DMChannel) => {
+  .setResponse(async (channel) => {
     // logger.debug(channel);
     const primary = await new DynamicaPrimary(
       channel.client,
