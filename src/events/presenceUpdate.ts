@@ -2,7 +2,7 @@ import Event from '@classes/event';
 import DynamicaSecondary from '@classes/secondary';
 import { Presence } from 'discord.js';
 
-export default new Event()
+export default new Event<'presenceUpdate'>()
   .setOnce(false)
   .setEvent('presenceUpdate')
   .setResponse(async (oldPresence: Presence, newPresence: Presence) => {

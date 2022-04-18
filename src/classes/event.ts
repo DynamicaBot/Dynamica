@@ -1,9 +1,9 @@
 import { ClientEvents } from 'discord.js';
 
-export default class Event {
+export default class Event<K extends keyof ClientEvents> {
   public once: boolean;
 
-  public event: keyof ClientEvents;
+  public event: K;
 
   public execute: (...args) => Promise<void>;
 
@@ -12,12 +12,12 @@ export default class Event {
     return this;
   }
 
-  setEvent(event: keyof ClientEvents) {
+  setEvent(event: K) {
     this.event = event;
     return this;
   }
 
-  setResponse(response: (...args) => Promise<void>) {
+  setResponse(response: (...args: ClientEvents[K]) => Promise<void>) {
     this.execute = response;
     return this;
   }

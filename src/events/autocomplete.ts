@@ -2,12 +2,11 @@ import autocompletes from '@autocompletes';
 import Autocomplete from '@classes/autocomplete';
 import Event from '@classes/event';
 import logger from '@utils/logger';
-import { Interaction } from 'discord.js';
 
-export default new Event()
+export default new Event<'interactionCreate'>()
   .setOnce(false)
   .setEvent('interactionCreate')
-  .setResponse(async (interaction: Interaction) => {
+  .setResponse(async (interaction) => {
     if (!interaction.isAutocomplete()) return;
     try {
       const autocomplete: Autocomplete = autocompletes[interaction.commandName];

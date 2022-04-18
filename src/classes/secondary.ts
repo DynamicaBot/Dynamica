@@ -1,4 +1,4 @@
-import PrimaryClass from '@classes/primary';
+import DynamicaPrimary from '@classes/primary';
 import db from '@db';
 import { Embed } from '@discordjs/builders';
 import Prisma, { Primary } from '@prisma/client';
@@ -25,7 +25,7 @@ export default class DynamicaSecondary extends DynamicaChannel<'secondary'> {
    * @param member guild member who created the channel
    * @returns
    */
-  async create(primary: PrimaryClass, guild: Guild, member: GuildMember) {
+  async create(primary: DynamicaPrimary, guild: Guild, member: GuildMember) {
     try {
       await primary.fetch();
 
@@ -174,7 +174,7 @@ export default class DynamicaSecondary extends DynamicaChannel<'secondary'> {
     const prisma = await this.fetchPrisma();
     const discord = await this.fetchDiscord();
     if (!discord) {
-      await this.deletePrisma();
+      await this.delete();
       return undefined;
     }
     if (!prisma) {
@@ -207,8 +207,11 @@ export default class DynamicaSecondary extends DynamicaChannel<'secondary'> {
   }
 
   async fetchDiscordText(): Promise<TextChannel> {
-    const channel = await this.client.channels.cache.get(this.id);
-    if (!channel || channel.type !== 'GUILD_TEXT') {
+    const channel = await this.client.channels.cache.get(this.textChannel?.id);
+    if (!channel) {
+      return undefined;
+    }
+    if (channel.type !== 'GUILD_TEXT') {
       return undefined;
     }
     return channel;
@@ -328,29 +331,21 @@ export default class DynamicaSecondary extends DynamicaChannel<'secondary'> {
     try {
       const discord = await this.fetchDiscord();
       const prisma = await this.fetchPrisma();
+      const textChannel = await this.fetchDiscordText();
+      if (textChannel) {
+        await textChannel.delete();
+      }
       if (discord) {
-        discord.delete();
+        await this.deleteDiscord();
       }
       if (prisma) {
-        db.secondary.delete({ where: { id: this.id } });
+        await this.deletePrisma();
       }
-      // if (!this.discord && !this.prisma) {
-      //   return;
-      // }
-      // if (!this.discord && !!this.prisma) {
-      //   await this.deletePrisma();
-      // } else if (!this.prisma && !!this.discord) {
-      //   await this.deleteDiscord();
-      // } else if (this.discord && this.prisma) {
-      //   await this.deletePrisma();
-      //   await this.deleteDiscord();
-      // }
+      console.trace();
       logger.debug(`Secondary channel deleted ${this.id}.`);
     } catch (error) {
       logger.error(error);
     }
-
-    await updateActivityCount(this.client);
   }
 
   async deletePrisma(): Promise<void> {
@@ -359,7 +354,9 @@ export default class DynamicaSecondary extends DynamicaChannel<'secondary'> {
     }
     const prisma = await this.fetchPrisma();
     if (prisma) {
-      await db.secondary.delete({ where: { id: this.id } });
+      await db.secondary.delete({ where: { id: this.id } }).then(() => {
+        updateActivityCount(this.client);
+      });
     }
   }
 
@@ -371,22 +368,29 @@ export default class DynamicaSecondary extends DynamicaChannel<'secondary'> {
       throw new Error('No Id defined.');
     }
     try {
-      if (!this.discord.deletable) {
-        throw new Error('The channel is not deletable.');
-      }
-
-      await updateActivityCount(this.client);
-
-      await this.discord.delete();
-
-      if (this.textChannel) {
-        const textChannel = this.discord.guild.channels.cache.get(
-          this.prisma.textChannelId
-        );
-        await textChannel.delete();
+      const discord = await this.fetchDiscord();
+      if (discord) {
+        await discord.delete();
       }
     } catch (error) {
       logger.error('Failed to delete secondary:', error);
+    }
+  }
+
+  async deleteDiscordText(): Promise<void> {
+    if (!this.client) {
+      throw new Error('No client defined.');
+    }
+    if (!this.id) {
+      throw new Error('No Id defined.');
+    }
+    try {
+      const discordText = await this.fetchDiscordText();
+      if (discordText) {
+        await discordText.delete();
+      }
+    } catch (error) {
+      logger.error('Failed to delete secondary text channel', error);
     }
   }
 

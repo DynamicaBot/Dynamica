@@ -4,12 +4,11 @@ import commands from '@commands';
 import checkGuild from '@preconditions/guild';
 import { ErrorEmbed } from '@utils/discordEmbeds';
 import logger from '@utils/logger';
-import { CacheType, Interaction } from 'discord.js';
 
-export default new Event()
+export default new Event<'interactionCreate'>()
   .setOnce(false)
   .setEvent('interactionCreate')
-  .setResponse(async (interaction: Interaction<CacheType>) => {
+  .setResponse(async (interaction) => {
     if (!interaction.isCommand()) return;
     try {
       const command = commands[interaction.commandName];
