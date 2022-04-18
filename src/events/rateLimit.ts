@@ -1,10 +1,9 @@
 import Event from '@classes/event';
 import logger from '@utils/logger';
-import { RateLimitData } from 'discord.js';
 
-export default new Event()
+export default new Event<'rateLimit'>()
   .setOnce(false)
-  .setEvent('guildCreate')
-  .setResponse(async (data: RateLimitData) => {
+  .setEvent('rateLimit')
+  .setResponse(async (data) => {
     logger.info(data);
   });
