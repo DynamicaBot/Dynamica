@@ -7,7 +7,7 @@ interface DynamicaChannelTypes {
     prisma: Prisma.Primary;
   };
   secondary: {
-    prisma: Prisma.Secondary;
+    prisma: Prisma.Secondary & { guild: Prisma.Guild; primary: Prisma.Primary };
   };
 }
 

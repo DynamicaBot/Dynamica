@@ -1,7 +1,7 @@
 import PrimaryClass from '@classes/primary';
 import db from '@db';
 import { Embed } from '@discordjs/builders';
-import Prisma from '@prisma/client';
+import Prisma, { Primary } from '@prisma/client';
 import updateActivityCount from '@utils';
 import formatChannelName from '@utils/format';
 import logger from '@utils/logger';
@@ -10,7 +10,7 @@ import DynamicaChannel from './dynamicaChannel';
 
 export default class DynamicaSecondary extends DynamicaChannel<'secondary'> {
   /** The secondary channel as defined by prisma */
-  declare prisma: Prisma.Secondary;
+  // declare prisma: Prisma.Secondary & { guild: Guild; primary: Primary };
 
   /** The discord text channel */
   textChannel?: TextChannel;
@@ -181,6 +181,8 @@ export default class DynamicaSecondary extends DynamicaChannel<'secondary'> {
       return undefined;
     }
     this.prisma = prisma;
+    this.prismaGuild = prisma.guild;
+    this.prismaPrimary = prisma.primary;
     this.discord = discord;
     if (prisma.textChannelId) {
       const textChannel = await this.fetchDiscordText();
@@ -194,7 +196,9 @@ export default class DynamicaSecondary extends DynamicaChannel<'secondary'> {
     return this;
   }
 
-  async fetchPrisma(): Promise<Prisma.Secondary> {
+  async fetchPrisma(): Promise<
+    Prisma.Secondary & { guild: Prisma.Guild; primary: Primary }
+  > {
     const prisma = await db.secondary.findUnique({
       where: { id: this.id },
       include: { guild: true, primary: true },
