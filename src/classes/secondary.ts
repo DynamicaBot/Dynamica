@@ -5,48 +5,18 @@ import Prisma from '@prisma/client';
 import updateActivityCount from '@utils';
 import formatChannelName from '@utils/format';
 import logger from '@utils/logger';
-import {
-  Client,
-  Guild,
-  GuildMember,
-  TextChannel,
-  User,
-  VoiceChannel,
-} from 'discord.js';
+import { Guild, GuildMember, TextChannel, User } from 'discord.js';
+import DynamicaChannel from './dynamicaChannel';
 
-export default class DynamicaSecondary {
+export default class DynamicaSecondary extends DynamicaChannel<'secondary'> {
   /** The secondary channel as defined by prisma */
-  prisma: Prisma.Secondary;
-
-  /** The discord channel as defined by discord */
-  discord: VoiceChannel;
-
-  /** The discordjs client instance */
-  client: Client<true>;
-
-  /** The channel id as set in fetch */
-  id: string;
+  declare prisma: Prisma.Secondary;
 
   /** The discord text channel */
   textChannel?: TextChannel;
 
-  /** The prisma guild */
-  prismaGuild: Prisma.Guild;
-
   /** The prisma primary */
   prismaPrimary: Prisma.Primary;
-
-  /**
-   * The secondary constructor
-   * @param client DiscordJS client instance
-   * @param id The channel Id
-   */
-  constructor(client: Client<true>, id?: string) {
-    this.client = client;
-    if (id) {
-      this.id = id;
-    }
-  }
 
   /**
    * Create a secondary channel.
@@ -55,11 +25,7 @@ export default class DynamicaSecondary {
    * @param member guild member who created the channel
    * @returns
    */
-  async create(
-    primary: PrimaryClass,
-    guild: Guild,
-    member: GuildMember
-  ): Promise<DynamicaSecondary> {
+  async create(primary: PrimaryClass, guild: Guild, member: GuildMember) {
     try {
       await primary.fetch();
 
@@ -196,7 +162,7 @@ export default class DynamicaSecondary {
    * Fetch the database entry and discord channels (voice and text).
    * @param channelId The discord channel Id.
    */
-  async fetch(): Promise<DynamicaSecondary | undefined> {
+  async fetch() {
     // Variables
     if (!this.client) {
       throw new Error('No client defined');
@@ -205,49 +171,49 @@ export default class DynamicaSecondary {
       throw new Error('No Id defined');
     }
 
-    const { id } = this;
-
-    const prisma = await db.secondary.findUnique({
-      where: { id },
-      include: { guild: true, primary: true },
-    });
-
-    if (prisma) {
-      const discord = await this.client.channels.cache.get(id);
-      if (discord?.type === 'GUILD_VOICE') {
-        this.discord = discord;
-      } else {
-        await db.secondary.delete({ where: { id: prisma.id } });
-        return undefined;
-      }
-      const textChannel = await this.client.channels.cache.get(
-        prisma.textChannelId
-      );
-      this.prisma = prisma;
-      this.prismaGuild = prisma.guild;
-      this.prismaPrimary = prisma.primary;
-      if (textChannel?.type === 'GUILD_TEXT') {
+    const prisma = await this.fetchPrisma();
+    const discord = await this.fetchDiscord();
+    if (!discord) {
+      await this.deletePrisma();
+      return undefined;
+    }
+    if (!prisma) {
+      return undefined;
+    }
+    this.prisma = prisma;
+    this.discord = discord;
+    if (prisma.textChannelId) {
+      const textChannel = await this.fetchDiscordText();
+      if (textChannel) {
         this.textChannel = textChannel;
       } else {
-        this.textChannel = undefined;
-        await db.secondary.update({
-          where: { id },
-          data: {
-            textChannelId: undefined,
-          },
-        });
+        logger.error(`Failed to fetch text channel ${prisma.textChannelId}`);
       }
-    } else {
-      return undefined;
     }
 
     return this;
   }
 
+  async fetchPrisma(): Promise<Prisma.Secondary> {
+    const prisma = await db.secondary.findUnique({
+      where: { id: this.id },
+      include: { guild: true, primary: true },
+    });
+    return prisma;
+  }
+
+  async fetchDiscordText(): Promise<TextChannel> {
+    const channel = await this.client.channels.cache.get(this.id);
+    if (!channel || channel.type !== 'GUILD_TEXT') {
+      return undefined;
+    }
+    return channel;
+  }
+
   /**
    * Update secondary channel, changing name if required.
    */
-  async update(): Promise<void> {
+  async update() {
     if (!this.client) {
       throw new Error('No client defined');
     }
@@ -270,9 +236,6 @@ export default class DynamicaSecondary {
             guildId: this.prismaGuild.id,
           },
         });
-        /**
-         * The discord channel to be refreshed
-         */
 
         /**
          * The name of the creator based on the config
@@ -351,25 +314,33 @@ export default class DynamicaSecondary {
    * Delete a secondary discord channel. DB & Discord Channel.
    */
   async delete(): Promise<void> {
-    await this.fetch();
     if (!this.client) {
       throw new Error('No client defined');
     }
     if (!this.id) {
       logger.debug('No id');
     }
+
     try {
-      if (!this.discord && !this.prisma) {
-        return;
+      const discord = await this.fetchDiscord();
+      const prisma = await this.fetchPrisma();
+      if (discord) {
+        discord.delete();
       }
-      if (!this.discord && !!this.prisma) {
-        await this.deletePrisma();
-      } else if (!this.prisma && !!this.discord) {
-        await this.deleteDiscord();
-      } else if (this.discord && this.prisma) {
-        await this.deletePrisma();
-        await this.deleteDiscord();
+      if (prisma) {
+        db.secondary.delete({ where: { id: this.id } });
       }
+      // if (!this.discord && !this.prisma) {
+      //   return;
+      // }
+      // if (!this.discord && !!this.prisma) {
+      //   await this.deletePrisma();
+      // } else if (!this.prisma && !!this.discord) {
+      //   await this.deleteDiscord();
+      // } else if (this.discord && this.prisma) {
+      //   await this.deletePrisma();
+      //   await this.deleteDiscord();
+      // }
       logger.debug(`Secondary channel deleted ${this.id}.`);
     } catch (error) {
       logger.error(error);
@@ -378,14 +349,17 @@ export default class DynamicaSecondary {
     await updateActivityCount(this.client);
   }
 
-  private async deletePrisma(): Promise<void> {
+  async deletePrisma(): Promise<void> {
     if (!this.id) {
       throw new Error('No id defined.');
     }
-    await db.secondary.delete({ where: { id: this.id } });
+    const prisma = await this.fetchPrisma();
+    if (prisma) {
+      await db.secondary.delete({ where: { id: this.id } });
+    }
   }
 
-  private async deleteDiscord(): Promise<void> {
+  async deleteDiscord(): Promise<void> {
     if (!this.client) {
       throw new Error('No client defined.');
     }
