@@ -4,11 +4,12 @@ import DynamicaSecondary from '@classes/secondary';
 import db from '@db';
 import updateActivityCount from '@utils';
 import logger from '@utils/logger';
+import { Client } from 'discord.js';
 
-export default new Event<'ready'>()
+export default new Event()
   .setOnce(true)
   .setEvent('ready')
-  .setResponse(async (client) => {
+  .setResponse(async (client: Client<true>) => {
     try {
       const secondaries = await db.secondary.findMany();
       const primaries = await db.primary.findMany();

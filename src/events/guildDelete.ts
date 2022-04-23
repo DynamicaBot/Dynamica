@@ -1,11 +1,12 @@
 import Event from '@classes/event';
 import db from '@db';
 import logger from '@utils/logger';
+import { Guild } from 'discord.js';
 
-export default new Event<'guildDelete'>()
+export default new Event()
   .setOnce(false)
   .setEvent('guildDelete')
-  .setResponse(async (guild) => {
+  .setResponse(async (guild: Guild) => {
     const manager = await guild.channels.cache.get('Dynamica Manager');
     try {
       await manager?.delete();
