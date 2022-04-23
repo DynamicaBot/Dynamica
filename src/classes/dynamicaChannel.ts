@@ -45,25 +45,29 @@ export default class DynamicaChannel<K extends keyof DynamicaChannelTypes> {
     return this;
   }
   async fetch(): Promise<DynamicaChannel<K> | undefined> {
-    if (!this.client) {
-      throw new Error('No client defined');
-    }
-    if (!this.id) {
-      throw new Error('No id defined');
-    }
-    const channel = await this.fetchDiscord();
-    const prisma = await this.fetchPrisma();
-    if (!channel) {
-      this.deletePrisma();
-      return undefined;
-    }
-    if (!prisma) {
-      return undefined;
-    }
-    this.prisma = prisma;
-    this.discord = channel;
+    try {
+      if (!this.client) {
+        throw new Error('No client defined');
+      }
+      if (!this.id) {
+        throw new Error('No id defined');
+      }
+      const channel = await this.fetchDiscord();
+      const prisma = await this.fetchPrisma();
+      if (!channel) {
+        this.deletePrisma();
+        return undefined;
+      }
+      if (!prisma) {
+        return undefined;
+      }
+      this.prisma = prisma;
+      this.discord = channel;
 
-    return this;
+      return this;
+    } catch (error) {
+      logger.error(error.toString());
+    }
   }
   async delete() {
     this.deletePrisma();

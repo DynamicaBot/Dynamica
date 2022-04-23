@@ -1,7 +1,6 @@
 import Event from '@/classes/event';
 import { ClientEvents } from 'discord.js';
 import autocomplete from './autocomplete';
-import channelDelete from './channelDelete';
 import command from './command';
 import guildCreate from './guildCreate';
 import guildDelete from './guildDelete';
@@ -15,7 +14,6 @@ interface EventsInterface {
 
 const exports: EventsInterface = {
   autocomplete,
-  channelDelete,
   command,
   guildCreate,
   guildDelete,
