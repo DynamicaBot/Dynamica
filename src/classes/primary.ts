@@ -80,7 +80,7 @@ export default class DynamicaPrimary extends DynamicaChannel<'primary'> {
         await this.deletePrisma();
         await this.deleteDiscord();
       } catch (error) {
-        logger.error('Failed to delete secondary:', error);
+        logger.error('Failed to delete secondary:', error.toString());
       }
     }
   }

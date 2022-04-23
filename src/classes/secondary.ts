@@ -185,11 +185,11 @@ export default class DynamicaSecondary extends DynamicaChannel<'secondary'> {
     this.prismaPrimary = prisma.primary;
     this.discord = discord;
     if (prisma.textChannelId) {
-      const textChannel = await this.fetchDiscordText();
+      const textChannel = await this.fetchDiscordText(prisma.textChannelId);
       if (textChannel) {
         this.textChannel = textChannel;
       } else {
-        logger.error(`Failed to fetch text channel ${prisma.textChannelId}`);
+        logger.error(`Failed to fetch text channel ${textChannel}`);
       }
     }
 
@@ -206,8 +206,8 @@ export default class DynamicaSecondary extends DynamicaChannel<'secondary'> {
     return prisma;
   }
 
-  async fetchDiscordText(): Promise<TextChannel> {
-    const channel = await this.client.channels.cache.get(this.textChannel?.id);
+  async fetchDiscordText(id: string): Promise<TextChannel> {
+    const channel = await this.client.channels.cache.get(id);
     if (!channel) {
       return undefined;
     }
@@ -331,7 +331,7 @@ export default class DynamicaSecondary extends DynamicaChannel<'secondary'> {
     try {
       const discord = await this.fetchDiscord();
       const prisma = await this.fetchPrisma();
-      const textChannel = await this.fetchDiscordText();
+      const textChannel = await this.fetchDiscordText(prisma.textChannelId);
       if (textChannel) {
         await textChannel.delete();
       }
@@ -341,7 +341,7 @@ export default class DynamicaSecondary extends DynamicaChannel<'secondary'> {
       if (prisma) {
         await this.deletePrisma();
       }
-      console.trace();
+      // console.trace();
       logger.debug(`Secondary channel deleted ${this.id}.`);
     } catch (error) {
       logger.error(error);
@@ -354,9 +354,14 @@ export default class DynamicaSecondary extends DynamicaChannel<'secondary'> {
     }
     const prisma = await this.fetchPrisma();
     if (prisma) {
-      await db.secondary.delete({ where: { id: this.id } }).then(() => {
-        updateActivityCount(this.client);
-      });
+      await db.secondary
+        .delete({ where: { id: this.id } })
+        .then(() => {
+          updateActivityCount(this.client);
+        })
+        .catch((error) =>
+          logger.error('Failed to delete secondary:', error.toString())
+        );
     }
   }
 
@@ -373,7 +378,7 @@ export default class DynamicaSecondary extends DynamicaChannel<'secondary'> {
         await discord.delete();
       }
     } catch (error) {
-      logger.error('Failed to delete secondary:', error);
+      logger.error('Failed to delete secondary:', error.toString());
     }
   }
 
@@ -385,12 +390,14 @@ export default class DynamicaSecondary extends DynamicaChannel<'secondary'> {
       throw new Error('No Id defined.');
     }
     try {
-      const discordText = await this.fetchDiscordText();
+      const discordText = await this.fetchDiscordText(
+        this.prisma?.textChannelId
+      );
       if (discordText) {
         await discordText.delete();
       }
     } catch (error) {
-      logger.error('Failed to delete secondary text channel', error);
+      logger.error('Failed to delete secondary text channel', error.toString());
     }
   }
 
@@ -428,7 +435,7 @@ export default class DynamicaSecondary extends DynamicaChannel<'secondary'> {
 
       await this.update();
     } catch (error) {
-      logger.error('Failed to lock channel:', error);
+      logger.error('Failed to lock channel:', error.toString());
     }
   }
 
@@ -451,7 +458,7 @@ export default class DynamicaSecondary extends DynamicaChannel<'secondary'> {
 
       await this.update();
     } catch (error) {
-      logger.error('Failed to unlock channel:', error);
+      logger.error('Failed to unlock channel:', error.toString());
     }
   }
 
@@ -468,7 +475,7 @@ export default class DynamicaSecondary extends DynamicaChannel<'secondary'> {
         data: { creator: user.id },
       });
     } catch (error) {
-      logger.error('Failed to set owner of channel:', error);
+      logger.error('Failed to set owner of channel:', error.toString());
     }
     this.fetch();
   }
