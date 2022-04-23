@@ -1,7 +1,7 @@
 import db from '@db';
 import { Alias, Guild as PrismaGuild } from '@prisma/client';
 import logger from '@utils/logger';
-import { Client, Guild as DiscordGuild, Guild } from 'discord.js';
+import { Client, Guild as DiscordGuild } from 'discord.js';
 
 export default class DynamicaGuild {
   private client: Client<true>;
@@ -30,55 +30,21 @@ export default class DynamicaGuild {
     if (!this.id) {
       throw new Error('No Id defined.');
     }
-
     try {
-      const guild = await this.fetchPrisma();
-      const discordGuild = await this.fetchDiscord();
+      const guild = await db.guild.findUnique({
+        where: { id: this.id },
+        include: { aliases: true },
+      });
+      const discordGuild = await this.client.guilds.cache.get(this.id);
       if (guild && discordGuild) {
         this.prisma = guild;
         this.discord = discordGuild;
       }
+      return undefined;
     } catch (error) {
       logger.error("Couldn't fetch guild:", error);
     }
     return this;
-  }
-
-  async fetchPrisma(): Promise<
-    PrismaGuild & {
-      aliases: Alias[];
-    }
-  > {
-    const guild = await db.guild.findUnique({
-      where: { id: this.id },
-      include: { aliases: true },
-    });
-    if (!guild) {
-      logger.info('fetch prisma');
-      return db.guild.create({
-        data: { id: this.id },
-        include: { aliases: true },
-      });
-    } else {
-      return guild;
-    }
-  }
-
-  async fetchDiscord(): Promise<DiscordGuild> {
-    const discord = await this.client.guilds.cache.get(this.id);
-    if (!discord) {
-      this.deletePrisma();
-      return undefined;
-    }
-    return discord;
-  }
-
-  async deletePrisma(): Promise<PrismaGuild | undefined> {
-    const guild = await db.guild.findUnique({ where: { id: this.id } });
-    if (!guild) {
-      return undefined;
-    }
-    return db.guild.delete({ where: { id: this.id } });
   }
 
   /**
@@ -93,7 +59,7 @@ export default class DynamicaGuild {
     if (!this.id) {
       throw new Error('No Id defined');
     }
-    this.prisma = await db.guild.update({
+    const updatedGuild = await db.guild.update({
       where: { id: this.id },
       include: {
         aliases: true,
@@ -102,6 +68,8 @@ export default class DynamicaGuild {
         allowJoinRequests: enabled,
       },
     });
+
+    this.prisma = updatedGuild;
     return this;
   }
 
@@ -117,24 +85,15 @@ export default class DynamicaGuild {
     if (!this.id) {
       throw new Error('No Id defined');
     }
-    this.prisma = await db.guild.update({
+    const updatedGuild = await db.guild.update({
       where: { id: this.id },
       include: { aliases: true },
       data: {
         textChannelsEnabled: enabled,
       },
     });
-    return this;
-  }
 
-  /**
-   * Create a guild entry in prisma
-   */
-  async create(id: Guild['id']) {
-    return db.guild.create({
-      data: {
-        id,
-      },
-    });
+    this.prisma = updatedGuild;
+    return this;
   }
 }
