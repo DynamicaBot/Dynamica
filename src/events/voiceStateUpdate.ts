@@ -3,7 +3,7 @@ import DynamicaPrimary from '@classes/primary';
 import DynamicaSecondary from '@classes/secondary';
 import { VoiceState } from 'discord.js';
 
-export default new Event<'voiceStateUpdate'>()
+export default new Event()
   .setOnce(false)
   .setEvent('voiceStateUpdate')
   .setResponse(async (oldVoiceState: VoiceState, newVoiceState: VoiceState) => {

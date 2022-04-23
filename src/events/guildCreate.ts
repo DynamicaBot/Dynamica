@@ -2,6 +2,7 @@ import Event from '@classes/event';
 import db from '@db';
 import { Embed, hyperlink } from '@discordjs/builders';
 import logger from '@utils/logger';
+import { Guild } from 'discord.js';
 /**
  * The list of basic commands to display.
  */
@@ -73,10 +74,10 @@ const botInfoEmbed = new Embed()
     iconURL: 'https://dynamica.dev/img/dynamica.png',
   });
 
-export default new Event<'guildCreate'>()
+export default new Event()
   .setOnce(false)
   .setEvent('guildCreate')
-  .setResponse(async (guild) => {
+  .setResponse(async (guild: Guild) => {
     if (!guild.me.permissions.has('ADMINISTRATOR')) {
       const owner = await guild.fetchOwner();
       owner.send(

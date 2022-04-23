@@ -4,10 +4,7 @@ import { Client, Guild, VoiceChannel } from 'discord.js';
 
 interface DynamicaChannelTypes {
   primary: {
-    prisma: Prisma.Primary & {
-      guild: Prisma.Guild;
-      secondaries: Prisma.Secondary[];
-    };
+    prisma: Prisma.Primary;
   };
   secondary: {
     prisma: Prisma.Secondary & { guild: Prisma.Guild; primary: Prisma.Primary };
@@ -37,11 +34,10 @@ export default class DynamicaChannel<K extends keyof DynamicaChannelTypes> {
     this.client = client;
     if (channelId) {
       this.id = channelId;
-      this.fetch();
     }
   }
 
-  async create(...args) {
+  async create(...args): Promise<DynamicaChannel<K>> {
     return this;
   }
   async fetch(): Promise<DynamicaChannel<K> | undefined> {

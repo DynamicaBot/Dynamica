@@ -1,5 +1,4 @@
 import Event from '@/classes/event';
-import { ClientEvents } from 'discord.js';
 import autocomplete from './autocomplete';
 import channelDelete from './channelDelete';
 import command from './command';
@@ -10,7 +9,7 @@ import ready from './ready';
 import voiceStateUpdate from './voiceStateUpdate';
 
 interface EventsInterface {
-  [key: string]: Event<keyof ClientEvents>;
+  [key: string]: Event;
 }
 
 const exports: EventsInterface = {
