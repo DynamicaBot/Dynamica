@@ -277,9 +277,10 @@ export default class DynamicaSecondary extends DynamicaChannel<'secondary'> {
          * The template to be used.
          */
         const str =
-          secondary.name ?? !filteredActivityList.length
+          secondary.name ??
+          (!filteredActivityList.length
             ? this.prismaPrimary.generalName
-            : this.prismaPrimary.template;
+            : this.prismaPrimary.template);
         const channelNumber =
           secondaries
             .map((secondaryChannel) => secondaryChannel.id)
