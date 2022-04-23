@@ -9,8 +9,6 @@ type Awaitable<T> = T | PromiseLike<T>;
 
 /** The different events that can occur in the DynamicaEventManager */
 interface DynamicaEventTypes {
-    /** Fires when a secondary channel has been created and is ready to be joined. */
-    secondaryReady: [secondary: DynamicaSecondary, guildMember: GuildMember]
     /** Fired when a user joins a secondary channel. */
     secondaryJoined: [secondary: DynamicaSecondary, guildMember: GuildMember]
     /** Fured when a user joins a primary channel. */
@@ -19,8 +17,6 @@ interface DynamicaEventTypes {
     secondaryLeft: [secondary: DynamicaSecondary, guildMember: GuildMember]
     /** Fired when a user leaves a primary channel. */
     primaryLeft: [primary: DynamicaPrimary, guildMember: GuildMember]
-    /** Fired when a secondary channel needs to be refreshed. */
-    secondaryRefresh: [secondary: DynamicaSecondary]
 }
 
 export class DynamicaEventManager extends EventEmitter {
