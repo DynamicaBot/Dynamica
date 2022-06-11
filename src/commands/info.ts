@@ -3,7 +3,8 @@ import Command from '@classes/command';
 import DynamicaPrimary from '@classes/primary';
 import DynamicaSecondary from '@classes/secondary';
 import db from '@db';
-import { Embed, SlashCommandBuilder } from '@discordjs/builders';
+import { SlashCommandBuilder } from '@discordjs/builders';
+import { MessageEmbed } from 'discord.js';
 
 export default new Command()
   .setCommandData(
@@ -29,7 +30,8 @@ export default new Command()
             option
               .setAutocomplete(true)
               .setName('secondarychannel')
-              .setDescription('Secondary channel to get info about.').setRequired(true)
+              .setDescription('Secondary channel to get info about.')
+              .setRequired(true)
           )
           .setDescription('Get info about a secondary channel.')
       )
@@ -55,7 +57,7 @@ export default new Command()
         ephemeral: true,
         content: `Here's the current info for <#${primary.id}>`,
         embeds: [
-          new Embed().addFields(
+          new MessageEmbed().addFields(
             {
               name: 'General Template',
               value: primary.prisma.generalName,
@@ -84,7 +86,7 @@ export default new Command()
         ephemeral: true,
         content: `Here's the current info for <#${secondary.id}>`,
         embeds: [
-          new Embed().addFields(
+          new MessageEmbed().addFields(
             {
               name: 'Name Override',
               value: secondary.prisma.name ?? '`Not set`',
@@ -112,16 +114,10 @@ export default new Command()
         ephemeral: true,
         content: "Here's the current info for the guild",
         embeds: [
-          new Embed().addFields(
-            {
-              name: 'Text Channels',
-              value: prismaGuild.textChannelsEnabled ? 'Enabled' : 'Disabled',
-            },
-            {
-              name: 'Join Requests',
-              value: prismaGuild.allowJoinRequests ? 'Enabled' : 'Disabled',
-            }
-          ),
+          new MessageEmbed().addFields({
+            name: 'Join Requests',
+            value: prismaGuild.allowJoinRequests ? 'Enabled' : 'Disabled',
+          }),
         ],
       });
     }

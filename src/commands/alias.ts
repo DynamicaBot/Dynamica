@@ -1,9 +1,10 @@
 import Command from '@classes/command';
 import db from '@db';
-import { Embed, SlashCommandBuilder } from '@discordjs/builders';
+import { SlashCommandBuilder } from '@discordjs/builders';
 import help from '@help/alias';
 import checkManager from '@preconditions/manager';
 import { listAliases, updateAlias } from '@utils/alias';
+import { MessageEmbed } from 'discord.js';
 import _ from 'lodash';
 
 export default new Command()
@@ -73,7 +74,7 @@ export default new Command()
       }));
 
       const embeds = _.chunk(inlineAliases, 25).map((result) =>
-        new Embed().addFields(...result)
+        new MessageEmbed().addFields(...result)
       );
       interaction.reply({
         content: 'Alias List',

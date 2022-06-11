@@ -36,15 +36,6 @@ export default new Event<'voiceStateUpdate'>()
         // If a secondary exists then attempt to update the name;
         if (newVoiceState.channel.members.size !== 1) {
           await existingSecondary.update();
-          if (existingSecondary.textChannel) {
-            // Typeguard voice remove permission for people who have left the voice channel to see the text channel.
-            existingSecondary.textChannel.permissionOverwrites.create(
-              oldVoiceState.member.id,
-              {
-                VIEW_CHANNEL: true,
-              }
-            );
-          }
         }
       }
     }
@@ -59,11 +50,6 @@ export default new Event<'voiceStateUpdate'>()
       if (secondary) {
         if (oldVoiceState.channel.members.size !== 0) {
           await secondary.update();
-          if (secondary.textChannel) {
-            secondary.textChannel.permissionOverwrites.delete(
-              oldVoiceState.member.id
-            );
-          }
         } else {
           secondary.delete();
         }

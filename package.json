@@ -23,21 +23,19 @@
   "main": "./dist/index.js",
   "type": "module",
   "dependencies": {
-    "@discordjs/builders": "^0.12.0",
-    "@discordjs/rest": "^0.3.0",
+    "@discordjs/builders": "^0.15.0",
+    "@discordjs/rest": "^0.5.0",
     "@prisma/client": "^3.10.0",
     "bufferutil": "^4.0.6",
-    "discord-api-types": "^0.28.0",
-    "discord.js": "^13.3.1",
+    "discord-api-types": "^0.33.5",
+    "discord.js": "^13.8.0",
     "dotenv": "^10.0.0",
-    "erlpack": "^0.1.4",
     "fuse.js": "^6.5.3",
     "graphql": "^16.3.0",
     "lodash": "^4.17.21",
     "romans": "^2.0.3",
     "signale": "^1.4.0",
-    "utf-8-validate": "^5.0.8",
-    "zlib-sync": "^0.1.7"
+    "utf-8-validate": "^5.0.8"
   },
   "scripts": {
     "start": "node --enable-source-maps .",

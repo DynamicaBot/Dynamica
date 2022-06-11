@@ -11,40 +11,38 @@ datasource db {
 }
 
 model Guild {
-  id        String @id @unique
-  primaryChannels  Primary[]
-  secondaryChannels  Secondary[]
-  textChannelsEnabled Boolean @default(false)
-  allowJoinRequests Boolean @default(false)
-  aliases Alias[] @relation("AliasOnGuild")
+  id                String      @id @unique
+  primaryChannels   Primary[]
+  secondaryChannels Secondary[]
+  allowJoinRequests Boolean     @default(false)
+  aliases           Alias[]     @relation("AliasOnGuild")
 }
 
 model Primary {
-  id String @id @unique
-  creator String
-  template String @default("@@game@@ ##")
-  generalName String @default("General ##")
+  id          String      @id @unique
+  creator     String
+  template    String      @default("@@game@@ ##")
+  generalName String      @default("General ##")
   secondaries Secondary[] @relation("SecondaryOnPrimary")
-  guildId String?
-  guild Guild? @relation(references: [id], fields: [guildId])
+  guildId     String?
+  guild       Guild?      @relation(references: [id], fields: [guildId])
 }
 
 model Secondary {
-  id String @id @unique
-  name String?
-  creator String?
-  locked Boolean @default(false)
-  guildId String
-  guild Guild @relation(references: [id], fields: [guildId])
-  textChannelId String?
+  id        String  @id @unique
+  name      String?
+  creator   String?
+  locked    Boolean @default(false)
+  guildId   String
+  guild     Guild   @relation(references: [id], fields: [guildId])
   primaryId String
-  primary Primary @relation(name: "SecondaryOnPrimary", fields: [primaryId], references: [id])
+  primary   Primary @relation(name: "SecondaryOnPrimary", fields: [primaryId], references: [id])
 }
 
 model Alias {
-  id Int @id @default(autoincrement())
+  id       Int     @id @default(autoincrement())
   activity String
-  alias String
-  guildId String?
-  guild Guild? @relation(name: "AliasOnGuild", fields: [guildId], references: [id])
+  alias    String
+  guildId  String?
+  guild    Guild?  @relation(name: "AliasOnGuild", fields: [guildId], references: [id])
 }

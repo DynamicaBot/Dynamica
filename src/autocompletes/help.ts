@@ -10,10 +10,10 @@ export default new Autocomplete()
     const commandValues = Object.values(commands) as Command[];
 
     const fuse = new Fuse(
-      commandValues?.map(({ commandData, helpText }) => ({
+      commandValues?.map(({ commandData, help }) => ({
         name: commandData.name,
-        short: helpText.short,
-        long: helpText.long,
+        short: help.short,
+        long: help.long,
       })),
       {
         keys: [

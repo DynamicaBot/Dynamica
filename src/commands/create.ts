@@ -14,7 +14,7 @@ export default new Command()
       .setDescription('Create a primary channel.')
       .addChannelOption((option) =>
         option
-          .addChannelType(4)
+          .addChannelTypes(4)
           .setName('section')
           .setDescription(
             'A section that the voice channel should be created under.'
