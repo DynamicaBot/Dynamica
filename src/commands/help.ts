@@ -1,7 +1,8 @@
 import helpHelp from '@/help/help';
 import Command from '@classes/command';
-import { Embed, SlashCommandBuilder } from '@discordjs/builders';
+import { SlashCommandBuilder } from '@discordjs/builders';
 import help from '@help';
+import { MessageEmbed } from 'discord.js';
 import _ from 'lodash';
 
 export default new Command()
@@ -23,7 +24,7 @@ export default new Command()
   .setResponse(async (interaction) => {
     const subcommand = interaction.options.getString('subcommand', false);
     if (subcommand) {
-      const embed = new Embed()
+      const embed = new MessageEmbed()
         .setAuthor({
           name: 'Dynamica',
           url: 'https://dynamica.dev',
@@ -49,7 +50,7 @@ export default new Command()
       );
     return interaction.reply({
       embeds: helpFields.map((helpField) =>
-        new Embed()
+        new MessageEmbed()
           .setAuthor({
             name: 'Dynamica',
             url: 'https://dynamica.dev',

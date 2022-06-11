@@ -106,28 +106,6 @@ export default class DynamicaGuild {
   }
 
   /**
-   * Change the setting for creating new text channels automatically.
-   * @param enabled the state to set the setting to
-   * @returns this
-   */
-  async setTextEnabled(enabled: boolean) {
-    if (!this.client) {
-      throw new Error('No client defined');
-    }
-    if (!this.id) {
-      throw new Error('No Id defined');
-    }
-    this.prisma = await db.guild.update({
-      where: { id: this.id },
-      include: { aliases: true },
-      data: {
-        textChannelsEnabled: enabled,
-      },
-    });
-    return this;
-  }
-
-  /**
    * Create a guild entry in prisma
    */
   async create(id: Guild['id']) {

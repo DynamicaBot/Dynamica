@@ -14,7 +14,6 @@ import name from './name';
 import permission from './permission';
 import ping from './ping';
 import template from './template';
-import text from './text';
 import transfer from './transfer';
 import unlock from './unlock';
 import version from './version';
@@ -39,7 +38,6 @@ const exports: HelpInterface = {
   permission,
   ping,
   template,
-  text,
   transfer,
   unlock,
   version,

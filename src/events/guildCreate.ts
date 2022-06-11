@@ -1,7 +1,8 @@
 import Event from '@classes/event';
 import db from '@db';
-import { Embed, hyperlink } from '@discordjs/builders';
+import { hyperlink } from '@discordjs/builders';
 import logger from '@utils/logger';
+import { MessageEmbed } from 'discord.js';
 /**
  * The list of basic commands to display.
  */
@@ -41,33 +42,31 @@ const basicCommands: {
   },
 ];
 
-const botInfoEmbed = new Embed()
+const commands = basicCommands
+  .map(
+    (command) =>
+      `${hyperlink(`\`${command.command}\``, command.help)} - ${
+        command.description
+      }`
+  )
+  .join('\n');
+
+const botInfoEmbed = new MessageEmbed()
   .setTitle('Welcome to Dynamica!')
   .setDescription(
     'Dynamica is a Discord bot that allows you to manage voice channels in your server with ease.\n'
   )
-  .addField({
-    name: 'Basic Commands',
-    value: basicCommands
-      .map(
-        (command) =>
-          `${hyperlink(`\`${command.command}\``, command.help)} - ${
-            command.description
-          }`
-      )
-      .join('\n'),
-    inline: false,
-  })
-  .addField({
-    name: 'Website',
-    value:
-      'Maybe you know this already but you can find out more about Dynamica at [dynamica.dev](https://dynamica.dev) including more commands.',
-  })
-  .addField({
-    name: 'Support',
-    value:
-      'If you have any questions or issues, you can join the [support server](https://discord.gg/zs892m6btf).',
-  })
+  .addField('Basic Commands', commands, false)
+  .addField(
+    'Website',
+
+    'Maybe you know this already but you can find out more about Dynamica at [dynamica.dev](https://dynamica.dev) including more commands.'
+  )
+  .addField(
+    'Support',
+
+    'If you have any questions or issues, you can join the [support server](https://discord.gg/zs892m6btf).'
+  )
   .setAuthor({
     name: 'Dynamica',
     iconURL: 'https://dynamica.dev/img/dynamica.png',
