@@ -9,6 +9,7 @@ export default defineConfig((options) => ({
   format: ['esm'],
   platform: 'node',
   minify: !options.watch,
+  dts: options.watch,
   tsconfig: 'tsconfig.json',
   bundle: true,
   metafile: true,

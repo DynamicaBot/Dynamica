@@ -1,4 +1,4 @@
-import commands from '@commands';
+import * as commands from '@commands';
 import { REST } from '@discordjs/rest';
 import logger from '@utils/logger';
 import { Routes } from 'discord-api-types/v9';
@@ -10,7 +10,7 @@ export default async () => {
   } else {
     const importedCommands = Object.values(commands);
     const commandList = importedCommands.map((command) =>
-      command.commandData.toJSON()
+      command.data.toJSON()
     );
 
     const rest = new REST({ version: '9' }).setToken(TOKEN);

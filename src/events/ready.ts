@@ -12,7 +12,6 @@ export default new Event<'ready'>()
     try {
       const secondaries = await db.secondary.findMany();
       const primaries = await db.primary.findMany();
-
       primaries.forEach(async (element) => {
         const existingPrimary = await new DynamicaPrimary(
           client,

@@ -5,38 +5,41 @@ import checkCreator from '@preconditions/creator';
 import checkSecondary from '@preconditions/secondary';
 import { ErrorEmbed } from '@utils/discordEmbeds';
 
-export default new Command()
-  .setPreconditions([checkCreator, checkSecondary])
-  .setCommandData(
-    new SlashCommandBuilder()
-      .setName('limit')
-      .setDescription(
-        'Edit the max number of people allowed in the current channel'
-      )
-      .addIntegerOption((option) =>
-        option
-          .setDescription(
-            'The maximum number of people that are allowed to join the channel.'
-          )
-          .setName('number')
-          .setRequired(true)
-      )
+const data = new SlashCommandBuilder()
+  .setName('limit')
+  .setDescription(
+    'Edit the max number of people allowed in the current channel'
   )
-  .setHelp(help)
-  .setResponse(async (interaction) => {
-    const userLimit = interaction.options.getInteger('number', true);
+  .addIntegerOption((option) =>
+    option
+      .setDescription(
+        'The maximum number of people that are allowed to join the channel.'
+      )
+      .setName('number')
+      .setRequired(true)
+  );
 
-    const guildMember = await interaction.guild.members.cache.get(
-      interaction.user.id
-    );
+const response = async (interaction) => {
+  const userLimit = interaction.options.getInteger('number', true);
 
-    const { channel } = guildMember.voice;
+  const guildMember = await interaction.guild.members.cache.get(
+    interaction.user.id
+  );
 
-    if (!channel.manageable) {
-      return interaction.reply({
-        embeds: [ErrorEmbed(`Cannot edit <#${channel.id}>.`)],
-      });
-    }
-    channel.edit({ userLimit });
-    return interaction.reply(`<#${channel.id}> limit changed to ${userLimit}.`);
-  });
+  const { channel } = guildMember.voice;
+
+  if (!channel.manageable) {
+    return interaction.reply({
+      embeds: [ErrorEmbed(`Cannot edit <#${channel.id}>.`)],
+    });
+  }
+  channel.edit({ userLimit });
+  return interaction.reply(`<#${channel.id}> limit changed to ${userLimit}.`);
+};
+
+export const limit = new Command({
+  preconditions: [checkCreator, checkSecondary],
+  data,
+  help,
+  response,
+});

@@ -1,6 +1,6 @@
 import Autocomplete from '@classes/autocomplete';
 import Command from '@classes/command';
-import commands from '@commands';
+import * as commands from '@commands';
 import Fuse from 'fuse.js';
 
 export default new Autocomplete()
@@ -10,7 +10,7 @@ export default new Autocomplete()
     const commandValues = Object.values(commands) as Command[];
 
     const fuse = new Fuse(
-      commandValues?.map(({ commandData, help }) => ({
+      commandValues?.map(({ data: commandData, help }) => ({
         name: commandData.name,
         short: help.short,
         long: help.long,
@@ -34,7 +34,7 @@ export default new Autocomplete()
             }))
             .slice(0, 24)
         : commandValues
-            ?.map(({ commandData }) => ({
+            ?.map(({ data: commandData }) => ({
               name: commandData.name,
               value: commandData.name,
             }))

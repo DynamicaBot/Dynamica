@@ -49,7 +49,7 @@ export default new Event<'voiceStateUpdate'>()
 
       if (secondary) {
         if (oldVoiceState.channel.members.size !== 0) {
-          await secondary.update();
+          secondary.update();
         } else {
           secondary.delete();
         }
