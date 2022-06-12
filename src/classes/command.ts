@@ -2,69 +2,66 @@ import {
   SlashCommandBuilder,
   SlashCommandSubcommandsOnlyBuilder,
 } from '@discordjs/builders';
-import { CommandInteraction } from 'discord.js';
+import {
+  ApplicationCommandPermissionData,
+  CommandInteraction,
+  Guild,
+} from 'discord.js';
 import Condition from './condition';
 import Help from './help';
+
+type SlashCommandBuilderTypes =
+  | SlashCommandBuilder
+  | SlashCommandSubcommandsOnlyBuilder
+  | Omit<SlashCommandBuilder, 'addSubcommand' | 'addSubcommandGroup'>;
+
+interface Props {
+  data: SlashCommandBuilderTypes;
+  preconditions?: Condition[];
+  help?: Help;
+  response: (interaction: CommandInteraction) => Promise<void>;
+}
 
 /**
  * The command class for defining new Dynamica commands.
  */
 export default class Command {
-  preconditions: Condition[];
+  public static commands: Command[];
 
-  help: Help;
+  conditions?: Condition[];
 
-  public commandData:
-    | SlashCommandBuilder
-    | SlashCommandSubcommandsOnlyBuilder
-    | Omit<SlashCommandBuilder, 'addSubcommand' | 'addSubcommandGroup'>;
+  help?: Help;
 
-  public execute: (interaction: CommandInteraction) => Promise<void>;
+  data: SlashCommandBuilderTypes;
 
-  constructor() {
-    this.preconditions = [];
-    this.help = new Help('', undefined);
-  }
+  response: (interaction: CommandInteraction) => Promise<void>;
 
-  /**
-   * Set preconditions.
-   * @param preconditions The different preconditions for the command to be run
-   */
-  setPreconditions(preconditions?) {
-    this.preconditions = preconditions;
-    return this;
-  }
-
-  /**
-   * Set the help info for the command.
-   * @param short The short command description.
-   * @param long The long command description.
-   */
-  setHelp(help: Help) {
+  constructor({
+    data,
+    preconditions: conditions = [],
+    help = new Help('', undefined),
+    response = async () => {},
+  }: Props) {
+    this.conditions = conditions;
     this.help = help;
-    return this;
+    this.data = data;
+    this.response = response;
   }
 
   /**
-   * The command data for deploying discord commands.
-   * @param commandData The discord command data.
+   * Updates the permissions of a slash command.
+   * @param guild The guild to update the permissions for.
+   * @param permissions The permissions to set for the command.
    */
-  setCommandData(
-    commandData:
-      | SlashCommandBuilder
-      | SlashCommandSubcommandsOnlyBuilder
-      | Omit<SlashCommandBuilder, 'addSubcommand' | 'addSubcommandGroup'>
+  async updateGuildPermissions(
+    guild: Guild,
+    permissions: ApplicationCommandPermissionData[]
   ) {
-    this.commandData = commandData;
-    return this;
-  }
-
-  /**
-   * Set the function to execute
-   * @param data The function to execute when the event is recieved and all the preconditions pass.
-   */
-  setResponse(data: (interaction: CommandInteraction) => Promise<void>) {
-    this.execute = data;
-    return this;
+    const guildCommands = await guild.commands.fetch();
+    guildCommands.forEach((command) => {
+      if (command.name === this.data.name) {
+        command.permissions.set({ permissions });
+      }
+    });
   }
 }

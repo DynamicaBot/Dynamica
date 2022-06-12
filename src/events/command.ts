@@ -1,6 +1,6 @@
 import Condition from '@/classes/condition';
 import Event from '@classes/event';
-import commands from '@commands';
+import * as commands from '@commands';
 import checkGuild from '@preconditions/guild';
 import { ErrorEmbed } from '@utils/discordEmbeds';
 import logger from '@utils/logger';
@@ -29,7 +29,7 @@ export default new Event<'interactionCreate'>()
           embeds: [ErrorEmbed(failingCondition.message)],
         });
       } else {
-        command.execute(interaction);
+        command.response(interaction);
       }
     } catch (e) {
       logger.error(e);

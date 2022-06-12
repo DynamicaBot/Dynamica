@@ -11,7 +11,7 @@ const logger = new signale.Signale({
   logLevel: process.env.LOG_LEVEL || 'info',
   config: {
     displayDate: false,
-    displayTimestamp: true,
+    displayTimestamp: false,
   },
 });
 

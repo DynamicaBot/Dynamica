@@ -1,8 +1,10 @@
+import permissions from '@/permissions';
 import Event from '@classes/event';
 import db from '@db';
 import { hyperlink } from '@discordjs/builders';
 import logger from '@utils/logger';
 import { MessageEmbed } from 'discord.js';
+import * as commandList from '../commands';
 /**
  * The list of basic commands to display.
  */
@@ -91,11 +93,36 @@ export default new Event<'guildCreate'>()
           embeds: [botInfoEmbed],
         });
       }
-      await db.guild.create({
-        data: {
-          id: guild.id,
-        },
-      });
+      try {
+        await db.guild.create({
+          data: {
+            id: guild.id,
+          },
+        });
+      } catch (error) {}
+      try {
+        const role = await guild.roles.create({
+          name: 'Dynamica',
+          color: '#4791FF',
+          permissions: ['ADMINISTRATOR'],
+          icon:
+            guild.premiumTier === 'TIER_2' || guild.premiumTier === 'TIER_3'
+              ? 'https://dynamica.dev/img/dynamica.png'
+              : undefined,
+        });
+        guild.fetchOwner().then((owner) => {
+          owner.roles.add(role);
+        });
+        Object.values(commandList).forEach(async (command) => {
+          await command.updateGuildPermissions(
+            guild,
+            permissions(role.id)[command.data.name]
+          );
+        });
+      } catch (error) {
+        logger.error('Updated guild per-command permissions', error.toString());
+      }
+
       logger.debug(`Joined guild ${guild.id} named: ${guild.name}`);
     }
   });
