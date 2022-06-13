@@ -28,13 +28,13 @@ jobs:
             ghcr.io/dynamicabot/dynamica
           # generate Docker tags based on the following events/attributes
           tags: |
-            type=schedule
-            type=ref,event=branch
-            type=ref,event=pr
-            type=semver,pattern={{version}}
-            type=semver,pattern={{major}}.{{minor}}
-            type=semver,pattern={{major}}
-            type=sha
+            type=schedule,prefix=pterodactyl
+            type=ref,event=branch,prefix=pterodactyl
+            type=ref,event=pr,prefix=pterodactyl
+            type=semver,pattern={{version}},prefix=pterodactyl
+            type=semver,pattern={{major}}.{{minor}},prefix=pterodactyl
+            type=semver,pattern={{major}},prefix=pterodactyl
+            type=sha,prefix=pterodactyl
 
       - name: Set up QEMU
         uses: docker/setup-qemu-action@v2
