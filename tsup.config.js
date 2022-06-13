@@ -3,7 +3,7 @@ import { defineConfig } from 'tsup';
 
 export default defineConfig((options) => ({
   entry: ['src/index.ts', 'src/deploy-commands.ts', 'src/remove-commands.ts'],
-  splitting: true,
+  splitting: !options.watch,
   sourcemap: true,
   clean: true,
   format: ['esm'],
