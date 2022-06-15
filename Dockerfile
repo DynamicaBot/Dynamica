@@ -38,6 +38,7 @@ RUN yarn install --production --frozen-lockfile
 COPY --from=build /app/node_modules/.prisma /app/node_modules/.prisma
 COPY --from=build /app/dist dist
 RUN adduser -H -D container -s /bin/bash
+ENV  USER=container HOME=/home/container
 USER container
 
 COPY entrypoint.sh /entrypoint.sh
