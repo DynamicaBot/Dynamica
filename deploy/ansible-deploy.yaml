@@ -14,4 +14,3 @@
           - 5555:5555
           - 4000:4000
         restart_policy: unless-stopped
-        pull: true
