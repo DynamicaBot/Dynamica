@@ -68,11 +68,11 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v2
       - name: Tailscale
-        uses: tailscale/github-action@v1
+        uses: tailscale/github-action
         with:
           authkey: ${{ secrets.TAILSCALE_AUTHKEY }}
       - name: Create Inventory
-        run: echo $ANSIBLE_INVENTORY > inventory
+        run: echo $ANSIBLE_INVENTORY >> inventory
       - name: Install SSH key
         uses: shimataro/ssh-key-action@v2
         with:
