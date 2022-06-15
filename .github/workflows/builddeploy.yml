@@ -1,15 +1,11 @@
 name: Docker Build
 
 on:
-  push:
-    tags:
-      - '*.*.*'
-  pull_request:
-    branches:
-      - 'master'
+  release:
+    types: ['released']
 
 jobs:
-  docker-norm:
+  docker-build:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
@@ -24,13 +20,9 @@ jobs:
             ghcr.io/dynamicabot/dynamica
           # generate Docker tags based on the following events/attributes
           tags: |
-            type=schedule
-            type=ref,event=branch
-            type=ref,event=pr
             type=semver,pattern={{version}}
             type=semver,pattern={{major}}.{{minor}}
             type=semver,pattern={{major}}
-            type=sha
 
       - name: Set up QEMU
         uses: docker/setup-qemu-action@v2
@@ -50,11 +42,50 @@ jobs:
         id: docker_build
         with:
           context: .
-          push: ${{ github.event_name != 'pull_request' }}
           target: 'runner'
           tags: ${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}
-  docker-pterodactyl:
+          build-args: |
+            VERSION=${{ github.event.release.tag_name }}
+
+  deploy:
+    runs-on: ubuntu-latest
+    environment: 'Production'
+    needs: 'docker-build'
+    defaults:
+      run:
+        working-directory: deploy
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+      - uses: actions/setup-python@v4
+        with:
+          python-version: '3.x'
+          cache: 'pip'
+      - name: Tailscale
+        uses: tailscale/github-action@main
+        with:
+          authkey: ${{ secrets.TAILSCALE_AUTHKEY }}
+      - name: Create Inventory
+        run: echo $ANSIBLE_INVENTORY >> inventory
+        env:
+          ANSIBLE_INVENTORY: ${{ secrets.ANSIBLE_INVENTORY }}
+      - name: Install SSH key
+        uses: shimataro/ssh-key-action@v2
+        with:
+          key: ${{ secrets.SSH_KEY }}
+          known_hosts: ${{ secrets.KNOWN_HOSTS }}
+      - name: Install Dependancies
+        run: pip install -r requirements.txt
+      - name: Install Docker Galaxy
+        run: ansible-galaxy collection install community.docker
+      - name: Deploy
+        run: ansible-playbook ansible-deploy.yaml
+        env:
+          TOKEN: ${{ secrets.TOKEN }}
+          CLIENT_ID: ${{ secrets.CLIENT_ID }}
+  docker-build-pterodactyl:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
@@ -97,7 +128,8 @@ jobs:
         id: docker_build
         with:
           context: .
-          push: ${{ github.event_name != 'pull_request' }}
           target: 'runner'
           tags: ${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}
+          build-args: |
+            VERSION=${{ github.event.release.tag_name }}

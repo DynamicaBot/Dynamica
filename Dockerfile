@@ -19,8 +19,8 @@ WORKDIR /app
 
 ENV NODE_ENV="production"
 ENV DATABASE_URL "file:/app/config/db.sqlite"
-ARG DRONE_TAG
-ENV VERSION=$DRONE_TAG
+ARG VERSION
+ENV VERSION=$VERSION
 COPY --from=build /app/node_modules/.prisma /app/node_modules/.prisma
 COPY --from=build /app/dist dist
 RUN yarn install --production --frozen-lockfile
@@ -31,8 +31,8 @@ FROM build as pterodactyl
 
 ENV NODE_ENV="production"
 ENV DATABASE_URL "file:/home/container/dynamica/db.sqlite"
-ARG DRONE_TAG
-ENV VERSION=$DRONE_TAG
+ARG VERSION
+ENV VERSION=$VERSION
 WORKDIR /app
 RUN yarn install --production --frozen-lockfile
 COPY --from=build /app/node_modules/.prisma /app/node_modules/.prisma
