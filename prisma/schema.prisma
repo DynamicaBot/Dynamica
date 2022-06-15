@@ -12,6 +12,7 @@ datasource db {
 
 model Guild {
   id                String      @id @unique
+  managerRoleId     String?
   primaryChannels   Primary[]
   secondaryChannels Secondary[]
   allowJoinRequests Boolean     @default(false)
