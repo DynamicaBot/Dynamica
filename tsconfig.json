@@ -19,6 +19,7 @@
     "downlevelIteration": false /* Emit more compliant, but verbose and less performant JavaScript for iteration. */,
     "esModuleInterop": true /* Emit additional JavaScript to ease support for importing CommonJS modules. This enables `allowSyntheticDefaultImports` for type compatibility. */,
     "baseUrl": "src",
+    "skipLibCheck": true,
     "paths": {
       "@": ["./"],
       "@/*": ["./*"],
