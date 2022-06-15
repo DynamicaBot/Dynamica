@@ -61,6 +61,7 @@ jobs:
           context: .
           target: 'runner'
           tags: ${{ steps.meta.outputs.tags }}
+          push: true
           labels: ${{ steps.meta.outputs.labels }}
           build-args: |
             VERSION=${{ github.event.release.tag_name }}
