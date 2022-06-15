@@ -1,3 +1,4 @@
+import Command from '@/classes/command';
 import Condition from '@/classes/condition';
 import Event from '@classes/event';
 import * as commands from '@commands';
@@ -11,8 +12,8 @@ export default new Event<'interactionCreate'>()
   .setResponse(async (interaction) => {
     if (!interaction.isCommand()) return;
     try {
-      const command = commands[interaction.commandName];
-      const { preconditions: conditions } = command;
+      const command: Command = commands[interaction.commandName];
+      const { conditions } = command;
       const conditionResults = await Promise.all(
         [checkGuild as Condition, ...conditions].map((condition) =>
           condition.check(interaction)
