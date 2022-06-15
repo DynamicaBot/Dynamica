@@ -24,7 +24,6 @@ jobs:
             ghcr.io/dynamicabot/dynamica
           # generate Docker tags based on the following events/attributes
           tags: |
-            latest
             type=schedule
             type=ref,event=branch
             type=ref,event=pr
