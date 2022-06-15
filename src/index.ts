@@ -3,7 +3,7 @@ import events from '@events';
 import logger from '@utils/logger';
 import { Client, Intents } from 'discord.js';
 import dotenv from 'dotenv';
-import rl from 'readline'
+import rl from 'readline';
 import deploy from './scripts/deploy';
 import remove from './scripts/remove';
 
@@ -20,23 +20,29 @@ const client = new Client({
   ],
 });
 
+/**
+ * Some of the commandline stuff to read
+ */
 (async () => {
-  const readline = rl.createInterface({input: process.stdin, output: process.stdout})
+  const readline = rl.createInterface({
+    input: process.stdin,
+    output: process.stdout,
+  });
   for await (const line of readline) {
-    logger.log(line)
+    // logger.log(line)
     switch (line) {
-      case "deploy":
-        await deploy()
+      case 'deploy':
+        await deploy();
         break;
-      case "remove":
-        await remove()
+      case 'remove':
+        await remove();
         break;
       default:
+        logger.log('Unknown command');
         break;
     }
   }
-})()
-
+})();
 
 const eventList = Object.values(events);
 try {
