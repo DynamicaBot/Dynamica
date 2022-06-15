@@ -4,7 +4,7 @@
     - name: Deploy Dynamica
       community.docker.docker_container:
         name: Dynamica
-        image: ghcr.io/dynamicabot/dynamica:latest
+        image: ghcr.io/dynamicabot/dynamica:{{ lookup('env', 'VERSION') }}
         volumes:
           - ~/Dynamica/config:/app/config
         env:

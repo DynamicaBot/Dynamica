@@ -85,6 +85,7 @@ jobs:
         env:
           TOKEN: ${{ secrets.TOKEN }}
           CLIENT_ID: ${{ secrets.CLIENT_ID }}
+          VERSION: ${{ github.event.release.tag_name }}
   docker-build-pterodactyl:
     runs-on: ubuntu-latest
     steps:
