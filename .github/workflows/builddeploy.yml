@@ -148,7 +148,7 @@ jobs:
         id: docker_build
         with:
           context: .
-          target: 'runner'
+          target: 'pterodactyl'
           tags: ${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}
           push: true
