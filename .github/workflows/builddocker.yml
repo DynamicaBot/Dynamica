@@ -73,6 +73,8 @@ jobs:
           authkey: ${{ secrets.TAILSCALE_AUTHKEY }}
       - name: Create Inventory
         run: echo $ANSIBLE_INVENTORY >> inventory
+      - name: List Inventory
+        run: cat inventory
       - name: Install SSH key
         uses: shimataro/ssh-key-action@v2
         with:
