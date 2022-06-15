@@ -149,5 +149,6 @@ jobs:
           target: 'runner'
           tags: ${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}
+          push: true
           build-args: |
             VERSION=${{ github.event.release.tag_name }}
