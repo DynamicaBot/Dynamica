@@ -72,7 +72,7 @@ jobs:
         with:
           authkey: ${{ secrets.TAILSCALE_AUTHKEY }}
       - name: Create Inventory
-        run: echo "{{ secrets.ANSIBLE_INVENTORY }}" > inventory
+        run: echo $ANSIBLE_INVENTORY > inventory
       - name: Install SSH key
         uses: shimataro/ssh-key-action@v2
         with:
