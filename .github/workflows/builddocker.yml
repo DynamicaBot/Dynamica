@@ -73,6 +73,8 @@ jobs:
           authkey: ${{ secrets.TAILSCALE_AUTHKEY }}
       - name: Create Inventory
         run: echo $ANSIBLE_INVENTORY >> inventory
+        env:
+          ANSIBLE_INVENTORY: ${{ secrets.ANSIBLE_INVENTORY }}
       - name: List Inventory
         run: cat inventory
       - name: Install SSH key
