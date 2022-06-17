@@ -50,7 +50,7 @@
   "devDependencies": {
     "@swc/core": "^1.2.151",
     "@types/lodash": "^4.14.178",
-    "@types/node": "^17.0.23",
+    "@types/node": "^18.0.0",
     "@types/romans": "^2.0.0",
     "@types/signale": "^1.4.2",
     "@typescript-eslint/eslint-plugin": "^5.17.0",
