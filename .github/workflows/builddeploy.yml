@@ -9,7 +9,7 @@ jobs:
     name: Check Types
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v3
       - name: Setup Yarn
         uses: actions/setup-node@v2
         with:
@@ -27,7 +27,7 @@ jobs:
     name: 'Build and Publish Image'
     steps:
       - name: Checkout
-        uses: actions/checkout@v2
+        uses: actions/checkout@v3
 
       - name: Docker meta
         id: meta
@@ -79,7 +79,7 @@ jobs:
 
     steps:
       - name: Checkout
-        uses: actions/checkout@v2
+        uses: actions/checkout@v3
       - uses: actions/setup-python@v4
         with:
           python-version: '3.x'
@@ -113,7 +113,7 @@ jobs:
     name: 'Build and Publish Image (Pterodactyl)'
     steps:
       - name: Checkout
-        uses: actions/checkout@v2
+        uses: actions/checkout@v3
 
       - name: Docker meta
         id: meta
