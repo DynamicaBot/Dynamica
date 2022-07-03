@@ -40,7 +40,7 @@ export default class Command {
     data,
     preconditions: conditions = [],
     help = new Help('', undefined),
-    response = async () => {},
+    response = async (interaction: CommandInteraction) => {},
   }: Props) {
     this.conditions = conditions;
     this.help = help;
