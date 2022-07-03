@@ -4,6 +4,7 @@ import { SlashCommandBuilder } from '@discordjs/builders';
 import checkCreator from '@preconditions/creator';
 import checkSecondary from '@preconditions/secondary';
 import { ErrorEmbed } from '@utils/discordEmbeds';
+import { CommandInteraction } from 'discord.js';
 
 const data = new SlashCommandBuilder()
   .setName('bitrate')
@@ -13,7 +14,7 @@ const data = new SlashCommandBuilder()
       .setDescription('The bitrate to set the channel to.')
       .setName('bitrate')
   );
-const response = async (interaction) => {
+const response = async (interaction: CommandInteraction) => {
   const bitrate = interaction.options.getInteger('bitrate');
 
   const guildMember = await interaction.guild.members.cache.get(
@@ -34,20 +35,23 @@ const response = async (interaction) => {
     });
   }
   if (!(bitrate <= 96 && bitrate >= 8)) {
+  }
+  try {
+    await channel.edit({
+      bitrate: bitrate ? bitrate * 1000 : 64000,
+    });
+    return interaction.reply(
+      `<#${channel.id}> bitrate changed to ${bitrate ?? 'default'}kbps.`
+    );
+  } catch (error) {
     return interaction.reply({
       embeds: [
         ErrorEmbed(
-          'Bitrate (in kbps) should be greater than or equal to 4 or less than or equal to 96.'
+          'Make sure that the bitrate is within the rang you have access to (kBps) e.g. 64 for 64000bps'
         ),
       ],
     });
   }
-  await channel.edit({
-    bitrate: bitrate ? bitrate * 1000 : 64000,
-  });
-  return interaction.reply(
-    `<#${channel.id}> bitrate changed to ${bitrate ?? 'default'}kbps.`
-  );
 };
 
 export const bitrate = new Command({
