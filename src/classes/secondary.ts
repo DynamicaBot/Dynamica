@@ -63,6 +63,7 @@ export default class DynamicaSecondary extends DynamicaChannel<'secondary'> {
           position: primary.discord.position
             ? primary.discord.position + 1
             : undefined,
+          bitrate: primary.discord.bitrate ?? undefined,
         }
       );
 
