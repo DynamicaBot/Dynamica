@@ -17,21 +17,14 @@ export default new Event<'voiceStateUpdate'>()
       /** Look for an existing primary channel */
       const existingPrimary = DynamicaPrimary.get(newVoiceState?.channelId);
       const existingSecondary = DynamicaSecondary.get(newVoiceState?.channelId);
-
-      console.log({ existingPrimary, existingSecondary });
       // Create a new secondary if one doesn't already exist and the user has joined a primary channel
       if (existingPrimary) {
-        const newSecondary = DynamicaSecondary.initalise(
+        await DynamicaSecondary.initalise(
           newVoiceState.client,
           existingPrimary,
           newVoiceState.guild,
           newVoiceState.member
         );
-        // await newSecondary.create(
-        //   primary,
-        //   newVoiceState.guild,
-        //   newVoiceState.member
-        // );
       } else if (existingSecondary) {
         // If a secondary exists then attempt to update the name;
         if (newVoiceState.channel.members.size !== 1) {
