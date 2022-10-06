@@ -5,11 +5,18 @@ import checkAdminPermissions from '@preconditions/admin';
 import checkCreator from '@preconditions/creator';
 import checkSecondary from '@preconditions/secondary';
 import { ErrorEmbed } from '@utils/discordEmbeds';
-import { CacheType, ChatInputCommandInteraction, Role } from 'discord.js';
+import {
+  CacheType,
+  ChatInputCommandInteraction,
+  PermissionFlagsBits,
+  Role,
+} from 'discord.js';
 
 const data = new SlashCommandBuilder()
   .setName('permission')
+  .setDMPermission(false)
   .setDescription('Edit the permissions of a voice channel.')
+  .setDefaultMemberPermissions(PermissionFlagsBits.Administrator)
   .addSubcommand((subcommand) =>
     subcommand
       .setName('add')

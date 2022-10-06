@@ -4,11 +4,16 @@ import DynamicaSecondary from '@classes/secondary';
 import db from '@db';
 import { SlashCommandBuilder } from '@discordjs/builders';
 import checkManager from '@preconditions/manager';
-import { CacheType, ChatInputCommandInteraction } from 'discord.js';
+import {
+  CacheType,
+  ChatInputCommandInteraction,
+  PermissionFlagsBits,
+} from 'discord.js';
 
 const data = new SlashCommandBuilder()
   .setName('template')
-  .setDefaultMemberPermissions('0')
+  .setDMPermission(false)
+  .setDefaultMemberPermissions(PermissionFlagsBits.ManageChannels)
   .setDescription('Edit the template for all secondary channels.')
   .addStringOption((option) =>
     option

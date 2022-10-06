@@ -9,6 +9,7 @@ import { EmbedBuilder } from 'discord.js';
 const data = new SlashCommandBuilder()
   .setName('info')
   .setDescription('Get info about a primary or secondary channel.')
+  .setDMPermission(false)
   .addSubcommand((subcommand) =>
     subcommand
       .setName('primary')

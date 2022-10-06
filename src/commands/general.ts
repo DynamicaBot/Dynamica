@@ -4,11 +4,17 @@ import DynamicaSecondary from '@classes/secondary';
 import db from '@db';
 import { SlashCommandBuilder } from '@discordjs/builders';
 import checkManager from '@preconditions/manager';
-import { CacheType, ChatInputCommandInteraction } from 'discord.js';
+import {
+  CacheType,
+  ChatInputCommandInteraction,
+  PermissionFlagsBits,
+} from 'discord.js';
 
 const data = new SlashCommandBuilder()
   .setName('general')
   .setDefaultMemberPermissions('0')
+  .setDMPermission(false)
+  .setDefaultMemberPermissions(PermissionFlagsBits.ManageChannels)
   .setDescription('Edit the name/template for the default general channel.')
   .addStringOption((option) =>
     option
