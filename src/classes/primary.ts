@@ -1,7 +1,7 @@
 import db from '@db';
 import Prisma from '@prisma/client';
 import logger from '@utils/logger';
-import { Guild, GuildChannel, User } from 'discord.js';
+import { ChannelType, Guild, GuildChannel, User } from 'discord.js';
 import DynamicaChannel from './dynamicaChannel';
 
 export default class DynamicaPrimary extends DynamicaChannel<'primary'> {
@@ -20,8 +20,10 @@ export default class DynamicaPrimary extends DynamicaChannel<'primary'> {
   async create(guild: Guild, user: User, section?: GuildChannel) {
     try {
       const parent = section?.id;
-      const channel = await guild.channels.create('➕ New Session', {
-        type: 'GUILD_VOICE',
+
+      const channel = await guild.channels.create({
+        type: ChannelType.GuildVoice,
+        name: '➕ New Session',
         parent,
       });
       const primary = await db.primary.create({

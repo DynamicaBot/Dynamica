@@ -4,6 +4,7 @@ import DynamicaSecondary from '@classes/secondary';
 import db from '@db';
 import { SlashCommandBuilder } from '@discordjs/builders';
 import checkManager from '@preconditions/manager';
+import { CacheType, ChatInputCommandInteraction } from 'discord.js';
 
 const data = new SlashCommandBuilder()
   .setName('template')
@@ -23,7 +24,9 @@ const data = new SlashCommandBuilder()
       .setRequired(true)
   );
 
-const response = async (interaction) => {
+const response = async (
+  interaction: ChatInputCommandInteraction<CacheType>
+) => {
   const name = interaction.options.getString('template', true);
   const channel = interaction.options.getString('channel', true);
 
@@ -42,7 +45,7 @@ const response = async (interaction) => {
     dynamicaSecondary.update();
   });
 
-  return interaction.reply(`Template changed to \`${name}\`.`);
+  interaction.reply(`Template changed to \`${name}\`.`);
 };
 
 export const template = new Command({

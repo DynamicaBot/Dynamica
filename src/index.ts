@@ -1,7 +1,7 @@
 import db from '@db';
 import events from '@events';
 import logger from '@utils/logger';
-import { Client, Intents } from 'discord.js';
+import { Client, GatewayIntentBits } from 'discord.js';
 import dotenv from 'dotenv';
 import rl from 'readline';
 import deploy from './scripts/deploy';
@@ -14,9 +14,9 @@ dotenv.config();
  */
 const client = new Client({
   intents: [
-    Intents.FLAGS.GUILDS,
-    Intents.FLAGS.GUILD_VOICE_STATES,
-    Intents.FLAGS.GUILD_PRESENCES,
+    GatewayIntentBits.Guilds,
+    GatewayIntentBits.GuildVoiceStates,
+    GatewayIntentBits.GuildPresences,
   ],
 });
 

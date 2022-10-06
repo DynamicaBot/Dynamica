@@ -4,7 +4,7 @@ import Prisma, { Primary } from '@prisma/client';
 import updateActivityCount from '@utils';
 import formatChannelName from '@utils/format';
 import logger from '@utils/logger';
-import { Guild, GuildMember, User } from 'discord.js';
+import { ChannelType, Guild, GuildMember, User } from 'discord.js';
 import DynamicaChannel from './dynamicaChannel';
 
 export default class DynamicaSecondary extends DynamicaChannel<'secondary'> {
@@ -48,8 +48,9 @@ export default class DynamicaSecondary extends DynamicaChannel<'secondary'> {
         ? primaryConfig.generalName
         : primaryConfig.template;
 
-      const secondary = await guild.channels.create(
-        formatChannelName(str, {
+      const secondary = await guild.channels.create({
+        type: ChannelType.GuildVoice,
+        name: formatChannelName(str, {
           creator: member?.displayName as string,
           channelNumber: primaryConfig.secondaries.length + 1,
           activities: filteredActivityList,
@@ -57,15 +58,12 @@ export default class DynamicaSecondary extends DynamicaChannel<'secondary'> {
           memberCount: primary.discord.members.size,
           locked: false,
         }),
-        {
-          type: 'GUILD_VOICE',
-          parent: primary.discord.parent ?? undefined,
-          position: primary.discord.position
-            ? primary.discord.position + 1
-            : undefined,
-          bitrate: primary.discord.bitrate ?? undefined,
-        }
-      );
+        parent: primary.discord.parent ?? undefined,
+        position: primary.discord.position
+          ? primary.discord.position + 1
+          : undefined,
+        bitrate: primary.discord.bitrate ?? undefined,
+      });
 
       if (secondary.parent && primary.discord.permissionsLocked) {
         secondary.lockPermissions();
@@ -320,12 +318,12 @@ export default class DynamicaSecondary extends DynamicaChannel<'secondary'> {
       await Promise.all(
         currentlyActive.map((member) =>
           permissionOverwrites.create(member.id, {
-            CONNECT: true,
+            Connect: true,
           })
         )
       ).then(() => {
         if (everyone) {
-          permissionOverwrites.create(everyone.id, { CONNECT: false });
+          permissionOverwrites.create(everyone.id, { Connect: false });
         }
       });
 

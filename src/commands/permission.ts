@@ -5,7 +5,7 @@ import checkAdminPermissions from '@preconditions/admin';
 import checkCreator from '@preconditions/creator';
 import checkSecondary from '@preconditions/secondary';
 import { ErrorEmbed } from '@utils/discordEmbeds';
-import { Role } from 'discord.js';
+import { CacheType, ChatInputCommandInteraction, Role } from 'discord.js';
 
 const data = new SlashCommandBuilder()
   .setName('permission')
@@ -49,7 +49,9 @@ const data = new SlashCommandBuilder()
       )
   );
 
-const response = async (interaction) => {
+const response = async (
+  interaction: ChatInputCommandInteraction<CacheType>
+) => {
   const subcommand = interaction.options.getSubcommand(true);
   const user = interaction.options.getUser('user', false);
   const role = interaction.options.getRole('role', false) as Role;
@@ -75,7 +77,7 @@ const response = async (interaction) => {
   }
 
   if (subcommand === 'add') {
-    permissionOverwrites.create(user || role, { CONNECT: true });
+    permissionOverwrites.create(user || role, { Connect: true });
     interaction.reply({
       ephemeral: true,
       content: `You've added permission for ${
@@ -84,7 +86,7 @@ const response = async (interaction) => {
     });
   }
   if (subcommand === 'remove') {
-    permissionOverwrites.create(user || role, { CONNECT: false });
+    permissionOverwrites.create(user || role, { Connect: false });
     interaction.reply({
       ephemeral: true,
       content: `You've removed permission for ${

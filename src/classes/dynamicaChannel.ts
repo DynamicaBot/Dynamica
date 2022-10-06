@@ -1,6 +1,6 @@
 import logger from '@/utils/logger';
 import Prisma from '@prisma/client';
-import { Client, Guild, VoiceChannel } from 'discord.js';
+import { ChannelType, Client, Guild, VoiceChannel } from 'discord.js';
 
 interface DynamicaChannelTypes {
   primary: {
@@ -81,7 +81,7 @@ export default class DynamicaChannel<K extends keyof DynamicaChannelTypes> {
   /** Get the discord channel */
   async fetchDiscord(): Promise<VoiceChannel | undefined> {
     const channel = await this.client.channels.cache.get(this.id);
-    if (!channel || channel.type !== 'GUILD_VOICE') {
+    if (!channel || channel.type !== ChannelType.GuildVoice) {
       return undefined;
     }
     return channel;

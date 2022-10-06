@@ -4,7 +4,7 @@ import DynamicaPrimary from '@classes/primary';
 import DynamicaSecondary from '@classes/secondary';
 import db from '@db';
 import { SlashCommandBuilder } from '@discordjs/builders';
-import { MessageEmbed } from 'discord.js';
+import { EmbedBuilder } from 'discord.js';
 
 const data = new SlashCommandBuilder()
   .setName('info')
@@ -51,7 +51,7 @@ const response = async (interaction) => {
       ephemeral: true,
       content: `Here's the current info for <#${primary.id}>`,
       embeds: [
-        new MessageEmbed().addFields(
+        new EmbedBuilder().addFields(
           {
             name: 'General Template',
             value: primary.prisma.generalName,
@@ -80,7 +80,7 @@ const response = async (interaction) => {
       ephemeral: true,
       content: `Here's the current info for <#${secondary.id}>`,
       embeds: [
-        new MessageEmbed().addFields(
+        new EmbedBuilder().addFields(
           {
             name: 'Name Override',
             value: secondary.prisma.name ?? '`Not set`',
@@ -108,7 +108,7 @@ const response = async (interaction) => {
       ephemeral: true,
       content: "Here's the current info for the guild",
       embeds: [
-        new MessageEmbed().addFields({
+        new EmbedBuilder().addFields({
           name: 'Join Requests',
           value: prismaGuild.allowJoinRequests ? 'Enabled' : 'Disabled',
         }),

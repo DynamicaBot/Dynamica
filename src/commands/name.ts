@@ -6,6 +6,7 @@ import { SlashCommandBuilder } from '@discordjs/builders';
 import checkManager from '@preconditions/manager';
 import checkSecondary from '@preconditions/secondary';
 import logger from '@utils/logger';
+import { CacheType, ChatInputCommandInteraction } from 'discord.js';
 
 const data = new SlashCommandBuilder()
   .setName('name')
@@ -18,7 +19,9 @@ const data = new SlashCommandBuilder()
       .setRequired(true)
   );
 
-const response = async (interaction) => {
+const response = async (
+  interaction: ChatInputCommandInteraction<CacheType>
+) => {
   const name = interaction.options.getString('name');
 
   const guildMember = await interaction.guild.members.cache.get(
@@ -35,7 +38,7 @@ const response = async (interaction) => {
     channel.id
   ).fetch();
   secondary.update();
-  return interaction.reply(`Channel name changed to \`${name}\`.`);
+  interaction.reply(`Channel name changed to \`${name}\`.`);
 };
 
 export const name = new Command({

@@ -4,7 +4,7 @@ import { SlashCommandBuilder } from '@discordjs/builders';
 import checkCreator from '@preconditions/creator';
 import checkSecondary from '@preconditions/secondary';
 import { ErrorEmbed } from '@utils/discordEmbeds';
-import { CommandInteraction } from 'discord.js';
+import { CacheType, ChatInputCommandInteraction } from 'discord.js';
 
 const data = new SlashCommandBuilder()
   .setName('bitrate')
@@ -14,7 +14,9 @@ const data = new SlashCommandBuilder()
       .setDescription('The bitrate to set the channel to.')
       .setName('bitrate')
   );
-const response = async (interaction: CommandInteraction) => {
+const response = async (
+  interaction: ChatInputCommandInteraction<CacheType>
+) => {
   const bitrate = interaction.options.getInteger('bitrate');
 
   const guildMember = await interaction.guild.members.cache.get(
@@ -24,15 +26,17 @@ const response = async (interaction: CommandInteraction) => {
   const { channel } = guildMember.voice;
 
   if (!channel.manageable) {
-    return interaction.reply({
+    interaction.reply({
       embeds: [ErrorEmbed('Unable to manage channel.')],
     });
+    return;
   }
 
   if (!bitrate) {
-    return channel.edit({ bitrate: 64000 }).then(() => {
+    channel.edit({ bitrate: 64000 }).then(() => {
       interaction.reply('Set bitrate to default.');
     });
+    return;
   }
   if (!(bitrate <= 96 && bitrate >= 8)) {
   }
@@ -40,11 +44,11 @@ const response = async (interaction: CommandInteraction) => {
     await channel.edit({
       bitrate: bitrate ? bitrate * 1000 : 64000,
     });
-    return interaction.reply(
+    interaction.reply(
       `<#${channel.id}> bitrate changed to ${bitrate ?? 'default'}kbps.`
     );
   } catch (error) {
-    return interaction.reply({
+    interaction.reply({
       embeds: [
         ErrorEmbed(
           'Make sure that the bitrate is within the rang you have access to (kBps) e.g. 64 for 64000bps'

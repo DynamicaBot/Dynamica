@@ -5,12 +5,15 @@ import { SlashCommandBuilder } from '@discordjs/builders';
 import checkAdminPermissions from '@preconditions/admin';
 import checkCreator from '@preconditions/creator';
 import { ErrorEmbed } from '@utils/discordEmbeds';
+import { CacheType, ChatInputCommandInteraction } from 'discord.js';
 
 const data = new SlashCommandBuilder()
   .setName('unlock')
   .setDescription('Remove any existing locks on locked secondary channels.');
 
-const response = async (interaction) => {
+const response = async (
+  interaction: ChatInputCommandInteraction<CacheType>
+) => {
   const guildMember = await interaction.guild.members.cache.get(
     interaction.user.id
   );

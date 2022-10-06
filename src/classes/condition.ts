@@ -1,9 +1,9 @@
-import { CommandInteraction } from 'discord.js';
+import { CacheType, ChatInputCommandInteraction } from 'discord.js';
 
 type CheckResult = { success: boolean; message?: string };
 
 type ConditionFunction = (
-  interaction: CommandInteraction
+  interaction: ChatInputCommandInteraction<CacheType>
 ) => Promise<CheckResult>;
 
 export default class Condition {
@@ -13,7 +13,9 @@ export default class Condition {
     this.condition = condition;
   }
 
-  async check(interaction: CommandInteraction): Promise<CheckResult> {
+  async check(
+    interaction: ChatInputCommandInteraction<CacheType>
+  ): Promise<CheckResult> {
     return this.condition(interaction);
   }
 }
