@@ -3,9 +3,18 @@ import Command from '@classes/command';
 import db from '@db';
 import { SlashCommandBuilder } from '@discordjs/builders';
 import { ErrorEmbed } from '@utils/discordEmbeds';
-import { MessageActionRow, MessageButton } from 'discord.js';
+import {
+  ActionRowBuilder,
+  ButtonBuilder,
+  ButtonStyle,
+  CacheType,
+  ChatInputCommandInteraction,
+  ComponentType,
+} from 'discord.js';
 
-const response = async (interaction) => {
+const response = async (
+  interaction: ChatInputCommandInteraction<CacheType>
+) => {
   const channel = interaction.options.getString('channel', true);
 
   if (!interaction.guild) return;
@@ -23,17 +32,17 @@ const response = async (interaction) => {
 
   const { creator } = channelConfig;
 
-  const row = new MessageActionRow().addComponents(
-    new MessageButton({
-      customId: 'channeljoinaccept',
-      style: 'SUCCESS',
-      label: 'Allow',
-    }),
-    new MessageButton({
-      customId: 'channeljoindeny',
-      style: 'DANGER',
-      label: 'Deny',
-    })
+  const row = new ActionRowBuilder<ButtonBuilder>({
+    type: ComponentType.ActionRow,
+  }).addComponents(
+    new ButtonBuilder()
+      .setCustomId('channeljoinaccept')
+      .setLabel('Allow')
+      .setStyle(ButtonStyle.Success),
+    new ButtonBuilder()
+      .setCustomId('channeljoindeny')
+      .setLabel('Deny')
+      .setStyle(ButtonStyle.Danger)
   );
   interaction.reply({
     components: [row],
@@ -41,7 +50,7 @@ const response = async (interaction) => {
   });
   interaction.channel
     .createMessageComponentCollector({
-      componentType: 'BUTTON',
+      componentType: ComponentType.Button,
       filter: (filteritem) => filteritem.user.id === channelConfig.creator,
     })
     .once('collect', async (collected) => {
@@ -50,10 +59,10 @@ const response = async (interaction) => {
         const discordChannel = await collected.guild.channels.cache.get(
           channel
         );
-        if (!discordChannel.isVoice()) return;
+        if (!discordChannel.isVoiceBased()) return;
 
         await discordChannel.permissionOverwrites.create(interaction.user, {
-          CONNECT: true,
+          Connect: true,
         });
         await interaction.editReply(
           `<@${interaction.user.id}> has been granted access to <#${channel}>.`
@@ -81,6 +90,7 @@ const response = async (interaction) => {
 const data = new SlashCommandBuilder()
   .setName('join')
   .setDescription('Request to join a locked voice channel.')
+  .setDMPermission(false)
   .addStringOption((option) =>
     option
       .setAutocomplete(true)

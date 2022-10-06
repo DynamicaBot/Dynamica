@@ -1,16 +1,22 @@
 import Command from '@classes/command';
 import db from '@db';
-import { SlashCommandBuilder } from '@discordjs/builders';
 import help from '@help/alias';
 import checkManager from '@preconditions/manager';
 import { listAliases, updateAlias } from '@utils/alias';
-import { MessageEmbed } from 'discord.js';
+import {
+  CacheType,
+  ChatInputCommandInteraction,
+  EmbedBuilder,
+  PermissionFlagsBits,
+  SlashCommandBuilder,
+} from 'discord.js';
 import _ from 'lodash';
 
 const data = new SlashCommandBuilder()
   .setName('alias')
   .setDescription('Manage aliases.')
-  .setDefaultMemberPermissions('0')
+  .setDefaultMemberPermissions(PermissionFlagsBits.ManageChannels)
+  .setDMPermission(false)
   .addSubcommand((subcommand) =>
     subcommand
       .setName('add')
@@ -46,7 +52,9 @@ const data = new SlashCommandBuilder()
     subcommand.setName('list').setDescription('List currently set aliases.')
   );
 
-const response = async (interaction) => {
+const response = async (
+  interaction: ChatInputCommandInteraction<CacheType>
+) => {
   const subcommand = interaction.options.getSubcommand(true);
   const activity = interaction.options.getString('activity');
   if (subcommand === 'add') {
@@ -71,7 +79,7 @@ const response = async (interaction) => {
     }));
 
     const embeds = _.chunk(inlineAliases, 25).map((result) =>
-      new MessageEmbed().addFields(...result)
+      new EmbedBuilder().addFields(...result)
     );
     interaction.reply({
       content: 'Alias List',

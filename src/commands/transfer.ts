@@ -3,9 +3,17 @@ import Command from '@classes/command';
 import DynamicaSecondary from '@classes/secondary';
 import { SlashCommandBuilder } from '@discordjs/builders';
 import checkCreator from '@preconditions/creator';
+import {
+  CacheType,
+  ChatInputCommandInteraction,
+  PermissionFlagsBits,
+} from 'discord.js';
 
 const data = new SlashCommandBuilder()
   .setName('transfer')
+  .setDMPermission(false)
+  .setDMPermission(false)
+  .setDefaultMemberPermissions(PermissionFlagsBits.Administrator)
   .setDescription('Transfer ownership of secondary channel to another person')
   .addUserOption((option) =>
     option
@@ -14,7 +22,9 @@ const data = new SlashCommandBuilder()
       .setRequired(true)
   );
 
-const response = async (interaction) => {
+const response = async (
+  interaction: ChatInputCommandInteraction<CacheType>
+) => {
   const user = interaction.options.getUser('user', true);
 
   const guildMember = await interaction.guild.members.cache.get(

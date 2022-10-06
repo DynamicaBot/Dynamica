@@ -1,13 +1,15 @@
 import help from '@/help/allowjoin';
 import Command from '@classes/command';
 import DynamicaGuild from '@classes/guild';
-import { SlashCommandBuilder } from '@discordjs/builders';
 import checkAdminPermissions from '@preconditions/admin';
 import checkManager from '@preconditions/manager';
+import { PermissionFlagsBits, SlashCommandBuilder } from 'discord.js';
 
 const data = new SlashCommandBuilder()
   .setName('allowjoin')
-  .setDefaultMemberPermissions('0')
+  // .setDefaultMemberPermissions(0)
+  .setDMPermission(false)
+  .setDefaultMemberPermissions(PermissionFlagsBits.Administrator)
   .setDescription('Allow users to request to join a locked channel.')
   .addBooleanOption((option) =>
     option

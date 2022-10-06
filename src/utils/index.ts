@@ -1,6 +1,6 @@
 import db from '@db';
 import logger from '@utils/logger';
-import { Client } from 'discord.js';
+import { ActivityType, Client } from 'discord.js';
 
 /**
  * Refresh Channel Activity Count
@@ -14,8 +14,8 @@ const updateActivityCount = (client: Client) =>
         afk: !!count,
         activities: [
           {
-            type: 'PLAYING',
-            name: `with ${count} ${count === 1 ? 'channel' : 'channels'}.`,
+            type: ActivityType.Watching,
+            name: `${count} ${count === 1 ? 'channel' : 'channels'}.`,
           },
         ],
       });

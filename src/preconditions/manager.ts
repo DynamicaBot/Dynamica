@@ -10,7 +10,7 @@ export default new Condition(async (interaction) => {
     const dynamicaManager = guildMember?.roles.cache.some(
       (role) => role.name === 'Dynamica Manager'
     );
-    const admin = guildMember.permissions.has('ADMINISTRATOR');
+    const admin = guildMember.permissions.has('Administrator');
     if (!dynamicaManager && !admin) {
       return {
         success: false,
