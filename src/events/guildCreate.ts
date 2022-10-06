@@ -1,3 +1,4 @@
+import { MQTT } from '@/classes/MQTT';
 import Event from '@classes/Event';
 import db from '@db';
 import { hyperlink } from '@discordjs/builders';
@@ -105,5 +106,12 @@ export default new Event<'guildCreate'>()
       }
 
       logger.debug(`Joined guild ${guild.id} named: ${guild.name}`);
+      const mqtt = MQTT.getInstance();
+      mqtt?.publish('dynamica/event/join', {
+        guild: {
+          id: guild.id,
+          name: guild.name,
+        },
+      });
     }
   });

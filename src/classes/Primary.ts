@@ -12,6 +12,7 @@ import {
   DynamicaChannel,
   DynamicaChannelType,
 } from './DynamicaChannel.interface';
+import { MQTT } from './MQTT';
 import DynamicaSecondary from './Secondary';
 
 export default class DynamicaPrimary
@@ -148,6 +149,11 @@ export default class DynamicaPrimary
         })
       );
     }
+    const mqtt = MQTT.getInstance();
+    mqtt?.publish(`dynamica/update/primary/${this.id}`, {
+      type: DynamicaChannelType.Primary,
+      id: this.id,
+    });
   }
 
   toString() {

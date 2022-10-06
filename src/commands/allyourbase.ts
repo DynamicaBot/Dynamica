@@ -1,4 +1,6 @@
+import { MQTT } from '@/classes/MQTT';
 import help from '@/help/allyourbase';
+import { interactionDetails } from '@/utils/mqtt';
 import Command from '@classes/Command';
 import DynamicaSecondary from '@classes/Secondary';
 import checkManager from '@preconditions/manager';
@@ -34,6 +36,10 @@ const response = async (
     await interaction.reply(
       `Owner of <#${channelId}> changed to <@${guildMember.user.id}>`
     );
+    const mqtt = MQTT.getInstance();
+    mqtt?.publish(`dynamica/command/${interaction.commandName}`, {
+      ...interactionDetails(interaction),
+    });
   } else {
     await interaction.reply('Must be a valid secondary channel.');
   }

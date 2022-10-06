@@ -1,3 +1,5 @@
+import { MQTT } from '@/classes/MQTT';
+import { interactionDetails } from '@/utils/mqtt';
 import Command from '@classes/Command';
 import db from '@db';
 import help from '@help/alias';
@@ -57,12 +59,20 @@ const response = async (
 ) => {
   const subcommand = interaction.options.getSubcommand(true);
   const activity = interaction.options.getString('activity');
+  const mqtt = MQTT.getInstance();
   if (subcommand === 'add') {
     const alias = interaction.options.getString('alias', true);
     await updateAlias(activity, alias, interaction.guildId);
     await interaction.reply(
       `Successfully created alias \`${alias}\` for \`${activity}\``
     );
+
+    mqtt?.publish(`dynamica/command/${interaction.commandName}`, {
+      subcommand,
+      activity,
+      alias,
+      ...interactionDetails(interaction),
+    });
   } else if (subcommand === 'remove') {
     const deletedAlias = await db.alias.delete({
       where: { id: parseInt(activity, 10) },
@@ -70,6 +80,12 @@ const response = async (
     await interaction.reply(
       `Successfully removed alias for \`${deletedAlias.activity}\`.`
     );
+
+    mqtt?.publish(`dynamica/command/${interaction.commandName}`, {
+      subcommand,
+      activity,
+      ...interactionDetails(interaction),
+    });
   } else if (subcommand === 'list') {
     const aliases = await listAliases(interaction.guildId);
     const inlineAliases = aliases.map(({ name, value }) => ({
@@ -84,6 +100,11 @@ const response = async (
     interaction.reply({
       content: 'Alias List',
       embeds,
+    });
+
+    mqtt?.publish(`dynamica/command/${interaction.commandName}`, {
+      subcommand,
+      ...interactionDetails(interaction),
     });
   }
 };

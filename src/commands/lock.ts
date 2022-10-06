@@ -1,4 +1,6 @@
+import { MQTT } from '@/classes/MQTT';
 import help from '@/help/lock';
+import { interactionDetails } from '@/utils/mqtt';
 import Command from '@classes/Command';
 import DynamicaSecondary from '@classes/Secondary';
 import { SlashCommandBuilder } from '@discordjs/builders';
@@ -20,7 +22,7 @@ const data = new SlashCommandBuilder()
 const response = async (
   interaction: ChatInputCommandInteraction<CacheType>
 ) => {
-  if (!interaction.guild?.members) return;
+  const mqtt = MQTT.getInstance();
 
   const guildMember = await interaction.guild.members.cache.get(
     interaction.user.id
@@ -36,6 +38,10 @@ const response = async (
       ephemeral: true,
       content:
         'Use `/permission add` to allow people to access the channels. Or, `/permission remove` to remove people.',
+    });
+    mqtt?.publish(`dynamica/command/${interaction.commandName}`, {
+      channel: dynamicaSecondary.id,
+      ...interactionDetails(interaction),
     });
   } else {
     interaction.reply({

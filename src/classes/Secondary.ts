@@ -17,6 +17,7 @@ import {
   DynamicaChannel,
   DynamicaChannelType,
 } from './DynamicaChannel.interface';
+import { MQTT } from './MQTT';
 
 export default class DynamicaSecondary
   implements DynamicaChannel<DynamicaChannelType.Secondary>
@@ -241,6 +242,22 @@ export default class DynamicaSecondary
           );
         });
     }
+
+    const mqtt = MQTT.getInstance();
+    mqtt?.publish(`dynamica/update/secondary/${this.id}`, {
+      id: this.id,
+      type: DynamicaChannelType.Secondary,
+      name,
+      locked,
+      activities,
+      members: discordChannel.members.map((member) => member.user.tag),
+      guildId: discordChannel.guildId,
+      guildName: discordChannel.guild.name,
+      creator: creator.displayName,
+      memberCount: discordChannel.members.size,
+      channelNumber: adjacentSecondaryCount + 1,
+    });
+
     return this;
   }
 

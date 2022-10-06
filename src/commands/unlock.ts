@@ -1,4 +1,6 @@
+import { MQTT } from '@/classes/MQTT';
 import help from '@/help/unlock';
+import { interactionDetails } from '@/utils/mqtt';
 import Command from '@classes/Command';
 import DynamicaSecondary from '@classes/Secondary';
 import { SlashCommandBuilder } from '@discordjs/builders';
@@ -23,6 +25,7 @@ const response = async (
   const guildMember = await interaction.guild.members.cache.get(
     interaction.user.id
   );
+  const mqtt = MQTT.getInstance();
 
   const { channelId } = guildMember.voice;
 
@@ -31,6 +34,10 @@ const response = async (
   if (dynamicaSecondary) {
     await dynamicaSecondary.unlock(interaction.client);
     await interaction.reply(`Removed lock on <#${channelId}>`);
+    mqtt?.publish(`dynamica/command/${interaction.commandName}`, {
+      channel: channelId,
+      ...interactionDetails(interaction),
+    });
   } else {
     await interaction.reply({
       ephemeral: true,

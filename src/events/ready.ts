@@ -1,3 +1,4 @@
+import { MQTT } from '@/classes/MQTT';
 import DynamicaSecondary from '@/classes/Secondary';
 import Event from '@classes/Event';
 import DynamicaPrimary from '@classes/Primary';
@@ -11,6 +12,8 @@ export default new Event<'ready'>()
   .setEvent('ready')
   .setResponse(async (client) => {
     logger.info(`Ready! Logged in as ${client.user?.tag}`);
+    const mqtt = MQTT.getInstance();
+
     try {
       const secondaries = await db.secondary.findMany();
       const primaries = await db.primary.findMany();
@@ -62,6 +65,12 @@ export default new Event<'ready'>()
             }
           }
         }
+      });
+      mqtt?.publish('dynamica/presence', {
+        ready: client.isReady,
+        guilds: await (await client.guilds.fetch()).toJSON(),
+        activePrimaries: primaries.length,
+        activeSecondaries: secondaries.length,
       });
     } catch (error) {
       logger.error(error);

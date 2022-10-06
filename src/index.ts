@@ -4,6 +4,7 @@ import logger from '@utils/logger';
 import { Client, GatewayIntentBits } from 'discord.js';
 import dotenv from 'dotenv';
 import rl from 'readline';
+import { MQTT } from './classes/MQTT';
 import deploy from './scripts/deploy';
 import remove from './scripts/remove';
 
@@ -19,6 +20,9 @@ const client = new Client({
     GatewayIntentBits.GuildPresences,
   ],
 });
+
+const mqtt = MQTT.getInstance();
+mqtt?.publish('dynamica/test', 'test');
 
 /**
  * Some of the commandline stuff to read

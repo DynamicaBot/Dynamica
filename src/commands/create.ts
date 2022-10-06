@@ -1,4 +1,6 @@
+import { MQTT } from '@/classes/MQTT';
 import help from '@/help/create';
+import { interactionDetails } from '@/utils/mqtt';
 import Command from '@classes/Command';
 import DynamicaPrimary from '@classes/Primary';
 import { SlashCommandBuilder } from '@discordjs/builders';
@@ -31,6 +33,7 @@ const response = async (
   const section = interaction.options.getChannel(
     'section'
   ) as GuildChannel | null;
+  const mqtt = MQTT.getInstance();
 
   const newPrimary = await DynamicaPrimary.initialise(
     interaction.guild,
@@ -41,6 +44,11 @@ const response = async (
   interaction.reply(
     `New voice channel <#${newPrimary.id}> successfully created.`
   );
+
+  mqtt?.publish(`dynamica/command/${interaction.commandName}`, {
+    section,
+    ...interactionDetails(interaction),
+  });
 };
 
 export const create = new Command({

@@ -1,4 +1,6 @@
+import { MQTT } from '@/classes/MQTT';
 import helpHelp from '@/help/help';
+import { interactionDetails } from '@/utils/mqtt';
 import Command from '@classes/Command';
 import { SlashCommandBuilder } from '@discordjs/builders';
 import helpForHelp from '@help';
@@ -44,7 +46,7 @@ const response = async (interaction) => {
     })),
     25
   );
-  return interaction.reply({
+  interaction.reply({
     embeds: helpFields.map((helpField) =>
       new EmbedBuilder()
         .setAuthor({
@@ -59,6 +61,10 @@ const response = async (interaction) => {
         })
         .addFields(...helpField)
     ),
+  });
+  const mqtt = MQTT.getInstance();
+  mqtt?.publish(`dynamica/command/${interaction.commandName}`, {
+    ...interactionDetails(interaction),
   });
 };
 
