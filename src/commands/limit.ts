@@ -4,6 +4,7 @@ import { SlashCommandBuilder } from '@discordjs/builders';
 import checkCreator from '@preconditions/creator';
 import checkSecondary from '@preconditions/secondary';
 import { ErrorEmbed } from '@utils/discordEmbeds';
+import { CacheType, ChatInputCommandInteraction } from 'discord.js';
 
 const data = new SlashCommandBuilder()
   .setName('limit')
@@ -19,7 +20,9 @@ const data = new SlashCommandBuilder()
       .setRequired(true)
   );
 
-const response = async (interaction) => {
+const response = async (
+  interaction: ChatInputCommandInteraction<CacheType>
+) => {
   const userLimit = interaction.options.getInteger('number', true);
 
   const guildMember = await interaction.guild.members.cache.get(
@@ -29,12 +32,13 @@ const response = async (interaction) => {
   const { channel } = guildMember.voice;
 
   if (!channel.manageable) {
-    return interaction.reply({
+    interaction.reply({
       embeds: [ErrorEmbed(`Cannot edit <#${channel.id}>.`)],
     });
+    return;
   }
   channel.edit({ userLimit });
-  return interaction.reply(`<#${channel.id}> limit changed to ${userLimit}.`);
+  interaction.reply(`<#${channel.id}> limit changed to ${userLimit}.`);
 };
 
 export const limit = new Command({

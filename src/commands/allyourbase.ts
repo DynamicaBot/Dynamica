@@ -1,18 +1,25 @@
 import help from '@/help/allyourbase';
 import Command from '@classes/command';
 import DynamicaSecondary from '@classes/secondary';
-import { SlashCommandBuilder } from '@discordjs/builders';
 import checkManager from '@preconditions/manager';
 import checkSecondary from '@preconditions/secondary';
+import {
+  CacheType,
+  ChatInputCommandInteraction,
+  SlashCommandBuilder,
+} from 'discord.js';
 
 const data = new SlashCommandBuilder()
   .setName('allyourbase')
-  .setDefaultMemberPermissions('0')
+  .setDefaultMemberPermissions(0)
+  .setDMPermission(false)
   .setDescription(
     'If you are an admin you become the owner of the channel you are in.'
   );
 
-const response = async (interaction) => {
+const response = async (
+  interaction: ChatInputCommandInteraction<CacheType>
+) => {
   const guildMember = await interaction.guild.members.cache.get(
     interaction.user.id
   );

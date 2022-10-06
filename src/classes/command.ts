@@ -2,11 +2,7 @@ import {
   SlashCommandBuilder,
   SlashCommandSubcommandsOnlyBuilder,
 } from '@discordjs/builders';
-import {
-  ApplicationCommandPermissionData,
-  CommandInteraction,
-  Guild,
-} from 'discord.js';
+import { CacheType, ChatInputCommandInteraction } from 'discord.js';
 import Condition from './condition';
 import Help from './help';
 
@@ -19,7 +15,9 @@ interface Props {
   data: SlashCommandBuilderTypes;
   preconditions?: Condition[];
   help?: Help;
-  response: (interaction: CommandInteraction) => Promise<void>;
+  response: (
+    interaction: ChatInputCommandInteraction<CacheType>
+  ) => Promise<void>;
 }
 
 /**
@@ -34,34 +32,21 @@ export default class Command {
 
   data: SlashCommandBuilderTypes;
 
-  response: (interaction: CommandInteraction) => Promise<void>;
+  response: (
+    interaction: ChatInputCommandInteraction<CacheType>
+  ) => Promise<void>;
 
   constructor({
     data,
     preconditions: conditions = [],
     help = new Help('', undefined),
-    response = async (interaction: CommandInteraction) => {},
+    response = async (
+      interaction: ChatInputCommandInteraction<CacheType>
+    ) => {},
   }: Props) {
     this.conditions = conditions;
     this.help = help;
     this.data = data;
     this.response = response;
-  }
-
-  /**
-   * Updates the permissions of a slash command.
-   * @param guild The guild to update the permissions for.
-   * @param permissions The permissions to set for the command.
-   */
-  async updateGuildPermissions(
-    guild: Guild,
-    permissions: ApplicationCommandPermissionData[]
-  ) {
-    const guildCommands = await guild.commands.fetch();
-    guildCommands.forEach((command) => {
-      if (command.name === this.data.name) {
-        command.permissions.set({ permissions });
-      }
-    });
   }
 }

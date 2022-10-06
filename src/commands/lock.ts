@@ -5,12 +5,15 @@ import { SlashCommandBuilder } from '@discordjs/builders';
 import checkAdminPermissions from '@preconditions/admin';
 import checkCreator from '@preconditions/creator';
 import checkSecondary from '@preconditions/secondary';
+import { CacheType, ChatInputCommandInteraction } from 'discord.js';
 
 const data = new SlashCommandBuilder()
   .setName('lock')
   .setDescription('Lock a channel to a certain role or user.');
 
-const response = async (interaction) => {
+const response = async (
+  interaction: ChatInputCommandInteraction<CacheType>
+) => {
   if (!interaction.guild?.members) return;
 
   const guildMember = await interaction.guild.members.cache.get(

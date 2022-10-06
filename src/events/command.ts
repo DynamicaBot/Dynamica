@@ -10,7 +10,7 @@ export default new Event<'interactionCreate'>()
   .setOnce(false)
   .setEvent('interactionCreate')
   .setResponse(async (interaction) => {
-    if (!interaction.isCommand()) return;
+    if (!interaction.isChatInputCommand()) return;
     try {
       const command: Command = commands[interaction.commandName];
       const { conditions } = command;

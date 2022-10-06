@@ -92,24 +92,10 @@ export default new Event<'guildCreate'>()
         });
       }
       try {
-        const role = await guild.roles.create({
-          name: 'Dynamica',
-          color: '#4791FF',
-          permissions: ['ADMINISTRATOR'],
-          icon:
-            guild.premiumTier === 'TIER_2' || guild.premiumTier === 'TIER_3'
-              ? 'https://dynamica.dev/img/dynamica.png'
-              : undefined,
-        });
-
         await db.guild.create({
           data: {
             id: guild.id,
-            managerRoleId: role.id,
           },
-        });
-        guild.fetchOwner().then((owner) => {
-          owner.roles.add(role);
         });
       } catch (error) {
         logger.error('Updated guild per-command permissions', error.toString());
