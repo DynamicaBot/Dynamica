@@ -1,6 +1,6 @@
-import Command from '@/classes/command';
-import Condition from '@/classes/condition';
-import Event from '@classes/event';
+import Command from '@/classes/Command';
+import Condition from '@/classes/Condition';
+import Event from '@classes/Event';
 import * as commands from '@commands';
 import checkGuild from '@preconditions/guild';
 import { ErrorEmbed } from '@utils/discordEmbeds';

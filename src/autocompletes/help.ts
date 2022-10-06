@@ -1,5 +1,5 @@
-import Autocomplete from '@classes/autocomplete';
-import Command from '@classes/command';
+import Autocomplete from '@classes/Autocomplete';
+import Command from '@classes/Command';
 import * as commands from '@commands';
 import Fuse from 'fuse.js';
 

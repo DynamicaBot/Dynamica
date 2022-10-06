@@ -1,6 +1,6 @@
 import help from '@/help/name';
-import Command from '@classes/command';
-import DynamicaSecondary from '@classes/secondary';
+import Command from '@classes/Command';
+import DynamicaSecondary from '@classes/Secondary';
 import db from '@db';
 import { SlashCommandBuilder } from '@discordjs/builders';
 import checkManager from '@preconditions/manager';
@@ -38,11 +38,8 @@ const response = async (
   await db.secondary.update({ where: { id: channel.id }, data: { name } });
   logger.info(`${channel.id} name changed.`);
 
-  const secondary = await new DynamicaSecondary(
-    interaction.client,
-    channel.id
-  ).fetch();
-  secondary.update();
+  await DynamicaSecondary.get(channel.id).update(interaction.client);
+
   interaction.reply(`Channel name changed to \`${name}\`.`);
 };
 

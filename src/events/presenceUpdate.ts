@@ -1,26 +1,18 @@
-import Event from '@classes/event';
-import DynamicaSecondary from '@classes/secondary';
+import Event from '@classes/Event';
+import DynamicaSecondary from '@classes/Secondary';
 import { Presence } from 'discord.js';
 
 export default new Event<'presenceUpdate'>()
   .setOnce(false)
   .setEvent('presenceUpdate')
   .setResponse(async (oldPresence: Presence, newPresence: Presence) => {
-    if (
-      oldPresence?.activities?.at(0)?.name ===
-      newPresence?.activities?.at(0)?.name
-    )
-      return;
     const { channelId } = newPresence.member.voice;
     if (!channelId) {
       return;
     }
-    const dynamicaSecondary = await new DynamicaSecondary(
-      newPresence.client,
-      channelId
-    ).fetch();
+    const dynamicaSecondary = DynamicaSecondary.get(channelId);
 
     if (dynamicaSecondary) {
-      dynamicaSecondary.update();
+      dynamicaSecondary.update(oldPresence.client);
     }
   });

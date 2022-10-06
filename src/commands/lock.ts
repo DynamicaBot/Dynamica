@@ -1,6 +1,6 @@
 import help from '@/help/lock';
-import Command from '@classes/command';
-import DynamicaSecondary from '@classes/secondary';
+import Command from '@classes/Command';
+import DynamicaSecondary from '@classes/Secondary';
 import { SlashCommandBuilder } from '@discordjs/builders';
 import checkAdminPermissions from '@preconditions/admin';
 import checkCreator from '@preconditions/creator';
@@ -28,13 +28,10 @@ const response = async (
 
   const channelId = guildMember?.voice.channelId;
 
-  const dynamicaSecondary = await new DynamicaSecondary(
-    interaction.client,
-    channelId
-  ).fetch();
+  const dynamicaSecondary = DynamicaSecondary.get(channelId);
 
   if (dynamicaSecondary) {
-    await dynamicaSecondary.lock();
+    await dynamicaSecondary.lock(interaction.client);
     await interaction.reply({
       ephemeral: true,
       content:

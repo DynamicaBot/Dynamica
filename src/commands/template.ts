@@ -1,6 +1,6 @@
 import help from '@/help/template';
-import Command from '@classes/command';
-import DynamicaSecondary from '@classes/secondary';
+import Command from '@classes/Command';
+import DynamicaSecondary from '@classes/Secondary';
 import db from '@db';
 import { SlashCommandBuilder } from '@discordjs/builders';
 import checkManager from '@preconditions/manager';
@@ -42,12 +42,9 @@ const response = async (
   });
 
   primary.secondaries.forEach(async (secondary) => {
-    const dynamicaSecondary = await new DynamicaSecondary(
-      interaction.client,
-      secondary.id
-    ).fetch();
+    const dynamicaSecondary = DynamicaSecondary.get(secondary.id);
 
-    dynamicaSecondary.update();
+    dynamicaSecondary.update(interaction.client);
   });
 
   interaction.reply(`Template changed to \`${name}\`.`);

@@ -3,8 +3,8 @@ import {
   SlashCommandSubcommandsOnlyBuilder,
 } from '@discordjs/builders';
 import { CacheType, ChatInputCommandInteraction } from 'discord.js';
-import Condition from './condition';
-import Help from './help';
+import Condition from './Condition';
+import Help from './Help';
 
 type SlashCommandBuilderTypes =
   | SlashCommandBuilder

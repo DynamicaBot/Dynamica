@@ -3,7 +3,7 @@
     "prefix": "command",
     "body": [
       "import help from '@/help/version';",
-      "import Command from '@classes/command';",
+      "import Command from '@classes/Command';",
       "import { SlashCommandBuilder } from '@discordjs/builders';",
       "import Discord from 'discord.js';",
       "export default new Command()",
@@ -25,7 +25,7 @@
   "Help": {
     "prefix": "help",
     "body": [
-      "import Help from '@/classes/help';",
+      "import Help from '@/classes/Help';",
       "",
       "export default new Help('Sends the running version of Dynamica.');"
     ],

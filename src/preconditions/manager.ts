@@ -1,4 +1,4 @@
-import Condition from '@/classes/condition';
+import Condition from '@/classes/Condition';
 import logger from '@utils/logger';
 
 export default new Condition(async (interaction) => {

@@ -1,8 +1,8 @@
 // create a custom event emitter with typesafe emitters
 import { CommandInteraction, GuildMember } from 'discord.js';
 import { EventEmitter } from 'events';
-import DynamicaPrimary from './primary';
-import DynamicaSecondary from './secondary';
+import DynamicaPrimary from './Primary';
+import DynamicaSecondary from './Secondary';
 const emitter = new EventEmitter();
 
 type Awaitable<T> = T | PromiseLike<T>;

@@ -1,4 +1,4 @@
-import Condition from '@/classes/condition';
+import Condition from '@/classes/Condition';
 import db from '@db';
 import logger from '@utils/logger';
 import { CacheType, ChatInputCommandInteraction } from 'discord.js';
@@ -10,15 +10,15 @@ export default new Condition(
         interaction.user.id
       );
 
-      const id = guildMember.voice.channelId;
-      if (!id) {
+      const channel = guildMember.voice.channel;
+      if (!channel) {
         return {
           success: false,
           message: 'You need to be in a voice channel to use this command.',
         };
       }
       const channelProperties = await db.secondary.findUnique({
-        where: { id },
+        where: { id: channel.id },
       });
 
       if (!channelProperties) {
@@ -40,7 +40,7 @@ export default new Condition(
       if (!creator && !dynamicaManager && !admin) {
         return {
           success: false,
-          message: `You must be the creator of <#${id}> to use this command.`,
+          message: `You must be the creator of ${channel.toString()} to use this command.`,
         };
       }
       return { success: true };

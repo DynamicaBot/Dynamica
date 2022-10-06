@@ -1,6 +1,6 @@
 import help from '@/help/unlock';
-import Command from '@classes/command';
-import DynamicaSecondary from '@classes/secondary';
+import Command from '@classes/Command';
+import DynamicaSecondary from '@classes/Secondary';
 import { SlashCommandBuilder } from '@discordjs/builders';
 import checkAdminPermissions from '@preconditions/admin';
 import checkCreator from '@preconditions/creator';
@@ -26,13 +26,10 @@ const response = async (
 
   const { channelId } = guildMember.voice;
 
-  const dynamicaSecondary = await new DynamicaSecondary(
-    interaction.client,
-    channelId
-  ).fetch();
+  const dynamicaSecondary = DynamicaSecondary.get(channelId);
 
   if (dynamicaSecondary) {
-    await dynamicaSecondary.unlock();
+    await dynamicaSecondary.unlock(interaction.client);
     await interaction.reply(`Removed lock on <#${channelId}>`);
   } else {
     await interaction.reply({
