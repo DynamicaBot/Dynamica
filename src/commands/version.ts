@@ -1,5 +1,5 @@
 import help from '@/help/version';
-import Command from '@classes/command';
+import Command from '@classes/Command';
 import { SlashCommandBuilder } from '@discordjs/builders';
 import Discord, { CacheType, ChatInputCommandInteraction } from 'discord.js';
 

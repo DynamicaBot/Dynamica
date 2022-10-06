@@ -1,4 +1,4 @@
-import Condition from '@/classes/condition';
+import Condition from '@/classes/Condition';
 
 export default new Condition(async (interaction) => {
   if (!interaction.appPermissions.has('Administrator')) {

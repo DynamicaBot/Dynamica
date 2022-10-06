@@ -1,6 +1,6 @@
 import help from '@/help/allowjoin';
-import Command from '@classes/command';
-import DynamicaGuild from '@classes/guild';
+import Command from '@classes/Command';
+import DynamicaGuild from '@classes/Guild';
 import checkAdminPermissions from '@preconditions/admin';
 import checkManager from '@preconditions/manager';
 import { PermissionFlagsBits, SlashCommandBuilder } from 'discord.js';

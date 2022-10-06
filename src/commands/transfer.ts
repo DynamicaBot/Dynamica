@@ -1,6 +1,6 @@
 import help from '@/help/transfer';
-import Command from '@classes/command';
-import DynamicaSecondary from '@classes/secondary';
+import Command from '@classes/Command';
+import DynamicaSecondary from '@classes/Secondary';
 import { SlashCommandBuilder } from '@discordjs/builders';
 import checkCreator from '@preconditions/creator';
 import {
@@ -33,10 +33,7 @@ const response = async (
 
   const { channelId } = guildMember.voice;
 
-  const secondaryChannel = await new DynamicaSecondary(
-    interaction.client,
-    channelId
-  ).fetch();
+  const secondaryChannel = DynamicaSecondary.get(channelId);
   if (secondaryChannel) {
     await secondaryChannel.changeOwner(user);
     interaction.reply(`Ownership of <#${channelId}> channel to <@${user.id}>.`);

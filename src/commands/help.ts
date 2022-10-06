@@ -1,5 +1,5 @@
 import helpHelp from '@/help/help';
-import Command from '@classes/command';
+import Command from '@classes/Command';
 import { SlashCommandBuilder } from '@discordjs/builders';
 import helpForHelp from '@help';
 import { EmbedBuilder } from 'discord.js';

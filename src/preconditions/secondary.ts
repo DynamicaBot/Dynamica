@@ -1,4 +1,4 @@
-import Condition from '@/classes/condition';
+import Condition from '@/classes/Condition';
 import db from '@db';
 import logger from '@utils/logger';
 

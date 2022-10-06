@@ -1,55 +1,71 @@
-import Event from '@classes/event';
-import DynamicaPrimary from '@classes/primary';
-import DynamicaSecondary from '@classes/secondary';
+import DynamicaSecondary from '@/classes/Secondary';
+import Event from '@classes/Event';
+import DynamicaPrimary from '@classes/Primary';
 import db from '@db';
 import updateActivityCount from '@utils';
 import logger from '@utils/logger';
+import { DiscordAPIError } from 'discord.js';
 
 export default new Event<'ready'>()
   .setOnce(true)
   .setEvent('ready')
   .setResponse(async (client) => {
+    logger.info(`Ready! Logged in as ${client.user?.tag}`);
     try {
       const secondaries = await db.secondary.findMany();
       const primaries = await db.primary.findMany();
+
       primaries.forEach(async (element) => {
-        const existingPrimary = await new DynamicaPrimary(
-          client,
-          element.id
-        ).fetch();
-
-        if (!existingPrimary) {
-          return;
-        }
-        const channel = existingPrimary.discord;
-
-        if (channel.members.size > 0) {
-          const channelMembers = [...channel.members.values()];
-
-          const secondary = new DynamicaSecondary(client);
-          await secondary.create(
-            existingPrimary,
-            channel.guild,
-            channelMembers[0]
+        try {
+          const guild = await client.guilds.fetch(element.guildId);
+          await guild.channels.fetch(element.id);
+          const existingPrimary = new DynamicaPrimary(
+            element.id,
+            element.guildId
           );
-          channelMembers.slice(1).forEach((channelMember) => {
-            channelMember.voice.setChannel(secondary.discord);
-          });
+          await existingPrimary.update(client, guild);
+        } catch (error) {
+          if (error instanceof DiscordAPIError) {
+            if (error.code === 10003) {
+              logger.debug(
+                `Primary channel (${element.id}) was already deleted.`
+              );
+              await db.primary.delete({ where: { id: element.id } });
+              DynamicaPrimary.remove(element.id);
+            } else {
+              logger.error(error);
+            }
+          }
         }
       });
 
       secondaries.forEach(async (element) => {
-        const secondaryChannel = await new DynamicaSecondary(
-          client,
-          element.id
-        ).fetch();
-
-        await secondaryChannel?.update();
+        try {
+          const guild = await client.guilds.fetch(element.guildId);
+          await guild.channels.fetch(element.id);
+          const existingSecondary = new DynamicaSecondary(
+            element.id,
+            element.guildId,
+            element.primaryId
+          );
+          await existingSecondary.update(client);
+        } catch (error) {
+          if (error instanceof DiscordAPIError) {
+            if (error.code === 10003) {
+              logger.debug(
+                `Secondary channel (${element.id}) was already deleted.`
+              );
+              await db.secondary.delete({ where: { id: element.id } });
+              DynamicaSecondary.remove(element.id);
+            } else {
+              logger.error(error);
+            }
+          }
+        }
       });
-
-      logger.info(`Ready! Logged in as ${client.user?.tag}`);
-      updateActivityCount(client);
     } catch (error) {
       logger.error(error);
+    } finally {
+      updateActivityCount(client);
     }
   });

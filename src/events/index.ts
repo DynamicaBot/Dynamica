@@ -1,4 +1,4 @@
-import Event from '@/classes/event';
+import Event from '@/classes/Event';
 import { ClientEvents } from 'discord.js';
 import autocomplete from './autocomplete';
 import command from './command';

@@ -1,4 +1,4 @@
-import Command from '@classes/command';
+import Command from '@classes/Command';
 import db from '@db';
 import help from '@help/alias';
 import checkManager from '@preconditions/manager';

@@ -1,4 +1,4 @@
-import Help from '@/classes/help';
+import Help from '@/classes/Help';
 import alias from './alias';
 import allowjoin from './allowjoin';
 import allyourbase from './allyourbase';

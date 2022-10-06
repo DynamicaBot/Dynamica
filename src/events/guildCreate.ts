@@ -1,4 +1,4 @@
-import Event from '@classes/event';
+import Event from '@classes/Event';
 import db from '@db';
 import { hyperlink } from '@discordjs/builders';
 import logger from '@utils/logger';

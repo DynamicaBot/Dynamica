@@ -1,6 +1,6 @@
 import help from '@/help/allyourbase';
-import Command from '@classes/command';
-import DynamicaSecondary from '@classes/secondary';
+import Command from '@classes/Command';
+import DynamicaSecondary from '@classes/Secondary';
 import checkManager from '@preconditions/manager';
 import checkSecondary from '@preconditions/secondary';
 import {
@@ -26,10 +26,8 @@ const response = async (
   );
 
   const { channelId } = guildMember.voice;
-  const secondaryChannel = await new DynamicaSecondary(
-    interaction.client,
-    channelId
-  ).fetch();
+
+  const secondaryChannel = DynamicaSecondary.get(channelId);
 
   if (secondaryChannel) {
     await secondaryChannel.changeOwner(interaction.user);

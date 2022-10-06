@@ -1,5 +1,5 @@
 import help from '@/help/bitrate';
-import Command from '@classes/command';
+import Command from '@classes/Command';
 import { SlashCommandBuilder } from '@discordjs/builders';
 import checkCreator from '@preconditions/creator';
 import checkSecondary from '@preconditions/secondary';

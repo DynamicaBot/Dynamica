@@ -1,4 +1,4 @@
-import Help from '@/classes/help';
+import Help from '@/classes/Help';
 
 export default new Help(
   'Use it to lock your channels away from pesky server members.',

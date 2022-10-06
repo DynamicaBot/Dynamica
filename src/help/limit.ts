@@ -1,3 +1,3 @@
-import Help from '@/classes/help';
+import Help from '@/classes/Help';
 
 export default new Help('Limit the maximum number of people in the channel.');

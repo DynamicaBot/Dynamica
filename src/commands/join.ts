@@ -1,5 +1,5 @@
 import help from '@/help/join';
-import Command from '@classes/command';
+import Command from '@classes/Command';
 import db from '@db';
 import { SlashCommandBuilder } from '@discordjs/builders';
 import { ErrorEmbed } from '@utils/discordEmbeds';

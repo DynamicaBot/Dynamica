@@ -1,6 +1,6 @@
 import help from '@/help/create';
-import Command from '@classes/command';
-import DynamicaPrimary from '@classes/primary';
+import Command from '@classes/Command';
+import DynamicaPrimary from '@classes/Primary';
 import { SlashCommandBuilder } from '@discordjs/builders';
 import checkManager from '@preconditions/manager';
 import {
@@ -32,8 +32,11 @@ const response = async (
     'section'
   ) as GuildChannel | null;
 
-  const newPrimary = new DynamicaPrimary(interaction.client);
-  await newPrimary.create(interaction.guild, interaction.user, section);
+  const newPrimary = await DynamicaPrimary.initialise(
+    interaction.guild,
+    interaction.user,
+    section
+  );
 
   interaction.reply(
     `New voice channel <#${newPrimary.id}> successfully created.`

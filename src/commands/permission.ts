@@ -1,5 +1,5 @@
 import help from '@/help/permission';
-import Command from '@classes/command';
+import Command from '@classes/Command';
 import { SlashCommandBuilder } from '@discordjs/builders';
 import checkAdminPermissions from '@preconditions/admin';
 import checkCreator from '@preconditions/creator';

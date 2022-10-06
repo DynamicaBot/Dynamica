@@ -1,4 +1,4 @@
-import Help from '@classes/help';
+import Help from '@classes/Help';
 import { bold } from '@discordjs/builders';
 
 export default new Help(

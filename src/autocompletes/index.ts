@@ -1,4 +1,4 @@
-import Autocomplete from '@/classes/autocomplete';
+import Autocomplete from '@classes/Autocomplete';
 import alias from './alias';
 import general from './general';
 import help from './help';

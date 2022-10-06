@@ -1,6 +1,6 @@
 import help from '@/help/general';
-import Command from '@classes/command';
-import DynamicaSecondary from '@classes/secondary';
+import Command from '@classes/Command';
+import DynamicaSecondary from '@classes/Secondary';
 import db from '@db';
 import { SlashCommandBuilder } from '@discordjs/builders';
 import checkManager from '@preconditions/manager';
@@ -43,11 +43,7 @@ const response = async (
   });
 
   updatedPrimary.secondaries.forEach(async (secondary) => {
-    const dynamicaSecondary = await new DynamicaSecondary(
-      interaction.client,
-      secondary.id
-    ).fetch();
-    dynamicaSecondary?.update();
+    await DynamicaSecondary.get(secondary.id).update(interaction.client);
   });
 
   await interaction.reply(

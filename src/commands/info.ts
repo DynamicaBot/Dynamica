@@ -1,7 +1,7 @@
 import help from '@/help/info';
-import Command from '@classes/command';
-import DynamicaPrimary from '@classes/primary';
-import DynamicaSecondary from '@classes/secondary';
+import Command from '@classes/Command';
+import DynamicaPrimary from '@classes/Primary';
+import DynamicaSecondary from '@classes/Secondary';
 import db from '@db';
 import { SlashCommandBuilder } from '@discordjs/builders';
 import { EmbedBuilder } from 'discord.js';
@@ -44,10 +44,9 @@ const response = async (interaction) => {
   const subcommand = interaction.options.getSubcommand(true);
   if (subcommand === 'primary') {
     const chosenPrimary = interaction.options.getString('primarychannel', true);
-    const primary = await new DynamicaPrimary(
-      interaction.client,
-      chosenPrimary
-    ).fetch();
+    const primary = DynamicaPrimary.get(chosenPrimary);
+    const prisma = await primary.prisma();
+
     interaction.reply({
       ephemeral: true,
       content: `Here's the current info for <#${primary.id}>`,
@@ -55,15 +54,15 @@ const response = async (interaction) => {
         new EmbedBuilder().addFields(
           {
             name: 'General Template',
-            value: primary.prisma.generalName,
+            value: prisma.generalName,
           },
           {
             name: 'Activity Template',
-            value: primary.prisma.template,
+            value: prisma.template,
           },
           {
             name: '# of Secondary channels',
-            value: primary.prisma.secondaries.length.toString(),
+            value: prisma.secondaries.length.toString(),
           }
         ),
       ],
@@ -73,10 +72,8 @@ const response = async (interaction) => {
       'secondarychannel',
       true
     );
-    const secondary = await new DynamicaSecondary(
-      interaction.client,
-      chosenSecondary
-    ).fetch();
+    const secondary = DynamicaSecondary.get(chosenSecondary);
+    const prisma = await secondary.prisma();
     interaction.reply({
       ephemeral: true,
       content: `Here's the current info for <#${secondary.id}>`,
@@ -84,19 +81,16 @@ const response = async (interaction) => {
         new EmbedBuilder().addFields(
           {
             name: 'Name Override',
-            value: secondary.prisma.name ?? '`Not set`',
+            value: prisma.name ?? '`Not set`',
           },
           {
             name: 'Locked',
-            value: secondary.prisma.locked ? '🔒 - Locked' : '🔓 - Unlocked',
+            value: prisma.locked ? '🔒 - Locked' : '🔓 - Unlocked',
           },
           {
             name: 'Owner',
-            value: (
-              await interaction.guild.members.cache.get(
-                secondary.prisma.creator
-              )
-            ).user.tag,
+            value: (await interaction.guild.members.cache.get(prisma.creator))
+              .user.tag,
           }
         ),
       ],

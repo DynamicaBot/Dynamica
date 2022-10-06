@@ -1,6 +1,6 @@
 import autocompletes from '@autocompletes';
-import Autocomplete from '@classes/autocomplete';
-import Event from '@classes/event';
+import Autocomplete from '@classes/Autocomplete';
+import Event from '@classes/Event';
 import logger from '@utils/logger';
 
 export default new Event<'interactionCreate'>()

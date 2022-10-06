@@ -2,12 +2,12 @@
   "version": "0.2.0",
   "configurations": [
     {
-      "type": "node-terminal",
-      "name": "Run Script: dev",
+      "name": "Launch via NPM",
       "request": "launch",
-      "command": "yarn watch",
-      "cwd": "${workspaceFolder}",
-      "skipFiles": ["node_modules"]
+      "runtimeArgs": ["watch"],
+      "runtimeExecutable": "yarn",
+      "skipFiles": ["<node_internals>/**"],
+      "type": "node"
     }
   ]
 }

@@ -1,4 +1,4 @@
-import Help from '@/classes/help';
+import Help from '@/classes/Help';
 
 export default new Help(
   'Using the /template command you can set the template for the channel name target primary channel.',

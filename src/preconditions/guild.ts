@@ -1,4 +1,4 @@
-import Condition from '@/classes/condition';
+import Condition from '@/classes/Condition';
 import { CacheType, ChatInputCommandInteraction } from 'discord.js';
 
 export default new Condition(

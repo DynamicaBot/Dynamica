@@ -1,4 +1,4 @@
-import Condition from '@/classes/condition';
+import Condition from '@/classes/Condition';
 import checkAdmin from './admin';
 import checkCreator from './creator';
 import checkGuild from './guild';
