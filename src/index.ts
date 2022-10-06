@@ -63,22 +63,6 @@ try {
   logger.error(error);
 }
 
-// // every 30 minutes run status
-// setInterval(async () => {
-//   const mqtt = MQTT.getInstance();
-//   const guilds = client.guilds.cache.map((guild) => {
-//     return {
-//       id: guild.id,
-//       name: guild.name,
-//       members: guild.memberCount,
-//     };
-//   });
-//   mqtt?.publish('dynamica/status', {
-//     guilds,
-//     ...(await status()),
-//   });
-// }, 1000 * 60 * 1);
-
 // Handle stop signal
 process.on('SIGINT', () => {
   client.destroy();

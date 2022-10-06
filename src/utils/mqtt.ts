@@ -5,12 +5,4 @@ export const interactionDetails = (
 ) => ({
   name: interaction.commandName,
   timestamp: new Date(interaction.createdTimestamp).toISOString(),
-  guild: {
-    id: interaction.guildId,
-    name: interaction.guild.name,
-  },
-  user: {
-    id: interaction.user.id,
-    name: interaction.user.tag,
-  },
 });

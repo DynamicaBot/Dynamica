@@ -46,7 +46,6 @@ const response = async (
   );
 
   mqtt?.publish(`dynamica/command/${interaction.commandName}`, {
-    section,
     ...interactionDetails(interaction),
   });
 };

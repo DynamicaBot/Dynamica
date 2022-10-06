@@ -53,7 +53,6 @@ const response = async (
   );
   const mqtt = MQTT.getInstance();
   mqtt?.publish(`dynamica/command/${interaction.commandName}`, {
-    channel,
     name,
     ...interactionDetails(interaction),
   });

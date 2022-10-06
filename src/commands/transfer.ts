@@ -41,7 +41,6 @@ const response = async (
     interaction.reply(`Ownership of <#${channelId}> channel to <@${user.id}>.`);
     mqtt?.publish(`dynamica/command/${interaction.commandName}`, {
       channel: channelId,
-      to: user.id,
       ...interactionDetails(interaction),
     });
   } else {
