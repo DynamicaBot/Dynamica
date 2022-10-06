@@ -7,12 +7,14 @@ import {
   CacheType,
   ChatInputCommandInteraction,
   GuildChannel,
+  PermissionFlagsBits,
 } from 'discord.js';
 
 const data = new SlashCommandBuilder()
   .setName('create')
-  .setDefaultMemberPermissions('0')
   .setDescription('Create a primary channel.')
+  .setDMPermission(false)
+  .setDefaultMemberPermissions(PermissionFlagsBits.ManageChannels)
   .addChannelOption((option) =>
     option
       .addChannelTypes(4)

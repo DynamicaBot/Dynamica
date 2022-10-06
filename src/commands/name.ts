@@ -6,11 +6,16 @@ import { SlashCommandBuilder } from '@discordjs/builders';
 import checkManager from '@preconditions/manager';
 import checkSecondary from '@preconditions/secondary';
 import logger from '@utils/logger';
-import { CacheType, ChatInputCommandInteraction } from 'discord.js';
+import {
+  CacheType,
+  ChatInputCommandInteraction,
+  PermissionFlagsBits,
+} from 'discord.js';
 
 const data = new SlashCommandBuilder()
   .setName('name')
-  .setDefaultMemberPermissions('0')
+  .setDMPermission(false)
+  .setDefaultMemberPermissions(PermissionFlagsBits.ManageChannels)
   .setDescription('Edit the name of the current channel.')
   .addStringOption((option) =>
     option

@@ -4,11 +4,17 @@ import { SlashCommandBuilder } from '@discordjs/builders';
 import checkCreator from '@preconditions/creator';
 import checkSecondary from '@preconditions/secondary';
 import { ErrorEmbed } from '@utils/discordEmbeds';
-import { CacheType, ChatInputCommandInteraction } from 'discord.js';
+import {
+  CacheType,
+  ChatInputCommandInteraction,
+  PermissionFlagsBits,
+} from 'discord.js';
 
 const data = new SlashCommandBuilder()
   .setName('bitrate')
   .setDescription('Edit the bitrate of the current channel.')
+  .setDMPermission(false)
+  .setDefaultMemberPermissions(PermissionFlagsBits.ManageChannels)
   .addIntegerOption((option) =>
     option
       .setDescription('The bitrate to set the channel to.')

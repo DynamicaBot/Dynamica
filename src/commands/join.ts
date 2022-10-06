@@ -90,6 +90,7 @@ const response = async (
 const data = new SlashCommandBuilder()
   .setName('join')
   .setDescription('Request to join a locked voice channel.')
+  .setDMPermission(false)
   .addStringOption((option) =>
     option
       .setAutocomplete(true)

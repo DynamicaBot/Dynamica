@@ -7,6 +7,7 @@ import {
   CacheType,
   ChatInputCommandInteraction,
   EmbedBuilder,
+  PermissionFlagsBits,
   SlashCommandBuilder,
 } from 'discord.js';
 import _ from 'lodash';
@@ -14,7 +15,7 @@ import _ from 'lodash';
 const data = new SlashCommandBuilder()
   .setName('alias')
   .setDescription('Manage aliases.')
-  .setDefaultMemberPermissions(0)
+  .setDefaultMemberPermissions(PermissionFlagsBits.ManageChannels)
   .setDMPermission(false)
   .addSubcommand((subcommand) =>
     subcommand

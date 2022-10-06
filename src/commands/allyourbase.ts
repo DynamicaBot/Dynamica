@@ -6,12 +6,13 @@ import checkSecondary from '@preconditions/secondary';
 import {
   CacheType,
   ChatInputCommandInteraction,
+  PermissionFlagsBits,
   SlashCommandBuilder,
 } from 'discord.js';
 
 const data = new SlashCommandBuilder()
   .setName('allyourbase')
-  .setDefaultMemberPermissions(0)
+  .setDefaultMemberPermissions(PermissionFlagsBits.Administrator)
   .setDMPermission(false)
   .setDescription(
     'If you are an admin you become the owner of the channel you are in.'
