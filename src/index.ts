@@ -4,7 +4,6 @@ import logger from '@utils/logger';
 import { Client, GatewayIntentBits } from 'discord.js';
 import dotenv from 'dotenv';
 import rl from 'readline';
-import { MQTT } from './classes/MQTT';
 import deploy from './scripts/deploy';
 import remove from './scripts/remove';
 
@@ -20,9 +19,6 @@ const client = new Client({
     GatewayIntentBits.GuildPresences,
   ],
 });
-
-const mqtt = MQTT.getInstance();
-mqtt?.publish('dynamica/test', 'test');
 
 /**
  * Some of the commandline stuff to read
@@ -66,6 +62,22 @@ try {
 } catch (error) {
   logger.error(error);
 }
+
+// // every 30 minutes run status
+// setInterval(async () => {
+//   const mqtt = MQTT.getInstance();
+//   const guilds = client.guilds.cache.map((guild) => {
+//     return {
+//       id: guild.id,
+//       name: guild.name,
+//       members: guild.memberCount,
+//     };
+//   });
+//   mqtt?.publish('dynamica/status', {
+//     guilds,
+//     ...(await status()),
+//   });
+// }, 1000 * 60 * 1);
 
 // Handle stop signal
 process.on('SIGINT', () => {

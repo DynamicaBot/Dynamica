@@ -4,7 +4,7 @@ export const interactionDetails = (
   interaction: ChatInputCommandInteraction<CacheType>
 ) => ({
   name: interaction.commandName,
-  timestamp: interaction.createdTimestamp,
+  timestamp: new Date(interaction.createdTimestamp).toISOString(),
   guild: {
     id: interaction.guildId,
     name: interaction.guild.name,

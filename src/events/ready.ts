@@ -67,10 +67,7 @@ export default new Event<'ready'>()
         }
       });
       mqtt?.publish('dynamica/presence', {
-        ready: client.isReady,
-        guilds: await (await client.guilds.fetch()).toJSON(),
-        activePrimaries: primaries.length,
-        activeSecondaries: secondaries.length,
+        ready: client.readyAt,
       });
     } catch (error) {
       logger.error(error);

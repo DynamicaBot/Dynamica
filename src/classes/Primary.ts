@@ -73,6 +73,22 @@ export default class DynamicaPrimary
         `New primary channel ${channel.name} created by ${primary.creator}.`
       );
 
+      const mqtt = MQTT.getInstance();
+
+      mqtt?.publish('dynamica/primary/create', {
+        id: primary.id,
+        name: channel.name,
+        guild: {
+          id: guild.id,
+          name: guild.name,
+        },
+        creator: {
+          id: user.id,
+          tag: user.tag,
+        },
+        createdAt: new Date().toISOString(),
+      });
+
       const createdChannel = new DynamicaPrimary(channel.id, guild.id);
 
       return createdChannel;
@@ -103,6 +119,12 @@ export default class DynamicaPrimary
         } else {
           logger.error(error);
         }
+      } finally {
+        const mqtt = MQTT.getInstance();
+        mqtt?.publish(`dynamica/primary/delete`, {
+          type: DynamicaChannelType.Primary,
+          id: this.id,
+        });
       }
     }
   }
@@ -150,7 +172,7 @@ export default class DynamicaPrimary
       );
     }
     const mqtt = MQTT.getInstance();
-    mqtt?.publish(`dynamica/update/primary/${this.id}`, {
+    mqtt?.publish(`dynamica/primary/update`, {
       type: DynamicaChannelType.Primary,
       id: this.id,
     });

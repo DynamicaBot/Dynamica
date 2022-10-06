@@ -147,6 +147,25 @@ export default class DynamicaSecondary
       `Secondary channel ${secondary.name} created by ${member?.user.tag} in ${guild.name}.`
     );
 
+    const mqtt = MQTT.getInstance();
+
+    mqtt?.publish('dynamica/secondary/create', {
+      id: secondary.id,
+      name: secondary.name,
+      guild: {
+        id: guild.id,
+        name: guild.name,
+      },
+      creator: {
+        id: member.id,
+        name: member.displayName,
+      },
+      primary: {
+        id: primary.id,
+      },
+      createdAt: new Date().toISOString(),
+    });
+
     const dynamicaSecondary = new DynamicaSecondary(
       secondary.id,
       guild.id,
@@ -244,7 +263,7 @@ export default class DynamicaSecondary
     }
 
     const mqtt = MQTT.getInstance();
-    mqtt?.publish(`dynamica/update/secondary/${this.id}`, {
+    mqtt?.publish(`dynamica/secondary/update`, {
       id: this.id,
       type: DynamicaChannelType.Secondary,
       name,
@@ -353,6 +372,12 @@ export default class DynamicaSecondary
         } else {
           logger.error(error);
         }
+      } finally {
+        const mqtt = MQTT.getInstance();
+        mqtt?.publish(`dynamica/secondary/delete`, {
+          id: this.id,
+          type: DynamicaChannelType.Secondary,
+        });
       }
     }
   }
