@@ -1,3 +1,4 @@
+import updateActivityCount from '@/utils';
 import db from '@db';
 import logger from '@utils/logger';
 import {
@@ -81,6 +82,8 @@ export default class DynamicaPrimary
       });
 
       const createdChannel = new DynamicaPrimary(channel.id, guild.id);
+
+      updateActivityCount(guild.client);
 
       return createdChannel;
     } catch (error) {

@@ -1,3 +1,4 @@
+import DynamicaAlias from '@/classes/Alias';
 import { MQTT } from '@/classes/MQTT';
 import DynamicaSecondary from '@/classes/Secondary';
 import Event from '@classes/Event';
@@ -17,6 +18,7 @@ export default new Event<'ready'>()
     try {
       const secondaries = await db.secondary.findMany();
       const primaries = await db.primary.findMany();
+      const aliases = await db.alias.findMany();
 
       primaries.forEach(async (element) => {
         try {
@@ -66,6 +68,11 @@ export default new Event<'ready'>()
           }
         }
       });
+
+      aliases.forEach(async (element) => {
+        new DynamicaAlias(element.guildId, element.id);
+      });
+
       mqtt?.publish('dynamica/presence', {
         ready: client.readyAt,
       });

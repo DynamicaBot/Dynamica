@@ -1,10 +1,11 @@
+import DynamicaAlias from '@/classes/Alias';
 import { MQTT } from '@/classes/MQTT';
 import { interactionDetails } from '@/utils/mqtt';
 import Command from '@classes/Command';
 import db from '@db';
 import help from '@help/alias';
 import checkManager from '@preconditions/manager';
-import { listAliases, updateAlias } from '@utils/alias';
+import { listAliases } from '@utils/alias';
 import {
   CacheType,
   ChatInputCommandInteraction,
@@ -27,13 +28,13 @@ const data = new SlashCommandBuilder()
         option
           .setName('activity')
           .setRequired(true)
+          .setAutocomplete(true)
           .setDescription('The target activity.')
       )
       .addStringOption((option) =>
         option
           .setName('alias')
           .setDescription('The alias the game should be known by.')
-          .setRequired(true)
       )
   )
   .addSubcommand((subcommand) =>
@@ -51,6 +52,20 @@ const data = new SlashCommandBuilder()
       )
   )
   .addSubcommand((subcommand) =>
+    subcommand
+      .setName('update')
+      .setDescription('Update an alias.')
+      .addStringOption((option) =>
+        option
+          .setName('activity')
+          .setDescription(
+            'Name of the activity you want to update the alias for.'
+          )
+          .setRequired(true)
+          .setAutocomplete(true)
+      )
+  )
+  .addSubcommand((subcommand) =>
     subcommand.setName('list').setDescription('List currently set aliases.')
   );
 
@@ -58,11 +73,14 @@ const response = async (
   interaction: ChatInputCommandInteraction<CacheType>
 ) => {
   const subcommand = interaction.options.getSubcommand(true);
-  const activity = interaction.options.getString('activity');
+  console.log({ subcommand });
   const mqtt = MQTT.getInstance();
   if (subcommand === 'add') {
-    const alias = interaction.options.getString('alias', true);
-    await updateAlias(activity, alias, interaction.guildId);
+    const activity = interaction.options.getString('activity', true);
+    const aliasName = interaction.options.getString('alias', true);
+
+    await DynamicaAlias.findOrCreate(interaction.guildId, activity, aliasName);
+
     await interaction.reply(
       `Successfully created alias \`${alias}\` for \`${activity}\``
     );
@@ -73,7 +91,23 @@ const response = async (
       alias,
       ...interactionDetails(interaction),
     });
+  } else if (subcommand === 'update') {
+    const activity = interaction.options.getString('activity', true);
+    const aliasName = interaction.options.getString('alias', true);
+    DynamicaAlias.findOrCreate(interaction.guildId, activity, aliasName);
+
+    await interaction.reply(
+      `Successfully updated alias \`${aliasName}\` for \`${activity}\``
+    );
+
+    mqtt?.publish(`dynamica/command/${interaction.commandName}`, {
+      subcommand,
+      activity,
+      alias,
+      ...interactionDetails(interaction),
+    });
   } else if (subcommand === 'remove') {
+    const activity = interaction.options.getString('activity', true);
     const deletedAlias = await db.alias.delete({
       where: { id: parseInt(activity, 10) },
     });

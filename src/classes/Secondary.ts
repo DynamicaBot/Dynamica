@@ -83,7 +83,11 @@ export default class DynamicaSecondary
     });
 
     const primaryDiscordChannel = await primary.discord(client);
-
+    console.log({
+      primaryDiscordChannel: primaryDiscordChannel.members.map(
+        (member) => member.presence
+      ),
+    });
     const activities = primaryDiscordChannel.members
       .filter((member) => member.presence.activities.length > 0)
       .filter((member) => !member.user.bot)

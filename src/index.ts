@@ -1,7 +1,7 @@
 import db from '@db';
 import events from '@events';
 import logger from '@utils/logger';
-import { Client, GatewayIntentBits } from 'discord.js';
+import { Client, IntentsBitField } from 'discord.js';
 import dotenv from 'dotenv';
 import rl from 'readline';
 import deploy from './scripts/deploy';
@@ -9,15 +9,16 @@ import remove from './scripts/remove';
 
 dotenv.config();
 
+const intents = new IntentsBitField().add(
+  IntentsBitField.Flags.Guilds,
+  IntentsBitField.Flags.GuildVoiceStates,
+  IntentsBitField.Flags.GuildPresences
+);
 /**
  * DiscordJS Client instance
  */
 const client = new Client({
-  intents: [
-    GatewayIntentBits.Guilds,
-    GatewayIntentBits.GuildVoiceStates,
-    GatewayIntentBits.GuildPresences,
-  ],
+  intents,
 });
 
 /**

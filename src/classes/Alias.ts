@@ -1,34 +1,44 @@
 import db from '@db';
 
 export default class DynamicaAlias {
+  public static aliases: DynamicaAlias[] = [];
+
   private guildId: string;
 
   private id: number;
 
-  public activity: string;
+  public static add(alias: DynamicaAlias) {
+    if (DynamicaAlias.has(alias.id)) return;
+    this.aliases.push(alias);
+  }
 
-  public alias: string;
+  public static remove(id: number) {
+    this.aliases = this.aliases.filter((alias) => alias.id !== id);
+  }
 
-  constructor(guildId: string, id?: number) {
+  public static get(id: number | undefined) {
+    return this.aliases.find((alias) => alias.id === id);
+  }
+
+  public static has = (id: number) =>
+    this.aliases.some((alias) => alias.id === id);
+
+  public static getByGuildId(guildId: string) {
+    return this.aliases.filter((alias) => alias.guildId === guildId);
+  }
+
+  constructor(guildId: string, id: number) {
     this.guildId = guildId;
-    if (id) {
-      this.id = id;
-      this.fetch();
-    }
+    this.id = id;
+    DynamicaAlias.add(this);
   }
 
   /**
    * Fetches the alias.
    * @returns this
    */
-  async fetch() {
-    if (!this.id) {
-      throw new Error('No Id defined');
-    }
-    const alias = await db.alias.findUnique({ where: { id: this.id } });
-    this.activity = alias.activity;
-    this.alias = alias.alias;
-    return this;
+  prisma() {
+    return db.alias.findUniqueOrThrow({ where: { id: this.id } });
   }
 
   /**
@@ -36,46 +46,49 @@ export default class DynamicaAlias {
    * @param data The alias and activity to create.
    * @returns this
    */
-  async create(data: {
-    alias: string;
-    activity: string;
-  }): Promise<DynamicaAlias> {
-    const { alias, activity } = data;
-    const dbAlias = await db.alias.create({
-      data: { alias, activity, guildId: this.guildId },
-    });
+  public static async findOrCreate(
+    guildId: string,
+    activity: string,
+    alias: string
+  ): Promise<DynamicaAlias> {
+    // const { alias, activity } = data;
 
-    this.alias = dbAlias.alias;
-    this.activity = dbAlias.activity;
-    this.id = dbAlias.id;
-
-    return this;
-  }
-
-  /**
-   * Update the alias.
-   * @param id The Id of the alias to update.
-   * @param data The different things to update.
-   * @returns this
-   */
-  async update(data: { alias: string; activity: string }) {
-    if (!this.id) {
-      throw new Error('No Id defined');
-    }
-
-    const { alias, activity } = data;
-    const dbAlias = await db.alias.update({
-      data: {
+    const dbAlias = await db.alias.upsert({
+      create: {
+        activity,
+        alias,
+        guildId,
+      },
+      update: {
         activity,
         alias,
       },
-      where: { id: this.id },
+      where: {
+        guildId_activity: {
+          activity,
+          guildId,
+        },
+      },
     });
 
-    this.activity = dbAlias.activity;
-    this.alias = dbAlias.alias;
+    return new DynamicaAlias(dbAlias.guildId, dbAlias.id);
+  }
 
-    return this;
+  async update(alias: string, activity: string) {
+    const dbAlias = await db.alias.update({
+      where: {
+        guildId_activity: {
+          activity,
+          guildId: this.guildId,
+        },
+      },
+      data: {
+        alias,
+        activity,
+      },
+    });
+
+    return new DynamicaAlias(dbAlias.guildId, dbAlias.id);
   }
 
   /**
