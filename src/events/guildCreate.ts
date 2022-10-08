@@ -1,8 +1,6 @@
-import { MQTT } from '@/classes/MQTT';
+import DynamicaGuild from '@/classes/Guild';
 import Event from '@classes/Event';
-import db from '@db';
 import { hyperlink } from '@discordjs/builders';
-import logger from '@utils/logger';
 import { EmbedBuilder } from 'discord.js';
 /**
  * The list of basic commands to display.
@@ -80,38 +78,5 @@ export default new Event<'guildCreate'>()
   .setOnce(false)
   .setEvent('guildCreate')
   .setResponse(async (guild) => {
-    if (!guild.members.me.permissions.has('Administrator')) {
-      const owner = await guild.fetchOwner();
-      owner.send(
-        `Hi there, I see you tried to invite me into your server. To make sure that the bot works correctly please allow it to have admin permissions and then re-invite it.\n\nIf you need more info as to why the bot needs admin go ${hyperlink(
-          'here',
-          'https://dynamica.dev/docs/faq#why-does-this-random-bot-need-admin'
-        )}.`
-      );
-      await guild.leave();
-    } else {
-      if (guild.systemChannel) {
-        guild.systemChannel.send({
-          embeds: [botInfoEmbed],
-        });
-      }
-      try {
-        await db.guild.create({
-          data: {
-            id: guild.id,
-          },
-        });
-      } catch (error) {
-        logger.error('Updated guild per-command permissions', error.toString());
-      }
-
-      logger.debug(`Joined guild ${guild.id} named: ${guild.name}`);
-      const mqtt = MQTT.getInstance();
-      mqtt?.publish('dynamica/event/join', {
-        guild: {
-          id: guild.id,
-          name: guild.name,
-        },
-      });
-    }
+    await DynamicaGuild.initialise(guild);
   });

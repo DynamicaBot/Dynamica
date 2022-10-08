@@ -27,6 +27,10 @@ export default class DynamicaAlias {
     return this.aliases.filter((alias) => alias.guildId === guildId);
   }
 
+  static get count() {
+    return this.aliases.length;
+  }
+
   constructor(guildId: string, id: number) {
     this.guildId = guildId;
     this.id = id;

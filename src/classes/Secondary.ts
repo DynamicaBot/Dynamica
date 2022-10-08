@@ -1,6 +1,7 @@
 import DynamicaPrimary from '@classes/Primary';
 import db from '@db';
 import Prisma from '@prisma/client';
+import { PrismaClientKnownRequestError } from '@prisma/client/runtime/index.js';
 import updateActivityCount from '@utils';
 import formatChannelName from '@utils/format';
 import logger from '@utils/logger';
@@ -40,6 +41,10 @@ export default class DynamicaSecondary
     DynamicaSecondary.add(this);
   }
 
+  static get count() {
+    return this.channels.length;
+  }
+
   public static add(channel: DynamicaSecondary) {
     this.channels.push(channel);
   }
@@ -77,14 +82,8 @@ export default class DynamicaSecondary
       where: { guildId: guild.id },
     });
 
-    console.log((await member.fetch()).presence.activities);
-
     const primaryDiscordChannel = await primary.discord(client);
-    console.log({
-      primaryDiscordChannel: primaryDiscordChannel.members.map(
-        (member) => member.presence
-      ),
-    });
+
     const activities = primaryDiscordChannel.members
       .filter((member) => member.presence.activities.length > 0)
       .filter((member) => !member.user.bot)
@@ -174,96 +173,116 @@ export default class DynamicaSecondary
    * Update secondary channel, changing name if required.
    */
   async update(client: Client<true>) {
-    const discordChannel = await this.discord(client);
-    if (discordChannel.members.size === 0) {
-      this.delete(client);
-    }
-    const prismaChannel = (await this.prisma()) as Prisma.Secondary & {
-      guild: Prisma.Guild;
-    };
-
-    const primary = DynamicaPrimary.get(this.parentId);
-    const primaryPrisma = await primary.prisma();
-
-    const adjacentSecondaryCount = await db.secondary.count({
-      where: {
-        primaryId: discordChannel.parentId,
-        guildId: discordChannel.guildId,
-      },
-    });
-
-    /**
-     * Return aliases
-     */
-    const aliases = await db.alias.findMany({
-      where: {
-        guildId: discordChannel.guildId,
-      },
-    });
-
-    /**
-     * The activities list minus stuff that should be ignored like Spotify and Custom status // Todo: more complicated logic for people who might be streaming
-     */
-    const activities = discordChannel.members
-      .filter((member) => member.presence.activities.length > 0)
-      .filter((member) => !member.user.bot)
-      .map((member) => member.presence.activities)
-      .flat()
-      .filter((activity) => activity.type !== ActivityType.Custom)
-      .filter((activity) => activity.type !== ActivityType.Listening)
-      .map((activity) => activity.name);
-
-    const { locked } = prismaChannel;
-
-    /**
-     * The template to be used.
-     */
-    const str =
-      prismaChannel.name ??
-      (!activities.length ? primaryPrisma.generalName : primaryPrisma.template);
-
-    const guild = await client.guilds.fetch(prismaChannel.guildId);
-
-    const creator = await guild.members.fetch(prismaChannel.creator);
-
-    /**
-     * The formatted name
-     */
-    const name = formatChannelName(str, {
-      creator: creator.displayName,
-      aliases,
-      channelNumber: adjacentSecondaryCount + 1,
-      activities,
-      memberCount: discordChannel.members.size, // Get this
-      locked,
-    });
-
-    if (this.discord.name !== name) {
-      if (!discordChannel.manageable) {
-        throw new Error('Channel not manageable');
+    try {
+      const discordChannel = await this.discord(client);
+      if (discordChannel.members.size === 0) {
+        this.delete(client);
       }
-      discordChannel
-        .edit({
-          name,
-        })
-        .then(() => {
-          logger.debug(
-            `Secondary channel ${this.discord.name} in ${discordChannel.guild.name} name changed.`
-          );
-        });
+      const prismaChannel = (await this.prisma()) as Prisma.Secondary & {
+        guild: Prisma.Guild;
+      };
+
+      const primary = DynamicaPrimary.get(this.parentId);
+      const primaryPrisma = await primary.prisma();
+
+      const adjacentSecondaryCount = await db.secondary.count({
+        where: {
+          primaryId: discordChannel.parentId,
+          guildId: discordChannel.guildId,
+        },
+      });
+
+      /**
+       * Return aliases
+       */
+      const aliases = await db.alias.findMany({
+        where: {
+          guildId: discordChannel.guildId,
+        },
+      });
+
+      /**
+       * The activities list minus stuff that should be ignored like Spotify and Custom status // Todo: more complicated logic for people who might be streaming
+       */
+      const activities = discordChannel.members
+        .filter((member) => member.presence.activities.length > 0)
+        .filter((member) => !member.user.bot)
+        .map((member) => member.presence.activities)
+        .flat()
+        .filter((activity) => activity.type !== ActivityType.Custom)
+        .filter((activity) => activity.type !== ActivityType.Listening)
+        .map((activity) => activity.name);
+
+      const { locked } = prismaChannel;
+
+      /**
+       * The template to be used.
+       */
+      const str =
+        prismaChannel.name ??
+        (!activities.length
+          ? primaryPrisma.generalName
+          : primaryPrisma.template);
+
+      const guild = await client.guilds.fetch(prismaChannel.guildId);
+
+      const creator = await guild.members.fetch(prismaChannel.creator);
+
+      /**
+       * The formatted name
+       */
+      const name = formatChannelName(str, {
+        creator: creator.displayName,
+        aliases,
+        channelNumber: adjacentSecondaryCount + 1,
+        activities,
+        memberCount: discordChannel.members.size, // Get this
+        locked,
+      });
+
+      if (this.discord.name !== name) {
+        if (!discordChannel.manageable) {
+          throw new Error('Channel not manageable');
+        }
+        discordChannel
+          .edit({
+            name,
+          })
+          .then(() => {
+            logger.debug(
+              `Secondary channel ${this.discord.name} in ${discordChannel.guild.name} name changed.`
+            );
+          });
+      }
+
+      const mqtt = MQTT.getInstance();
+      mqtt?.publish(`dynamica/secondary/update`, {
+        id: this.id,
+        primaryId: primary.id,
+        name,
+        locked,
+        activities,
+        memberCount: discordChannel.members.size,
+      });
+
+      return this;
+    } catch (error) {
+      if (error instanceof DiscordAPIError) {
+        if (error.code === 10003) {
+          this.delete(client);
+        } else if (error.code === 50013) {
+          logger.warn(`Secondary channel ${this.discord.name} not manageable.`);
+        } else if (error.code === 50001) {
+          logger.warn(`Secondary channel ${this.discord.name} not viewable.`);
+        } else if (error.code === 50035) {
+          logger.warn(`Secondary channel ${this.discord.name} not editable.`);
+        } else if (error.code === 50034) {
+          logger.warn(`Secondary channel ${this.discord.name} not deletable.`);
+        } else {
+          logger.error(error);
+        }
+      }
     }
-
-    const mqtt = MQTT.getInstance();
-    mqtt?.publish(`dynamica/secondary/update`, {
-      id: this.id,
-      primaryId: primary.id,
-      name,
-      locked,
-      activities,
-      memberCount: discordChannel.members.size,
-    });
-
-    return this;
   }
 
   async lock(client: Client<true>): Promise<void> {
@@ -330,40 +349,53 @@ export default class DynamicaSecondary
   }
 
   async deleteDiscord(client: Client<true>) {
-    const channel = await this.discord(client);
-    channel.delete();
-  }
-  async deletePrisma() {
-    await db.secondary.delete({ where: { id: this.id } });
-  }
-  async delete(client: Client<true>) {
-    const channel = await this.discord(client);
-    if (channel) {
-      try {
-        await channel.delete();
-        await this.deletePrisma();
-        DynamicaSecondary.remove(this.id);
-      } catch (error) {
-        if (error instanceof DiscordAPIError) {
-          if (error.code === 10003) {
-            logger.debug(
-              `Primary channel ${channel.name} (${channel.id}) was already deleted.`
-            );
-            await this.deletePrisma();
-            DynamicaSecondary.remove(this.id);
-          } else {
-            logger.error(error);
-          }
+    try {
+      const channel = await this.discord(client);
+      await channel.delete();
+    } catch (error) {
+      if (error instanceof DiscordAPIError) {
+        if (error.code === 50013) {
+          logger.warn(`Secondary channel ${this.id} not manageable.`);
+        } else if (error.code === 50001) {
+          logger.warn(`Secondary channel ${this.id} not viewable.`);
+        } else if (error.code === 50035) {
+          logger.warn(`Secondary channel ${this.id} not editable.`);
+        } else if (error.code === 50034) {
+          logger.warn(`Secondary channel ${this.id} not deletable.`);
+        } else if (error.code === 10003) {
+          logger.warn(`Secondary channel ${this.id} not found.`);
         } else {
           logger.error(error);
         }
-      } finally {
-        const mqtt = MQTT.getInstance();
-        mqtt?.publish(`dynamica/secondary/delete`, {
-          id: this.id,
-        });
       }
     }
+  }
+  async deletePrisma() {
+    try {
+      await db.secondary.delete({ where: { id: this.id } });
+    } catch (error) {
+      if (error instanceof PrismaClientKnownRequestError) {
+        if (error.code === 'P2025') {
+          logger.warn(`Secondary channel ${this.discord.name} not found.`);
+        } else {
+          logger.error(error);
+        }
+      }
+    }
+  }
+  async delete(client: Client<true>) {
+    await this.deleteDiscord(client);
+
+    await this.deletePrisma();
+
+    logger.debug(`Secondary channel ${this.id} in ${this.guildId} deleted.`);
+
+    const mqtt = MQTT.getInstance();
+    mqtt?.publish(`dynamica/secondary/delete`, {
+      id: this.id,
+    });
+    DynamicaSecondary.remove(this.id);
+    updateActivityCount(client);
   }
 
   toString() {

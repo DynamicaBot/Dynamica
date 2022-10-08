@@ -1,5 +1,8 @@
+import DynamicaAlias from '@/classes/Alias';
+import DynamicaGuild from '@/classes/Guild';
 import { MQTT } from '@/classes/MQTT';
-import db from '@db';
+import DynamicaPrimary from '@/classes/Primary';
+import DynamicaSecondary from '@/classes/Secondary';
 import logger from '@utils/logger';
 import { ActivityType, Client, version } from 'discord.js';
 
@@ -8,10 +11,8 @@ import { ActivityType, Client, version } from 'discord.js';
  */
 const updateActivityCount = async (client: Client) => {
   try {
-    const secondaryCount = await db.secondary.count();
-    const primaryCount = await db.primary.count();
-    const aliasCount = await db.alias.count();
-    const guildCount = client.guilds.cache.size;
+    const secondaryCount = DynamicaSecondary.count;
+
     client.user.setActivity({
       type: ActivityType.Watching,
       name: `${secondaryCount} channels`,
@@ -24,10 +25,10 @@ const updateActivityCount = async (client: Client) => {
       readyAt: new Date(client.readyTimestamp).toISOString(),
       time: new Date().toISOString(),
       count: {
-        secondary: secondaryCount,
-        primary: primaryCount,
-        alias: aliasCount,
-        guild: guildCount,
+        secondary: DynamicaSecondary.count,
+        primary: DynamicaPrimary.count,
+        alias: DynamicaAlias.count,
+        guild: DynamicaGuild.count,
       },
       version: {
         name: process.env.VERSION,

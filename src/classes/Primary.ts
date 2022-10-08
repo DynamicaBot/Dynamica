@@ -37,6 +37,10 @@ export default class DynamicaPrimary
     return this.channels.find((channel) => channel.id === id);
   }
 
+  static get count() {
+    return this.channels.length;
+  }
+
   public static has = (id: string) =>
     this.channels.some((channel) => channel.id === id);
 

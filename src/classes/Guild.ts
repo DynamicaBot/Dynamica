@@ -92,6 +92,10 @@ export default class DynamicaGuild {
     DynamicaGuild.add(this);
   }
 
+  static get count() {
+    return DynamicaGuild.guilds.length;
+  }
+
   public static add(guild: DynamicaGuild) {
     DynamicaGuild.guilds.push(guild);
   }
