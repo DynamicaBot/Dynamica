@@ -52,6 +52,7 @@ export class HelpCommand extends Command {
       );
 
       interaction.reply({
+        ephemeral: true,
         embeds: helpPages.map((helpPage) =>
           new EmbedBuilder()
             .setAuthor({
