@@ -4,7 +4,6 @@ import { interactionDetails } from '@/utils/mqtt';
 import DynamicaSecondary from '@classes/Secondary';
 import db from '@db';
 import { SlashCommandBuilder } from '@discordjs/builders';
-import logger from '@utils/logger';
 import {
   CacheType,
   ChatInputCommandInteraction,
@@ -39,7 +38,7 @@ export class NameCommand extends Command {
     const channel = guildMember?.voice.channel;
 
     await db.secondary.update({ where: { id: channel.id }, data: { name } });
-    logger.info(`${channel.id} name changed.`);
+    this.logger.info(`${channel.id} name changed.`);
 
     await DynamicaSecondary.get(channel.id).update(interaction.client);
 
