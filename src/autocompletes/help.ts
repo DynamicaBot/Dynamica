@@ -1,10 +1,16 @@
-import Autocomplete from '@/classes/Autocomplete';
+import { Autocomplete } from '@/classes/Autocomplete';
 import { Helps } from '@/classes/Help';
+import { AutocompleteInteraction, CacheType } from 'discord.js';
 import Fuse from 'fuse.js';
 
-export default new Autocomplete()
-  .setName('help')
-  .setResponse(async (interaction) => {
+export class HelpAutocomplete extends Autocomplete {
+  constructor() {
+    super('help');
+  }
+
+  public response: (
+    interaction: AutocompleteInteraction<CacheType>
+  ) => Promise<void> = async (interaction) => {
     const value = interaction.options.getFocused();
     const helpOptions = Helps.names;
 
@@ -27,4 +33,5 @@ export default new Autocomplete()
             }))
             .slice(0, 24)
     );
-  });
+  };
+}

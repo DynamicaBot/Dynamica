@@ -4,6 +4,7 @@ import { Client, IntentsBitField } from 'discord.js';
 import dotenv from 'dotenv';
 import rl from 'readline';
 import { Events } from './classes/Event';
+import { RegisterAutocompletes } from './register-autocomples';
 import { RegisterCommands } from './register-commands';
 import { RegisterEvents } from './register-events';
 import { RegisterHelp } from './register-help';
@@ -27,6 +28,7 @@ const client = new Client({
 new RegisterCommands();
 new RegisterHelp();
 new RegisterEvents();
+new RegisterAutocompletes();
 
 /**
  * Some of the commandline stuff to read

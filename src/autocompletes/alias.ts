@@ -1,12 +1,17 @@
 import { channelActivities } from '@/utils/activity';
 import db from '@/utils/db';
-import Autocomplete from '@classes/Autocomplete';
-import { GuildMember } from 'discord.js';
+import { Autocomplete } from '@classes/Autocomplete';
+import { AutocompleteInteraction, CacheType, GuildMember } from 'discord.js';
 import Fuse from 'fuse.js';
 
-export default new Autocomplete()
-  .setName('alias')
-  .setResponse(async (interaction) => {
+export class AliasAutocomplete extends Autocomplete {
+  constructor() {
+    super('alias');
+  }
+
+  public response: (
+    interaction: AutocompleteInteraction<CacheType>
+  ) => Promise<void> = async (interaction) => {
     const { value } = interaction.options.getFocused(true);
     const member = interaction.member as GuildMember;
     const subcommand = interaction.options.getSubcommand(true) as
@@ -14,7 +19,6 @@ export default new Autocomplete()
       | 'remove'
       | 'list'
       | 'add';
-    console.log({ subcommand });
 
     let options: { name: string; value: string }[] = [];
 
@@ -28,15 +32,7 @@ export default new Autocomplete()
       }));
     } else if (subcommand === 'add') {
       const activities = channelActivities(member.voice.channel);
-      console.log({
-        activities: (
-          await Promise.all(
-            member.voice.channel.members.map(
-              async (m) => (await m.fetch()).presence.activities
-            )
-          )
-        ).flat(),
-      });
+
       options = activities.map((activity) => ({
         name: activity,
         value: activity,
@@ -55,4 +51,5 @@ export default new Autocomplete()
         ? query.map((result) => result.item).slice(0, 24)
         : options.slice(0, 24)
     );
-  });
+  };
+}

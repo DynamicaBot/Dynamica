@@ -18,7 +18,7 @@ export class HelpCommand extends Command {
     .addStringOption((option) =>
       option
         .setRequired(false)
-        .setName('subcommand')
+        .setName('help')
         .setDescription('Subcommand help')
         .setAutocomplete(true)
     );

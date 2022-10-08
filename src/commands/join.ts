@@ -27,7 +27,7 @@ export class JoinCommand extends Command {
     .addStringOption((option) =>
       option
         .setAutocomplete(true)
-        .setName('channel')
+        .setName('secondary')
         .setDescription('The channel to request to join.')
         .setRequired(true)
     );

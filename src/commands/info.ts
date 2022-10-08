@@ -22,7 +22,7 @@ export class InfoCommand extends Command {
         .addStringOption((option) =>
           option
             .setAutocomplete(true)
-            .setName('primarychannel')
+            .setName('primary')
             .setDescription('Primary channel to get info about.')
             .setRequired(true)
         )
@@ -34,7 +34,7 @@ export class InfoCommand extends Command {
         .addStringOption((option) =>
           option
             .setAutocomplete(true)
-            .setName('secondarychannel')
+            .setName('secondary')
             .setDescription('Secondary channel to get info about.')
             .setRequired(true)
         )
@@ -49,10 +49,7 @@ export class InfoCommand extends Command {
   response = async (interaction) => {
     const subcommand = interaction.options.getSubcommand(true);
     if (subcommand === 'primary') {
-      const chosenPrimary = interaction.options.getString(
-        'primarychannel',
-        true
-      );
+      const chosenPrimary = interaction.options.getString('primary', true);
       const primary = DynamicaPrimary.get(chosenPrimary);
       if (!primary) {
         interaction.reply({

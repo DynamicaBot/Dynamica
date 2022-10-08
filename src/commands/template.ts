@@ -47,7 +47,7 @@ export class TemplateCommand extends Command {
     .addStringOption((option) =>
       option
         .setAutocomplete(true)
-        .setName('channel')
+        .setName('primary')
         .setDescription('The channel to change the template for.')
         .setRequired(true)
     )

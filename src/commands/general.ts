@@ -23,7 +23,7 @@ export class GeneralCommand extends Command {
     .addStringOption((option) =>
       option
         .setAutocomplete(true)
-        .setName('channel')
+        .setName('primary')
         .setDescription('The channel to change the template for.')
         .setRequired(true)
     )
@@ -36,7 +36,7 @@ export class GeneralCommand extends Command {
 
   response = async (interaction: ChatInputCommandInteraction<CacheType>) => {
     const name = interaction.options.getString('name', true);
-    const channel = interaction.options.getString('channel', true);
+    const channel = interaction.options.getString('primary', true);
 
     const updatedPrimary = await db.primary.update({
       where: { id: channel },
