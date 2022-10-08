@@ -1,6 +1,6 @@
 import Command from '@/classes/Command';
-import { creatorCheck } from '@/preconditions/creator';
-import { secondaryCheck } from '@/preconditions/secondary';
+import creatorCheck from '@/preconditions/creator';
+import secondaryCheck from '@/preconditions/secondary';
 import interactionDetails from '@/utils/mqtt';
 import { ErrorEmbed } from '@utils/discordEmbeds';
 import {

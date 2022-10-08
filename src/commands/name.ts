@@ -1,6 +1,6 @@
 import Command from '@/classes/Command';
 import Secondaries from '@/classes/Secondaries';
-import { secondaryCheck } from '@/preconditions/secondary';
+import secondaryCheck from '@/preconditions/secondary';
 import interactionDetails from '@/utils/mqtt';
 import db from '@db';
 import {

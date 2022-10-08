@@ -1,7 +1,7 @@
 import Command from '@/classes/Command';
 import MQTT from '@/classes/MQTT';
 import Secondaries from '@/classes/Secondaries';
-import { creatorCheck } from '@/preconditions/creator';
+import creatorCheck from '@/preconditions/creator';
 import interactionDetails from '@/utils/mqtt';
 import {
   CacheType,

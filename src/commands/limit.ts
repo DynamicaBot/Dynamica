@@ -1,7 +1,7 @@
 import Command from '@/classes/Command';
 import interactionDetails from '@/utils/mqtt';
-import { creatorCheck } from '@preconditions/creator';
-import { secondaryCheck } from '@preconditions/secondary';
+import creatorCheck from '@preconditions/creator';
+import secondaryCheck from '@preconditions/secondary';
 import { ErrorEmbed } from '@utils/discordEmbeds';
 import {
   CacheType,
