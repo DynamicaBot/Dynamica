@@ -1,5 +1,9 @@
-import Help from '@/classes/Help';
+import { Help } from '@/classes/Help';
 
-export default new Help(
-  'Shows the info of either a user or the current server.'
-);
+export class InfoHelp extends Help {
+  constructor() {
+    super('info');
+  }
+
+  short = 'Shows the info of either a user or the current server.';
+}

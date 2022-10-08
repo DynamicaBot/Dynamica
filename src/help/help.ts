@@ -1,5 +1,8 @@
-import Help from '@classes/Help';
+import { Help } from '@/classes/Help';
 
-export default new Help(
-  'Shows a list of commands and their asociated descriptions. '
-);
+export class HelpHelp extends Help {
+  constructor() {
+    super('help');
+  }
+  public short = 'Shows a list of commands and their asociated descriptions. ';
+}

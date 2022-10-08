@@ -1,3 +1,9 @@
-import Help from '@/classes/Help';
+import { Help } from '@/classes/Help';
 
-export default new Help('Limit the maximum number of people in the channel.');
+export class LimitHelp extends Help {
+  constructor() {
+    super('limit');
+  }
+
+  short = 'Limit the maximum number of people in the channel.';
+}

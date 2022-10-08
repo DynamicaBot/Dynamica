@@ -1,44 +1,16 @@
-import Command from '@/classes/Command';
-import Condition from '@/classes/Condition';
-import Event from '@classes/Event';
-import * as commands from '@commands';
-import checkGuild from '@preconditions/guild';
-import { ErrorEmbed } from '@utils/discordEmbeds';
-import logger from '@utils/logger';
+import { Commands } from '@/classes/Command';
+import { Event } from '@classes/Event';
+import { CacheType, Interaction } from 'discord.js';
 
-export default new Event<'interactionCreate'>()
-  .setOnce(false)
-  .setEvent('interactionCreate')
-  .setResponse(async (interaction) => {
+export class CommandEvent extends Event<'interactionCreate'> {
+  constructor() {
+    super('interactionCreate');
+  }
+
+  public response: (
+    interaction: Interaction<CacheType>
+  ) => void | Promise<void> = (interaction) => {
     if (!interaction.isChatInputCommand()) return;
-    try {
-      const command: Command = commands[interaction.commandName];
-      const { conditions } = command;
-      const conditionResults = await Promise.all(
-        [checkGuild as Condition, ...conditions].map((condition) =>
-          condition.check(interaction)
-        )
-      );
-
-      const failingCondition = conditionResults.find(
-        (condition) => !condition.success
-      );
-
-      if (failingCondition) {
-        interaction.reply({
-          ephemeral: true,
-          embeds: [ErrorEmbed(failingCondition.message)],
-        });
-      } else {
-        command.response(interaction);
-      }
-    } catch (e) {
-      logger.error(e);
-      interaction.reply({
-        embeds: [
-          ErrorEmbed('There was an error while executing this command!'),
-        ],
-        ephemeral: true,
-      });
-    }
-  });
+    Commands.run(interaction);
+  };
+}

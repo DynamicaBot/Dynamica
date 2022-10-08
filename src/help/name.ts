@@ -1,5 +1,9 @@
-import Help from '@/classes/Help';
+import { Help } from '@/classes/Help';
 
-export default new Help(
-  "Changes the name of the Secondary channel you're currently in."
-);
+export class NameHelp extends Help {
+  constructor() {
+    super('name');
+  }
+
+  short = "Changes the name of the Secondary channel you're currently in.";
+}

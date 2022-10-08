@@ -1,11 +1,14 @@
 import DynamicaGuild from '@/classes/Guild';
 import { MQTT } from '@/classes/MQTT';
-import Event from '@classes/Event';
+import { Event } from '@classes/Event';
+import { Guild } from 'discord.js';
 
-export default new Event<'guildDelete'>()
-  .setOnce(false)
-  .setEvent('guildDelete')
-  .setResponse(async (guild) => {
+export class GuildDeleteEvent extends Event<'guildDelete'> {
+  constructor() {
+    super('guildDelete');
+  }
+
+  public response: (guild: Guild) => void | Promise<void> = async (guild) => {
     const foundGuild = DynamicaGuild.get(guild.id);
     if (foundGuild) {
       await foundGuild.leave(guild.client);
@@ -17,4 +20,5 @@ export default new Event<'guildDelete'>()
         name: guild.name,
       },
     });
-  });
+  };
+}

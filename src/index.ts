@@ -1,9 +1,12 @@
 import db from '@db';
-import events from '@events';
 import logger from '@utils/logger';
 import { Client, IntentsBitField } from 'discord.js';
 import dotenv from 'dotenv';
 import rl from 'readline';
+import { Events } from './classes/Event';
+import { RegisterCommands } from './register-commands';
+import { RegisterEvents } from './register-events';
+import { RegisterHelp } from './register-help';
 import deploy from './scripts/deploy';
 import remove from './scripts/remove';
 
@@ -17,9 +20,13 @@ const intents = new IntentsBitField().add(
 /**
  * DiscordJS Client instance
  */
-export const client = new Client({
+const client = new Client({
   intents,
 });
+
+new RegisterCommands();
+new RegisterHelp();
+new RegisterEvents();
 
 /**
  * Some of the commandline stuff to read
@@ -45,17 +52,12 @@ export const client = new Client({
   }
 })();
 
-const eventList = Object.values(events);
 try {
   /**
    * Register Events
    */
-  eventList.forEach((event) => {
-    if (event.once) {
-      client.once(event.event, (...args) => event.execute(...args));
-    } else {
-      client.on(event.event, (...args) => event.execute(...args));
-    }
+  Events.all.forEach((event) => {
+    client[event.once ? 'once' : 'on'](event.event, event.response);
   });
 
   /** Login */
@@ -70,5 +72,3 @@ process.on('SIGINT', () => {
   db.$disconnect();
   logger.info('Bot Stopped');
 });
-
-export default client;

@@ -1,7 +1,6 @@
 import DynamicaGuild from '@/classes/Guild';
-import Event from '@classes/Event';
-import { hyperlink } from '@discordjs/builders';
-import { EmbedBuilder } from 'discord.js';
+import { Event } from '@classes/Event';
+import { Guild } from 'discord.js';
 /**
  * The list of basic commands to display.
  */
@@ -41,42 +40,12 @@ const basicCommands: {
   },
 ];
 
-const commands = basicCommands
-  .map(
-    (command) =>
-      `${hyperlink(`\`${command.command}\``, command.help)} - ${
-        command.description
-      }`
-  )
-  .join('\n');
+export class GuildCreateEvent extends Event<'guildCreate'> {
+  constructor() {
+    super('guildCreate');
+  }
 
-const botInfoEmbed = new EmbedBuilder()
-  .setTitle('Welcome to Dynamica!')
-  .setDescription(
-    'Dynamica is a Discord bot that allows you to manage voice channels in your server with ease.\n'
-  )
-  .addFields([
-    { name: 'Basic Commands', value: commands },
-    {
-      name: 'Website',
-      value:
-        'Maybe you know this already but you can find out more about Dynamica at [dynamica.dev](https://dynamica.dev) including more commands.',
-    },
-    {
-      name: 'Support',
-      value:
-        'If you have any questions or issues, you can join the [support server](https://discord.gg/zs892m6btf).',
-    },
-  ])
-
-  .setAuthor({
-    name: 'Dynamica',
-    iconURL: 'https://dynamica.dev/img/dynamica.png',
-  });
-
-export default new Event<'guildCreate'>()
-  .setOnce(false)
-  .setEvent('guildCreate')
-  .setResponse(async (guild) => {
+  public response: (guild: Guild) => void | Promise<void> = async (guild) => {
     await DynamicaGuild.initialise(guild);
-  });
+  };
+}

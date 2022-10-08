@@ -1,10 +1,7 @@
-import { MQTT } from '@/classes/MQTT';
-import help from '@/help/allyourbase';
+import { secondaryCheck } from '@/preconditions/secondary';
 import { interactionDetails } from '@/utils/mqtt';
-import Command from '@classes/Command';
+import { Command } from '@classes/Command';
 import DynamicaSecondary from '@classes/Secondary';
-import checkManager from '@preconditions/manager';
-import checkSecondary from '@preconditions/secondary';
 import {
   CacheType,
   ChatInputCommandInteraction,
@@ -12,42 +9,41 @@ import {
   SlashCommandBuilder,
 } from 'discord.js';
 
-const data = new SlashCommandBuilder()
-  .setName('allyourbase')
-  .setDefaultMemberPermissions(PermissionFlagsBits.Administrator)
-  .setDMPermission(false)
-  .setDescription(
-    'If you are an admin you become the owner of the channel you are in.'
-  );
-
-const response = async (
-  interaction: ChatInputCommandInteraction<CacheType>
-) => {
-  const guildMember = await interaction.guild.members.cache.get(
-    interaction.user.id
-  );
-
-  const { channelId } = guildMember.voice;
-
-  const secondaryChannel = DynamicaSecondary.get(channelId);
-
-  if (secondaryChannel) {
-    await secondaryChannel.changeOwner(interaction.user);
-    await interaction.reply(
-      `Owner of <#${channelId}> changed to <@${guildMember.user.id}>`
-    );
-    const mqtt = MQTT.getInstance();
-    mqtt?.publish(`dynamica/command/${interaction.commandName}`, {
-      ...interactionDetails(interaction),
-    });
-  } else {
-    await interaction.reply('Must be a valid secondary channel.');
+export class AllyourbaseCommand extends Command {
+  constructor() {
+    super('allyourbase');
   }
-};
 
-export const allyourbase = new Command({
-  preconditions: [checkManager, checkSecondary],
-  help,
-  data,
-  response,
-});
+  conditions = [secondaryCheck];
+
+  data = new SlashCommandBuilder()
+    .setName('allyourbase')
+    .setDefaultMemberPermissions(PermissionFlagsBits.Administrator)
+    .setDMPermission(false)
+    .setDescription(
+      'If you are an admin you become the owner of the channel you are in.'
+    );
+
+  response = async (interaction: ChatInputCommandInteraction<CacheType>) => {
+    const guildMember = await interaction.guild.members.cache.get(
+      interaction.user.id
+    );
+
+    const { channelId } = guildMember.voice;
+
+    const secondaryChannel = DynamicaSecondary.get(channelId);
+
+    if (secondaryChannel) {
+      await secondaryChannel.changeOwner(interaction.user);
+      await interaction.reply(
+        `Owner of <#${channelId}> changed to <@${guildMember.user.id}>`
+      );
+
+      this.publish({
+        ...interactionDetails(interaction),
+      });
+    } else {
+      await interaction.reply('Must be a valid secondary channel.');
+    }
+  };
+}

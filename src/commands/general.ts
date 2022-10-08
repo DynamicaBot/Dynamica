@@ -1,66 +1,60 @@
-import { MQTT } from '@/classes/MQTT';
-import help from '@/help/general';
+import { Command } from '@/classes/Command';
 import { interactionDetails } from '@/utils/mqtt';
-import Command from '@classes/Command';
 import DynamicaSecondary from '@classes/Secondary';
 import db from '@db';
 import { SlashCommandBuilder } from '@discordjs/builders';
-import checkManager from '@preconditions/manager';
 import {
   CacheType,
   ChatInputCommandInteraction,
   PermissionFlagsBits,
 } from 'discord.js';
 
-const data = new SlashCommandBuilder()
-  .setName('general')
-  .setDefaultMemberPermissions('0')
-  .setDMPermission(false)
-  .setDefaultMemberPermissions(PermissionFlagsBits.ManageChannels)
-  .setDescription('Edit the name/template for the default general channel.')
-  .addStringOption((option) =>
-    option
-      .setAutocomplete(true)
-      .setName('channel')
-      .setDescription('The channel to change the template for.')
-      .setRequired(true)
-  )
-  .addStringOption((option) =>
-    option
-      .setName('name')
-      .setDescription('The new template for the general channel.')
-      .setRequired(true)
-  );
+export class GeneralCommand extends Command {
+  constructor() {
+    super('general');
+  }
 
-const response = async (
-  interaction: ChatInputCommandInteraction<CacheType>
-) => {
-  const name = interaction.options.getString('name', true);
-  const channel = interaction.options.getString('channel', true);
+  data = new SlashCommandBuilder()
+    .setName('general')
+    .setDefaultMemberPermissions('0')
+    .setDMPermission(false)
+    .setDefaultMemberPermissions(PermissionFlagsBits.ManageChannels)
+    .setDescription('Edit the name/template for the default general channel.')
+    .addStringOption((option) =>
+      option
+        .setAutocomplete(true)
+        .setName('channel')
+        .setDescription('The channel to change the template for.')
+        .setRequired(true)
+    )
+    .addStringOption((option) =>
+      option
+        .setName('name')
+        .setDescription('The new template for the general channel.')
+        .setRequired(true)
+    );
 
-  const updatedPrimary = await db.primary.update({
-    where: { id: channel },
-    data: { generalName: name },
-    include: { secondaries: true },
-  });
+  response = async (interaction: ChatInputCommandInteraction<CacheType>) => {
+    const name = interaction.options.getString('name', true);
+    const channel = interaction.options.getString('channel', true);
 
-  updatedPrimary.secondaries.forEach(async (secondary) => {
-    await DynamicaSecondary.get(secondary.id).update(interaction.client);
-  });
+    const updatedPrimary = await db.primary.update({
+      where: { id: channel },
+      data: { generalName: name },
+      include: { secondaries: true },
+    });
 
-  await interaction.reply(
-    `General template for <#${channel}> changed to \`${name}\`.`
-  );
-  const mqtt = MQTT.getInstance();
-  mqtt?.publish(`dynamica/command/${interaction.commandName}`, {
-    name,
-    ...interactionDetails(interaction),
-  });
-};
+    updatedPrimary.secondaries.forEach(async (secondary) => {
+      await DynamicaSecondary.get(secondary.id).update(interaction.client);
+    });
 
-export const general = new Command({
-  preconditions: [checkManager],
-  data,
-  response,
-  help,
-});
+    await interaction.reply(
+      `General template for <#${channel}> changed to \`${name}\`.`
+    );
+
+    this.publish({
+      name,
+      ...interactionDetails(interaction),
+    });
+  };
+}

@@ -1,3 +1,9 @@
-import Help from '@/classes/Help';
+import { Help } from '@/classes/Help';
 
-export default new Help('Transfer ownership to another user.');
+export class TransferHelp extends Help {
+  constructor() {
+    super('transfer');
+  }
+
+  short = 'Transfer ownership to another user.';
+}

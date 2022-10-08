@@ -1,19 +1,21 @@
-import logger from '@/utils/logger';
+import signaleLogger from '@/utils/logger';
 import mqtt from 'mqtt';
 
 export class MQTT {
   private static instance: MQTT | undefined = undefined;
   private client: mqtt.MqttClient;
+  private static logger = signaleLogger.scope('MQTT');
+  private logger = signaleLogger.scope('MQTT');
   private constructor() {
     this.client = mqtt.connect(process.env.MQTT_URL, {
       username: process.env.MQTT_USER,
       password: process.env.MQTT_PASS,
     });
     this.client.on('connect', () => {
-      logger.info('MQTT connected');
+      this.logger.info('Connected');
     });
     this.client.on('error', (error) => {
-      logger.error('MQTT error', error);
+      this.logger.error('Error', error);
     });
   }
 

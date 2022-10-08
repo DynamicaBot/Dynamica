@@ -1,10 +1,9 @@
-import { MQTT } from '@/classes/MQTT';
-import help from '@/help/bitrate';
+import { Command } from '@/classes/Command';
+import { creatorCheck } from '@/preconditions/creator';
+import { secondaryCheck } from '@/preconditions/secondary';
 import { interactionDetails } from '@/utils/mqtt';
-import Command from '@classes/Command';
+
 import { SlashCommandBuilder } from '@discordjs/builders';
-import checkCreator from '@preconditions/creator';
-import checkSecondary from '@preconditions/secondary';
 import { ErrorEmbed } from '@utils/discordEmbeds';
 import {
   CacheType,
@@ -12,71 +11,70 @@ import {
   PermissionFlagsBits,
 } from 'discord.js';
 
-const data = new SlashCommandBuilder()
-  .setName('bitrate')
-  .setDescription('Edit the bitrate of the current channel.')
-  .setDMPermission(false)
-  .setDefaultMemberPermissions(PermissionFlagsBits.ManageChannels)
-  .addIntegerOption((option) =>
-    option
-      .setDescription('The bitrate to set the channel to.')
-      .setName('bitrate')
-  );
-const response = async (
-  interaction: ChatInputCommandInteraction<CacheType>
-) => {
-  const bitrate = interaction.options.getInteger('bitrate');
-  const mqtt = MQTT.getInstance();
-  const guildMember = await interaction.guild.members.cache.get(
-    interaction.user.id
-  );
-
-  const { channel } = guildMember.voice;
-
-  if (!channel.manageable) {
-    interaction.reply({
-      embeds: [ErrorEmbed('Unable to manage channel.')],
-    });
-    return;
+export class BitrateCommand extends Command {
+  constructor() {
+    super('bitrate');
   }
 
-  if (!bitrate) {
-    channel.edit({ bitrate: 64000 }).then(() => {
-      interaction.reply('Set bitrate to default.');
-    });
+  conditions = [creatorCheck, secondaryCheck];
 
-    mqtt?.publish(`dynamica/command/${interaction.commandName}`, {
-      ...interactionDetails(interaction),
-    });
-    return;
-  }
-  if (!(bitrate <= 96 && bitrate >= 8)) {
-  }
-  try {
-    await channel.edit({
-      bitrate: bitrate ? bitrate * 1000 : 64000,
-    });
-    interaction.reply(
-      `<#${channel.id}> bitrate changed to ${bitrate ?? 'default'}kbps.`
+  data = new SlashCommandBuilder()
+    .setName('bitrate')
+    .setDescription('Edit the bitrate of the current channel.')
+    .setDMPermission(false)
+    .setDefaultMemberPermissions(PermissionFlagsBits.ManageChannels)
+    .addIntegerOption((option) =>
+      option
+        .setDescription('The bitrate to set the channel to.')
+        .setName('bitrate')
     );
 
-    mqtt?.publish(`dynamica/command/${interaction.commandName}`, {
-      ...interactionDetails(interaction),
-    });
-  } catch (error) {
-    interaction.reply({
-      embeds: [
-        ErrorEmbed(
-          'Make sure that the bitrate is within the rang you have access to (kBps) e.g. 64 for 64000bps'
-        ),
-      ],
-    });
-  }
-};
+  response = async (interaction: ChatInputCommandInteraction<CacheType>) => {
+    const bitrate = interaction.options.getInteger('bitrate');
+    const guildMember = await interaction.guild.members.cache.get(
+      interaction.user.id
+    );
 
-export const bitrate = new Command({
-  preconditions: [checkSecondary, checkCreator],
-  help,
-  data,
-  response,
-});
+    const { channel } = guildMember.voice;
+
+    if (!channel.manageable) {
+      interaction.reply({
+        embeds: [ErrorEmbed('Unable to manage channel.')],
+      });
+      return;
+    }
+
+    if (!bitrate) {
+      channel.edit({ bitrate: 64000 }).then(() => {
+        interaction.reply('Set bitrate to default.');
+      });
+
+      this.publish({
+        ...interactionDetails(interaction),
+      });
+      return;
+    }
+    if (!(bitrate <= 96 && bitrate >= 8)) {
+    }
+    try {
+      await channel.edit({
+        bitrate: bitrate ? bitrate * 1000 : 64000,
+      });
+      interaction.reply(
+        `<#${channel.id}> bitrate changed to ${bitrate ?? 'default'}kbps.`
+      );
+
+      this.publish({
+        ...interactionDetails(interaction),
+      });
+    } catch (error) {
+      interaction.reply({
+        embeds: [
+          ErrorEmbed(
+            'Make sure that the bitrate is within the rang you have access to (kBps) e.g. 64 for 64000bps'
+          ),
+        ],
+      });
+    }
+  };
+}

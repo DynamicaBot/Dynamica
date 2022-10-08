@@ -1,7 +1,6 @@
 import DynamicaSecondary from '@/classes/Secondary';
 import logger from '@utils/logger';
-import { ActivityType } from 'discord.js';
-import client from '..';
+import { ActivityType, Client } from 'discord.js';
 
 /**
  * Refresh Channel Activity Count
@@ -37,7 +36,7 @@ import client from '..';
 //   }
 // };
 
-export const updatePresence = async () => {
+export const updatePresence = async (client: Client<true>) => {
   try {
     const secondaryCount = DynamicaSecondary.count;
 

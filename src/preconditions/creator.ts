@@ -1,52 +1,34 @@
 import Condition from '@/classes/Condition';
-import db from '@db';
+import { ConditionError } from '@/classes/ConditionError';
+import DynamicaSecondary from '@/classes/Secondary';
 import logger from '@utils/logger';
-import { CacheType, ChatInputCommandInteraction } from 'discord.js';
+import { GuildMember } from 'discord.js';
 
-export default new Condition(
-  async (interaction: ChatInputCommandInteraction<CacheType>) => {
-    try {
-      const guildMember = await interaction.guild.members.cache.get(
-        interaction.user.id
+export const creatorCheck = new Condition(async (interaction) => {
+  try {
+    if (!(interaction.member instanceof GuildMember))
+      throw new ConditionError("You're not in a guild.");
+    const channel = interaction.member.voice;
+
+    if (!channel)
+      throw new ConditionError(
+        'You need to be in a voice channel to use this command.'
       );
 
-      const channel = guildMember.voice.channel;
-      if (!channel) {
-        return {
-          success: false,
-          message: 'You need to be in a voice channel to use this command.',
-        };
-      }
-      const channelProperties = await db.secondary.findUnique({
-        where: { id: channel.id },
-      });
+    const secondary = DynamicaSecondary.get(channel.channelId);
 
-      if (!channelProperties) {
-        return {
-          success: false,
-          message:
-            'You must be in a voice channel managed by the bot to use this command.',
-        };
-      }
-
-      const dynamicaManager = guildMember?.roles.cache.some(
-        (role) => role.name === 'Dynamica Manager'
+    if (!secondary)
+      throw new ConditionError(
+        'You must be in a voice channel managed by the bot to use this command.'
       );
 
-      const admin = guildMember.permissions.has('Administrator');
-
-      const creator = guildMember.id === channelProperties?.creator;
-
-      if (!creator && !dynamicaManager && !admin) {
-        return {
-          success: false,
-          message: `You must be the creator of ${channel.toString()} to use this command.`,
-        };
-      }
-      return { success: true };
-    } catch (error) {
-      logger.error(error);
-      return { success: false, message: 'An error occured.' };
-    }
+    const secondaryPrisma = await secondary.prisma();
+    if (secondaryPrisma.creator !== interaction.user.id)
+      throw new ConditionError(
+        'You must be the owner of the channel to use this command.'
+      );
+  } catch (error) {
+    logger.error(error);
+    throw new ConditionError('An unknown error occured.');
   }
-);
+});

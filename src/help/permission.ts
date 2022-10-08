@@ -1,5 +1,9 @@
-import Help from '@/classes/Help';
+import { Help } from '@/classes/Help';
 
-export default new Help(
-  'Edits the permissions for secondary channels. (Works in conjuction with /lock and /unlock.'
-);
+export class PermissionHelp extends Help {
+  constructor() {
+    super('permission');
+  }
+  public short =
+    'Edits the permissions for secondary channels. (Works in conjuction with /lock and /unlock.';
+}

@@ -1,24 +1,32 @@
-import { ClientEvents } from 'discord.js';
+import signaleLogger from '@utils/logger';
+import { Client, ClientEvents } from 'discord.js';
+import { Signale } from 'signale';
 
-export default class Event<K extends keyof ClientEvents> {
-  public once: boolean;
+type Awaitable<T> = Promise<T> | T;
 
-  public event: K;
-
-  public execute: (...args) => Promise<void>;
-
-  setOnce(once) {
-    this.once = once;
-    return this;
+export class Event<K extends keyof ClientEvents> {
+  public logger: Signale;
+  constructor(public event: K, public once: boolean = false) {
+    this.logger = signaleLogger.scope('Event', event);
   }
 
-  setEvent(event: K) {
-    this.event = event;
-    return this;
+  public response: (...args: ClientEvents[K]) => Awaitable<void>;
+}
+
+export class Events {
+  public static events: Event<keyof ClientEvents>[] = [];
+
+  public static register(event: Event<keyof ClientEvents>): void {
+    this.events.push(event);
   }
 
-  setResponse(response: (...args: ClientEvents[K]) => Promise<void>) {
-    this.execute = response;
-    return this;
+  public static registerListeners(client: Client<false>): void {
+    this.events.forEach((event) =>
+      client[event.once ? 'once' : 'on'](event.event, event.response)
+    );
+  }
+
+  static get all(): Event<keyof ClientEvents>[] {
+    return Events.events;
   }
 }

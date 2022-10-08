@@ -1,10 +1,11 @@
+// import { updatePresence } from '@/utils';
 import { updatePresence } from '@/utils';
 import DynamicaPrimary from '@classes/Primary';
 import db from '@db';
 import Prisma from '@prisma/client';
 import { PrismaClientKnownRequestError } from '@prisma/client/runtime/index.js';
 import formatChannelName from '@utils/format';
-import logger from '@utils/logger';
+import signaleLogger from '@utils/logger';
 import {
   ActivityType,
   ChannelType,
@@ -13,15 +14,11 @@ import {
   GuildMember,
   User,
 } from 'discord.js';
-import {
-  DynamicaChannel,
-  DynamicaChannelType,
-} from './DynamicaChannel.interface';
+import { Signale } from 'signale';
+import { DynamicaChannelType } from './DynamicaChannel.interface';
 import { MQTT } from './MQTT';
 
-export default class DynamicaSecondary
-  implements DynamicaChannel<DynamicaChannelType.Secondary>
-{
+export default class DynamicaSecondary {
   static channels: DynamicaSecondary[] = [];
 
   id: string;
@@ -33,11 +30,16 @@ export default class DynamicaSecondary
   /** The prisma primary */
   parentId: string;
 
+  private static readonly logger = signaleLogger.scope('Secondary');
+
+  private readonly logger: Signale;
+
   constructor(channelId: string, guildId: string, primaryId: string) {
     this.guildId = guildId;
     this.id = channelId;
     this.type = DynamicaChannelType.Secondary;
     this.parentId = primaryId;
+    this.logger = signaleLogger.scope('Secondary', this.id);
     DynamicaSecondary.add(this);
   }
 
@@ -47,12 +49,10 @@ export default class DynamicaSecondary
 
   public static add(channel: DynamicaSecondary) {
     this.channels.push(channel);
-    updatePresence();
   }
 
   public static remove(id: string) {
     this.channels = this.channels.filter((channel) => channel.id !== id);
-    updatePresence();
   }
 
   public static get(id: string | undefined) {
@@ -131,19 +131,20 @@ export default class DynamicaSecondary
 
     await member.voice.setChannel(secondary);
 
-    db.secondary.create({
+    await db.secondary.create({
       data: {
         id: secondary.id,
         creator: member.id,
         primaryId: primary.id,
         guildId: guild.id,
       },
-      include: { guild: true, primary: true },
     });
 
-    logger.debug(
-      `Secondary channel ${secondary.name} created by ${member?.user.tag} in ${member.guild.name}.`
-    );
+    this.logger
+      .scope('Secondary', secondary.id)
+      .debug(
+        `Secondary channel ${secondary.name} created by ${member?.user.tag} in ${member.guild.name}.`
+      );
 
     const mqtt = MQTT.getInstance();
 
@@ -238,19 +239,16 @@ export default class DynamicaSecondary
         locked,
       });
 
-      if (this.discord.name !== name) {
+      if (discordChannel.name !== name) {
         if (!discordChannel.manageable) {
           throw new Error('Channel not manageable');
         }
-        discordChannel
-          .edit({
-            name,
-          })
-          .then(() => {
-            logger.debug(
-              `Secondary channel ${this.discord.name} in ${discordChannel.guild.name} name changed.`
-            );
-          });
+        await discordChannel.edit({
+          name,
+        });
+        this.logger.debug(
+          `Secondary channel ${this.discord.name} in ${discordChannel.guild.name} name changed.`
+        );
       }
 
       const mqtt = MQTT.getInstance();
@@ -269,15 +267,15 @@ export default class DynamicaSecondary
         if (error.code === 10003) {
           this.delete(client);
         } else if (error.code === 50013) {
-          logger.warn(`Secondary channel ${this.discord.name} not manageable.`);
+          this.logger.warn(`Secondary channel not manageable.`);
         } else if (error.code === 50001) {
-          logger.warn(`Secondary channel ${this.discord.name} not viewable.`);
+          this.logger.warn(`Secondary channel not viewable.`);
         } else if (error.code === 50035) {
-          logger.warn(`Secondary channel ${this.discord.name} not editable.`);
+          this.logger.warn(`Secondary channel not editable.`);
         } else if (error.code === 50034) {
-          logger.warn(`Secondary channel ${this.discord.name} not deletable.`);
+          this.logger.warn(`Secondary channel not deletable.`);
         } else {
-          logger.error(error);
+          this.logger.error(error);
         }
       }
     }
@@ -353,17 +351,17 @@ export default class DynamicaSecondary
     } catch (error) {
       if (error instanceof DiscordAPIError) {
         if (error.code === 50013) {
-          logger.warn(`Secondary channel ${this.id} not manageable.`);
+          this.logger.warn(`Secondary channel not manageable.`);
         } else if (error.code === 50001) {
-          logger.warn(`Secondary channel ${this.id} not viewable.`);
+          this.logger.warn(`Secondary channel not viewable.`);
         } else if (error.code === 50035) {
-          logger.warn(`Secondary channel ${this.id} not editable.`);
+          this.logger.warn(`Secondary channel not editable.`);
         } else if (error.code === 50034) {
-          logger.warn(`Secondary channel ${this.id} not deletable.`);
+          this.logger.warn(`Secondary channel not deletable.`);
         } else if (error.code === 10003) {
-          logger.warn(`Secondary channel ${this.id} not found.`);
+          this.logger.warn(`Secondary channel not found.`);
         } else {
-          logger.error(error);
+          this.logger.error(error);
         }
       }
     }
@@ -374,9 +372,10 @@ export default class DynamicaSecondary
     } catch (error) {
       if (error instanceof PrismaClientKnownRequestError) {
         if (error.code === 'P2025') {
-          logger.warn(`Secondary channel ${this.discord.name} not found.`);
+          console.log(error);
+          this.logger.warn(`Secondary channel not found.`);
         } else {
-          logger.error(error);
+          this.logger.error(error);
         }
       }
     }
@@ -386,13 +385,14 @@ export default class DynamicaSecondary
 
     await this.deletePrisma();
 
-    logger.debug(`Secondary channel ${this.id} in ${this.guildId} deleted.`);
+    this.logger.debug(`Secondary channel deleted.`);
 
     const mqtt = MQTT.getInstance();
     mqtt?.publish(`dynamica/secondary/delete`, {
       id: this.id,
     });
     DynamicaSecondary.remove(this.id);
+    updatePresence(client);
   }
 
   toString() {

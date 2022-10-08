@@ -1,11 +1,16 @@
-import Event from '@classes/Event';
+import { Event } from '@classes/Event';
 import DynamicaSecondary from '@classes/Secondary';
 import { Presence } from 'discord.js';
 
-export default new Event<'presenceUpdate'>()
-  .setOnce(false)
-  .setEvent('presenceUpdate')
-  .setResponse(async (oldPresence: Presence, newPresence: Presence) => {
+export class PresenceUpdateEvent extends Event<'presenceUpdate'> {
+  constructor() {
+    super('presenceUpdate');
+  }
+
+  public response: (
+    oldPresence: Presence,
+    newPresence: Presence
+  ) => void | Promise<void> = (oldPresence, newPresence) => {
     const { channelId } = newPresence.member.voice;
     if (!channelId) {
       return;
@@ -15,4 +20,5 @@ export default new Event<'presenceUpdate'>()
     if (dynamicaSecondary) {
       dynamicaSecondary.update(newPresence.client);
     }
-  });
+  };
+}

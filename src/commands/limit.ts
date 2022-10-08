@@ -1,10 +1,8 @@
-import { MQTT } from '@/classes/MQTT';
-import help from '@/help/limit';
+import { Command } from '@/classes/Command';
 import { interactionDetails } from '@/utils/mqtt';
-import Command from '@classes/Command';
 import { SlashCommandBuilder } from '@discordjs/builders';
-import checkCreator from '@preconditions/creator';
-import checkSecondary from '@preconditions/secondary';
+import { creatorCheck } from '@preconditions/creator';
+import { secondaryCheck } from '@preconditions/secondary';
 import { ErrorEmbed } from '@utils/discordEmbeds';
 import {
   CacheType,
@@ -12,51 +10,49 @@ import {
   PermissionFlagsBits,
 } from 'discord.js';
 
-const data = new SlashCommandBuilder()
-  .setName('limit')
-  .setDMPermission(false)
-  .setDefaultMemberPermissions(PermissionFlagsBits.ManageChannels)
-  .setDescription(
-    'Edit the max number of people allowed in the current channel'
-  )
-  .addIntegerOption((option) =>
-    option
-      .setDescription(
-        'The maximum number of people that are allowed to join the channel.'
-      )
-      .setName('number')
-      .setRequired(true)
-  );
-
-const response = async (
-  interaction: ChatInputCommandInteraction<CacheType>
-) => {
-  const userLimit = interaction.options.getInteger('number', true);
-  const mqtt = MQTT.getInstance();
-  const guildMember = await interaction.guild.members.cache.get(
-    interaction.user.id
-  );
-
-  const { channel } = guildMember.voice;
-
-  if (!channel.manageable) {
-    interaction.reply({
-      embeds: [ErrorEmbed(`Cannot edit <#${channel.id}>.`)],
-    });
-    return;
+export class LimitCommand extends Command {
+  constructor() {
+    super('limit');
   }
-  channel.edit({ userLimit });
-  interaction.reply(`<#${channel.id}> limit changed to ${userLimit}.`);
-  mqtt?.publish(`dynamica/command/${interaction.commandName}`, {
-    userLimit,
-    channel: channel.id,
-    ...interactionDetails(interaction),
-  });
-};
 
-export const limit = new Command({
-  preconditions: [checkCreator, checkSecondary],
-  data,
-  help,
-  response,
-});
+  conditions = [creatorCheck, secondaryCheck];
+
+  response = async (interaction: ChatInputCommandInteraction<CacheType>) => {
+    const userLimit = interaction.options.getInteger('number', true);
+    const guildMember = await interaction.guild.members.cache.get(
+      interaction.user.id
+    );
+
+    const { channel } = guildMember.voice;
+
+    if (!channel.manageable) {
+      interaction.reply({
+        embeds: [ErrorEmbed(`Cannot edit <#${channel.id}>.`)],
+      });
+      return;
+    }
+    channel.edit({ userLimit });
+    interaction.reply(`<#${channel.id}> limit changed to ${userLimit}.`);
+    this.publish({
+      userLimit,
+      channel: channel.id,
+      ...interactionDetails(interaction),
+    });
+  };
+
+  data = new SlashCommandBuilder()
+    .setName('limit')
+    .setDMPermission(false)
+    .setDefaultMemberPermissions(PermissionFlagsBits.ManageChannels)
+    .setDescription(
+      'Edit the max number of people allowed in the current channel'
+    )
+    .addIntegerOption((option) =>
+      option
+        .setDescription(
+          'The maximum number of people that are allowed to join the channel.'
+        )
+        .setName('number')
+        .setRequired(true)
+    );
+}

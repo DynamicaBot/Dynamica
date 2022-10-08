@@ -1,5 +1,5 @@
 import db from '@db';
-import logger from '@utils/logger';
+import signaleLogger from '@utils/logger';
 import {
   ChannelType,
   Client,
@@ -8,21 +8,21 @@ import {
   GuildChannel,
   GuildMember,
 } from 'discord.js';
-import {
-  DynamicaChannel,
-  DynamicaChannelType,
-} from './DynamicaChannel.interface';
+import { Signale } from 'signale';
+import { DynamicaChannelType } from './DynamicaChannel.interface';
 import { MQTT } from './MQTT';
 import DynamicaSecondary from './Secondary';
 
-export default class DynamicaPrimary
-  implements DynamicaChannel<DynamicaChannelType.Primary>
-{
+export default class DynamicaPrimary {
   id: string;
   guildId: string;
   static channels: DynamicaPrimary[] = [];
 
   type: DynamicaChannelType.Primary;
+
+  private static readonly logger = signaleLogger.scope('Primary');
+
+  private readonly logger: Signale;
 
   public static add(channel: DynamicaPrimary) {
     this.channels.push(channel);
@@ -47,6 +47,7 @@ export default class DynamicaPrimary
     this.id = channelId;
     this.guildId = guildId;
     this.type = DynamicaChannelType.Primary;
+    this.logger = signaleLogger.scope('Primary', this.id);
     DynamicaPrimary.add(this);
   }
 
@@ -77,9 +78,11 @@ export default class DynamicaPrimary
         },
       });
 
-      logger.debug(
-        `New primary channel ${channel.name} created by ${primary.creator}.`
-      );
+      this.logger
+        .scope('Primary', channel.id)
+        .debug(
+          `New primary channel ${channel.name} created by ${primary.creator}.`
+        );
 
       const mqtt = MQTT.getInstance();
 
@@ -92,7 +95,7 @@ export default class DynamicaPrimary
 
       return createdChannel;
     } catch (error) {
-      logger.error('Error creating new primary channel:', error);
+      this.logger.error('Error creating new primary channel:', error);
     }
   }
 
@@ -107,16 +110,16 @@ export default class DynamicaPrimary
       } catch (error) {
         if (error instanceof DiscordAPIError) {
           if (error.code === 10003) {
-            logger.debug(
+            this.logger.debug(
               `Primary channel ${channel.name} (${channel.id}) was already deleted.`
             );
             this.deletePrisma();
             DynamicaPrimary.remove(this.id);
           } else {
-            logger.error(error);
+            this.logger.error(error);
           }
         } else {
-          logger.error(error);
+          this.logger.error(error);
         }
       } finally {
         const mqtt = MQTT.getInstance();

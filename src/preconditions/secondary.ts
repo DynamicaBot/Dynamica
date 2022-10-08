@@ -1,36 +1,22 @@
 import Condition from '@/classes/Condition';
-import db from '@db';
-import logger from '@utils/logger';
+import { ConditionError } from '@/classes/ConditionError';
+import DynamicaSecondary from '@/classes/Secondary';
+import { GuildMember } from 'discord.js';
 
-export default new Condition(async (interaction) => {
-  try {
-    const guildMember = await interaction.guild.members.cache.get(
-      interaction.user.id
+export const secondaryCheck = new Condition(async (interaction) => {
+  if (!(interaction.member instanceof GuildMember))
+    throw new ConditionError("You're not in a guild.");
+
+  const channel = interaction.member.voice;
+
+  if (!channel)
+    throw new ConditionError(
+      'You need to be in a voice channel to use this command.'
     );
 
-    const channel = guildMember?.voice.channel;
-    if (!channel) {
-      return {
-        success: false,
-        message: 'You must be in a voice channel to use this command.',
-      };
-    }
-
-    const channelConfig = await db.secondary.findUnique({
-      where: {
-        id: channel.id,
-      },
-    });
-    if (channelConfig) {
-      return { success: true };
-    }
-    return {
-      success: false,
-      message:
-        'You need to be in a channel managed by the bot to use this command.',
-    };
-  } catch (error) {
-    logger.error('error in secondary check', error);
-    return { success: false, message: 'An error occured.' };
-  }
+  const secondary = DynamicaSecondary.get(channel.channelId);
+  if (!secondary)
+    throw new ConditionError(
+      'You must be in a voice channel managed by the bot to use this command.'
+    );
 });

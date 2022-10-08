@@ -1,17 +1,22 @@
 import autocompletes from '@autocompletes';
 import Autocomplete from '@classes/Autocomplete';
-import Event from '@classes/Event';
-import logger from '@utils/logger';
+import { Event } from '@classes/Event';
+import { CacheType, Interaction } from 'discord.js';
 
-export default new Event<'interactionCreate'>()
-  .setOnce(false)
-  .setEvent('interactionCreate')
-  .setResponse(async (interaction) => {
+export class AutocompleteEvent extends Event<'interactionCreate'> {
+  constructor() {
+    super('interactionCreate');
+  }
+
+  public response: (
+    interaction: Interaction<CacheType>
+  ) => void | Promise<void> = async (interaction) => {
     if (!interaction.isAutocomplete()) return;
     try {
       const autocomplete: Autocomplete = autocompletes[interaction.commandName];
       autocomplete.response(interaction);
     } catch (error) {
-      logger.error(error);
+      this.logger.error(error);
     }
-  });
+  };
+}

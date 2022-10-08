@@ -1,12 +1,9 @@
-import { MQTT } from '@/classes/MQTT';
-import help from '@/help/name';
+import { Command } from '@/classes/Command';
+import { secondaryCheck } from '@/preconditions/secondary';
 import { interactionDetails } from '@/utils/mqtt';
-import Command from '@classes/Command';
 import DynamicaSecondary from '@classes/Secondary';
 import db from '@db';
 import { SlashCommandBuilder } from '@discordjs/builders';
-import checkManager from '@preconditions/manager';
-import checkSecondary from '@preconditions/secondary';
 import logger from '@utils/logger';
 import {
   CacheType,
@@ -14,45 +11,43 @@ import {
   PermissionFlagsBits,
 } from 'discord.js';
 
-const data = new SlashCommandBuilder()
-  .setName('name')
-  .setDMPermission(false)
-  .setDefaultMemberPermissions(PermissionFlagsBits.ManageChannels)
-  .setDescription('Edit the name of the current channel.')
-  .addStringOption((option) =>
-    option
-      .setName('name')
-      .setDescription('The new name of the channel (can be a template).')
-      .setRequired(true)
-  );
+export class NameCommand extends Command {
+  constructor() {
+    super('name');
+  }
 
-const response = async (
-  interaction: ChatInputCommandInteraction<CacheType>
-) => {
-  const name = interaction.options.getString('name');
-  const mqtt = MQTT.getInstance();
-  const guildMember = await interaction.guild.members.cache.get(
-    interaction.user.id
-  );
+  conditions = [secondaryCheck];
 
-  const channel = guildMember?.voice.channel;
+  data = new SlashCommandBuilder()
+    .setName('name')
+    .setDMPermission(false)
+    .setDefaultMemberPermissions(PermissionFlagsBits.ManageChannels)
+    .setDescription('Edit the name of the current channel.')
+    .addStringOption((option) =>
+      option
+        .setName('name')
+        .setDescription('The new name of the channel (can be a template).')
+        .setRequired(true)
+    );
 
-  await db.secondary.update({ where: { id: channel.id }, data: { name } });
-  logger.info(`${channel.id} name changed.`);
+  response = async (interaction: ChatInputCommandInteraction<CacheType>) => {
+    const name = interaction.options.getString('name');
+    const guildMember = await interaction.guild.members.cache.get(
+      interaction.user.id
+    );
 
-  await DynamicaSecondary.get(channel.id).update(interaction.client);
+    const channel = guildMember?.voice.channel;
 
-  interaction.reply(`Channel name changed to \`${name}\`.`);
-  mqtt?.publish(`dynamica/command/${interaction.commandName}`, {
-    channel: channel.id,
-    name,
-    ...interactionDetails(interaction),
-  });
-};
+    await db.secondary.update({ where: { id: channel.id }, data: { name } });
+    logger.info(`${channel.id} name changed.`);
 
-export const name = new Command({
-  preconditions: [checkManager, checkSecondary],
-  data,
-  response,
-  help,
-});
+    await DynamicaSecondary.get(channel.id).update(interaction.client);
+
+    interaction.reply(`Channel name changed to \`${name}\`.`);
+    this.publish({
+      channel: channel.id,
+      name,
+      ...interactionDetails(interaction),
+    });
+  };
+}

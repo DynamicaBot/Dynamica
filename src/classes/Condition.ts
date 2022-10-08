@@ -4,7 +4,7 @@ type CheckResult = { success: boolean; message?: string };
 
 type ConditionFunction = (
   interaction: ChatInputCommandInteraction<CacheType>
-) => Promise<CheckResult>;
+) => Promise<void>;
 
 export default class Condition {
   private condition: ConditionFunction;
@@ -15,7 +15,7 @@ export default class Condition {
 
   async check(
     interaction: ChatInputCommandInteraction<CacheType>
-  ): Promise<CheckResult> {
-    return this.condition(interaction);
+  ): Promise<void> {
+    await this.condition(interaction);
   }
 }
