@@ -1,7 +1,7 @@
 import Command from '@/classes/Command';
+import Secondaries from '@/classes/Secondaries';
 import { secondaryCheck } from '@/preconditions/secondary';
 import interactionDetails from '@/utils/mqtt';
-import DynamicaSecondary from '@classes/Secondary';
 import {
   CacheType,
   ChatInputCommandInteraction,
@@ -31,7 +31,7 @@ export default class AllyourbaseCommand extends Command {
 
     const { channelId } = guildMember.voice;
 
-    const secondaryChannel = DynamicaSecondary.get(channelId);
+    const secondaryChannel = Secondaries.get(channelId);
 
     if (secondaryChannel) {
       await secondaryChannel.changeOwner(interaction.user);

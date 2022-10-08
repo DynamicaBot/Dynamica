@@ -1,8 +1,8 @@
 import Command from '@/classes/Command';
+import Primaries from '@/classes/Primaries';
+import Secondaries from '@/classes/Secondaries';
 import { ErrorEmbed } from '@/utils/discordEmbeds';
 import interactionDetails from '@/utils/mqtt';
-import DynamicaPrimary from '@classes/Primary';
-import DynamicaSecondary from '@classes/Secondary';
 import db from '@db';
 import { EmbedBuilder, SlashCommandBuilder } from 'discord.js';
 
@@ -49,7 +49,7 @@ export default class InfoCommand extends Command {
     const subcommand = interaction.options.getSubcommand(true);
     if (subcommand === 'primary') {
       const chosenPrimary = interaction.options.getString('primary', true);
-      const primary = DynamicaPrimary.get(chosenPrimary);
+      const primary = Primaries.get(chosenPrimary);
       if (!primary) {
         interaction.reply({
           embeds: [ErrorEmbed('That primary channel does not exist.')],
@@ -89,7 +89,7 @@ export default class InfoCommand extends Command {
         'secondarychannel',
         true
       );
-      const secondary = DynamicaSecondary.get(chosenSecondary);
+      const secondary = Secondaries.get(chosenSecondary);
       if (!secondary) {
         interaction.reply({
           ephemeral: true,

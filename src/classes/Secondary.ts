@@ -1,7 +1,6 @@
 // eslint-disable-next-line import/no-cycle
 import updatePresence from '@/utils/presence';
 import db from '@db';
-import Prisma from '@prisma/client';
 import { PrismaClientKnownRequestError } from '@prisma/client/runtime/index.js';
 import formatChannelName from '@utils/format';
 import signaleLogger from '@utils/logger';
@@ -12,15 +11,14 @@ import {
   DiscordAPIError,
   GuildMember,
   User,
+  VoiceBasedChannel,
 } from 'discord.js';
 import { Signale } from 'signale';
 import MQTT from './MQTT';
+import Secondaries from './Secondaries';
 // eslint-disable-next-line import/no-cycle
-import DynamicaPrimary from './Primary';
 
 export default class DynamicaSecondary {
-  static channels: DynamicaSecondary[] = [];
-
   id: string;
 
   guildId: string;
@@ -37,36 +35,7 @@ export default class DynamicaSecondary {
     this.id = channelId;
     this.parentId = primaryId;
     this.logger = signaleLogger.scope('Secondary', this.id);
-    DynamicaSecondary.add(this);
   }
-
-  static get count() {
-    return this.channels.length;
-  }
-
-  public static add(channel: DynamicaSecondary) {
-    this.channels.push(channel);
-  }
-
-  public static remove(id: string) {
-    this.channels = this.channels.filter((channel) => channel.id !== id);
-  }
-
-  public static get(id: string | undefined) {
-    return this.channels.find((channel) => channel.id === id);
-  }
-
-  /**
-   * Get the secondary channels from a primary id.
-   * @param id The id of the parent channel.
-   * @returns array of secondary channels.
-   */
-  public static getFromPrimaryId(id: string) {
-    return this.channels.filter((channel) => channel.parentId === id);
-  }
-
-  public static has = (id: string) =>
-    this.channels.some((channel) => channel.id === id);
 
   /**
    * Create a secondary channel.
@@ -75,15 +44,16 @@ export default class DynamicaSecondary {
    * @param member guild member who created the channel
    * @returns
    */
-  public static async initalise(primary: DynamicaPrimary, member: GuildMember) {
-    const { guild, client } = member;
+  public static async initalise(
+    primary: VoiceBasedChannel,
+    member: GuildMember
+  ) {
+    const { guild } = member;
     const aliases = await db.alias.findMany({
       where: { guildId: guild.id },
     });
 
-    const primaryDiscordChannel = await primary.discord(client);
-
-    const activities = primaryDiscordChannel.members
+    const activities = primary.members
       .filter((listMember) => listMember.presence.activities.length > 0)
       .filter((listMember) => !listMember.user.bot)
       .map((listMember) => listMember.presence.activities)
@@ -92,7 +62,9 @@ export default class DynamicaSecondary {
       .filter((activity) => activity.type !== ActivityType.Listening)
       .map((activity) => activity.name);
 
-    const primaryPrisma = await primary.prisma();
+    const primaryPrisma = await db.primary.findUnique({
+      where: { id: primary.id },
+    });
 
     const str = !activities.length
       ? primaryPrisma.generalName
@@ -112,17 +84,15 @@ export default class DynamicaSecondary {
         channelNumber: adjacentSecondaryCount + 1,
         activities,
         aliases,
-        memberCount: primaryDiscordChannel.members.size,
+        memberCount: primary.members.size,
         locked: false,
       }),
-      parent: primaryDiscordChannel.parent ?? undefined,
-      position: primaryDiscordChannel.position
-        ? primaryDiscordChannel.position + 1
-        : undefined,
-      bitrate: primaryDiscordChannel.bitrate ?? undefined,
+      parent: primary.parent ?? undefined,
+      position: primary.position ? primary.position + 1 : undefined,
+      bitrate: primary.bitrate ?? undefined,
     });
 
-    if (secondary.parent && primaryDiscordChannel.permissionsLocked) {
+    if (secondary.parent && primary.permissionsLocked) {
       secondary.lockPermissions();
     }
 
@@ -157,6 +127,7 @@ export default class DynamicaSecondary {
       guild.id,
       primary.id
     );
+    Secondaries.add(dynamicaSecondary);
     return dynamicaSecondary;
   }
 
@@ -173,12 +144,11 @@ export default class DynamicaSecondary {
     if (discordChannel.members.size === 0) {
       this.delete(client);
     }
-    const prismaChannel = (await this.prisma()) as Prisma.Secondary & {
-      guild: Prisma.Guild;
-    };
+    const prismaChannel = await this.prisma();
 
-    const primary = DynamicaPrimary.get(this.parentId);
-    const primaryPrisma = await primary.prisma();
+    const primaryPrisma = await db.primary.findUnique({
+      where: { id: this.parentId },
+    });
 
     const adjacentSecondaryCount = await db.secondary.count({
       where: {
@@ -248,7 +218,7 @@ export default class DynamicaSecondary {
     const mqtt = MQTT.getInstance();
     mqtt?.publish(`dynamica/secondary/update`, {
       id: this.id,
-      primaryId: primary.id,
+      primaryId: this.parentId,
       name,
       locked,
       activities,
@@ -370,7 +340,7 @@ export default class DynamicaSecondary {
     mqtt?.publish(`dynamica/secondary/delete`, {
       id: this.id,
     });
-    DynamicaSecondary.remove(this.id);
+    Secondaries.remove(this.id);
     updatePresence(client);
   }
 

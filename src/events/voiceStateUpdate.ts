@@ -1,6 +1,7 @@
+import Primaries from '@/classes/Primaries';
+import Secondaries from '@/classes/Secondaries';
 import updatePresence from '@/utils/presence';
 import Event from '@classes/Event';
-import DynamicaPrimary from '@classes/Primary';
 import DynamicaSecondary from '@classes/Secondary';
 import { VoiceState } from 'discord.js';
 
@@ -19,10 +20,10 @@ export default class VoiceStateUpdateEvent extends Event<'voiceStateUpdate'> {
   ) => {
     if (oldVoiceState?.channelId === newVoiceState?.channelId) return;
     // If the channel doesn't change then just ignore it.
-    const oldChannelSecondary = DynamicaSecondary.get(oldVoiceState.channelId);
+    const oldChannelSecondary = Secondaries.get(oldVoiceState.channelId);
 
-    const newChannelPrimary = DynamicaPrimary.get(newVoiceState.channelId);
-    const newChannelSecondary = DynamicaSecondary.get(newVoiceState.channelId);
+    const newChannelPrimary = Primaries.get(newVoiceState.channelId);
+    const newChannelSecondary = Secondaries.get(newVoiceState.channelId);
 
     if (oldChannelSecondary) {
       const oldSecondaryDiscord = await oldChannelSecondary.discord(
@@ -37,7 +38,7 @@ export default class VoiceStateUpdateEvent extends Event<'voiceStateUpdate'> {
 
     if (newChannelPrimary) {
       await DynamicaSecondary.initalise(
-        newChannelPrimary,
+        newVoiceState.channel,
         newVoiceState.member
       );
       updatePresence(newVoiceState.client);

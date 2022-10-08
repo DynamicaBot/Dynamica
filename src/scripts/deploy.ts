@@ -3,6 +3,7 @@ import registerCommands from '@/register-commands';
 import { REST } from '@discordjs/rest';
 import logger from '@utils/logger';
 import { Routes } from 'discord-api-types/v10';
+
 const { TOKEN, CLIENT_ID, GUILD_ID } = process.env;
 const deployLogger = logger.scope('Deploy');
 
@@ -12,7 +13,7 @@ export default async () => {
   } else {
     deployLogger.time('deploy');
 
-    new registerCommands();
+    registerCommands();
 
     const { json: commandData } = Commands;
 

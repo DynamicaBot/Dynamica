@@ -1,8 +1,8 @@
 import Command from '@/classes/Command';
 import MQTT from '@/classes/MQTT';
+import Secondaries from '@/classes/Secondaries';
 import { creatorCheck } from '@/preconditions/creator';
 import interactionDetails from '@/utils/mqtt';
-import DynamicaSecondary from '@classes/Secondary';
 import {
   CacheType,
   ChatInputCommandInteraction,
@@ -40,7 +40,7 @@ export default class TransferCommand extends Command {
 
     const { channelId } = guildMember.voice;
 
-    const secondaryChannel = DynamicaSecondary.get(channelId);
+    const secondaryChannel = Secondaries.get(channelId);
     if (secondaryChannel) {
       await secondaryChannel.changeOwner(user);
       interaction.reply(

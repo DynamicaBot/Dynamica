@@ -1,10 +1,10 @@
-import DynamicaSecondary from '@/classes/Secondary';
+import Secondaries from '@/classes/Secondaries';
 import { ActivityType, Client } from 'discord.js';
 import logger from './logger';
 
 const updatePresence = async (client: Client<true>) => {
   try {
-    const secondaryCount = DynamicaSecondary.count;
+    const secondaryCount = Secondaries.count;
 
     client.user.setActivity({
       type: ActivityType.Watching,

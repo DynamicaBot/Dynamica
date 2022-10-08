@@ -1,7 +1,7 @@
 import Command from '@/classes/Command';
 import MQTT from '@/classes/MQTT';
+import Secondaries from '@/classes/Secondaries';
 import interactionDetails from '@/utils/mqtt';
-import DynamicaSecondary from '@classes/Secondary';
 import db from '@db';
 import {
   CacheType,
@@ -27,7 +27,7 @@ export default class TemplateCommand extends Command {
     });
 
     primary.secondaries.forEach(async (secondary) => {
-      const dynamicaSecondary = DynamicaSecondary.get(secondary.id);
+      const dynamicaSecondary = Secondaries.get(secondary.id);
 
       dynamicaSecondary.update(interaction.client);
     });

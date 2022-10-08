@@ -29,7 +29,7 @@ export default class DynamicaAlias {
     guildId: string,
     activity: string,
     alias: string
-  ): Promise<DynamicaAlias> {
+  ) {
     // const { alias, activity } = data;
 
     const dbAlias = await db.alias.upsert({
@@ -51,7 +51,6 @@ export default class DynamicaAlias {
     });
     const newAlias = new DynamicaAlias(dbAlias.guildId, dbAlias.id);
     Aliases.add(newAlias);
-    return new DynamicaAlias(dbAlias.guildId, dbAlias.id);
   }
 
   async update(alias: string, activity: string) {

@@ -1,8 +1,8 @@
 import Command from '@/classes/Command';
 import MQTT from '@/classes/MQTT';
+import Secondaries from '@/classes/Secondaries';
 import { creatorCheck } from '@/preconditions/creator';
 import interactionDetails from '@/utils/mqtt';
-import DynamicaSecondary from '@classes/Secondary';
 import { ErrorEmbed } from '@utils/discordEmbeds';
 import {
   CacheType,
@@ -33,7 +33,7 @@ export default class UnlockCommand extends Command {
 
     const { channelId } = guildMember.voice;
 
-    const dynamicaSecondary = DynamicaSecondary.get(channelId);
+    const dynamicaSecondary = Secondaries.get(channelId);
 
     if (dynamicaSecondary) {
       await dynamicaSecondary.unlock(interaction.client);

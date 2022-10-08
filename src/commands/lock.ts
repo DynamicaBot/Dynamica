@@ -1,8 +1,8 @@
 import Command from '@/classes/Command';
+import Secondaries from '@/classes/Secondaries';
 import { creatorCheck } from '@/preconditions/creator';
 import { secondaryCheck } from '@/preconditions/secondary';
 import interactionDetails from '@/utils/mqtt';
-import DynamicaSecondary from '@classes/Secondary';
 import {
   CacheType,
   ChatInputCommandInteraction,
@@ -30,7 +30,7 @@ export default class LockCommand extends Command {
 
     const channelId = guildMember?.voice.channelId;
 
-    const dynamicaSecondary = DynamicaSecondary.get(channelId);
+    const dynamicaSecondary = Secondaries.get(channelId);
 
     if (dynamicaSecondary) {
       await dynamicaSecondary.lock(interaction.client);

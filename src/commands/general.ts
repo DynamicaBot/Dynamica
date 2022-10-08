@@ -1,6 +1,6 @@
 import Command from '@/classes/Command';
+import Secondaries from '@/classes/Secondaries';
 import interactionDetails from '@/utils/mqtt';
-import DynamicaSecondary from '@classes/Secondary';
 import db from '@db';
 import {
   CacheType,
@@ -45,7 +45,7 @@ export default class GeneralCommand extends Command {
     });
 
     updatedPrimary.secondaries.forEach(async (secondary) => {
-      await DynamicaSecondary.get(secondary.id).update(interaction.client);
+      await Secondaries.get(secondary.id).update(interaction.client);
     });
 
     await interaction.reply(

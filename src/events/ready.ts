@@ -3,6 +3,8 @@ import Aliases from '@/classes/Aliases';
 import DynamicaGuild from '@/classes/Guild';
 import Guilds from '@/classes/Guilds';
 import MQTT from '@/classes/MQTT';
+import Primaries from '@/classes/Primaries';
+import Secondaries from '@/classes/Secondaries';
 import DynamicaSecondary from '@/classes/Secondary';
 import updatePresence from '@/utils/presence';
 // import { updatePresence } from '@/utils';
@@ -40,6 +42,7 @@ export default class ReadyEvent extends Event<'ready'> {
               element.id,
               element.guildId
             );
+            Primaries.add(existingPrimary);
             await existingPrimary.update(client);
           } catch (error) {
             if (error instanceof DiscordAPIError) {
@@ -48,7 +51,7 @@ export default class ReadyEvent extends Event<'ready'> {
                   `Primary channel (${element.id}) was already deleted.`
                 );
                 await db.primary.delete({ where: { id: element.id } });
-                DynamicaPrimary.remove(element.id);
+                Primaries.remove(element.id);
               } else {
                 this.logger.error(error);
               }
@@ -56,7 +59,7 @@ export default class ReadyEvent extends Event<'ready'> {
           }
         })
       );
-      this.logger.info(`Loaded ${DynamicaPrimary.count} primary channels`);
+      this.logger.info(`Loaded ${Primaries.count} primary channels`);
 
       await Promise.all(
         secondaries.map(async (element) => {
@@ -68,6 +71,7 @@ export default class ReadyEvent extends Event<'ready'> {
               element.guildId,
               element.primaryId
             );
+            Secondaries.add(existingSecondary);
             await existingSecondary.update(client);
           } catch (error) {
             if (error instanceof DiscordAPIError) {
@@ -76,7 +80,7 @@ export default class ReadyEvent extends Event<'ready'> {
                   `Secondary channel (${element.id}) was already deleted.`
                 );
                 await db.secondary.delete({ where: { id: element.id } });
-                DynamicaSecondary.remove(element.id);
+                Secondaries.remove(element.id);
                 // updatePresence(client);
               } else {
                 this.logger.error(error);
@@ -85,7 +89,7 @@ export default class ReadyEvent extends Event<'ready'> {
           }
         })
       );
-      this.logger.info(`Loaded ${DynamicaSecondary.count} secondary channels`);
+      this.logger.info(`Loaded ${Secondaries.count} secondary channels`);
 
       await Promise.all(
         aliases.map(async (element) => {

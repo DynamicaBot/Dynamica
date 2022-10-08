@@ -1,7 +1,7 @@
 import Command from '@/classes/Command';
+import Secondaries from '@/classes/Secondaries';
 import { secondaryCheck } from '@/preconditions/secondary';
 import interactionDetails from '@/utils/mqtt';
-import DynamicaSecondary from '@classes/Secondary';
 import db from '@db';
 import {
   CacheType,
@@ -40,7 +40,7 @@ export default class NameCommand extends Command {
     await db.secondary.update({ where: { id: channel.id }, data: { name } });
     this.logger.info(`${channel.id} name changed.`);
 
-    await DynamicaSecondary.get(channel.id).update(interaction.client);
+    await Secondaries.get(channel.id).update(interaction.client);
 
     interaction.reply(`Channel name changed to \`${name}\`.`);
     this.publish({

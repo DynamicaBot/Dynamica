@@ -10,44 +10,22 @@ import {
 } from 'discord.js';
 import { Signale } from 'signale';
 import MQTT from './MQTT';
-// eslint-disable-next-line import/no-cycle
+import Primaries from './Primaries';
 import DynamicaSecondary from './Secondary';
 
 export default class DynamicaPrimary {
-  id: string;
+  public id: string;
 
-  guildId: string;
-
-  static channels: DynamicaPrimary[] = [];
+  public guildId: string;
 
   private static readonly logger = signaleLogger.scope('Primary');
 
   private readonly logger: Signale;
 
-  public static add(channel: DynamicaPrimary) {
-    this.channels.push(channel);
-  }
-
-  public static remove(id: string) {
-    this.channels = this.channels.filter((channel) => channel.id !== id);
-  }
-
-  public static get(id: string | undefined) {
-    return this.channels.find((channel) => channel.id === id);
-  }
-
-  static get count() {
-    return this.channels.length;
-  }
-
-  public static has = (id: string) =>
-    this.channels.some((channel) => channel.id === id);
-
   constructor(channelId: string, guildId: string) {
     this.id = channelId;
     this.guildId = guildId;
     this.logger = signaleLogger.scope('Primary', this.id);
-    DynamicaPrimary.add(this);
   }
 
   /**
@@ -90,7 +68,7 @@ export default class DynamicaPrimary {
     });
 
     const createdChannel = new DynamicaPrimary(channel.id, guild.id);
-
+    Primaries.add(createdChannel);
     return createdChannel;
   }
 
@@ -109,7 +87,7 @@ export default class DynamicaPrimary {
               `Primary channel ${channel.name} (${channel.id}) was already deleted.`
             );
             this.deletePrisma();
-            DynamicaPrimary.remove(this.id);
+            Primaries.remove(this.id);
           } else {
             this.logger.error(error);
           }
@@ -151,10 +129,14 @@ export default class DynamicaPrimary {
   }
 
   async update(client: Client<true>) {
-    const { members } = await this.discord(client);
+    const channel = await this.discord(client);
+    const { members } = channel;
     if (members.size) {
       const primaryMember = members.at(0);
-      const secondary = await DynamicaSecondary.initalise(this, primaryMember);
+      const secondary = await DynamicaSecondary.initalise(
+        channel,
+        primaryMember
+      );
       const others = [...members.values()].slice(1);
       await Promise.all(
         others.map(async (member) => {
