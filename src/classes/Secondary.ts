@@ -320,7 +320,7 @@ export default class DynamicaSecondary {
     } catch (error) {
       if (error instanceof PrismaClientKnownRequestError) {
         if (error.code === 'P2025') {
-          console.log(error);
+          this.logger.error(error);
           this.logger.warn(`Secondary channel not found.`);
         } else {
           this.logger.error(error);
