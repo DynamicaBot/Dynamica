@@ -49,7 +49,7 @@ export default new Autocomplete()
       keys: ['name'],
     });
     const query = fuse.search(value.toString());
-    console.log({ results: query.map((result) => result.item).slice(0, 24) });
+    // console.log({ results: query.map((result) => result.item).slice(0, 24) });
     interaction.respond(
       value.toString()
         ? query.map((result) => result.item).slice(0, 24)

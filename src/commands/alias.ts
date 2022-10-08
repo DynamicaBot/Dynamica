@@ -73,7 +73,7 @@ const response = async (
   interaction: ChatInputCommandInteraction<CacheType>
 ) => {
   const subcommand = interaction.options.getSubcommand(true);
-  console.log({ subcommand });
+  // console.log({ subcommand });
   const mqtt = MQTT.getInstance();
   if (subcommand === 'add') {
     const activity = interaction.options.getString('activity', true);

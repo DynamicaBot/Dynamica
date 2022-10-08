@@ -22,10 +22,7 @@ const data = new SlashCommandBuilder()
 
 const response = async (interaction) => {
   const state = interaction.options.getBoolean('state', true);
-  const guild = await new DynamicaGuild(
-    interaction.client,
-    interaction.guildId
-  ).fetch();
+  const guild = DynamicaGuild.get(interaction.guildId);
   guild.setAllowJoin(state);
   interaction.reply(`${state ? 'Enabled' : 'Disabled'} Join Requests`);
   const mqtt = MQTT.getInstance();

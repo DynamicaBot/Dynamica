@@ -1,4 +1,5 @@
 import DynamicaAlias from '@/classes/Alias';
+import DynamicaGuild from '@/classes/Guild';
 import { MQTT } from '@/classes/MQTT';
 import DynamicaSecondary from '@/classes/Secondary';
 import Event from '@classes/Event';
@@ -19,6 +20,7 @@ export default new Event<'ready'>()
       const secondaries = await db.secondary.findMany();
       const primaries = await db.primary.findMany();
       const aliases = await db.alias.findMany();
+      const guilds = await db.guild.findMany();
 
       primaries.forEach(async (element) => {
         try {
@@ -71,6 +73,18 @@ export default new Event<'ready'>()
 
       aliases.forEach(async (element) => {
         new DynamicaAlias(element.guildId, element.id);
+      });
+
+      guilds.forEach(async (element) => {
+        try {
+          const guild = await client.guilds.fetch(element.id);
+          new DynamicaGuild(guild.id);
+        } catch (error) {
+          if (error instanceof DiscordAPIError) {
+            await db.guild.delete({ where: { id: element.id } });
+            logger.error(error);
+          }
+        }
       });
 
       mqtt?.publish('dynamica/presence', {

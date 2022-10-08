@@ -13,6 +13,6 @@ export default new Event<'presenceUpdate'>()
     const dynamicaSecondary = DynamicaSecondary.get(channelId);
 
     if (dynamicaSecondary) {
-      dynamicaSecondary.update(oldPresence.client);
+      dynamicaSecondary.update(newPresence.client);
     }
   });

@@ -9,6 +9,7 @@ import {
   CacheType,
   ChatInputCommandInteraction,
   GuildChannel,
+  GuildMember,
   PermissionFlagsBits,
 } from 'discord.js';
 
@@ -34,10 +35,10 @@ const response = async (
     'section'
   ) as GuildChannel | null;
   const mqtt = MQTT.getInstance();
-
+  if (!(interaction.member instanceof GuildMember)) return;
   const newPrimary = await DynamicaPrimary.initialise(
     interaction.guild,
-    interaction.user,
+    interaction.member,
     section
   );
 

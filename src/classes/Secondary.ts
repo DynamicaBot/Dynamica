@@ -9,7 +9,6 @@ import {
   ChannelType,
   Client,
   DiscordAPIError,
-  Guild,
   GuildMember,
   User,
 } from 'discord.js';
@@ -72,15 +71,13 @@ export default class DynamicaSecondary
    * @param member guild member who created the channel
    * @returns
    */
-  public static async initalise(
-    client: Client<true>,
-    primary: DynamicaPrimary,
-    guild: Guild,
-    member: GuildMember
-  ) {
+  public static async initalise(primary: DynamicaPrimary, member: GuildMember) {
+    const { guild, client } = member;
     const aliases = await db.alias.findMany({
       where: { guildId: guild.id },
     });
+
+    console.log((await member.fetch()).presence.activities);
 
     const primaryDiscordChannel = await primary.discord(client);
     console.log({
@@ -110,7 +107,7 @@ export default class DynamicaSecondary
       },
     });
 
-    const secondary = await guild.channels.create({
+    const secondary = await member.guild.channels.create({
       type: ChannelType.GuildVoice,
       name: formatChannelName(str, {
         creator: member?.displayName as string,
@@ -148,7 +145,7 @@ export default class DynamicaSecondary
       });
 
     logger.debug(
-      `Secondary channel ${secondary.name} created by ${member?.user.tag} in ${guild.name}.`
+      `Secondary channel ${secondary.name} created by ${member?.user.tag} in ${member.guild.name}.`
     );
 
     const mqtt = MQTT.getInstance();
@@ -321,8 +318,7 @@ export default class DynamicaSecondary
   }
 
   async discord(client: Client<true>) {
-    const guild = await client.guilds.fetch(this.guildId);
-    const channel = await guild.channels.fetch(this.id);
+    const channel = await client.channels.fetch(this.id);
     if (!channel.isVoiceBased()) {
       throw new Error('Not voice based');
     }

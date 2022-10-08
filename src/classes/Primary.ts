@@ -7,7 +7,7 @@ import {
   DiscordAPIError,
   Guild,
   GuildChannel,
-  User,
+  GuildMember,
 } from 'discord.js';
 import {
   DynamicaChannel,
@@ -53,7 +53,11 @@ export default class DynamicaPrimary
    * @param user The user who ran the command
    * @param section The section that the channel should be assigned to
    */
-  static async initialise(guild: Guild, user: User, section?: GuildChannel) {
+  static async initialise(
+    guild: Guild,
+    member: GuildMember,
+    section?: GuildChannel
+  ) {
     try {
       const parent = section?.id;
 
@@ -65,7 +69,7 @@ export default class DynamicaPrimary
       const primary = await db.primary.create({
         data: {
           id: channel.id,
-          creator: user.id,
+          creator: member.id,
           guildId: guild.id,
         },
       });
@@ -151,12 +155,7 @@ export default class DynamicaPrimary
     const { members } = await this.discord(client);
     if (members.size) {
       const primaryMember = members.at(0);
-      const secondary = await DynamicaSecondary.initalise(
-        client,
-        this,
-        guild,
-        primaryMember
-      );
+      const secondary = await DynamicaSecondary.initalise(this, primaryMember);
       const others = [...members.values()].slice(1);
       await Promise.all(
         others.map(async (member) => {
