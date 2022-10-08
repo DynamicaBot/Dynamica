@@ -29,6 +29,10 @@ export const creatorCheck = new Condition(async (interaction) => {
       );
   } catch (error) {
     logger.error(error);
-    throw new ConditionError('An unknown error occured.');
+    if (error instanceof ConditionError) {
+      throw error;
+    } else {
+      throw new ConditionError('An unknown error occured.');
+    }
   }
 });
