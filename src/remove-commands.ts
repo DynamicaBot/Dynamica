@@ -1,7 +1,8 @@
-import remove from "./scripts/remove";
-import { config} from 'dotenv'
+import { config } from 'dotenv';
+import remove from './scripts/remove';
+
 config();
 
 (async () => {
-  await remove()
-})()
+  await remove();
+})();

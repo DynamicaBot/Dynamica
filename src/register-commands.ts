@@ -1,44 +1,42 @@
-import { Commands } from './classes/Command';
-import {
-  AliasCommand,
-  AllowjoinCommand,
-  AllyourbaseCommand,
-  BitrateCommand,
-  CreateCommand,
-  GeneralCommand,
-  HelpCommand,
-  InfoCommand,
-  JoinCommand,
-  LimitCommand,
-  LockCommand,
-  NameCommand,
-  PermissionCommand,
-  PingCommand,
-  TemplateCommand,
-  TransferCommand,
-  UnlockCommand,
-  VersionCommand,
-} from './commands';
+import Commands from './classes/Commands';
+import AliasCommand from './commands/alias';
+import AllowjoinCommand from './commands/allowjoin';
+import AllyourbaseCommand from './commands/allyourbase';
+import BitrateCommand from './commands/bitrate';
+import CreateCommand from './commands/create';
+import GeneralCommand from './commands/general';
+import HelpCommand from './commands/help';
+import InfoCommand from './commands/info';
+import JoinCommand from './commands/join';
+import LimitCommand from './commands/limit';
+import LockCommand from './commands/lock';
+import NameCommand from './commands/name';
+import PermissionCommand from './commands/permission';
+import PingCommand from './commands/ping';
+import TemplateCommand from './commands/template';
+import TransferCommand from './commands/transfer';
+import UnlockCommand from './commands/unlock';
+import VersionCommand from './commands/version';
 
-export class RegisterCommands {
-  constructor() {
-    Commands.register(new AliasCommand());
-    Commands.register(new AllowjoinCommand());
-    Commands.register(new AllyourbaseCommand());
-    Commands.register(new BitrateCommand());
-    Commands.register(new CreateCommand());
-    Commands.register(new GeneralCommand());
-    Commands.register(new HelpCommand());
-    Commands.register(new InfoCommand());
-    Commands.register(new JoinCommand());
-    Commands.register(new LimitCommand());
-    Commands.register(new LockCommand());
-    Commands.register(new NameCommand());
-    Commands.register(new PermissionCommand());
-    Commands.register(new PingCommand());
-    Commands.register(new TemplateCommand());
-    Commands.register(new TransferCommand());
-    Commands.register(new UnlockCommand());
-    Commands.register(new VersionCommand());
-  }
-}
+const registerCommands = () => {
+  Commands.register(new AliasCommand());
+  Commands.register(new AllowjoinCommand());
+  Commands.register(new AllyourbaseCommand());
+  Commands.register(new BitrateCommand());
+  Commands.register(new CreateCommand());
+  Commands.register(new GeneralCommand());
+  Commands.register(new HelpCommand());
+  Commands.register(new InfoCommand());
+  Commands.register(new JoinCommand());
+  Commands.register(new LimitCommand());
+  Commands.register(new LockCommand());
+  Commands.register(new NameCommand());
+  Commands.register(new PermissionCommand());
+  Commands.register(new PingCommand());
+  Commands.register(new TemplateCommand());
+  Commands.register(new TransferCommand());
+  Commands.register(new UnlockCommand());
+  Commands.register(new VersionCommand());
+};
+
+export default registerCommands;

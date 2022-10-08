@@ -2,14 +2,11 @@ import db from '@db';
 import logger from '@utils/logger';
 import { Client, IntentsBitField } from 'discord.js';
 import dotenv from 'dotenv';
-import rl from 'readline';
-import { Events } from './classes/Event';
-import { RegisterAutocompletes } from './register-autocomples';
-import { RegisterCommands } from './register-commands';
-import { RegisterEvents } from './register-events';
-import { RegisterHelp } from './register-help';
-import deploy from './scripts/deploy';
-import remove from './scripts/remove';
+import Events from './classes/Events';
+import registerAutocompletes from './register-autocomples';
+import registerCommands from './register-commands';
+import registerEvents from './register-events';
+import registerHelp from './register-help';
 
 dotenv.config();
 
@@ -25,34 +22,10 @@ const client = new Client({
   intents,
 });
 
-new RegisterCommands();
-new RegisterHelp();
-new RegisterEvents();
-new RegisterAutocompletes();
-
-/**
- * Some of the commandline stuff to read
- */
-(async () => {
-  const readline = rl.createInterface({
-    input: process.stdin,
-    output: process.stdout,
-  });
-  for await (const line of readline) {
-    // logger.log(line)
-    switch (line) {
-      case 'deploy':
-        await deploy();
-        break;
-      case 'remove':
-        await remove();
-        break;
-      default:
-        logger.log('Unknown command');
-        break;
-    }
-  }
-})();
+registerCommands();
+registerHelp();
+registerEvents();
+registerAutocompletes();
 
 try {
   /**

@@ -1,14 +1,15 @@
-import { channelActivities } from '@/utils/activity';
+import channelActivities from '@/utils/activity';
 import db from '@/utils/db';
-import { Autocomplete } from '@classes/Autocomplete';
+import Autocomplete from '@classes/Autocomplete';
 import { AutocompleteInteraction, CacheType, GuildMember } from 'discord.js';
 import Fuse from 'fuse.js';
 
-export class AliasAutocomplete extends Autocomplete {
+export default class AliasAutocomplete extends Autocomplete {
   constructor() {
     super('alias');
   }
 
+  // eslint-disable-next-line class-methods-use-this
   public response: (
     interaction: AutocompleteInteraction<CacheType>
   ) => Promise<void> = async (interaction) => {
@@ -26,7 +27,7 @@ export class AliasAutocomplete extends Autocomplete {
       const existingAliases = await db.alias.findMany({
         where: { guildId: interaction.guildId },
       });
-      options = existingAliases.map(({ activity, id }) => ({
+      options = existingAliases.map(({ activity }) => ({
         name: activity,
         value: activity,
       }));

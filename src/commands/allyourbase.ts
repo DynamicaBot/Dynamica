@@ -1,6 +1,6 @@
+import Command from '@/classes/Command';
 import { secondaryCheck } from '@/preconditions/secondary';
-import { interactionDetails } from '@/utils/mqtt';
-import { Command } from '@classes/Command';
+import interactionDetails from '@/utils/mqtt';
 import DynamicaSecondary from '@classes/Secondary';
 import {
   CacheType,
@@ -9,7 +9,7 @@ import {
   SlashCommandBuilder,
 } from 'discord.js';
 
-export class AllyourbaseCommand extends Command {
+export default class AllyourbaseCommand extends Command {
   constructor() {
     super('allyourbase');
   }

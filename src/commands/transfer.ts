@@ -1,16 +1,16 @@
-import { Command } from '@/classes/Command';
-import { MQTT } from '@/classes/MQTT';
+import Command from '@/classes/Command';
+import MQTT from '@/classes/MQTT';
 import { creatorCheck } from '@/preconditions/creator';
-import { interactionDetails } from '@/utils/mqtt';
+import interactionDetails from '@/utils/mqtt';
 import DynamicaSecondary from '@classes/Secondary';
-import { SlashCommandBuilder } from '@discordjs/builders';
 import {
   CacheType,
   ChatInputCommandInteraction,
   PermissionFlagsBits,
+  SlashCommandBuilder,
 } from 'discord.js';
 
-export class TransferCommand extends Command {
+export default class TransferCommand extends Command {
   constructor() {
     super('transfer');
   }
@@ -30,6 +30,7 @@ export class TransferCommand extends Command {
         .setRequired(true)
     );
 
+  // eslint-disable-next-line class-methods-use-this
   response = async (interaction: ChatInputCommandInteraction<CacheType>) => {
     const user = interaction.options.getUser('user', true);
     const mqtt = MQTT.getInstance();

@@ -1,9 +1,9 @@
-import { Command } from '@/classes/Command';
-import { interactionDetails } from '@/utils/mqtt';
-import DynamicaGuild from '@classes/Guild';
+import Command from '@/classes/Command';
+import Guilds from '@/classes/Guilds';
+import interactionDetails from '@/utils/mqtt';
 import { PermissionFlagsBits, SlashCommandBuilder } from 'discord.js';
 
-export class AllowjoinCommand extends Command {
+export default class AllowjoinCommand extends Command {
   constructor() {
     super('allowjoin');
   }
@@ -23,7 +23,7 @@ export class AllowjoinCommand extends Command {
 
   response = async (interaction) => {
     const state = interaction.options.getBoolean('state', true);
-    const guild = DynamicaGuild.get(interaction.guildId);
+    const guild = Guilds.get(interaction.guildId);
     guild.setAllowJoin(state);
     interaction.reply(`${state ? 'Enabled' : 'Disabled'} Join Requests`);
 

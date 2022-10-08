@@ -1,12 +1,14 @@
-import { Help } from '@classes/Help';
-import { bold } from '@discordjs/builders';
+import Help from '@classes/Help';
+import { bold } from 'discord.js';
 
-export class AliasHelp extends Help {
+export default class AliasHelp extends Help {
   constructor() {
     super('alias');
   }
+
   public short =
     'Adds an alternative name for a game that replaces the default one in the channel name.';
+
   public long = `The alias command allows you to shorten the name of a game in the channel's title. This can be helpful for shortening the names of some games or, if your group has another name they refer to a game by.
   
   ${bold('add')}

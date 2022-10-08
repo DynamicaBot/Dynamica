@@ -1,14 +1,15 @@
-import { updatePresence } from '@/utils';
-import { Event } from '@classes/Event';
+import updatePresence from '@/utils/presence';
+import Event from '@classes/Event';
 import DynamicaPrimary from '@classes/Primary';
 import DynamicaSecondary from '@classes/Secondary';
 import { VoiceState } from 'discord.js';
 
-export class VoiceStateUpdateEvent extends Event<'voiceStateUpdate'> {
+export default class VoiceStateUpdateEvent extends Event<'voiceStateUpdate'> {
   constructor() {
     super('voiceStateUpdate');
   }
 
+  // eslint-disable-next-line class-methods-use-this
   public response: (
     oldVoiceState: VoiceState,
     newVoiceState: VoiceState
@@ -18,8 +19,6 @@ export class VoiceStateUpdateEvent extends Event<'voiceStateUpdate'> {
   ) => {
     if (oldVoiceState?.channelId === newVoiceState?.channelId) return;
     // If the channel doesn't change then just ignore it.
-
-    const oldChannelPrimary = DynamicaPrimary.get(oldVoiceState?.channelId);
     const oldChannelSecondary = DynamicaSecondary.get(oldVoiceState.channelId);
 
     const newChannelPrimary = DynamicaPrimary.get(newVoiceState.channelId);

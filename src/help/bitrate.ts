@@ -1,8 +1,9 @@
-import { Help } from '@/classes/Help';
+import Help from '@/classes/Help';
 
-export class BitrateHelp extends Help {
+export default class BitrateHelp extends Help {
   constructor() {
     super('bitrate');
   }
+
   public short = 'Changes the bitrate of the current channel.';
 }

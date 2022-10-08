@@ -1,16 +1,16 @@
-import { Command } from '@/classes/Command';
+import Command from '@/classes/Command';
 import { secondaryCheck } from '@/preconditions/secondary';
-import { interactionDetails } from '@/utils/mqtt';
+import interactionDetails from '@/utils/mqtt';
 import DynamicaSecondary from '@classes/Secondary';
 import db from '@db';
-import { SlashCommandBuilder } from '@discordjs/builders';
 import {
   CacheType,
   ChatInputCommandInteraction,
   PermissionFlagsBits,
+  SlashCommandBuilder,
 } from 'discord.js';
 
-export class NameCommand extends Command {
+export default class NameCommand extends Command {
   constructor() {
     super('name');
   }

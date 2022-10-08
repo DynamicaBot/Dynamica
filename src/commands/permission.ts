@@ -1,17 +1,17 @@
-import { Command } from '@/classes/Command';
+import Command from '@/classes/Command';
 import { creatorCheck } from '@/preconditions/creator';
 import { secondaryCheck } from '@/preconditions/secondary';
-import { interactionDetails } from '@/utils/mqtt';
-import { SlashCommandBuilder } from '@discordjs/builders';
+import interactionDetails from '@/utils/mqtt';
 import { ErrorEmbed } from '@utils/discordEmbeds';
 import {
   CacheType,
   ChatInputCommandInteraction,
   PermissionFlagsBits,
   Role,
+  SlashCommandBuilder,
 } from 'discord.js';
 
-export class PermissionCommand extends Command {
+export default class PermissionCommand extends Command {
   constructor() {
     super('permission');
   }

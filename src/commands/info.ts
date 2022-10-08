@@ -1,13 +1,12 @@
-import { Command } from '@/classes/Command';
+import Command from '@/classes/Command';
 import { ErrorEmbed } from '@/utils/discordEmbeds';
-import { interactionDetails } from '@/utils/mqtt';
+import interactionDetails from '@/utils/mqtt';
 import DynamicaPrimary from '@classes/Primary';
 import DynamicaSecondary from '@classes/Secondary';
 import db from '@db';
-import { SlashCommandBuilder } from '@discordjs/builders';
-import { EmbedBuilder } from 'discord.js';
+import { EmbedBuilder, SlashCommandBuilder } from 'discord.js';
 
-export class InfoCommand extends Command {
+export default class InfoCommand extends Command {
   constructor() {
     super('info');
   }

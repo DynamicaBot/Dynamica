@@ -1,5 +1,5 @@
-import { Commands } from '@/classes/Command';
-import { RegisterCommands } from '@/register-commands';
+import Commands from '@/classes/Commands';
+import registerCommands from '@/register-commands';
 import { REST } from '@discordjs/rest';
 import logger from '@utils/logger';
 import { Routes } from 'discord-api-types/v10';
@@ -12,7 +12,7 @@ export default async () => {
   } else {
     deployLogger.time('deploy');
 
-    new RegisterCommands();
+    new registerCommands();
 
     const { json: commandData } = Commands;
 

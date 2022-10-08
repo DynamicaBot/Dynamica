@@ -1,6 +1,6 @@
-import { SecondaryAutocomplete } from './secondary';
+import SecondaryAutocomplete from './secondary';
 
-export class JoinAutocomplete extends SecondaryAutocomplete {
+export default class JoinAutocomplete extends SecondaryAutocomplete {
   constructor() {
     super('join');
   }

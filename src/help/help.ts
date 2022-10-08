@@ -1,8 +1,9 @@
-import { Help } from '@/classes/Help';
+import Help from '@/classes/Help';
 
-export class HelpHelp extends Help {
+export default class HelpHelp extends Help {
   constructor() {
     super('help');
   }
+
   public short = 'Shows a list of commands and their asociated descriptions. ';
 }

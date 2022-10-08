@@ -1,6 +1,6 @@
-import { Help } from '@/classes/Help';
+import Help from '@/classes/Help';
 
-export class TransferHelp extends Help {
+export default class TransferHelp extends Help {
   constructor() {
     super('transfer');
   }

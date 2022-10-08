@@ -1,10 +1,13 @@
-import { Command } from '@/classes/Command';
-import { MQTT } from '@/classes/MQTT';
-import { interactionDetails } from '@/utils/mqtt';
-import { SlashCommandBuilder } from '@discordjs/builders';
-import Discord, { CacheType, ChatInputCommandInteraction } from 'discord.js';
+import Command from '@/classes/Command';
+import MQTT from '@/classes/MQTT';
+import interactionDetails from '@/utils/mqtt';
+import Discord, {
+  CacheType,
+  ChatInputCommandInteraction,
+  SlashCommandBuilder,
+} from 'discord.js';
 
-export class VersionCommand extends Command {
+export default class VersionCommand extends Command {
   constructor() {
     super('version');
   }
@@ -13,6 +16,7 @@ export class VersionCommand extends Command {
     .setName('version')
     .setDescription('The version of the bot in use.');
 
+  // eslint-disable-next-line class-methods-use-this
   response = async (interaction: ChatInputCommandInteraction<CacheType>) => {
     const mqtt = MQTT.getInstance();
     interaction.reply({

@@ -1,15 +1,17 @@
 import DynamicaAlias from '@/classes/Alias';
+import Aliases from '@/classes/Aliases';
 import DynamicaGuild from '@/classes/Guild';
-import { MQTT } from '@/classes/MQTT';
+import Guilds from '@/classes/Guilds';
+import MQTT from '@/classes/MQTT';
 import DynamicaSecondary from '@/classes/Secondary';
-import { updatePresence } from '@/utils';
+import updatePresence from '@/utils/presence';
 // import { updatePresence } from '@/utils';
-import { Event } from '@classes/Event';
+import Event from '@classes/Event';
 import DynamicaPrimary from '@classes/Primary';
 import db from '@db';
 import { Client, DiscordAPIError } from 'discord.js';
 
-export class ReadyEvent extends Event<'ready'> {
+export default class ReadyEvent extends Event<'ready'> {
   constructor() {
     super('ready');
   }
@@ -38,7 +40,7 @@ export class ReadyEvent extends Event<'ready'> {
               element.id,
               element.guildId
             );
-            await existingPrimary.update(client, guild);
+            await existingPrimary.update(client);
           } catch (error) {
             if (error instanceof DiscordAPIError) {
               if (error.code === 10003) {
@@ -87,16 +89,18 @@ export class ReadyEvent extends Event<'ready'> {
 
       await Promise.all(
         aliases.map(async (element) => {
-          new DynamicaAlias(element.guildId, element.id);
+          const newAlias = new DynamicaAlias(element.guildId, element.id);
+          Aliases.add(newAlias);
         })
       );
-      this.logger.info(`Loaded ${DynamicaAlias.count} aliases`);
+      this.logger.info(`Loaded ${Aliases.count} aliases`);
 
       await Promise.all(
         guilds.map(async (element) => {
           try {
             const guild = await client.guilds.fetch(element.id);
-            new DynamicaGuild(guild.id);
+            const newGuild = new DynamicaGuild(guild.id);
+            Guilds.add(newGuild);
           } catch (error) {
             if (error instanceof DiscordAPIError) {
               await db.guild.delete({ where: { id: element.id } });
@@ -105,7 +109,7 @@ export class ReadyEvent extends Event<'ready'> {
           }
         })
       );
-      this.logger.info(`Loaded ${DynamicaGuild.count} guilds`);
+      this.logger.info(`Loaded ${Guilds.count} guilds`);
 
       mqtt?.publish('dynamica/presence', {
         ready: client.readyAt,

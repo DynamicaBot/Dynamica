@@ -1,6 +1,5 @@
-import { Command } from '@/classes/Command';
-import { interactionDetails } from '@/utils/mqtt';
-import { SlashCommandBuilder } from '@discordjs/builders';
+import Command from '@/classes/Command';
+import interactionDetails from '@/utils/mqtt';
 import { creatorCheck } from '@preconditions/creator';
 import { secondaryCheck } from '@preconditions/secondary';
 import { ErrorEmbed } from '@utils/discordEmbeds';
@@ -8,9 +7,10 @@ import {
   CacheType,
   ChatInputCommandInteraction,
   PermissionFlagsBits,
+  SlashCommandBuilder,
 } from 'discord.js';
 
-export class LimitCommand extends Command {
+export default class LimitCommand extends Command {
   constructor() {
     super('limit');
   }

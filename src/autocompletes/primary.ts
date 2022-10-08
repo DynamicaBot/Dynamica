@@ -1,13 +1,14 @@
-import { Autocomplete } from '@/classes/Autocomplete';
+import Autocomplete from '@/classes/Autocomplete';
 import db from '@db';
 import { AutocompleteInteraction, CacheType } from 'discord.js';
 import Fuse from 'fuse.js';
 
-export class PrimaryAutocomplete extends Autocomplete {
+export default class PrimaryAutocomplete extends Autocomplete {
   constructor(commandName: string = 'primary') {
     super(commandName);
   }
 
+  // eslint-disable-next-line class-methods-use-this
   public response: (
     interaction: AutocompleteInteraction<CacheType>
   ) => Promise<void> = async (interaction) => {

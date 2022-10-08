@@ -1,16 +1,16 @@
-import { Command } from '@/classes/Command';
+import Command from '@/classes/Command';
 import { creatorCheck } from '@/preconditions/creator';
 import { secondaryCheck } from '@/preconditions/secondary';
-import { interactionDetails } from '@/utils/mqtt';
+import interactionDetails from '@/utils/mqtt';
 import DynamicaSecondary from '@classes/Secondary';
-import { SlashCommandBuilder } from '@discordjs/builders';
 import {
   CacheType,
   ChatInputCommandInteraction,
   PermissionFlagsBits,
+  SlashCommandBuilder,
 } from 'discord.js';
 
-export class LockCommand extends Command {
+export default class LockCommand extends Command {
   constructor() {
     super('lock');
   }

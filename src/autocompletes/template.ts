@@ -1,6 +1,6 @@
-import { PrimaryAutocomplete } from './primary';
+import PrimaryAutocomplete from './primary';
 
-export class TemplateAutocomplete extends PrimaryAutocomplete {
+export default class TemplateAutocomplete extends PrimaryAutocomplete {
   constructor() {
     super('template');
   }

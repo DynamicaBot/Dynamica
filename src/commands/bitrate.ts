@@ -1,17 +1,17 @@
-import { Command } from '@/classes/Command';
+import Command from '@/classes/Command';
 import { creatorCheck } from '@/preconditions/creator';
 import { secondaryCheck } from '@/preconditions/secondary';
-import { interactionDetails } from '@/utils/mqtt';
+import interactionDetails from '@/utils/mqtt';
 
-import { SlashCommandBuilder } from '@discordjs/builders';
 import { ErrorEmbed } from '@utils/discordEmbeds';
 import {
   CacheType,
   ChatInputCommandInteraction,
   PermissionFlagsBits,
+  SlashCommandBuilder,
 } from 'discord.js';
 
-export class BitrateCommand extends Command {
+export default class BitrateCommand extends Command {
   constructor() {
     super('bitrate');
   }
@@ -53,8 +53,6 @@ export class BitrateCommand extends Command {
         ...interactionDetails(interaction),
       });
       return;
-    }
-    if (!(bitrate <= 96 && bitrate >= 8)) {
     }
     try {
       await channel.edit({

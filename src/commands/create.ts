@@ -1,16 +1,16 @@
-import { Command } from '@/classes/Command';
-import { interactionDetails } from '@/utils/mqtt';
+import Command from '@/classes/Command';
+import interactionDetails from '@/utils/mqtt';
 import DynamicaPrimary from '@classes/Primary';
-import { SlashCommandBuilder } from '@discordjs/builders';
 import {
   CacheType,
   ChatInputCommandInteraction,
   GuildChannel,
   GuildMember,
   PermissionFlagsBits,
+  SlashCommandBuilder,
 } from 'discord.js';
 
-export class CreateCommand extends Command {
+export default class CreateCommand extends Command {
   constructor() {
     super('create');
   }

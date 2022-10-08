@@ -8,7 +8,9 @@ import {
   Guild,
   hyperlink,
 } from 'discord.js';
-import { MQTT } from './MQTT';
+// eslint-disable-next-line import/no-cycle
+import Guilds from './Guilds';
+import MQTT from './MQTT';
 
 /**
  * The list of basic commands to display.
@@ -83,31 +85,10 @@ const botInfoEmbed = new EmbedBuilder()
   });
 
 export default class DynamicaGuild {
-  public static guilds: DynamicaGuild[] = [];
-
-  private id: string;
+  public id: string;
 
   constructor(id: string) {
     this.id = id;
-    DynamicaGuild.add(this);
-  }
-
-  static get count() {
-    return DynamicaGuild.guilds.length;
-  }
-
-  public static add(guild: DynamicaGuild) {
-    DynamicaGuild.guilds.push(guild);
-  }
-
-  public static remove(guildId: string) {
-    DynamicaGuild.guilds = DynamicaGuild.guilds.filter(
-      (guild) => guild.id !== guildId
-    );
-  }
-
-  public static get(guildId: string) {
-    return DynamicaGuild.guilds.find((guild) => guild.id === guildId);
   }
 
   public static async initialise(guild: Guild) {
@@ -156,8 +137,8 @@ export default class DynamicaGuild {
         name: guild.name,
       },
     });
-
-    return new DynamicaGuild(guild.id);
+    const newGuild = new DynamicaGuild(guild.id);
+    Guilds.add(newGuild);
   }
 
   prisma() {
@@ -185,7 +166,7 @@ export default class DynamicaGuild {
     try {
       await this.leaveDiscord(client);
       await this.deletePrisma();
-      DynamicaGuild.remove(this.id);
+      Guilds.remove(this.id);
       mqtt?.publish('dynamica/event/leave', {
         guild: {
           id: this.id,

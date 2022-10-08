@@ -1,40 +1,15 @@
 import db from '@db';
+// eslint-disable-next-line import/no-cycle
+import Aliases from './Aliases';
 
 export default class DynamicaAlias {
-  public static aliases: DynamicaAlias[] = [];
+  public guildId: string;
 
-  private guildId: string;
-
-  private id: number;
-
-  public static add(alias: DynamicaAlias) {
-    if (DynamicaAlias.has(alias.id)) return;
-    this.aliases.push(alias);
-  }
-
-  public static remove(id: number) {
-    this.aliases = this.aliases.filter((alias) => alias.id !== id);
-  }
-
-  public static get(id: number | undefined) {
-    return this.aliases.find((alias) => alias.id === id);
-  }
-
-  public static has = (id: number) =>
-    this.aliases.some((alias) => alias.id === id);
-
-  public static getByGuildId(guildId: string) {
-    return this.aliases.filter((alias) => alias.guildId === guildId);
-  }
-
-  static get count() {
-    return this.aliases.length;
-  }
+  public id: number;
 
   constructor(guildId: string, id: number) {
     this.guildId = guildId;
     this.id = id;
-    DynamicaAlias.add(this);
   }
 
   /**
@@ -74,7 +49,8 @@ export default class DynamicaAlias {
         },
       },
     });
-
+    const newAlias = new DynamicaAlias(dbAlias.guildId, dbAlias.id);
+    Aliases.add(newAlias);
     return new DynamicaAlias(dbAlias.guildId, dbAlias.id);
   }
 
@@ -91,8 +67,8 @@ export default class DynamicaAlias {
         activity,
       },
     });
-
-    return new DynamicaAlias(dbAlias.guildId, dbAlias.id);
+    const newAlias = new DynamicaAlias(dbAlias.guildId, dbAlias.id);
+    Aliases.add(newAlias);
   }
 
   /**

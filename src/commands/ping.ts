@@ -1,10 +1,12 @@
-import { Command } from '@/classes/Command';
-import { MQTT } from '@/classes/MQTT';
-import { interactionDetails } from '@/utils/mqtt';
-import { SlashCommandBuilder } from '@discordjs/builders';
-import { CacheType, ChatInputCommandInteraction } from 'discord.js';
+import Command from '@/classes/Command';
+import interactionDetails from '@/utils/mqtt';
+import {
+  CacheType,
+  ChatInputCommandInteraction,
+  SlashCommandBuilder,
+} from 'discord.js';
 
-export class PingCommand extends Command {
+export default class PingCommand extends Command {
   constructor() {
     super('ping');
   }
@@ -16,7 +18,6 @@ export class PingCommand extends Command {
       )}ms.`,
       ephemeral: true,
     });
-    const mqtt = MQTT.getInstance();
     this.publish({
       ...interactionDetails(interaction),
     });

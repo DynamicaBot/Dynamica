@@ -1,6 +1,6 @@
 import DynamicaAlias from '@/classes/Alias';
-import { Command } from '@/classes/Command';
-import { interactionDetails } from '@/utils/mqtt';
+import Command from '@/classes/Command';
+import interactionDetails from '@/utils/mqtt';
 import db from '@db';
 import { listAliases } from '@utils/alias';
 import {
@@ -12,7 +12,7 @@ import {
 } from 'discord.js';
 import _ from 'lodash';
 
-export class AliasCommand extends Command {
+export default class AliasCommand extends Command {
   constructor() {
     super('alias');
   }

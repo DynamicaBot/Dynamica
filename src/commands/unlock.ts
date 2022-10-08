@@ -1,17 +1,17 @@
-import { Command } from '@/classes/Command';
-import { MQTT } from '@/classes/MQTT';
+import Command from '@/classes/Command';
+import MQTT from '@/classes/MQTT';
 import { creatorCheck } from '@/preconditions/creator';
-import { interactionDetails } from '@/utils/mqtt';
+import interactionDetails from '@/utils/mqtt';
 import DynamicaSecondary from '@classes/Secondary';
-import { SlashCommandBuilder } from '@discordjs/builders';
 import { ErrorEmbed } from '@utils/discordEmbeds';
 import {
   CacheType,
   ChatInputCommandInteraction,
   PermissionFlagsBits,
+  SlashCommandBuilder,
 } from 'discord.js';
 
-export class UnlockCommand extends Command {
+export default class UnlockCommand extends Command {
   constructor() {
     super('unlock');
   }
@@ -24,6 +24,7 @@ export class UnlockCommand extends Command {
     .setDefaultMemberPermissions(PermissionFlagsBits.ManageChannels)
     .setDescription('Remove any existing locks on locked secondary channels.');
 
+  // eslint-disable-next-line class-methods-use-this
   response = async (interaction: ChatInputCommandInteraction<CacheType>) => {
     const guildMember = await interaction.guild.members.cache.get(
       interaction.user.id

@@ -1,4 +1,4 @@
-import { Event } from '@classes/Event';
+import Event from '@classes/Event';
 import DynamicaSecondary from '@classes/Secondary';
 import { Presence } from 'discord.js';
 

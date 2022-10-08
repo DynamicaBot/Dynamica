@@ -1,7 +1,8 @@
-import deploy from "./scripts/deploy";
-import { config} from 'dotenv'
+import { config } from 'dotenv';
+import deploy from './scripts/deploy';
+
 config();
 
 (async () => {
-  await deploy()
-})()
+  await deploy();
+})();

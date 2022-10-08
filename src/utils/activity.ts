@@ -1,6 +1,6 @@
 import { ActivityType, VoiceBasedChannel } from 'discord.js';
 
-export const channelActivities = ({ members }: VoiceBasedChannel) =>
+const channelActivities = ({ members }: VoiceBasedChannel) =>
   members
     .filter((member) => member.presence.activities.length > 0)
     .filter((member) => !member.user.bot)
@@ -9,3 +9,5 @@ export const channelActivities = ({ members }: VoiceBasedChannel) =>
     .filter((activity) => activity.type !== ActivityType.Custom)
     .filter((activity) => activity.type !== ActivityType.Listening)
     .map((activity) => activity.name);
+
+export default channelActivities;

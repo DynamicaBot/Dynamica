@@ -1,6 +1,5 @@
-import { Command } from '@/classes/Command';
+import Command from '@/classes/Command';
 import db from '@db';
-import { SlashCommandBuilder } from '@discordjs/builders';
 import { ErrorEmbed } from '@utils/discordEmbeds';
 import {
   ActionRowBuilder,
@@ -9,13 +8,14 @@ import {
   CacheType,
   ChatInputCommandInteraction,
   ComponentType,
+  SlashCommandBuilder,
 } from 'discord.js';
 
 // const ;
 
 // export const join = new Command({ help, data, response });
 
-export class JoinCommand extends Command {
+export default class JoinCommand extends Command {
   constructor() {
     super('join');
   }
@@ -32,6 +32,7 @@ export class JoinCommand extends Command {
         .setRequired(true)
     );
 
+  // eslint-disable-next-line class-methods-use-this
   response = async (interaction: ChatInputCommandInteraction<CacheType>) => {
     const channel = interaction.options.getString('channel', true);
 

@@ -1,7 +1,5 @@
 import { CacheType, ChatInputCommandInteraction } from 'discord.js';
 
-type CheckResult = { success: boolean; message?: string };
-
 type ConditionFunction = (
   interaction: ChatInputCommandInteraction<CacheType>
 ) => Promise<void>;

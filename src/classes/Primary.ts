@@ -9,16 +9,16 @@ import {
   GuildMember,
 } from 'discord.js';
 import { Signale } from 'signale';
-import { DynamicaChannelType } from './DynamicaChannel.interface';
-import { MQTT } from './MQTT';
+import MQTT from './MQTT';
+// eslint-disable-next-line import/no-cycle
 import DynamicaSecondary from './Secondary';
 
 export default class DynamicaPrimary {
   id: string;
-  guildId: string;
-  static channels: DynamicaPrimary[] = [];
 
-  type: DynamicaChannelType.Primary;
+  guildId: string;
+
+  static channels: DynamicaPrimary[] = [];
 
   private static readonly logger = signaleLogger.scope('Primary');
 
@@ -46,7 +46,6 @@ export default class DynamicaPrimary {
   constructor(channelId: string, guildId: string) {
     this.id = channelId;
     this.guildId = guildId;
-    this.type = DynamicaChannelType.Primary;
     this.logger = signaleLogger.scope('Primary', this.id);
     DynamicaPrimary.add(this);
   }
@@ -62,41 +61,37 @@ export default class DynamicaPrimary {
     member: GuildMember,
     section?: GuildChannel
   ) {
-    try {
-      const parent = section?.id;
+    const parent = section?.id;
 
-      const channel = await guild.channels.create({
-        type: ChannelType.GuildVoice,
-        name: '➕ New Session',
-        parent,
-      });
-      const primary = await db.primary.create({
-        data: {
-          id: channel.id,
-          creator: member.id,
-          guildId: guild.id,
-        },
-      });
+    const channel = await guild.channels.create({
+      type: ChannelType.GuildVoice,
+      name: '➕ New Session',
+      parent,
+    });
+    const primary = await db.primary.create({
+      data: {
+        id: channel.id,
+        creator: member.id,
+        guildId: guild.id,
+      },
+    });
 
-      this.logger
-        .scope('Primary', channel.id)
-        .debug(
-          `New primary channel ${channel.name} created by ${primary.creator}.`
-        );
+    this.logger
+      .scope('Primary', channel.id)
+      .debug(
+        `New primary channel ${channel.name} created by ${primary.creator}.`
+      );
 
-      const mqtt = MQTT.getInstance();
+    const mqtt = MQTT.getInstance();
 
-      mqtt?.publish('dynamica/primary/create', {
-        id: primary.id,
-        createdAt: new Date().toISOString(),
-      });
+    mqtt?.publish('dynamica/primary/create', {
+      id: primary.id,
+      createdAt: new Date().toISOString(),
+    });
 
-      const createdChannel = new DynamicaPrimary(channel.id, guild.id);
+    const createdChannel = new DynamicaPrimary(channel.id, guild.id);
 
-      return createdChannel;
-    } catch (error) {
-      this.logger.error('Error creating new primary channel:', error);
-    }
+    return createdChannel;
   }
 
   /**
@@ -155,7 +150,7 @@ export default class DynamicaPrimary {
     return channel;
   }
 
-  async update(client: Client<true>, guild: Guild) {
+  async update(client: Client<true>) {
     const { members } = await this.discord(client);
     if (members.size) {
       const primaryMember = members.at(0);

@@ -1,11 +1,10 @@
-import { Command } from '@/classes/Command';
-import { Helps } from '@/classes/Help';
-import { interactionDetails } from '@/utils/mqtt';
-import { SlashCommandBuilder } from '@discordjs/builders';
-import { APIEmbedField, EmbedBuilder } from 'discord.js';
+import Command from '@/classes/Command';
+import Helps from '@/classes/Helps';
+import interactionDetails from '@/utils/mqtt';
+import { APIEmbedField, EmbedBuilder, SlashCommandBuilder } from 'discord.js';
 import _ from 'lodash';
 
-export class HelpCommand extends Command {
+export default class HelpCommand extends Command {
   constructor() {
     super('help');
   }
@@ -39,7 +38,7 @@ export class HelpCommand extends Command {
           text: `Find out more https://dynamica.dev/docs/commands/${subcommand}`,
         })
         .setDescription(helpPage.long ?? helpPage.short);
-      return interaction.reply({ embeds: [embed] });
+      interaction.reply({ embeds: [embed] });
     } else {
       const helpItems = Helps.all;
       const helpPages: APIEmbedField[][] = _.chunk(
