@@ -1,8 +1,8 @@
+import { updatePresence } from '@/utils';
 import DynamicaPrimary from '@classes/Primary';
 import db from '@db';
 import Prisma from '@prisma/client';
 import { PrismaClientKnownRequestError } from '@prisma/client/runtime/index.js';
-import updateActivityCount from '@utils';
 import formatChannelName from '@utils/format';
 import logger from '@utils/logger';
 import {
@@ -47,10 +47,12 @@ export default class DynamicaSecondary
 
   public static add(channel: DynamicaSecondary) {
     this.channels.push(channel);
+    updatePresence();
   }
 
   public static remove(id: string) {
     this.channels = this.channels.filter((channel) => channel.id !== id);
+    updatePresence();
   }
 
   public static get(id: string | undefined) {
@@ -129,19 +131,15 @@ export default class DynamicaSecondary
 
     await member.voice.setChannel(secondary);
 
-    db.secondary
-      .create({
-        data: {
-          id: secondary.id,
-          creator: member.id,
-          primaryId: primary.id,
-          guildId: guild.id,
-        },
-        include: { guild: true, primary: true },
-      })
-      .then(() => {
-        updateActivityCount(client);
-      });
+    db.secondary.create({
+      data: {
+        id: secondary.id,
+        creator: member.id,
+        primaryId: primary.id,
+        guildId: guild.id,
+      },
+      include: { guild: true, primary: true },
+    });
 
     logger.debug(
       `Secondary channel ${secondary.name} created by ${member?.user.tag} in ${member.guild.name}.`
@@ -395,7 +393,6 @@ export default class DynamicaSecondary
       id: this.id,
     });
     DynamicaSecondary.remove(this.id);
-    updateActivityCount(client);
   }
 
   toString() {

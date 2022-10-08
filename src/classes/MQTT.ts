@@ -1,3 +1,4 @@
+import logger from '@/utils/logger';
 import mqtt from 'mqtt';
 
 export class MQTT {
@@ -9,10 +10,10 @@ export class MQTT {
       password: process.env.MQTT_PASS,
     });
     this.client.on('connect', () => {
-      console.log('MQTT connected');
+      logger.info('MQTT connected');
     });
     this.client.on('error', (error) => {
-      console.log('MQTT error', error);
+      logger.error('MQTT error', error);
     });
   }
 

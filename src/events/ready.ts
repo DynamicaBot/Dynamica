@@ -2,10 +2,10 @@ import DynamicaAlias from '@/classes/Alias';
 import DynamicaGuild from '@/classes/Guild';
 import { MQTT } from '@/classes/MQTT';
 import DynamicaSecondary from '@/classes/Secondary';
+import { updatePresence } from '@/utils';
 import Event from '@classes/Event';
 import DynamicaPrimary from '@classes/Primary';
 import db from '@db';
-import updateActivityCount from '@utils';
 import logger from '@utils/logger';
 import { DiscordAPIError } from 'discord.js';
 
@@ -17,6 +17,7 @@ export default new Event<'ready'>()
     const mqtt = MQTT.getInstance();
 
     try {
+      logger.time('ready');
       const secondaries = await db.secondary.findMany();
       const primaries = await db.primary.findMany();
       const aliases = await db.alias.findMany();
@@ -104,8 +105,8 @@ export default new Event<'ready'>()
       });
 
       logger.info('Loaded all data');
-
-      updateActivityCount(client);
+      logger.timeEnd('ready');
+      updatePresence();
     } catch (error) {
       logger.error(error);
     }

@@ -17,7 +17,7 @@ const intents = new IntentsBitField().add(
 /**
  * DiscordJS Client instance
  */
-const client = new Client({
+export const client = new Client({
   intents,
 });
 
