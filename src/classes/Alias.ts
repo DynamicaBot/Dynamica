@@ -24,6 +24,7 @@ export default class DynamicaAlias {
    * Create a new alias
    * @param data The alias and activity to create.
    * @returns this
+   * TODO: Add a check to see if the alias already exists.
    */
   public static async findOrCreate(
     guildId: string,

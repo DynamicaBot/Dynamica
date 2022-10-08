@@ -23,7 +23,7 @@ export default class HelpCommand extends Command {
     );
 
   response = async (interaction) => {
-    const subcommand = interaction.options.getString('subcommand', false);
+    const subcommand = interaction.options.getString('help', false);
     if (subcommand) {
       const helpPage = Helps.get(subcommand);
       const embed = new EmbedBuilder()
