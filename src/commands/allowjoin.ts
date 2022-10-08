@@ -1,4 +1,6 @@
+import { MQTT } from '@/classes/MQTT';
 import help from '@/help/allowjoin';
+import { interactionDetails } from '@/utils/mqtt';
 import Command from '@classes/Command';
 import DynamicaGuild from '@classes/Guild';
 import checkAdminPermissions from '@preconditions/admin';
@@ -20,12 +22,13 @@ const data = new SlashCommandBuilder()
 
 const response = async (interaction) => {
   const state = interaction.options.getBoolean('state', true);
-  const guild = await new DynamicaGuild(
-    interaction.client,
-    interaction.guildId
-  ).fetch();
+  const guild = DynamicaGuild.get(interaction.guildId);
   guild.setAllowJoin(state);
-  return interaction.reply(`${state ? 'Enabled' : 'Disabled'} Join Requests`);
+  interaction.reply(`${state ? 'Enabled' : 'Disabled'} Join Requests`);
+  const mqtt = MQTT.getInstance();
+  mqtt?.publish(`dynamica/command/${interaction.commandName}`, {
+    ...interactionDetails(interaction),
+  });
 };
 
 export const allowjoin = new Command({

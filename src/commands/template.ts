@@ -1,4 +1,6 @@
+import { MQTT } from '@/classes/MQTT';
 import help from '@/help/template';
+import { interactionDetails } from '@/utils/mqtt';
 import Command from '@classes/Command';
 import DynamicaSecondary from '@classes/Secondary';
 import db from '@db';
@@ -48,6 +50,11 @@ const response = async (
   });
 
   interaction.reply(`Template changed to \`${name}\`.`);
+  const mqtt = MQTT.getInstance();
+  mqtt?.publish(`dynamica/command/${interaction.commandName}`, {
+    name,
+    ...interactionDetails(interaction),
+  });
 };
 
 export const template = new Command({

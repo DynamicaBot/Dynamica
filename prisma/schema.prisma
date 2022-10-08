@@ -40,9 +40,11 @@ model Secondary {
 }
 
 model Alias {
-  id       Int     @id @default(autoincrement())
+  id       Int    @id @default(autoincrement())
   activity String
   alias    String
-  guildId  String?
-  guild    Guild?  @relation(name: "AliasOnGuild", fields: [guildId], references: [id])
+  guildId  String
+  guild    Guild  @relation(name: "AliasOnGuild", fields: [guildId], references: [id])
+
+  @@unique([guildId, activity])
 }

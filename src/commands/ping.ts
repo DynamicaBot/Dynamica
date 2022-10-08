@@ -1,4 +1,6 @@
+import { MQTT } from '@/classes/MQTT';
 import help from '@/help/ping';
+import { interactionDetails } from '@/utils/mqtt';
 import Command from '@classes/Command';
 import { SlashCommandBuilder } from '@discordjs/builders';
 import { CacheType, ChatInputCommandInteraction } from 'discord.js';
@@ -15,6 +17,10 @@ const response = async (
       interaction.client.ws.ping
     )}ms.`,
     ephemeral: true,
+  });
+  const mqtt = MQTT.getInstance();
+  mqtt?.publish(`dynamica/command/${interaction.commandName}`, {
+    ...interactionDetails(interaction),
   });
 };
 

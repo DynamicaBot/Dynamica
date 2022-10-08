@@ -1,3 +1,4 @@
+import updateActivityCount from '@/utils';
 import db from '@db';
 import logger from '@utils/logger';
 import {
@@ -6,12 +7,13 @@ import {
   DiscordAPIError,
   Guild,
   GuildChannel,
-  User,
+  GuildMember,
 } from 'discord.js';
 import {
   DynamicaChannel,
   DynamicaChannelType,
 } from './DynamicaChannel.interface';
+import { MQTT } from './MQTT';
 import DynamicaSecondary from './Secondary';
 
 export default class DynamicaPrimary
@@ -51,7 +53,11 @@ export default class DynamicaPrimary
    * @param user The user who ran the command
    * @param section The section that the channel should be assigned to
    */
-  static async initialise(guild: Guild, user: User, section?: GuildChannel) {
+  static async initialise(
+    guild: Guild,
+    member: GuildMember,
+    section?: GuildChannel
+  ) {
     try {
       const parent = section?.id;
 
@@ -63,7 +69,7 @@ export default class DynamicaPrimary
       const primary = await db.primary.create({
         data: {
           id: channel.id,
-          creator: user.id,
+          creator: member.id,
           guildId: guild.id,
         },
       });
@@ -72,7 +78,16 @@ export default class DynamicaPrimary
         `New primary channel ${channel.name} created by ${primary.creator}.`
       );
 
+      const mqtt = MQTT.getInstance();
+
+      mqtt?.publish('dynamica/primary/create', {
+        id: primary.id,
+        createdAt: new Date().toISOString(),
+      });
+
       const createdChannel = new DynamicaPrimary(channel.id, guild.id);
+
+      updateActivityCount(guild.client);
 
       return createdChannel;
     } catch (error) {
@@ -102,6 +117,11 @@ export default class DynamicaPrimary
         } else {
           logger.error(error);
         }
+      } finally {
+        const mqtt = MQTT.getInstance();
+        mqtt?.publish(`dynamica/primary/delete`, {
+          id: this.id,
+        });
       }
     }
   }
@@ -135,12 +155,7 @@ export default class DynamicaPrimary
     const { members } = await this.discord(client);
     if (members.size) {
       const primaryMember = members.at(0);
-      const secondary = await DynamicaSecondary.initalise(
-        client,
-        this,
-        guild,
-        primaryMember
-      );
+      const secondary = await DynamicaSecondary.initalise(this, primaryMember);
       const others = [...members.values()].slice(1);
       await Promise.all(
         others.map(async (member) => {
@@ -148,6 +163,10 @@ export default class DynamicaPrimary
         })
       );
     }
+    const mqtt = MQTT.getInstance();
+    mqtt?.publish(`dynamica/primary/update`, {
+      id: this.id,
+    });
   }
 
   toString() {

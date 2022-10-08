@@ -1,3 +1,4 @@
+import { MQTT } from '@/classes/MQTT';
 import help from '@/help/join';
 import Command from '@classes/Command';
 import db from '@db';
@@ -16,8 +17,7 @@ const response = async (
   interaction: ChatInputCommandInteraction<CacheType>
 ) => {
   const channel = interaction.options.getString('channel', true);
-
-  if (!interaction.guild) return;
+  const mqtt = MQTT.getInstance();
 
   const channelConfig = await db.secondary.findUnique({
     where: { id: channel },

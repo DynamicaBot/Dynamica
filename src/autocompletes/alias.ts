@@ -1,22 +1,55 @@
+import { channelActivities } from '@/utils/activity';
+import db from '@/utils/db';
 import Autocomplete from '@classes/Autocomplete';
-import db from '@db';
+import { GuildMember } from 'discord.js';
 import Fuse from 'fuse.js';
 
 export default new Autocomplete()
-  .setName('activity')
+  .setName('alias')
   .setResponse(async (interaction) => {
     const { value } = interaction.options.getFocused(true);
-    const aliases = await db.alias.findMany({
-      where: { guildId: interaction.guild.id },
-    });
+    const member = interaction.member as GuildMember;
+    const subcommand = interaction.options.getSubcommand(true) as
+      | 'update'
+      | 'remove'
+      | 'list'
+      | 'add';
+    console.log({ subcommand });
 
-    if (!interaction.guild) return;
-    const options = aliases.map((alias) => ({
-      name: alias.activity,
-      value: alias.id.toString(),
-    }));
-    const fuse = new Fuse(options, { keys: ['name'] });
+    let options: { name: string; value: string }[] = [];
+
+    if (subcommand === 'update' || subcommand === 'remove') {
+      const existingAliases = await db.alias.findMany({
+        where: { guildId: interaction.guildId },
+      });
+      options = existingAliases.map(({ activity, id }) => ({
+        name: activity,
+        value: activity,
+      }));
+    } else if (subcommand === 'add') {
+      const activities = channelActivities(member.voice.channel);
+      console.log({
+        activities: (
+          await Promise.all(
+            member.voice.channel.members.map(
+              async (m) => (await m.fetch()).presence.activities
+            )
+          )
+        ).flat(),
+      });
+      options = activities.map((activity) => ({
+        name: activity,
+        value: activity,
+      }));
+    }
+
+    // const options = [...channelActivityList, ...existingAliases];
+
+    const fuse = new Fuse(options, {
+      keys: ['name'],
+    });
     const query = fuse.search(value.toString());
+    // console.log({ results: query.map((result) => result.item).slice(0, 24) });
     interaction.respond(
       value.toString()
         ? query.map((result) => result.item).slice(0, 24)

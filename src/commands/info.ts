@@ -1,4 +1,6 @@
+import { MQTT } from '@/classes/MQTT';
 import help from '@/help/info';
+import { interactionDetails } from '@/utils/mqtt';
 import Command from '@classes/Command';
 import DynamicaPrimary from '@classes/Primary';
 import DynamicaSecondary from '@classes/Secondary';
@@ -42,6 +44,7 @@ const data = new SlashCommandBuilder()
 
 const response = async (interaction) => {
   const subcommand = interaction.options.getSubcommand(true);
+  const mqtt = MQTT.getInstance();
   if (subcommand === 'primary') {
     const chosenPrimary = interaction.options.getString('primarychannel', true);
     const primary = DynamicaPrimary.get(chosenPrimary);
@@ -66,6 +69,11 @@ const response = async (interaction) => {
           }
         ),
       ],
+    });
+    mqtt?.publish(`dynamica/command/${interaction.commandName}`, {
+      channel: primary.id,
+      subcommand,
+      ...interactionDetails(interaction),
     });
   } else if (subcommand === 'secondary') {
     const chosenSecondary = interaction.options.getString(
@@ -95,6 +103,11 @@ const response = async (interaction) => {
         ),
       ],
     });
+    mqtt?.publish(`dynamica/command/${interaction.commandName}`, {
+      channel: secondary.id,
+      subcommand,
+      ...interactionDetails(interaction),
+    });
   } else if (subcommand === 'guild') {
     const prismaGuild = await db.guild.findUnique({
       where: { id: interaction.guildId },
@@ -108,6 +121,10 @@ const response = async (interaction) => {
           value: prismaGuild.allowJoinRequests ? 'Enabled' : 'Disabled',
         }),
       ],
+    });
+    mqtt?.publish(`dynamica/command/${interaction.commandName}`, {
+      subcommand,
+      ...interactionDetails(interaction),
     });
   }
 };

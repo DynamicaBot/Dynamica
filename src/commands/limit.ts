@@ -1,4 +1,6 @@
+import { MQTT } from '@/classes/MQTT';
 import help from '@/help/limit';
+import { interactionDetails } from '@/utils/mqtt';
 import Command from '@classes/Command';
 import { SlashCommandBuilder } from '@discordjs/builders';
 import checkCreator from '@preconditions/creator';
@@ -30,7 +32,7 @@ const response = async (
   interaction: ChatInputCommandInteraction<CacheType>
 ) => {
   const userLimit = interaction.options.getInteger('number', true);
-
+  const mqtt = MQTT.getInstance();
   const guildMember = await interaction.guild.members.cache.get(
     interaction.user.id
   );
@@ -45,6 +47,11 @@ const response = async (
   }
   channel.edit({ userLimit });
   interaction.reply(`<#${channel.id}> limit changed to ${userLimit}.`);
+  mqtt?.publish(`dynamica/command/${interaction.commandName}`, {
+    userLimit,
+    channel: channel.id,
+    ...interactionDetails(interaction),
+  });
 };
 
 export const limit = new Command({

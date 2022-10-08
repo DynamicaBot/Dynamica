@@ -1,4 +1,6 @@
+import { MQTT } from '@/classes/MQTT';
 import help from '@/help/bitrate';
+import { interactionDetails } from '@/utils/mqtt';
 import Command from '@classes/Command';
 import { SlashCommandBuilder } from '@discordjs/builders';
 import checkCreator from '@preconditions/creator';
@@ -24,7 +26,7 @@ const response = async (
   interaction: ChatInputCommandInteraction<CacheType>
 ) => {
   const bitrate = interaction.options.getInteger('bitrate');
-
+  const mqtt = MQTT.getInstance();
   const guildMember = await interaction.guild.members.cache.get(
     interaction.user.id
   );
@@ -42,6 +44,10 @@ const response = async (
     channel.edit({ bitrate: 64000 }).then(() => {
       interaction.reply('Set bitrate to default.');
     });
+
+    mqtt?.publish(`dynamica/command/${interaction.commandName}`, {
+      ...interactionDetails(interaction),
+    });
     return;
   }
   if (!(bitrate <= 96 && bitrate >= 8)) {
@@ -53,6 +59,10 @@ const response = async (
     interaction.reply(
       `<#${channel.id}> bitrate changed to ${bitrate ?? 'default'}kbps.`
     );
+
+    mqtt?.publish(`dynamica/command/${interaction.commandName}`, {
+      ...interactionDetails(interaction),
+    });
   } catch (error) {
     interaction.reply({
       embeds: [

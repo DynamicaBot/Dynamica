@@ -1,3 +1,4 @@
+import { MQTT } from '@/classes/MQTT';
 import Event from '@classes/Event';
 import db from '@db';
 import logger from '@utils/logger';
@@ -19,4 +20,11 @@ export default new Event<'guildDelete'>()
     }
 
     logger.debug(`Left guild ${guild.id} named: ${guild.name}`);
+    const mqtt = MQTT.getInstance();
+    mqtt?.publish('dynamica/event/leave', {
+      guild: {
+        id: guild.id,
+        name: guild.name,
+      },
+    });
   });

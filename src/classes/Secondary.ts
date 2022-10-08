@@ -9,7 +9,6 @@ import {
   ChannelType,
   Client,
   DiscordAPIError,
-  Guild,
   GuildMember,
   User,
 } from 'discord.js';
@@ -17,6 +16,7 @@ import {
   DynamicaChannel,
   DynamicaChannelType,
 } from './DynamicaChannel.interface';
+import { MQTT } from './MQTT';
 
 export default class DynamicaSecondary
   implements DynamicaChannel<DynamicaChannelType.Secondary>
@@ -71,18 +71,20 @@ export default class DynamicaSecondary
    * @param member guild member who created the channel
    * @returns
    */
-  public static async initalise(
-    client: Client<true>,
-    primary: DynamicaPrimary,
-    guild: Guild,
-    member: GuildMember
-  ) {
+  public static async initalise(primary: DynamicaPrimary, member: GuildMember) {
+    const { guild, client } = member;
     const aliases = await db.alias.findMany({
       where: { guildId: guild.id },
     });
 
-    const primaryDiscordChannel = await primary.discord(client);
+    console.log((await member.fetch()).presence.activities);
 
+    const primaryDiscordChannel = await primary.discord(client);
+    console.log({
+      primaryDiscordChannel: primaryDiscordChannel.members.map(
+        (member) => member.presence
+      ),
+    });
     const activities = primaryDiscordChannel.members
       .filter((member) => member.presence.activities.length > 0)
       .filter((member) => !member.user.bot)
@@ -105,7 +107,7 @@ export default class DynamicaSecondary
       },
     });
 
-    const secondary = await guild.channels.create({
+    const secondary = await member.guild.channels.create({
       type: ChannelType.GuildVoice,
       name: formatChannelName(str, {
         creator: member?.displayName as string,
@@ -143,8 +145,17 @@ export default class DynamicaSecondary
       });
 
     logger.debug(
-      `Secondary channel ${secondary.name} created by ${member?.user.tag} in ${guild.name}.`
+      `Secondary channel ${secondary.name} created by ${member?.user.tag} in ${member.guild.name}.`
     );
+
+    const mqtt = MQTT.getInstance();
+
+    mqtt?.publish('dynamica/secondary/create', {
+      id: secondary.id,
+      name: secondary.name,
+      primaryId: primary.id,
+      createdAt: new Date().toISOString(),
+    });
 
     const dynamicaSecondary = new DynamicaSecondary(
       secondary.id,
@@ -241,6 +252,17 @@ export default class DynamicaSecondary
           );
         });
     }
+
+    const mqtt = MQTT.getInstance();
+    mqtt?.publish(`dynamica/secondary/update`, {
+      id: this.id,
+      primaryId: primary.id,
+      name,
+      locked,
+      activities,
+      memberCount: discordChannel.members.size,
+    });
+
     return this;
   }
 
@@ -296,8 +318,7 @@ export default class DynamicaSecondary
   }
 
   async discord(client: Client<true>) {
-    const guild = await client.guilds.fetch(this.guildId);
-    const channel = await guild.channels.fetch(this.id);
+    const channel = await client.channels.fetch(this.id);
     if (!channel.isVoiceBased()) {
       throw new Error('Not voice based');
     }
@@ -336,6 +357,11 @@ export default class DynamicaSecondary
         } else {
           logger.error(error);
         }
+      } finally {
+        const mqtt = MQTT.getInstance();
+        mqtt?.publish(`dynamica/secondary/delete`, {
+          id: this.id,
+        });
       }
     }
   }

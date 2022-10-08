@@ -1,4 +1,6 @@
+import { MQTT } from '@/classes/MQTT';
 import help from '@/help/name';
+import { interactionDetails } from '@/utils/mqtt';
 import Command from '@classes/Command';
 import DynamicaSecondary from '@classes/Secondary';
 import db from '@db';
@@ -28,7 +30,7 @@ const response = async (
   interaction: ChatInputCommandInteraction<CacheType>
 ) => {
   const name = interaction.options.getString('name');
-
+  const mqtt = MQTT.getInstance();
   const guildMember = await interaction.guild.members.cache.get(
     interaction.user.id
   );
@@ -41,6 +43,11 @@ const response = async (
   await DynamicaSecondary.get(channel.id).update(interaction.client);
 
   interaction.reply(`Channel name changed to \`${name}\`.`);
+  mqtt?.publish(`dynamica/command/${interaction.commandName}`, {
+    channel: channel.id,
+    name,
+    ...interactionDetails(interaction),
+  });
 };
 
 export const name = new Command({

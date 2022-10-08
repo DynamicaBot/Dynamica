@@ -1,4 +1,6 @@
+import { MQTT } from '@/classes/MQTT';
 import help from '@/help/permission';
+import { interactionDetails } from '@/utils/mqtt';
 import Command from '@classes/Command';
 import { SlashCommandBuilder } from '@discordjs/builders';
 import checkAdminPermissions from '@preconditions/admin';
@@ -62,7 +64,7 @@ const response = async (
   const subcommand = interaction.options.getSubcommand(true);
   const user = interaction.options.getUser('user', false);
   const role = interaction.options.getRole('role', false) as Role;
-
+  const mqtt = MQTT.getInstance();
   const guildMember = await interaction.guild.members.cache.get(
     interaction.user.id
   );
@@ -101,6 +103,10 @@ const response = async (
       } to access the <#${channel.id}>.`,
     });
   }
+  mqtt?.publish(`dynamica/command/${interaction.commandName}`, {
+    subcommand,
+    ...interactionDetails(interaction),
+  });
 };
 
 export const permission = new Command({
