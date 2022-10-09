@@ -7,16 +7,17 @@ export default class Aliases {
     this.aliases.push(alias);
   }
 
-  public static remove(id: number) {
-    this.aliases = this.aliases.filter((alias) => alias.id !== id);
+  public static remove(activity: string, guildId: string) {
+    this.aliases = this.aliases.filter(
+      (alias) => alias.activity !== activity && alias.guildId !== guildId
+    );
   }
 
-  public static get(id: number | undefined) {
-    return this.aliases.find((alias) => alias.id === id);
+  public static get(activity: string, guildId: string) {
+    return this.aliases.find(
+      (alias) => alias.activity === activity && alias.guildId === guildId
+    );
   }
-
-  public static has = (id: number) =>
-    this.aliases.some((alias) => alias.id === id);
 
   public static getByGuildId(guildId: string) {
     return this.aliases.filter((alias) => alias.guildId === guildId);
@@ -24,5 +25,16 @@ export default class Aliases {
 
   static get count() {
     return this.aliases.length;
+  }
+
+  public static update(
+    activity: string,
+    guildId: string,
+    newAlias: DynamicaAlias
+  ) {
+    const aliasIndex = this.aliases.findIndex(
+      (alias) => alias.activity === activity && alias.guildId === guildId
+    );
+    this.aliases[aliasIndex] = newAlias;
   }
 }

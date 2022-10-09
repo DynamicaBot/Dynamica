@@ -1,12 +1,13 @@
+import Secondaries from '@/classes/Secondaries';
 import Event from '@classes/Event';
-import DynamicaSecondary from '@classes/Secondary';
 import { Presence } from 'discord.js';
 
-export class PresenceUpdateEvent extends Event<'presenceUpdate'> {
+export default class PresenceUpdateEvent extends Event<'presenceUpdate'> {
   constructor() {
     super('presenceUpdate');
   }
 
+  // eslint-disable-next-line class-methods-use-this
   public response: (
     oldPresence: Presence,
     newPresence: Presence
@@ -15,7 +16,7 @@ export class PresenceUpdateEvent extends Event<'presenceUpdate'> {
     if (!channelId) {
       return;
     }
-    const dynamicaSecondary = DynamicaSecondary.get(channelId);
+    const dynamicaSecondary = Secondaries.get(channelId);
 
     if (dynamicaSecondary) {
       dynamicaSecondary.update(newPresence.client);

@@ -1,15 +1,23 @@
+import signaleLogger from '@/utils/logger';
 import db from '@db';
+import { PrismaClientKnownRequestError } from '@prisma/client/runtime/index.js';
+import { Signale } from 'signale';
 // eslint-disable-next-line import/no-cycle
 import Aliases from './Aliases';
 
 export default class DynamicaAlias {
   public guildId: string;
 
-  public id: number;
+  public activity: string;
 
-  constructor(guildId: string, id: number) {
+  public logger: Signale;
+
+  public static logger = signaleLogger.scope('Alias');
+
+  constructor(guildId: string, activity: string) {
     this.guildId = guildId;
-    this.id = id;
+    this.activity = activity;
+    this.logger = signaleLogger.scope('Alias', guildId, activity);
   }
 
   /**
@@ -17,7 +25,14 @@ export default class DynamicaAlias {
    * @returns this
    */
   prisma() {
-    return db.alias.findUniqueOrThrow({ where: { id: this.id } });
+    return db.alias.findUniqueOrThrow({
+      where: {
+        guildId_activity: {
+          activity: this.activity,
+          guildId: this.guildId,
+        },
+      },
+    });
   }
 
   /**
@@ -26,32 +41,27 @@ export default class DynamicaAlias {
    * @returns this
    * TODO: Add a check to see if the alias already exists.
    */
-  public static async findOrCreate(
-    guildId: string,
-    activity: string,
-    alias: string
-  ) {
-    // const { alias, activity } = data;
-
-    const dbAlias = await db.alias.upsert({
-      create: {
-        activity,
-        alias,
-        guildId,
-      },
-      update: {
-        activity,
-        alias,
-      },
-      where: {
-        guildId_activity: {
-          activity,
+  public static async create(guildId: string, activity: string, alias: string) {
+    try {
+      const newAlias = await db.alias.create({
+        data: {
           guildId,
+          activity,
+          alias,
         },
-      },
-    });
-    const newAlias = new DynamicaAlias(dbAlias.guildId, dbAlias.id);
-    Aliases.add(newAlias);
+      });
+      const aliasInstance = new DynamicaAlias(newAlias.guildId, activity);
+      Aliases.add(aliasInstance);
+    } catch (error) {
+      if (error instanceof PrismaClientKnownRequestError) {
+        if (error.code === 'P2002') {
+          throw new Error('An alias with that name already exists.');
+        } else {
+          this.logger.error('An unknown Prisma Error occured', error);
+          throw new Error('An unknown error occured.');
+        }
+      }
+    }
   }
 
   async update(alias: string, activity: string) {
@@ -67,17 +77,23 @@ export default class DynamicaAlias {
         activity,
       },
     });
-    const newAlias = new DynamicaAlias(dbAlias.guildId, dbAlias.id);
-    Aliases.add(newAlias);
+
+    const newAlias = new DynamicaAlias(dbAlias.guildId, dbAlias.activity);
+    Aliases.update(activity, this.guildId, newAlias);
   }
 
   /**
    * Delete the chosen alias.
    */
   async delete() {
-    if (!this.id) {
-      throw new Error('No Id defined');
-    }
-    await db.alias.delete({ where: { id: this.id } });
+    await db.alias.delete({
+      where: {
+        guildId_activity: {
+          activity: this.activity,
+          guildId: this.guildId,
+        },
+      },
+    });
+    Aliases.remove(this.activity, this.guildId);
   }
 }

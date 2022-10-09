@@ -3,7 +3,7 @@ import AutocompleteEvent from './events/autocomplete';
 import CommandEvent from './events/command';
 import GuildCreateEvent from './events/guildCreate';
 import GuildDeleteEvent from './events/guildDelete';
-import { PresenceUpdateEvent } from './events/presenceUpdate';
+import PresenceUpdateEvent from './events/presenceUpdate';
 import ReadyEvent from './events/ready';
 import VoiceStateUpdateEvent from './events/voiceStateUpdate';
 

@@ -32,7 +32,9 @@ export default class AliasAutocomplete extends Autocomplete {
         value: activity,
       }));
     } else if (subcommand === 'add') {
-      const activities = channelActivities(member.voice.channel);
+      const activities = member.voice.channel
+        ? channelActivities(member.voice.channel)
+        : [];
 
       options = activities.map((activity) => ({
         name: activity,

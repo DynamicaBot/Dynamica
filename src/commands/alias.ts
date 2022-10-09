@@ -1,8 +1,9 @@
 import DynamicaAlias from '@/classes/Alias';
+import Aliases from '@/classes/Aliases';
 import Command from '@/classes/Command';
+import { ErrorEmbed } from '@/utils/discordEmbeds';
 import interactionDetails from '@/utils/mqtt';
-import db from '@db';
-import { listAliases } from '@utils/alias';
+import { PrismaClientKnownRequestError } from '@prisma/client/runtime/index.js';
 import {
   CacheType,
   ChatInputCommandInteraction,
@@ -36,6 +37,7 @@ export default class AliasCommand extends Command {
         .addStringOption((option) =>
           option
             .setName('alias')
+            .setRequired(true)
             .setDescription('The alias the game should be known by.')
         )
     )
@@ -78,11 +80,12 @@ export default class AliasCommand extends Command {
       const activity = interaction.options.getString('activity', true);
       const aliasName = interaction.options.getString('alias', true);
 
-      await DynamicaAlias.findOrCreate(
-        interaction.guildId,
-        activity,
-        aliasName
-      );
+      try {
+        await DynamicaAlias.create(interaction.guildId, activity, aliasName);
+      } catch (error) {
+        interaction.reply({ embeds: [ErrorEmbed(error.message)] });
+        return;
+      }
 
       await interaction.reply(
         `Successfully created alias \`${aliasName}\` for \`${activity}\``
@@ -97,7 +100,26 @@ export default class AliasCommand extends Command {
     } else if (subcommand === 'update') {
       const activity = interaction.options.getString('activity', true);
       const aliasName = interaction.options.getString('alias', true);
-      DynamicaAlias.findOrCreate(interaction.guildId, activity, aliasName);
+
+      const existingAlias = Aliases.get(activity, interaction.guildId);
+
+      if (!existingAlias) {
+        interaction.reply({
+          embeds: [ErrorEmbed('Alias not found.')],
+        });
+        return;
+      }
+
+      try {
+        await existingAlias.update(aliasName, activity);
+      } catch (error) {
+        if (error instanceof PrismaClientKnownRequestError) {
+          interaction.reply({
+            embeds: [ErrorEmbed(error.message)],
+          });
+          return;
+        }
+      }
 
       await interaction.reply(
         `Successfully updated alias \`${aliasName}\` for \`${activity}\``
@@ -111,11 +133,10 @@ export default class AliasCommand extends Command {
       });
     } else if (subcommand === 'remove') {
       const activity = interaction.options.getString('activity', true);
-      const deletedAlias = await db.alias.delete({
-        where: { id: parseInt(activity, 10) },
-      });
+      const foundAlias = Aliases.get(activity, interaction.guildId);
+      await foundAlias.delete();
       await interaction.reply(
-        `Successfully removed alias for \`${deletedAlias.activity}\`.`
+        `Successfully removed alias for \`${activity}\`.`
       );
 
       this.publish({
@@ -124,12 +145,18 @@ export default class AliasCommand extends Command {
         ...interactionDetails(interaction),
       });
     } else if (subcommand === 'list') {
-      const aliases = await listAliases(interaction.guildId);
-      const inlineAliases = aliases.map(({ name, value }) => ({
-        name,
-        value,
-        inline: true,
-      }));
+      const aliases = Aliases.getByGuildId(interaction.guildId);
+      const inlineAliases = await Promise.all(
+        aliases.map(async ({ activity }) => {
+          const alias = Aliases.get(activity, interaction.guildId);
+          const aliasPrisma = await alias.prisma();
+          return {
+            name: activity,
+            value: aliasPrisma.alias,
+            inline: true,
+          };
+        })
+      );
 
       const embeds = _.chunk(inlineAliases, 25).map((result) =>
         new EmbedBuilder().addFields(...result)

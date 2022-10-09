@@ -93,7 +93,7 @@ export default class ReadyEvent extends Event<'ready'> {
 
       await Promise.all(
         aliases.map(async (element) => {
-          const newAlias = new DynamicaAlias(element.guildId, element.id);
+          const newAlias = new DynamicaAlias(element.guildId, element.activity);
           Aliases.add(newAlias);
         })
       );
