@@ -30,9 +30,9 @@ export default class MQTT {
     return MQTT.instance;
   }
 
-  public publish(topic: string, message: any) {
+  public publish(topic: string, message: string | Buffer) {
     return new Promise<void>((res, rej) => {
-      this.client.publish(topic, JSON.stringify(message), (err) => {
+      this.client.publish(topic, message, (err) => {
         if (err) {
           rej(err);
         } else {

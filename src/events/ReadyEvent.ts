@@ -115,9 +115,7 @@ export default class ReadyEvent extends Event<'ready'> {
       );
       this.logger.info(`Loaded ${Guilds.count} guilds`);
 
-      mqtt?.publish('dynamica/presence', {
-        ready: client.readyAt,
-      });
+      mqtt?.publish('dynamica/presence', client.readyAt.toISOString());
 
       this.logger.info('Loaded all data');
       this.logger.timeEnd('ready');
