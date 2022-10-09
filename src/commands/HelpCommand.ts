@@ -1,7 +1,6 @@
 import Command from '@/classes/Command';
 import Helps from '@/classes/Helps';
 import { InfoEmbed } from '@/utils/discordEmbeds';
-import interactionDetails from '@/utils/mqtt';
 import { APIEmbedField, EmbedBuilder, SlashCommandBuilder } from 'discord.js';
 import _ from 'lodash';
 
@@ -62,7 +61,6 @@ export default class HelpCommand extends Command {
             .addFields(helpPage)
         ),
       });
-      this.publish({ ...interactionDetails(interaction) });
     }
   };
 }

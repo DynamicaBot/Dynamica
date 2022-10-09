@@ -1,7 +1,6 @@
 import Command from '@/classes/Command';
 import Secondaries from '@/classes/Secondaries';
 import { SuccessEmbed } from '@/utils/discordEmbeds';
-import interactionDetails from '@/utils/mqtt';
 import db from '@db';
 import {
   CacheType,
@@ -55,11 +54,6 @@ export default class GeneralCommand extends Command {
           `General template for <#${channel}> changed to \`${name}\`.`
         ),
       ],
-    });
-
-    this.publish({
-      name,
-      ...interactionDetails(interaction),
     });
   };
 }

@@ -8,7 +8,6 @@ import {
 } from 'discord.js';
 import { Signale } from 'signale';
 import Condition from './Condition';
-import MQTT from './MQTT';
 
 type SlashCommandBuilderTypes =
   | SlashCommandBuilder
@@ -35,9 +34,4 @@ export default class Command {
     this.logger = signaleLogger.scope('Command', name);
     this.name = name;
   }
-
-  public publish = (data: any) => {
-    const mqtt = MQTT.getInstance();
-    mqtt?.publish(`dynamica/command/${this.name}`, data);
-  };
 }

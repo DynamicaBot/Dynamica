@@ -1,7 +1,6 @@
 import Command from '@/classes/Command';
 import creatorCheck from '@/preconditions/creator';
 import secondaryCheck from '@/preconditions/secondary';
-import interactionDetails from '@/utils/mqtt';
 import { ErrorEmbed } from '@utils/discordEmbeds';
 import {
   CacheType,
@@ -104,9 +103,5 @@ export default class PermissionCommand extends Command {
         } to access the <#${channel.id}>.`,
       });
     }
-    this.publish({
-      subcommand,
-      ...interactionDetails(interaction),
-    });
   };
 }

@@ -1,8 +1,6 @@
 import Command from '@/classes/Command';
-import MQTT from '@/classes/MQTT';
 import Secondaries from '@/classes/Secondaries';
 import { SuccessEmbed } from '@/utils/discordEmbeds';
-import interactionDetails from '@/utils/mqtt';
 import db from '@db';
 import {
   CacheType,
@@ -43,11 +41,6 @@ export default class TemplateCommand extends Command {
           )}.`
         ),
       ],
-    });
-    const mqtt = MQTT.getInstance();
-    mqtt?.publish(`dynamica/command/${interaction.commandName}`, {
-      name: template,
-      ...interactionDetails(interaction),
     });
   };
 

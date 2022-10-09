@@ -9,7 +9,6 @@ import {
   GuildMember,
 } from 'discord.js';
 import { Signale } from 'signale';
-import MQTT from './MQTT';
 import Primaries from './Primaries';
 import DynamicaSecondary from './Secondary';
 
@@ -60,13 +59,6 @@ export default class DynamicaPrimary {
         `New primary channel ${channel.name} created by ${primary.creator}.`
       );
 
-    const mqtt = MQTT.getInstance();
-
-    mqtt?.publish('dynamica/primary/create', {
-      id: primary.id,
-      createdAt: new Date().toISOString(),
-    });
-
     const createdChannel = new DynamicaPrimary(channel.id, guild.id);
     Primaries.add(createdChannel);
     return createdChannel;
@@ -94,11 +86,6 @@ export default class DynamicaPrimary {
         } else {
           this.logger.error(error);
         }
-      } finally {
-        const mqtt = MQTT.getInstance();
-        mqtt?.publish(`dynamica/primary/delete`, {
-          id: this.id,
-        });
       }
     }
   }
@@ -144,10 +131,6 @@ export default class DynamicaPrimary {
         })
       );
     }
-    const mqtt = MQTT.getInstance();
-    mqtt?.publish(`dynamica/primary/update`, {
-      id: this.id,
-    });
   }
 
   toString() {

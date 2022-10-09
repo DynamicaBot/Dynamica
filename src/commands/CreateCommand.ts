@@ -1,6 +1,5 @@
 import Command from '@/classes/Command';
 import { SuccessEmbed } from '@/utils/discordEmbeds';
-import interactionDetails from '@/utils/mqtt';
 import DynamicaPrimary from '@classes/Primary';
 import {
   CacheType,
@@ -52,10 +51,6 @@ export default class CreateCommand extends Command {
           )} successfully created.`
         ),
       ],
-    });
-
-    this.publish({
-      ...interactionDetails(interaction),
     });
   };
 }

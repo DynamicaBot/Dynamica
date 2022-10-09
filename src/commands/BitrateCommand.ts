@@ -1,7 +1,6 @@
 import Command from '@/classes/Command';
 import creatorCheck from '@/preconditions/creator';
 import secondaryCheck from '@/preconditions/secondary';
-import interactionDetails from '@/utils/mqtt';
 
 import { ErrorEmbed, SuccessEmbed } from '@utils/discordEmbeds';
 import {
@@ -51,10 +50,6 @@ export default class BitrateCommand extends Command {
           embeds: [SuccessEmbed('Set bitrate to default.')],
         });
       });
-
-      this.publish({
-        ...interactionDetails(interaction),
-      });
       return;
     }
     try {
@@ -67,10 +62,6 @@ export default class BitrateCommand extends Command {
             `${channelMention(channel.id)} bitrate changed to ${bitrate} kbps.`
           ),
         ],
-      });
-
-      this.publish({
-        ...interactionDetails(interaction),
       });
     } catch (error) {
       interaction.reply({

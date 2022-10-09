@@ -3,7 +3,6 @@ import Secondaries from '@/classes/Secondaries';
 import creatorCheck from '@/preconditions/creator';
 import secondaryCheck from '@/preconditions/secondary';
 import { SuccessEmbed } from '@/utils/discordEmbeds';
-import interactionDetails from '@/utils/mqtt';
 import {
   CacheType,
   ChatInputCommandInteraction,
@@ -46,10 +45,6 @@ export default class LockCommand extends Command {
           )} to remove people.`
         ),
       ],
-    });
-    this.publish({
-      channel: dynamicaSecondary.id,
-      ...interactionDetails(interaction),
     });
   };
 }

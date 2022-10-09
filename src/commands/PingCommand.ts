@@ -1,5 +1,4 @@
 import Command from '@/classes/Command';
-import interactionDetails from '@/utils/mqtt';
 import {
   CacheType,
   ChatInputCommandInteraction,
@@ -11,15 +10,13 @@ export default class PingCommand extends Command {
     super('ping');
   }
 
+  // eslint-disable-next-line class-methods-use-this
   response = async (interaction: ChatInputCommandInteraction<CacheType>) => {
     await interaction.reply({
       content: `Pong from JavaScript! Bot Latency ${Math.round(
         interaction.client.ws.ping
       )}ms.`,
       ephemeral: true,
-    });
-    this.publish({
-      ...interactionDetails(interaction),
     });
   };
 

@@ -1,7 +1,6 @@
 import Command from '@/classes/Command';
 import Guilds from '@/classes/Guilds';
 import { SuccessEmbed } from '@/utils/discordEmbeds';
-import interactionDetails from '@/utils/mqtt';
 import { PermissionFlagsBits, SlashCommandBuilder } from 'discord.js';
 
 export default class AllowjoinCommand extends Command {
@@ -22,16 +21,13 @@ export default class AllowjoinCommand extends Command {
         .setRequired(true)
     );
 
+  // eslint-disable-next-line class-methods-use-this
   response = async (interaction) => {
     const state = interaction.options.getBoolean('state', true);
     const guild = Guilds.get(interaction.guildId);
     guild.setAllowJoin(state);
     interaction.reply({
       embeds: [SuccessEmbed(`${state ? 'Enabled' : 'Disabled'} Join Requests`)],
-    });
-
-    this.publish({
-      ...interactionDetails(interaction),
     });
   };
 }

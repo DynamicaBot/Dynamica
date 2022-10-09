@@ -8,13 +8,17 @@ const updatePresence = async (client: Client<true>) => {
   try {
     const channelCount = Secondaries.count;
 
-    client.user.setActivity({
-      type: ActivityType.Watching,
-      name: `${channelCount} channel${pl(channelCount)}`,
-      url: 'https://dynamica.dev',
+    client.user.setPresence({
+      afk: !!channelCount,
+      status: channelCount ? 'online' : 'idle',
+      activities: [
+        {
+          type: ActivityType.Watching,
+          name: `${channelCount} channel${pl(channelCount)}`,
+          url: 'https://dynamica.dev',
+        },
+      ],
     });
-    client.user.client.user.setAFK(!!channelCount);
-    client.user.setStatus(channelCount ? 'online' : 'idle');
   } catch (error) {
     logger.error(error);
   }

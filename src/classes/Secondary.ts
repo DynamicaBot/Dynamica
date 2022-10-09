@@ -14,7 +14,6 @@ import {
   VoiceBasedChannel,
 } from 'discord.js';
 import { Signale } from 'signale';
-import MQTT from './MQTT';
 import Secondaries from './Secondaries';
 // eslint-disable-next-line import/no-cycle
 
@@ -113,15 +112,6 @@ export default class DynamicaSecondary {
         `Secondary channel ${secondary.name} created by ${member?.user.tag} in ${member.guild.name}.`
       );
 
-    const mqtt = MQTT.getInstance();
-
-    mqtt?.publish('dynamica/secondary/create', {
-      id: secondary.id,
-      name: secondary.name,
-      primaryId: primary.id,
-      createdAt: new Date().toISOString(),
-    });
-
     const dynamicaSecondary = new DynamicaSecondary(
       secondary.id,
       guild.id,
@@ -214,16 +204,6 @@ export default class DynamicaSecondary {
         `Secondary channel ${this.discord.name} in ${discordChannel.guild.name} name changed.`
       );
     }
-
-    const mqtt = MQTT.getInstance();
-    mqtt?.publish(`dynamica/secondary/update`, {
-      id: this.id,
-      primaryId: this.parentId,
-      name,
-      locked,
-      activities,
-      memberCount: discordChannel.members.size,
-    });
 
     return this;
   }
@@ -336,10 +316,6 @@ export default class DynamicaSecondary {
 
     this.logger.debug(`Secondary channel deleted.`);
 
-    const mqtt = MQTT.getInstance();
-    mqtt?.publish(`dynamica/secondary/delete`, {
-      id: this.id,
-    });
     Secondaries.remove(this.id);
     updatePresence(client);
   }

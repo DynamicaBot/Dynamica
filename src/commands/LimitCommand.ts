@@ -1,5 +1,4 @@
 import Command from '@/classes/Command';
-import interactionDetails from '@/utils/mqtt';
 import creatorCheck from '@preconditions/creator';
 import secondaryCheck from '@preconditions/secondary';
 import { ErrorEmbed, SuccessEmbed } from '@utils/discordEmbeds';
@@ -42,11 +41,6 @@ export default class LimitCommand extends Command {
           )}.`
         ),
       ],
-    });
-    this.publish({
-      userLimit,
-      channel: channel.id,
-      ...interactionDetails(interaction),
     });
   };
 

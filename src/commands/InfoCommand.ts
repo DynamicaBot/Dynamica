@@ -2,7 +2,6 @@ import Command from '@/classes/Command';
 import Primaries from '@/classes/Primaries';
 import Secondaries from '@/classes/Secondaries';
 import { ErrorEmbed } from '@/utils/discordEmbeds';
-import interactionDetails from '@/utils/mqtt';
 import db from '@db';
 import { EmbedBuilder, SlashCommandBuilder } from 'discord.js';
 
@@ -79,11 +78,6 @@ export default class InfoCommand extends Command {
           ),
         ],
       });
-      this.publish({
-        channel: primary.id,
-        subcommand,
-        ...interactionDetails(interaction),
-      });
     } else if (subcommand === 'secondary') {
       const chosenSecondary = interaction.options.getString(
         'secondarychannel',
@@ -119,11 +113,6 @@ export default class InfoCommand extends Command {
           ),
         ],
       });
-      this.publish({
-        channel: secondary.id,
-        subcommand,
-        ...interactionDetails(interaction),
-      });
     } else if (subcommand === 'guild') {
       const prismaGuild = await db.guild.findUnique({
         where: { id: interaction.guildId },
@@ -137,10 +126,6 @@ export default class InfoCommand extends Command {
             value: prismaGuild.allowJoinRequests ? 'Enabled' : 'Disabled',
           }),
         ],
-      });
-      this.publish({
-        subcommand,
-        ...interactionDetails(interaction),
       });
     }
   };

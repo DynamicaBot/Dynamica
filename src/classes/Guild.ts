@@ -10,7 +10,6 @@ import {
 } from 'discord.js';
 // eslint-disable-next-line import/no-cycle
 import Guilds from './Guilds';
-import MQTT from './MQTT';
 
 /**
  * The list of basic commands to display.
@@ -130,13 +129,6 @@ export default class DynamicaGuild {
     }
 
     logger.debug(`Joined guild ${guild.id} named: ${guild.name}`);
-    const mqtt = MQTT.getInstance();
-    mqtt?.publish('dynamica/event/join', {
-      guild: {
-        id: guild.id,
-        name: guild.name,
-      },
-    });
     const newGuild = new DynamicaGuild(guild.id);
     Guilds.add(newGuild);
   }
@@ -161,17 +153,10 @@ export default class DynamicaGuild {
   }
 
   async leave(client: Client<true>) {
-    const mqtt = MQTT.getInstance();
-
     try {
       await this.leaveDiscord(client);
       await this.deletePrisma();
       Guilds.remove(this.id);
-      mqtt?.publish('dynamica/event/leave', {
-        guild: {
-          id: this.id,
-        },
-      });
     } catch (error) {
       if (error instanceof DiscordAPIError) {
         logger.error('Error leaving guild:', error);

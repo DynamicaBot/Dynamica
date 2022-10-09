@@ -2,7 +2,6 @@ import DynamicaAlias from '@/classes/Alias';
 import Aliases from '@/classes/Aliases';
 import Command from '@/classes/Command';
 import { ErrorEmbed, SuccessEmbed } from '@/utils/discordEmbeds';
-import interactionDetails from '@/utils/mqtt';
 import { PrismaClientKnownRequestError } from '@prisma/client/runtime/index.js';
 import {
   CacheType,
@@ -96,13 +95,6 @@ export default class AliasCommand extends Command {
           ),
         ],
       });
-
-      this.publish({
-        subcommand,
-        activity,
-        aliasName,
-        ...interactionDetails(interaction),
-      });
     } else if (subcommand === 'update') {
       const activity = interaction.options.getString('activity', true);
       const aliasName = interaction.options.getString('alias', true);
@@ -134,13 +126,6 @@ export default class AliasCommand extends Command {
           ),
         ],
       });
-
-      this.publish({
-        subcommand,
-        activity,
-        aliasName,
-        ...interactionDetails(interaction),
-      });
     } else if (subcommand === 'remove') {
       const activity = interaction.options.getString('activity', true);
       const foundAlias = Aliases.get(activity, interaction.guildId);
@@ -149,12 +134,6 @@ export default class AliasCommand extends Command {
         embeds: [
           SuccessEmbed(`Successfully removed alias for \`${activity}\`.`),
         ],
-      });
-
-      this.publish({
-        subcommand,
-        activity,
-        ...interactionDetails(interaction),
       });
     }
   };

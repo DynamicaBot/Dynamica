@@ -1,7 +1,6 @@
 import Aliases from '@/classes/Aliases';
 import Command from '@/classes/Command';
 import { InfoEmbed } from '@/utils/discordEmbeds';
-import interactionDetails from '@/utils/mqtt';
 import {
   CacheType,
   ChatInputCommandInteraction,
@@ -43,10 +42,6 @@ export default class AliasesCommand extends Command {
     interaction.reply({
       embeds,
       ephemeral: true,
-    });
-
-    this.publish({
-      ...interactionDetails(interaction),
     });
   };
 }
