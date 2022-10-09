@@ -37,13 +37,24 @@ export default function formatChannelName(
      */
     memberCount: number;
     /**
+     * Random unicode emoji.
+     */
+    emoji: string;
+    /**
      * If a channel is locked or not.
      */
     locked: boolean;
   }
 ) {
-  const { creator, channelNumber, activities, aliases, memberCount, locked } =
-    options;
+  const {
+    creator,
+    channelNumber,
+    activities,
+    aliases,
+    memberCount,
+    emoji,
+    locked,
+  } = options;
 
   const activityList = uniq(activities);
 
@@ -95,5 +106,6 @@ export default function formatChannelName(
     .replace(/@@num@@/g, memberCount.toString()) // number of channel members
     .replace(/@@game@@/g, aliasedActivities.join(', ')) // Activities
     .replace(/@@creator@@/g, creator) // Creator
+    .replace(/@@emoji@@/g, emoji) // Random unicode emoji
     .replace(/<<(.+)\/(.+)>>/g, memberCount === 1 ? plurals[1] : plurals[2])}`; // Plurals
 }

@@ -13,6 +13,7 @@ import {
   User,
   VoiceBasedChannel,
 } from 'discord.js';
+import emojiList from 'emoji-random-list';
 import { Signale } from 'signale';
 import Secondaries from './Secondaries';
 // eslint-disable-next-line import/no-cycle
@@ -76,6 +77,12 @@ export default class DynamicaSecondary {
       },
     });
 
+    const emoji = emojiList.random({
+      skintones: false,
+      genders: false,
+      group: 'smileys-and-emotion,animals-and-nature,food-and-drink',
+    })[0]; // random() returns an array of emojis
+
     const secondary = await member.guild.channels.create({
       type: ChannelType.GuildVoice,
       name: formatChannelName(str, {
@@ -84,6 +91,7 @@ export default class DynamicaSecondary {
         activities,
         aliases,
         memberCount: primary.members.size,
+        emoji,
         locked: false,
       }),
       parent: primary.parent ?? undefined,
@@ -103,6 +111,7 @@ export default class DynamicaSecondary {
         creator: member.id,
         primaryId: primary.id,
         guildId: guild.id,
+        emoji,
       },
     });
 
@@ -147,6 +156,8 @@ export default class DynamicaSecondary {
       },
     });
 
+    const { emoji } = prismaChannel;
+
     /**
      * Return aliases
      */
@@ -190,6 +201,7 @@ export default class DynamicaSecondary {
       channelNumber: adjacentSecondaryCount + 1,
       activities,
       memberCount: discordChannel.members.size, // Get this
+      emoji,
       locked,
     });
 

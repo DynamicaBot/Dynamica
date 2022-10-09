@@ -762,6 +762,11 @@ duplexify@^4.1.1:
     readable-stream "^3.1.1"
     stream-shift "^1.0.0"
 
+emoji-random-list@^1.1.3:
+  version "1.1.3"
+  resolved "https://registry.yarnpkg.com/emoji-random-list/-/emoji-random-list-1.1.3.tgz#cf6cea95365730eded5603cfc1fd700d701c022d"
+  integrity sha512-KUhniFC6qVxVbTHMNQl4bvgZ3Kc6cfMoahEPzH7I7KDfshMTF98yHib0tdC4XUh+BXd2k5cpkHxGvWZ/xX5ydQ==
+
 end-of-stream@^1.1.0, end-of-stream@^1.4.1:
   version "1.4.4"
   resolved "https://registry.yarnpkg.com/end-of-stream/-/end-of-stream-1.4.4.tgz#5ae64a5f45057baf3626ec14da0ca5e4b2431eb0"
