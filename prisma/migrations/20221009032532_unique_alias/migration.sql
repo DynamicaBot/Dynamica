@@ -7,14 +7,6 @@
 */
 -- RedefineTables
 PRAGMA foreign_keys=OFF;
-CREATE TABLE "new_Guild" (
-    "id" TEXT NOT NULL PRIMARY KEY,
-    "allowJoinRequests" BOOLEAN NOT NULL DEFAULT false
-);
-INSERT INTO "new_Guild" ("allowJoinRequests", "id") SELECT "allowJoinRequests", "id" FROM "Guild";
-DROP TABLE "Guild";
-ALTER TABLE "new_Guild" RENAME TO "Guild";
-CREATE UNIQUE INDEX "Guild_id_key" ON "Guild"("id");
 CREATE TABLE "new_Alias" (
     "id" INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
     "activity" TEXT NOT NULL,
@@ -26,5 +18,13 @@ INSERT INTO "new_Alias" ("activity", "alias", "guildId", "id") SELECT "activity"
 DROP TABLE "Alias";
 ALTER TABLE "new_Alias" RENAME TO "Alias";
 CREATE UNIQUE INDEX "Alias_guildId_activity_key" ON "Alias"("guildId", "activity");
+CREATE TABLE "new_Guild" (
+    "id" TEXT NOT NULL PRIMARY KEY,
+    "allowJoinRequests" BOOLEAN NOT NULL DEFAULT false
+);
+INSERT INTO "new_Guild" ("allowJoinRequests", "id") SELECT "allowJoinRequests", "id" FROM "Guild";
+DROP TABLE "Guild";
+ALTER TABLE "new_Guild" RENAME TO "Guild";
+CREATE UNIQUE INDEX "Guild_id_key" ON "Guild"("id");
 PRAGMA foreign_key_check;
 PRAGMA foreign_keys=ON;
