@@ -10,6 +10,9 @@
         env:
           TOKEN: "{{ lookup('env', 'TOKEN') }}"
           CLIENT_ID: "{{ lookup('env', 'CLIENT_ID') }}"
+          MQTT_URL: "{{ lookup('env', 'MQTT_URL') }}"
+          MQTT_USER: "{{ lookup('env', 'MQTT_USER') }}"
+          MQTT_PASS: "{{ lookup('env', 'MQTT_PASS') }}"
         ports:
           - 5555:5555
           - 4000:4000
