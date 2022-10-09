@@ -1,5 +1,6 @@
 import Events from '@/classes/Events';
 import AutocompleteEvent from './events/autocomplete';
+import ChannelDeleteEvent from './events/channelDelete';
 import CommandEvent from './events/command';
 import GuildCreateEvent from './events/guildCreate';
 import GuildDeleteEvent from './events/guildDelete';
@@ -15,6 +16,7 @@ const registerEvents = () => {
   Events.register(new PresenceUpdateEvent());
   Events.register(new ReadyEvent());
   Events.register(new VoiceStateUpdateEvent());
+  Events.register(new ChannelDeleteEvent());
 };
 
 export default registerEvents;

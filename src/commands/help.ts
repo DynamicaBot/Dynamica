@@ -1,5 +1,6 @@
 import Command from '@/classes/Command';
 import Helps from '@/classes/Helps';
+import { InfoEmbed } from '@/utils/discordEmbeds';
 import interactionDetails from '@/utils/mqtt';
 import { APIEmbedField, EmbedBuilder, SlashCommandBuilder } from 'discord.js';
 import _ from 'lodash';
@@ -52,15 +53,9 @@ export default class HelpCommand extends Command {
 
       interaction.reply({
         ephemeral: true,
-        embeds: helpPages.map((helpPage) =>
-          new EmbedBuilder()
-            .setAuthor({
-              name: 'Dynamica',
-              url: 'https://dynamica.dev',
-              iconURL: 'https://dynamica.dev/img/dynamica.png',
-            })
-            .setColor(3066993)
-            .setTitle('Help')
+        embeds: helpPages.map((helpPage, index) =>
+          InfoEmbed("Information about Dynamica's commands.")
+            .setTitle(`Help (${index + 1})`)
             .setFooter({
               text: 'Find out more https://dynamica.dev/docs/commands',
             })

@@ -18,7 +18,6 @@ export default class AliasAutocomplete extends Autocomplete {
     const subcommand = interaction.options.getSubcommand(true) as
       | 'update'
       | 'remove'
-      | 'list'
       | 'add';
 
     let options: { name: string; value: string }[] = [];

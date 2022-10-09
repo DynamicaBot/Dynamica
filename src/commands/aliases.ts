@@ -1,10 +1,10 @@
 import Aliases from '@/classes/Aliases';
 import Command from '@/classes/Command';
+import { InfoEmbed } from '@/utils/discordEmbeds';
 import interactionDetails from '@/utils/mqtt';
 import {
   CacheType,
   ChatInputCommandInteraction,
-  EmbedBuilder,
   SlashCommandBuilder,
 } from 'discord.js';
 import _ from 'lodash';
@@ -35,12 +35,14 @@ export default class AliasesCommand extends Command {
       })
     );
 
-    const embeds = _.chunk(inlineAliases, 25).map((result) =>
-      new EmbedBuilder().addFields(...result)
+    const embeds = _.chunk(inlineAliases, 25).map((result, index) =>
+      InfoEmbed("Information about aliases for this server's games.")
+        .addFields(...result)
+        .setTitle(`Aliases (${index + 1})`)
     );
     interaction.reply({
-      content: 'Alias List',
       embeds,
+      ephemeral: true,
     });
 
     this.publish({

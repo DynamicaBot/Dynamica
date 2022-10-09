@@ -1,8 +1,10 @@
 import Command from '@/classes/Command';
+import { SuccessEmbed } from '@/utils/discordEmbeds';
 import interactionDetails from '@/utils/mqtt';
 import DynamicaPrimary from '@classes/Primary';
 import {
   CacheType,
+  channelMention,
   ChatInputCommandInteraction,
   GuildChannel,
   GuildMember,
@@ -42,9 +44,15 @@ export default class CreateCommand extends Command {
       section
     );
 
-    interaction.reply(
-      `New voice channel <#${newPrimary.id}> successfully created.`
-    );
+    interaction.reply({
+      embeds: [
+        SuccessEmbed(
+          `New voice channel ${channelMention(
+            newPrimary.id
+          )} successfully created.`
+        ),
+      ],
+    });
 
     this.publish({
       ...interactionDetails(interaction),

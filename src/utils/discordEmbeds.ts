@@ -1,6 +1,6 @@
 import { EmbedBuilder } from 'discord.js';
 
-export const ErrorEmbed = (message: string) =>
+export const ErrorEmbed = (message?: string) =>
   new EmbedBuilder()
     .setColor(15158332)
     .setDescription(message)

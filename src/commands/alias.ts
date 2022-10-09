@@ -1,12 +1,13 @@
 import DynamicaAlias from '@/classes/Alias';
 import Aliases from '@/classes/Aliases';
 import Command from '@/classes/Command';
-import { ErrorEmbed } from '@/utils/discordEmbeds';
+import { ErrorEmbed, SuccessEmbed } from '@/utils/discordEmbeds';
 import interactionDetails from '@/utils/mqtt';
 import { PrismaClientKnownRequestError } from '@prisma/client/runtime/index.js';
 import {
   CacheType,
   ChatInputCommandInteraction,
+  inlineCode,
   PermissionFlagsBits,
   SlashCommandBuilder,
 } from 'discord.js';
@@ -88,9 +89,13 @@ export default class AliasCommand extends Command {
         return;
       }
 
-      await interaction.reply(
-        `Successfully created alias \`${aliasName}\` for \`${activity}\``
-      );
+      await interaction.reply({
+        embeds: [
+          SuccessEmbed(
+            `Alias ${inlineCode(aliasName)} added for ${inlineCode(activity)}.`
+          ),
+        ],
+      });
 
       this.publish({
         subcommand,
@@ -122,9 +127,13 @@ export default class AliasCommand extends Command {
         }
       }
 
-      await interaction.reply(
-        `Successfully updated alias \`${aliasName}\` for \`${activity}\``
-      );
+      await interaction.reply({
+        embeds: [
+          SuccessEmbed(
+            `Successfully updated alias for \`${activity}\` to \`${aliasName}\``
+          ),
+        ],
+      });
 
       this.publish({
         subcommand,
@@ -136,9 +145,11 @@ export default class AliasCommand extends Command {
       const activity = interaction.options.getString('activity', true);
       const foundAlias = Aliases.get(activity, interaction.guildId);
       await foundAlias.delete();
-      await interaction.reply(
-        `Successfully removed alias for \`${activity}\`.`
-      );
+      await interaction.reply({
+        embeds: [
+          SuccessEmbed(`Successfully removed alias for \`${activity}\`.`),
+        ],
+      });
 
       this.publish({
         subcommand,
