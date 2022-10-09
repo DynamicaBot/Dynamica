@@ -32,6 +32,7 @@ model Secondary {
   id        String  @id @unique
   name      String?
   creator   String?
+  emoji     String?
   locked    Boolean @default(false)
   guildId   String
   guild     Guild   @relation(references: [id], fields: [guildId])
