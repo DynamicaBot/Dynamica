@@ -32,7 +32,7 @@ export default class MQTT {
 
   public publish(topic: string, message: string | Buffer) {
     return new Promise<void>((res, rej) => {
-      this.client.publish(topic, message, (err) => {
+      this.client.publish(topic, message, { retain: true }, (err) => {
         if (err) {
           rej(err);
         } else {
