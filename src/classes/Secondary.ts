@@ -1,11 +1,11 @@
 // eslint-disable-next-line import/no-cycle
+import channelActivities from '@/utils/activity';
 import updatePresence from '@/utils/presence';
 import db from '@db';
 import { PrismaClientKnownRequestError } from '@prisma/client/runtime/index.js';
 import formatChannelName from '@utils/format';
 import signaleLogger from '@utils/logger';
 import {
-  ActivityType,
   ChannelType,
   Client,
   DiscordAPIError,
@@ -52,14 +52,7 @@ export default class DynamicaSecondary {
       where: { guildId: guild.id },
     });
 
-    const activities = primary.members
-      .filter((listMember) => listMember.presence.activities.length > 0)
-      .filter((listMember) => !listMember.user.bot)
-      .map((listMember) => listMember.presence.activities)
-      .flat()
-      .filter((activity) => activity.type !== ActivityType.Custom)
-      .filter((activity) => activity.type !== ActivityType.Listening)
-      .map((activity) => activity.name);
+    const activities = channelActivities(primary);
 
     const primaryPrisma = await db.primary.findUnique({
       where: { id: primary.id },
@@ -159,14 +152,7 @@ export default class DynamicaSecondary {
     /**
      * The activities list minus stuff that should be ignored like Spotify and Custom status // Todo: more complicated logic for people who might be streaming
      */
-    const activities = discordChannel.members
-      .filter((member) => member.presence.activities.length > 0)
-      .filter((member) => !member.user.bot)
-      .map((member) => member.presence.activities)
-      .flat()
-      .filter((activity) => activity.type !== ActivityType.Custom)
-      .filter((activity) => activity.type !== ActivityType.Listening)
-      .map((activity) => activity.name);
+    const activities = channelActivities(discordChannel);
 
     const { locked } = prismaChannel;
 
