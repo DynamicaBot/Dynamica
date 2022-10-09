@@ -33,5 +33,6 @@ export default async () => {
       logger.error(error);
     }
     deployLogger.timeEnd('deploy');
+    process.exit();
   }
 };

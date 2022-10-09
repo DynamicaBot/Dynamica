@@ -29,6 +29,7 @@ export default async () => {
           GUILD_ID ? 'guild' : 'application'
         } (/) commands.`
       );
+      process.exit();
     } catch (error) {
       logger.error(error);
     }
