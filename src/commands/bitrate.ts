@@ -3,9 +3,10 @@ import creatorCheck from '@/preconditions/creator';
 import secondaryCheck from '@/preconditions/secondary';
 import interactionDetails from '@/utils/mqtt';
 
-import { ErrorEmbed } from '@utils/discordEmbeds';
+import { ErrorEmbed, SuccessEmbed } from '@utils/discordEmbeds';
 import {
   CacheType,
+  channelMention,
   ChatInputCommandInteraction,
   PermissionFlagsBits,
   SlashCommandBuilder,
@@ -46,7 +47,9 @@ export default class BitrateCommand extends Command {
 
     if (!bitrate) {
       channel.edit({ bitrate: 64000 }).then(() => {
-        interaction.reply('Set bitrate to default.');
+        interaction.reply({
+          embeds: [SuccessEmbed('Set bitrate to default.')],
+        });
       });
 
       this.publish({
@@ -58,9 +61,13 @@ export default class BitrateCommand extends Command {
       await channel.edit({
         bitrate: bitrate ? bitrate * 1000 : 64000,
       });
-      interaction.reply(
-        `<#${channel.id}> bitrate changed to ${bitrate ?? 'default'}kbps.`
-      );
+      interaction.reply({
+        embeds: [
+          SuccessEmbed(
+            `${channelMention(channel.id)} bitrate changed to ${bitrate} kbps.`
+          ),
+        ],
+      });
 
       this.publish({
         ...interactionDetails(interaction),

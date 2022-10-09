@@ -2,10 +2,12 @@ import Command from '@/classes/Command';
 import Secondaries from '@/classes/Secondaries';
 import creatorCheck from '@/preconditions/creator';
 import secondaryCheck from '@/preconditions/secondary';
+import { SuccessEmbed } from '@/utils/discordEmbeds';
 import interactionDetails from '@/utils/mqtt';
 import {
   CacheType,
   ChatInputCommandInteraction,
+  inlineCode,
   PermissionFlagsBits,
   SlashCommandBuilder,
 } from 'discord.js';
@@ -32,22 +34,22 @@ export default class LockCommand extends Command {
 
     const dynamicaSecondary = Secondaries.get(channelId);
 
-    if (dynamicaSecondary) {
-      await dynamicaSecondary.lock(interaction.client);
-      await interaction.reply({
-        ephemeral: true,
-        content:
-          'Use `/permission add` to allow people to access the channels. Or, `/permission remove` to remove people.',
-      });
-      this.publish({
-        channel: dynamicaSecondary.id,
-        ...interactionDetails(interaction),
-      });
-    } else {
-      interaction.reply({
-        ephemeral: true,
-        content: "This isn't a dynamica channel.",
-      });
-    }
+    await dynamicaSecondary.lock(interaction.client);
+    await interaction.reply({
+      ephemeral: true,
+      embeds: [
+        SuccessEmbed(
+          `Use ${inlineCode(
+            '/permission add'
+          )} to allow people to access the channels. Or, ${inlineCode(
+            '/permission remove'
+          )} to remove people.`
+        ),
+      ],
+    });
+    this.publish({
+      channel: dynamicaSecondary.id,
+      ...interactionDetails(interaction),
+    });
   };
 }

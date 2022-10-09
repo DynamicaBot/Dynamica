@@ -1,11 +1,13 @@
 import Command from '@/classes/Command';
 import Secondaries from '@/classes/Secondaries';
 import secondaryCheck from '@/preconditions/secondary';
+import { SuccessEmbed } from '@/utils/discordEmbeds';
 import interactionDetails from '@/utils/mqtt';
 import db from '@db';
 import {
   CacheType,
   ChatInputCommandInteraction,
+  inlineCode,
   PermissionFlagsBits,
   SlashCommandBuilder,
 } from 'discord.js';
@@ -42,7 +44,9 @@ export default class NameCommand extends Command {
 
     await Secondaries.get(channel.id).update(interaction.client);
 
-    interaction.reply(`Channel name changed to \`${name}\`.`);
+    interaction.reply({
+      embeds: [SuccessEmbed(`Channel name changed to ${inlineCode(name)}.`)],
+    });
     this.publish({
       channel: channel.id,
       name,

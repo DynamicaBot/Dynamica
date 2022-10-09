@@ -3,9 +3,10 @@ import MQTT from '@/classes/MQTT';
 import Secondaries from '@/classes/Secondaries';
 import creatorCheck from '@/preconditions/creator';
 import interactionDetails from '@/utils/mqtt';
-import { ErrorEmbed } from '@utils/discordEmbeds';
+import { SuccessEmbed } from '@utils/discordEmbeds';
 import {
   CacheType,
+  channelMention,
   ChatInputCommandInteraction,
   PermissionFlagsBits,
   SlashCommandBuilder,
@@ -35,18 +36,13 @@ export default class UnlockCommand extends Command {
 
     const dynamicaSecondary = Secondaries.get(channelId);
 
-    if (dynamicaSecondary) {
-      await dynamicaSecondary.unlock(interaction.client);
-      await interaction.reply(`Removed lock on <#${channelId}>`);
-      mqtt?.publish(`dynamica/command/${interaction.commandName}`, {
-        channel: channelId,
-        ...interactionDetails(interaction),
-      });
-    } else {
-      await interaction.reply({
-        ephemeral: true,
-        embeds: [ErrorEmbed('Not a valid Dynamica channel.')],
-      });
-    }
+    await dynamicaSecondary.unlock(interaction.client);
+    await interaction.reply({
+      embeds: [SuccessEmbed(`Removed lock on ${channelMention(channelId)}.`)],
+    });
+    mqtt?.publish(`dynamica/command/${interaction.commandName}`, {
+      channel: channelId,
+      ...interactionDetails(interaction),
+    });
   };
 }

@@ -2,10 +2,12 @@ import Command from '@/classes/Command';
 import interactionDetails from '@/utils/mqtt';
 import creatorCheck from '@preconditions/creator';
 import secondaryCheck from '@preconditions/secondary';
-import { ErrorEmbed } from '@utils/discordEmbeds';
+import { ErrorEmbed, SuccessEmbed } from '@utils/discordEmbeds';
 import {
   CacheType,
+  channelMention,
   ChatInputCommandInteraction,
+  inlineCode,
   PermissionFlagsBits,
   SlashCommandBuilder,
 } from 'discord.js';
@@ -27,12 +29,20 @@ export default class LimitCommand extends Command {
 
     if (!channel.manageable) {
       interaction.reply({
-        embeds: [ErrorEmbed(`Cannot edit <#${channel.id}>.`)],
+        embeds: [ErrorEmbed(`Cannot edit ${channelMention(channel.id)}.`)],
       });
       return;
     }
-    channel.edit({ userLimit });
-    interaction.reply(`<#${channel.id}> limit changed to ${userLimit}.`);
+    await channel.edit({ userLimit });
+    interaction.reply({
+      embeds: [
+        SuccessEmbed(
+          `${channelMention(channel.id)} limit changed to ${inlineCode(
+            userLimit.toString()
+          )}.`
+        ),
+      ],
+    });
     this.publish({
       userLimit,
       channel: channel.id,
