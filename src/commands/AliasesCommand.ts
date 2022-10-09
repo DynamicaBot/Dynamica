@@ -36,11 +36,11 @@ export default class AliasesCommand extends Command {
 
     const embeds = _.chunk(inlineAliases, 25).map((result, index) =>
       InfoEmbed("Information about aliases for this server's games.")
-        .addFields(...result)
+        .addFields(result)
         .setTitle(`Aliases (${index + 1})`)
     );
     interaction.reply({
-      embeds,
+      embeds: embeds.length ? embeds : [InfoEmbed('No aliases found')],
       ephemeral: true,
     });
   };
