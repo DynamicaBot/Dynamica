@@ -74,6 +74,7 @@ export default class AliasCommand extends Command {
         )
     );
 
+  // eslint-disable-next-line class-methods-use-this
   response = async (interaction: ChatInputCommandInteraction<CacheType>) => {
     const subcommand = interaction.options.getSubcommand(true);
     // console.log({ subcommand });

@@ -1,16 +1,25 @@
 import type DynamicaAlias from './Alias';
+import MQTT from './MQTT';
 
 export default class Aliases {
   private static aliases: DynamicaAlias[] = [];
 
+  public static mqtt = MQTT.getInstance();
+
   public static add(alias: DynamicaAlias) {
     this.aliases.push(alias);
+    if (this.mqtt) {
+      this.mqtt.publish('dynamica/aliases', this.aliases.length.toString());
+    }
   }
 
   public static remove(activity: string, guildId: string) {
     this.aliases = this.aliases.filter(
       (alias) => !(alias.activity === activity && alias.guildId === guildId)
     );
+    if (this.mqtt) {
+      this.mqtt.publish('dynamica/aliases', this.aliases.length.toString());
+    }
   }
 
   public static get(activity: string, guildId: string) {

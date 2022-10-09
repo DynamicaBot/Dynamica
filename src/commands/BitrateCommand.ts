@@ -29,6 +29,7 @@ export default class BitrateCommand extends Command {
         .setName('bitrate')
     );
 
+  // eslint-disable-next-line class-methods-use-this
   response = async (interaction: ChatInputCommandInteraction<CacheType>) => {
     const bitrate = interaction.options.getInteger('bitrate');
     const guildMember = await interaction.guild.members.cache.get(

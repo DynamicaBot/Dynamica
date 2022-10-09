@@ -31,6 +31,7 @@ export default class CreateCommand extends Command {
         .setRequired(false)
     );
 
+  // eslint-disable-next-line class-methods-use-this
   response = async (interaction: ChatInputCommandInteraction<CacheType>) => {
     const section = interaction.options.getChannel(
       'section'

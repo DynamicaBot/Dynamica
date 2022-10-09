@@ -34,6 +34,7 @@ export default class GeneralCommand extends Command {
         .setRequired(true)
     );
 
+  // eslint-disable-next-line class-methods-use-this
   response = async (interaction: ChatInputCommandInteraction<CacheType>) => {
     const name = interaction.options.getString('name', true);
     const channel = interaction.options.getString('primary', true);
