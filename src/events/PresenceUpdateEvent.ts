@@ -12,7 +12,7 @@ export default class PresenceUpdateEvent extends Event<'presenceUpdate'> {
     oldPresence: Presence,
     newPresence: Presence
   ) => void | Promise<void> = (oldPresence, newPresence) => {
-    const { channelId } = newPresence.member.voice;
+    const channelId = newPresence?.member?.voice?.channelId;
     if (!channelId) {
       return;
     }
