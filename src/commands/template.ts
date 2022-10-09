@@ -1,11 +1,14 @@
 import Command from '@/classes/Command';
 import MQTT from '@/classes/MQTT';
 import Secondaries from '@/classes/Secondaries';
+import { SuccessEmbed } from '@/utils/discordEmbeds';
 import interactionDetails from '@/utils/mqtt';
 import db from '@db';
 import {
   CacheType,
+  channelMention,
   ChatInputCommandInteraction,
+  inlineCode,
   PermissionFlagsBits,
   SlashCommandBuilder,
 } from 'discord.js';
@@ -17,12 +20,12 @@ export default class TemplateCommand extends Command {
 
   // eslint-disable-next-line class-methods-use-this
   response = async (interaction: ChatInputCommandInteraction<CacheType>) => {
-    const name = interaction.options.getString('template', true);
-    const channel = interaction.options.getString('channel', true);
+    const template = interaction.options.getString('template', true);
+    const channel = interaction.options.getString('primary', true);
 
     const primary = await db.primary.update({
       where: { id: channel },
-      data: { template: name },
+      data: { template },
       include: { secondaries: true },
     });
 
@@ -32,10 +35,18 @@ export default class TemplateCommand extends Command {
       dynamicaSecondary.update(interaction.client);
     });
 
-    interaction.reply(`Template changed to \`${name}\`.`);
+    interaction.reply({
+      embeds: [
+        SuccessEmbed(
+          `Template for ${channelMention(channel)} changed to ${inlineCode(
+            template
+          )}.`
+        ),
+      ],
+    });
     const mqtt = MQTT.getInstance();
     mqtt?.publish(`dynamica/command/${interaction.commandName}`, {
-      name,
+      name: template,
       ...interactionDetails(interaction),
     });
   };

@@ -1,5 +1,6 @@
 import Command from '@/classes/Command';
 import Secondaries from '@/classes/Secondaries';
+import { SuccessEmbed } from '@/utils/discordEmbeds';
 import interactionDetails from '@/utils/mqtt';
 import db from '@db';
 import {
@@ -48,9 +49,13 @@ export default class GeneralCommand extends Command {
       await Secondaries.get(secondary.id).update(interaction.client);
     });
 
-    await interaction.reply(
-      `General template for <#${channel}> changed to \`${name}\`.`
-    );
+    await interaction.reply({
+      embeds: [
+        SuccessEmbed(
+          `General template for <#${channel}> changed to \`${name}\`.`
+        ),
+      ],
+    });
 
     this.publish({
       name,
