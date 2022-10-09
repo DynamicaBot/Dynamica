@@ -1,6 +1,6 @@
 import Command from '@/classes/Command';
 import db from '@db';
-import { ErrorEmbed } from '@utils/discordEmbeds';
+import { ErrorEmbed, SuccessEmbed } from '@utils/discordEmbeds';
 import {
   ActionRowBuilder,
   ButtonBuilder,
@@ -34,17 +34,17 @@ export default class JoinCommand extends Command {
 
   // eslint-disable-next-line class-methods-use-this
   response = async (interaction: ChatInputCommandInteraction<CacheType>) => {
-    const channel = interaction.options.getString('channel', true);
+    const secondary = interaction.options.getString('secondary', true);
 
     const channelConfig = await db.secondary.findUnique({
-      where: { id: channel },
+      where: { id: secondary },
       include: { guild: true },
     });
     if (!channelConfig.guild.allowJoinRequests) {
       interaction.reply({
-        content: 'Error',
         embeds: [ErrorEmbed('Join Requests are not enabled on this server.')],
       });
+      return;
     }
 
     const { creator } = channelConfig;
@@ -63,7 +63,7 @@ export default class JoinCommand extends Command {
     );
     interaction.reply({
       components: [row],
-      content: `Does <@${interaction.user.id}> have permission to join <#${channel}>? As the creator <@${creator}>, are they allowed to join?`,
+      content: `Does <@${interaction.user.id}> have permission to join <#${secondary}>? As the creator <@${creator}>, are they allowed to join?`,
     });
     interaction.channel
       .createMessageComponentCollector({
@@ -74,31 +74,29 @@ export default class JoinCommand extends Command {
         const button = collected;
         if (button.customId === 'channeljoinaccept') {
           const discordChannel = await collected.guild.channels.cache.get(
-            channel
+            secondary
           );
           if (!discordChannel.isVoiceBased()) return;
 
           await discordChannel.permissionOverwrites.create(interaction.user, {
             Connect: true,
           });
-          await interaction.editReply(
-            `<@${interaction.user.id}> has been granted access to <#${channel}>.`
-          );
-          await collected.reply({
-            ephemeral: true,
-            content: `You have granted access for <@${interaction.user.id}> to access <#${channel}>.`,
+          await interaction.editReply({
+            embeds: [
+              SuccessEmbed(
+                `<@${interaction.user.id}> has been granted access to <#${secondary}>.`
+              ),
+            ],
+            components: [],
+            content: null,
           });
         } else if (button.customId === 'channeljoindeny') {
           await interaction.editReply({
             content: null,
             components: [],
             embeds: [
-              ErrorEmbed(`You have been denied access to <#${channel}>.`),
+              ErrorEmbed(`You have been denied access to <#${secondary}>.`),
             ],
-          });
-          await collected.reply({
-            content: `You have denied access to <#${channel}>.`,
-            ephemeral: true,
           });
         } else {
           interaction.reply('Wrong button');

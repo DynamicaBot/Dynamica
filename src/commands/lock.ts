@@ -34,7 +34,7 @@ export default class LockCommand extends Command {
 
     const dynamicaSecondary = Secondaries.get(channelId);
 
-    await dynamicaSecondary.lock(interaction.client);
+    dynamicaSecondary.lock(interaction.client);
     await interaction.reply({
       ephemeral: true,
       embeds: [
