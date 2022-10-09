@@ -1,4 +1,4 @@
-import PrimaryAutocomplete from './primary';
+import PrimaryAutocomplete from './PrimaryAutocomplete';
 
 export default class GeneralAutocomplete extends PrimaryAutocomplete {
   constructor() {

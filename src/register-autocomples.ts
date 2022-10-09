@@ -1,9 +1,9 @@
-import AliasAutocomplete from './autocompletes/alias';
-import GeneralAutocomplete from './autocompletes/general';
-import HelpAutocomplete from './autocompletes/help';
-import InfoAutocomplete from './autocompletes/info';
-import JoinAutocomplete from './autocompletes/join';
-import TemplateAutocomplete from './autocompletes/template';
+import AliasAutocomplete from './autocompletes/AliasAutocomplete';
+import GeneralAutocomplete from './autocompletes/GeneralAutocomplete';
+import HelpAutocomplete from './autocompletes/HelpAutocomplete';
+import InfoAutocomplete from './autocompletes/InfoAutocomplete';
+import JoinAutocomplete from './autocompletes/JoinAutocomplete';
+import TemplateAutocomplete from './autocompletes/TemplateAutocomplete';
 import Autocompletes from './classes/Autocompletes';
 
 const registerAutocompletes = () => {

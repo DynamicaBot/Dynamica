@@ -1,12 +1,12 @@
 import Events from '@/classes/Events';
-import AutocompleteEvent from './events/autocomplete';
-import ChannelDeleteEvent from './events/channelDelete';
-import CommandEvent from './events/command';
-import GuildCreateEvent from './events/guildCreate';
-import GuildDeleteEvent from './events/guildDelete';
-import PresenceUpdateEvent from './events/presenceUpdate';
-import ReadyEvent from './events/ready';
-import VoiceStateUpdateEvent from './events/voiceStateUpdate';
+import AutocompleteEvent from './events/AutocompleteEvent';
+import ChannelDeleteEvent from './events/ChannelDeleteEvent';
+import CommandEvent from './events/CommandEvent';
+import GuildCreateEvent from './events/GuildCreateEvent';
+import GuildDeleteEvent from './events/GuildDeleteEvent';
+import PresenceUpdateEvent from './events/PresenceUpdateEvent';
+import ReadyEvent from './events/ReadyEvent';
+import VoiceStateUpdateEvent from './events/VoiceStateUpdateEvent';
 
 const registerEvents = () => {
   Events.register(new AutocompleteEvent());

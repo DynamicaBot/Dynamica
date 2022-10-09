@@ -1,7 +1,7 @@
 import Autocomplete from '@/classes/Autocomplete';
 import { AutocompleteInteraction, CacheType } from 'discord.js';
-import PrimaryAutocomplete from './primary';
-import SecondaryAutocomplete from './secondary';
+import PrimaryAutocomplete from './PrimaryAutocomplete';
+import SecondaryAutocomplete from './SecondaryAutocomplete';
 
 export default class InfoAutocomplete extends Autocomplete {
   constructor() {
