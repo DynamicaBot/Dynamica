@@ -7,11 +7,9 @@ import { PrismaClientKnownRequestError } from '@prisma/client/runtime/index.js';
 import {
   CacheType,
   ChatInputCommandInteraction,
-  EmbedBuilder,
   PermissionFlagsBits,
   SlashCommandBuilder,
 } from 'discord.js';
-import _ from 'lodash';
 
 export default class AliasCommand extends Command {
   constructor() {
@@ -68,9 +66,12 @@ export default class AliasCommand extends Command {
             .setRequired(true)
             .setAutocomplete(true)
         )
-    )
-    .addSubcommand((subcommand) =>
-      subcommand.setName('list').setDescription('List currently set aliases.')
+        .addStringOption((option) =>
+          option
+            .setName('alias')
+            .setRequired(true)
+            .setDescription('The alias the game should be known by.')
+        )
     );
 
   response = async (interaction: ChatInputCommandInteraction<CacheType>) => {
@@ -142,32 +143,6 @@ export default class AliasCommand extends Command {
       this.publish({
         subcommand,
         activity,
-        ...interactionDetails(interaction),
-      });
-    } else if (subcommand === 'list') {
-      const aliases = Aliases.getByGuildId(interaction.guildId);
-      const inlineAliases = await Promise.all(
-        aliases.map(async ({ activity }) => {
-          const alias = Aliases.get(activity, interaction.guildId);
-          const aliasPrisma = await alias.prisma();
-          return {
-            name: activity,
-            value: aliasPrisma.alias,
-            inline: true,
-          };
-        })
-      );
-
-      const embeds = _.chunk(inlineAliases, 25).map((result) =>
-        new EmbedBuilder().addFields(...result)
-      );
-      interaction.reply({
-        content: 'Alias List',
-        embeds,
-      });
-
-      this.publish({
-        subcommand,
         ...interactionDetails(interaction),
       });
     }

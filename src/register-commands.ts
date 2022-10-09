@@ -1,5 +1,6 @@
 import Commands from './classes/Commands';
 import AliasCommand from './commands/alias';
+import AliasesCommand from './commands/aliases';
 import AllowjoinCommand from './commands/allowjoin';
 import AllyourbaseCommand from './commands/allyourbase';
 import BitrateCommand from './commands/bitrate';
@@ -37,6 +38,7 @@ const registerCommands = () => {
   Commands.register(new TransferCommand());
   Commands.register(new UnlockCommand());
   Commands.register(new VersionCommand());
+  Commands.register(new AliasesCommand());
 };
 
 export default registerCommands;

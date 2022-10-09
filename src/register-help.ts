@@ -1,5 +1,6 @@
 import Helps from './classes/Helps';
 import AliasHelp from './help/alias';
+import AliasesHelp from './help/aliases';
 import AllowjoinHelp from './help/allowjoin';
 import AllyourbaseHelp from './help/allyourbase';
 import BitrateHelp from './help/bitrate';
@@ -37,6 +38,7 @@ const registerHelp = () => {
   Helps.register(new TransferHelp());
   Helps.register(new UnlockHelp());
   Helps.register(new VersionHelp());
+  Helps.register(new AliasesHelp());
 };
 
 export default registerHelp;

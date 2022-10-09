@@ -9,7 +9,7 @@ export default class Aliases {
 
   public static remove(activity: string, guildId: string) {
     this.aliases = this.aliases.filter(
-      (alias) => alias.activity !== activity && alias.guildId !== guildId
+      (alias) => !(alias.activity === activity && alias.guildId === guildId)
     );
   }
 

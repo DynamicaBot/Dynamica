@@ -1,5 +1,5 @@
+import Aliases from '@/classes/Aliases';
 import channelActivities from '@/utils/activity';
-import db from '@/utils/db';
 import Autocomplete from '@classes/Autocomplete';
 import { AutocompleteInteraction, CacheType, GuildMember } from 'discord.js';
 import Fuse from 'fuse.js';
@@ -24,9 +24,7 @@ export default class AliasAutocomplete extends Autocomplete {
     let options: { name: string; value: string }[] = [];
 
     if (subcommand === 'update' || subcommand === 'remove') {
-      const existingAliases = await db.alias.findMany({
-        where: { guildId: interaction.guildId },
-      });
+      const existingAliases = Aliases.getByGuildId(interaction.guildId);
       options = existingAliases.map(({ activity }) => ({
         name: activity,
         value: activity,
