@@ -12,8 +12,9 @@ import updatePresence from '@/utils/presence';
 // import { updatePresence } from '@/utils';
 import Event, { EventToken } from '@classes/Event';
 import DB from '@/services/DB';
-import { Client, DiscordAPIError } from 'discord.js';
+import { DiscordAPIError } from 'discord.js';
 import { Service } from 'typedi';
+import Client from '@/services/Client';
 
 @Service({ id: EventToken, multiple: true })
 export default class ReadyEvent implements Event<'ready'> {
@@ -28,17 +29,16 @@ export default class ReadyEvent implements Event<'ready'> {
     private primaryFactory: PrimaryFactory,
     private secondaryFactory: SecondaryFactory,
     private guildFactory: GuildFactory,
-    private aliasFactory: AliasFactory
+    private aliasFactory: AliasFactory,
+    private client: Client
   ) {}
 
   event: 'ready' = 'ready';
 
   once = true;
 
-  public response: (client: Client<true>) => void | Promise<void> = async (
-    client
-  ) => {
-    this.logger.info(`Ready! Logged in as ${client.user?.tag}`);
+  public response: () => void | Promise<void> = async () => {
+    this.logger.info(`Ready! Logged in as ${this.client.user?.tag}`);
 
     try {
       this.logger.time('ready');
@@ -50,14 +50,14 @@ export default class ReadyEvent implements Event<'ready'> {
       await Promise.all(
         primaries.map(async (element) => {
           try {
-            const guild = await client.guilds.fetch(element.guildId);
+            const guild = await this.client.guilds.fetch(element.guildId);
             await guild.channels.fetch(element.id);
             const existingPrimary = this.primaryFactory.create(
               element.id,
               element.guildId
             );
             this.primaries.add(existingPrimary);
-            await existingPrimary.update(client);
+            await existingPrimary.update();
           } catch (error) {
             if (error instanceof DiscordAPIError) {
               if (error.code === 10003) {
@@ -78,7 +78,7 @@ export default class ReadyEvent implements Event<'ready'> {
       await Promise.all(
         secondaries.map(async (element) => {
           try {
-            const guild = await client.guilds.fetch(element.guildId);
+            const guild = await this.client.guilds.fetch(element.guildId);
             await guild.channels.fetch(element.id);
             const existingSecondary = this.secondaryFactory.create(
               element.id,
@@ -86,7 +86,7 @@ export default class ReadyEvent implements Event<'ready'> {
               element.primaryId
             );
             this.secondaries.add(existingSecondary);
-            await existingSecondary.update(client);
+            await existingSecondary.update();
           } catch (error) {
             if (error instanceof DiscordAPIError) {
               if (error.code === 10003) {
@@ -95,7 +95,6 @@ export default class ReadyEvent implements Event<'ready'> {
                 );
                 await this.db.secondary.delete({ where: { id: element.id } });
                 this.secondaries.remove(element.id);
-                // updatePresence(client);
               } else {
                 this.logger.error(error);
               }
@@ -119,7 +118,7 @@ export default class ReadyEvent implements Event<'ready'> {
       await Promise.all(
         guilds.map(async (element) => {
           try {
-            const guild = await client.guilds.fetch(element.id);
+            const guild = await this.client.guilds.fetch(element.id);
             const newGuild = this.guildFactory.create(guild.id);
             this.guilds.add(newGuild);
           } catch (error) {
@@ -132,11 +131,11 @@ export default class ReadyEvent implements Event<'ready'> {
       );
       this.logger.info(`Loaded ${this.guilds.count} guilds`);
 
-      this.mqtt.publish('dynamica/presence', client.readyAt.toISOString());
+      this.mqtt.publish('dynamica/presence', this.client.readyAt.toISOString());
 
       this.logger.info('Loaded all data');
       this.logger.timeEnd('ready');
-      updatePresence(client);
+      updatePresence();
     } catch (error) {
       this.logger.error(error);
     }

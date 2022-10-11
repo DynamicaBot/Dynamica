@@ -1,14 +1,16 @@
 import Secondaries from '@/classes/Secondaries';
-import { ActivityType, Client } from 'discord.js';
+import Client from '@/services/Client';
+import { ActivityType } from 'discord.js';
 import { Container } from 'typedi';
 import Logger from '../services/Logger';
 
 const pl = (n: number) => (n === 1 ? '' : 's');
 
-const updatePresence = async (client: Client<true>) => {
+const updatePresence = async () => {
   const secondaries = Container.get(Secondaries);
   const channelCount = secondaries.count;
   const logger = Container.get(Logger);
+  const client = Container.get(Client);
   try {
     client.user.setPresence({
       afk: !!channelCount,

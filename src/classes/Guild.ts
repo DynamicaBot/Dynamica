@@ -90,7 +90,7 @@ const botInfoEmbed = new EmbedBuilder()
 export default class DynamicaGuild {
   public id: string;
 
-  constructor(id: string, private db: DB) {
+  constructor(id: string, private db: DB, private client: Client) {
     this.id = id;
   }
 
@@ -148,24 +148,24 @@ export default class DynamicaGuild {
     });
   }
 
-  discord(client: Client<true>) {
-    return client.guilds.fetch(this.id);
+  discord() {
+    return this.client.guilds.fetch(this.id);
   }
 
   async deletePrisma() {
     return this.db.guild.delete({ where: { id: this.id } });
   }
 
-  async leaveDiscord(client: Client<true>) {
-    const guild = await this.discord(client);
+  async leaveDiscord() {
+    const guild = await this.discord();
     return guild.leave();
   }
 
-  async leave(client: Client<true>) {
+  async leave() {
     const logger = Container.get(Logger);
     const guilds = Container.get(Guilds);
     try {
-      await this.leaveDiscord(client);
+      await this.leaveDiscord();
       await this.deletePrisma();
       guilds.remove(this.id);
     } catch (error) {

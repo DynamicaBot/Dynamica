@@ -15,7 +15,7 @@ export default class GuildDeleteEvent implements Event<'guildDelete'> {
   public response: (guild: Guild) => void | Promise<void> = async (guild) => {
     const foundGuild = this.guilds.get(guild.id);
     if (foundGuild) {
-      await foundGuild.leave(guild.client);
+      await foundGuild.leave();
     }
   };
 }

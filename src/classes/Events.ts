@@ -1,11 +1,12 @@
-import { Client, ClientEvents } from 'discord.js';
+import Client from '@/services/Client';
+import { ClientEvents } from 'discord.js';
 import { Service } from 'typedi';
 import type Event from './Event';
 import MQTT from './MQTT';
 
 @Service()
 export default class Events {
-  constructor(private mqtt: MQTT) {}
+  constructor(private mqtt: MQTT, private client: Client) {}
 
   private events: Event<keyof ClientEvents>[] = [];
 
@@ -16,9 +17,9 @@ export default class Events {
     }
   }
 
-  public registerListeners(client: Client<false>): void {
+  public registerListeners(): void {
     this.events.forEach((event) =>
-      client[event.once ? 'once' : 'on'](event.event, event.response)
+      this.client[event.once ? 'once' : 'on'](event.event, event.response)
     );
   }
 
