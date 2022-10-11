@@ -1,7 +1,7 @@
 import Secondaries from '@/classes/Secondaries';
 import { ActivityType, Client } from 'discord.js';
 import { Container } from 'typedi';
-import Logger from './logger';
+import Logger from '../services/Logger';
 
 const pl = (n: number) => (n === 1 ? '' : 's');
 

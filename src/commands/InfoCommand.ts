@@ -3,8 +3,8 @@ import Condition from '@/classes/Condition';
 import Primaries from '@/classes/Primaries';
 import Secondaries from '@/classes/Secondaries';
 import { ErrorEmbed } from '@/utils/discordEmbeds';
-import Logger from '@/utils/logger';
-import DB from '@db';
+import Logger from '@/services/Logger';
+import DB from '@/services/DB';
 import { EmbedBuilder, SlashCommandBuilder } from 'discord.js';
 import { Service } from 'typedi';
 

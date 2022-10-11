@@ -1,7 +1,7 @@
 import Commands from '@/classes/Commands';
 import registerCommands from '@/register-commands';
 import { REST } from '@discordjs/rest';
-import Logger from '@utils/logger';
+import Logger from '@/services/Logger';
 import { Routes } from 'discord-api-types/v10';
 import { Container } from 'typedi';
 

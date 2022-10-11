@@ -1,13 +1,13 @@
 import 'reflect-metadata';
 import dotenv from 'dotenv';
 import { Container } from 'typedi';
-import Logger from '@utils/logger';
-import DB from '@db';
+import Logger from '@/services/Logger';
+import DB from '@/services/DB';
+import Client from '@/services/Client';
 import Events from './classes/Events';
 import registerAutocompletes from './register-autocomples';
 import registerEvents from './register-events';
 import registerHelp from './register-help';
-import Client from './Client';
 import registerCommands from './register-commands';
 
 dotenv.config();

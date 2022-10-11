@@ -1,7 +1,7 @@
 import Command, { CommandToken } from '@/classes/Command';
 import Condition from '@/classes/Condition';
-import Logger from '@/utils/logger';
-import DB from '@db';
+import Logger from '@/services/Logger';
+import DB from '@/services/DB';
 import { ErrorEmbed, SuccessEmbed } from '@utils/discordEmbeds';
 import {
   ActionRowBuilder,

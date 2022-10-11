@@ -2,7 +2,7 @@ import Command, { CommandToken } from '@/classes/Command';
 import Condition from '@/classes/Condition';
 import Helps from '@/classes/Helps';
 import { InfoEmbed } from '@/utils/discordEmbeds';
-import Logger from '@/utils/logger';
+import Logger from '@/services/Logger';
 import { APIEmbedField, EmbedBuilder, SlashCommandBuilder } from 'discord.js';
 import _ from 'lodash';
 import { Service } from 'typedi';

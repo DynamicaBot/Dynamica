@@ -1,5 +1,5 @@
-import DB from '@db';
-import Logger from '@utils/logger';
+import DB from '@/services/DB';
+import Logger from '@/services/Logger';
 import {
   ChannelType,
   Client,

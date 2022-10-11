@@ -1,5 +1,5 @@
 import { REST } from '@discordjs/rest';
-import Logger from '@utils/logger';
+import Logger from '@/services/Logger';
 import { Routes } from 'discord-api-types/v9';
 import { Container } from 'typedi';
 

@@ -1,6 +1,6 @@
 import Command, { CommandToken } from '@/classes/Command';
 import Condition from '@/classes/Condition';
-import Logger from '@/utils/logger';
+import Logger from '@/services/Logger';
 import {
   CacheType,
   ChatInputCommandInteraction,

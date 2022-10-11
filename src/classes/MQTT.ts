@@ -1,4 +1,4 @@
-import Logger from '@/utils/logger';
+import Logger from '@/services/Logger';
 import mqtt from 'mqtt';
 import { Service } from 'typedi';
 

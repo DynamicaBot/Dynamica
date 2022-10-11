@@ -3,7 +3,7 @@ import Aliases from '@/classes/Aliases';
 import Command, { CommandToken } from '@/classes/Command';
 import Condition from '@/classes/Condition';
 import { ErrorEmbed, SuccessEmbed } from '@/utils/discordEmbeds';
-import Logger from '@/utils/logger';
+import Logger from '@/services/Logger';
 import { PrismaClientKnownRequestError } from '@prisma/client/runtime/index.js';
 import {
   CacheType,

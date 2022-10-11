@@ -1,7 +1,7 @@
 import Aliases from '@/classes/Aliases';
 import Command, { CommandToken } from '@/classes/Command';
 import { InfoEmbed } from '@/utils/discordEmbeds';
-import Logger from '@/utils/logger';
+import Logger from '@/services/Logger';
 import {
   CacheType,
   ChatInputCommandInteraction,

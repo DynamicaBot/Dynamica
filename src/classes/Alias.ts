@@ -1,5 +1,5 @@
 import logger from '@/utils/normalLogger';
-import DB from '@db';
+import DB from '@/services/DB';
 import { PrismaClientKnownRequestError } from '@prisma/client/runtime/index.js';
 import { Service, Container } from 'typedi';
 // eslint-disable-next-line import/no-cycle

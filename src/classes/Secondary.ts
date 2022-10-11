@@ -1,10 +1,10 @@
 // eslint-disable-next-line import/no-cycle
 import channelActivities from '@/utils/activity';
 import updatePresence from '@/utils/presence';
-import DB from '@db';
+import DB from '@/services/DB';
 import { PrismaClientKnownRequestError } from '@prisma/client/runtime/index.js';
 import formatChannelName from '@utils/format';
-import Logger from '@utils/logger';
+import Logger from '@/services/Logger';
 import {
   ChannelType,
   Client,

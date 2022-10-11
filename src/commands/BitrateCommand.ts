@@ -1,6 +1,6 @@
 import Command, { CommandToken } from '@/classes/Command';
 import creatorCheck from '@/preconditions/creator';
-import Logger from '@/utils/logger';
+import Logger from '@/services/Logger';
 
 import { ErrorEmbed, SuccessEmbed } from '@utils/discordEmbeds';
 import {
