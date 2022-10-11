@@ -1,3 +1,5 @@
+import { Container } from 'typedi';
+import { HelpToken } from './classes/Help';
 import Helps from './classes/Helps';
 import AliasesHelp from './help/AliasesHelp';
 import AliasHelp from './help/AliasHelp';
@@ -20,25 +22,30 @@ import UnlockHelp from './help/UnlockHelp';
 import VersionHelp from './help/VersionHelp';
 
 const registerHelp = () => {
-  Helps.register(new AliasHelp());
-  Helps.register(new AllowjoinHelp());
-  Helps.register(new AllyourbaseHelp());
-  Helps.register(new BitrateHelp());
-  Helps.register(new CreateHelp());
-  Helps.register(new GeneralHelp());
-  Helps.register(new HelpHelp());
-  Helps.register(new InfoHelp());
-  Helps.register(new JoinHelp());
-  Helps.register(new LimitHelp());
-  Helps.register(new LockHelp());
-  Helps.register(new NameHelp());
-  Helps.register(new PermissionHelp());
-  Helps.register(new PingHelp());
-  Helps.register(new TemplateHelp());
-  Helps.register(new TransferHelp());
-  Helps.register(new UnlockHelp());
-  Helps.register(new VersionHelp());
-  Helps.register(new AliasesHelp());
+  Container.import([
+    AliasesHelp,
+    AliasHelp,
+    AllowjoinHelp,
+    AllyourbaseHelp,
+    BitrateHelp,
+    CreateHelp,
+    GeneralHelp,
+    HelpHelp,
+    InfoHelp,
+    JoinHelp,
+    LimitHelp,
+    LockHelp,
+    NameHelp,
+    PermissionHelp,
+    PingHelp,
+    TemplateHelp,
+    TransferHelp,
+    UnlockHelp,
+    VersionHelp,
+  ]);
+  Container.getMany(HelpToken).forEach((help) => {
+    Container.get(Helps).register(help);
+  });
 };
 
 export default registerHelp;

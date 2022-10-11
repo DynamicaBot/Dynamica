@@ -1,9 +1,9 @@
-import Help from '@/classes/Help';
+import Help, { HelpToken } from '@/classes/Help';
+import { Service } from 'typedi';
 
-export default class TransferHelp extends Help {
-  constructor() {
-    super('transfer');
-  }
+@Service({ id: HelpToken, multiple: true })
+export default class TransferHelp implements Help {
+  name = 'transfer';
 
   short = 'Transfer ownership to another user.';
 }

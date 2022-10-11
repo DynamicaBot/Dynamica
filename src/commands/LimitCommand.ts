@@ -1,4 +1,5 @@
-import Command from '@/classes/Command';
+import Command, { CommandToken } from '@/classes/Command';
+import Logger from '@/utils/logger';
 import creatorCheck from '@preconditions/creator';
 import secondaryCheck from '@preconditions/secondary';
 import { ErrorEmbed, SuccessEmbed } from '@utils/discordEmbeds';
@@ -10,14 +11,17 @@ import {
   PermissionFlagsBits,
   SlashCommandBuilder,
 } from 'discord.js';
+import { Service } from 'typedi';
 
-export default class LimitCommand extends Command {
-  constructor() {
-    super('limit');
-  }
+@Service({ id: CommandToken, multiple: true })
+export default class LimitCommand implements Command {
+  constructor(private logger: Logger) {}
+
+  name = 'limit';
 
   conditions = [creatorCheck, secondaryCheck];
 
+  // eslint-disable-next-line class-methods-use-this
   response = async (interaction: ChatInputCommandInteraction<CacheType>) => {
     const userLimit = interaction.options.getInteger('number', true);
     const guildMember = await interaction.guild.members.cache.get(

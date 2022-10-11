@@ -1,13 +1,19 @@
-import Command from '@/classes/Command';
+import Command, { CommandToken } from '@/classes/Command';
+import Condition from '@/classes/Condition';
 import Helps from '@/classes/Helps';
 import { InfoEmbed } from '@/utils/discordEmbeds';
+import Logger from '@/utils/logger';
 import { APIEmbedField, EmbedBuilder, SlashCommandBuilder } from 'discord.js';
 import _ from 'lodash';
+import { Service } from 'typedi';
 
-export default class HelpCommand extends Command {
-  constructor() {
-    super('help');
-  }
+@Service({ id: CommandToken, multiple: true })
+export default class HelpCommand implements Command {
+  constructor(private logger: Logger, private helps: Helps) {}
+
+  conditions: Condition[] = [];
+
+  name: string = 'help';
 
   data = new SlashCommandBuilder()
     .setName('help')
@@ -22,10 +28,11 @@ export default class HelpCommand extends Command {
         .setAutocomplete(true)
     );
 
+  // eslint-disable-next-line class-methods-use-this
   response = async (interaction) => {
     const subcommand = interaction.options.getString('help', false);
     if (subcommand) {
-      const helpPage = Helps.get(subcommand);
+      const helpPage = this.helps.get(subcommand);
       const embed = new EmbedBuilder()
         .setAuthor({
           name: 'Dynamica',
@@ -40,7 +47,7 @@ export default class HelpCommand extends Command {
         .setDescription(helpPage.long ?? helpPage.short);
       interaction.reply({ embeds: [embed] });
     } else {
-      const helpItems = Helps.all;
+      const helpItems = this.helps.all;
       const helpPages: APIEmbedField[][] = _.chunk(
         helpItems.map((helpItem) => ({
           name: helpItem.name,

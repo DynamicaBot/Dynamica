@@ -2,8 +2,10 @@ import Condition from '@/classes/Condition';
 import ConditionError from '@/classes/ConditionError';
 import Secondaries from '@/classes/Secondaries';
 import { GuildMember } from 'discord.js';
+import { Container } from 'typedi';
 
 const creatorCheck = new Condition(async (interaction) => {
+  const secondaries = Container.get(Secondaries);
   try {
     if (!(interaction.member instanceof GuildMember))
       throw new ConditionError("You're not in a guild.");
@@ -14,7 +16,7 @@ const creatorCheck = new Condition(async (interaction) => {
         'You need to be in a voice channel to use this command.'
       );
 
-    const secondary = Secondaries.get(channel.id);
+    const secondary = secondaries.get(channel.id);
 
     if (!secondary)
       throw new ConditionError(

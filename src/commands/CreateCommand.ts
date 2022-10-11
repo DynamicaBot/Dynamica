@@ -1,5 +1,7 @@
-import Command from '@/classes/Command';
+import Command, { CommandToken } from '@/classes/Command';
+import Condition from '@/classes/Condition';
 import { SuccessEmbed } from '@/utils/discordEmbeds';
+import Logger from '@/utils/logger';
 import DynamicaPrimary from '@classes/Primary';
 import {
   CacheType,
@@ -10,11 +12,15 @@ import {
   PermissionFlagsBits,
   SlashCommandBuilder,
 } from 'discord.js';
+import { Service } from 'typedi';
 
-export default class CreateCommand extends Command {
-  constructor() {
-    super('create');
-  }
+@Service({ id: CommandToken, multiple: true })
+export default class CreateCommand implements Command {
+  constructor(private logger: Logger) {}
+
+  conditions: Condition[] = [];
+
+  name = 'create';
 
   data = new SlashCommandBuilder()
     .setName('create')

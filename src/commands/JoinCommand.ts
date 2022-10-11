@@ -1,5 +1,7 @@
-import Command from '@/classes/Command';
-import db from '@db';
+import Command, { CommandToken } from '@/classes/Command';
+import Condition from '@/classes/Condition';
+import Logger from '@/utils/logger';
+import DB from '@db';
 import { ErrorEmbed, SuccessEmbed } from '@utils/discordEmbeds';
 import {
   ActionRowBuilder,
@@ -10,15 +12,18 @@ import {
   ComponentType,
   SlashCommandBuilder,
 } from 'discord.js';
+import { Service } from 'typedi';
 
 // const ;
 
 // export const join = new Command({ help, data, response });
+@Service({ id: CommandToken, multiple: true })
+export default class JoinCommand implements Command {
+  constructor(private logger: Logger, private db: DB) {}
 
-export default class JoinCommand extends Command {
-  constructor() {
-    super('join');
-  }
+  name: string = 'join';
+
+  conditions: Condition[] = [];
 
   data = new SlashCommandBuilder()
     .setName('join')
@@ -36,7 +41,7 @@ export default class JoinCommand extends Command {
   response = async (interaction: ChatInputCommandInteraction<CacheType>) => {
     const secondary = interaction.options.getString('secondary', true);
 
-    const channelConfig = await db.secondary.findUnique({
+    const channelConfig = await this.db.secondary.findUnique({
       where: { id: secondary },
       include: { guild: true },
     });

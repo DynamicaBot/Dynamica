@@ -1,19 +1,26 @@
-import Command from '@/classes/Command';
+import Command, { CommandToken } from '@/classes/Command';
 import Secondaries from '@/classes/Secondaries';
 import creatorCheck from '@/preconditions/creator';
 import { SuccessEmbed } from '@/utils/discordEmbeds';
-import db from '@db';
+import Logger from '@/utils/logger';
+import DB from '@db';
 import {
   CacheType,
   ChatInputCommandInteraction,
   inlineCode,
   SlashCommandBuilder,
 } from 'discord.js';
+import { Service } from 'typedi';
 
-export default class NameCommand extends Command {
-  constructor() {
-    super('name');
-  }
+@Service({ id: CommandToken, multiple: true })
+export default class NameCommand implements Command {
+  constructor(
+    private logger: Logger,
+    private secondaries: Secondaries,
+    private db: DB
+  ) {}
+
+  name = 'name';
 
   conditions = [creatorCheck];
 
@@ -36,10 +43,13 @@ export default class NameCommand extends Command {
 
     const channel = guildMember?.voice.channel;
 
-    await db.secondary.update({ where: { id: channel.id }, data: { name } });
+    await this.db.secondary.update({
+      where: { id: channel.id },
+      data: { name },
+    });
     this.logger.info(`${channel.id} name changed.`);
 
-    await Secondaries.get(channel.id).update(interaction.client);
+    await this.secondaries.get(channel.id).update(interaction.client);
 
     interaction.reply({
       embeds: [SuccessEmbed(`Channel name changed to ${inlineCode(name)}.`)],

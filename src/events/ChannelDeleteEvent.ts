@@ -1,12 +1,21 @@
-import Event from '@/classes/Event';
+import Event, { EventToken } from '@/classes/Event';
 import Primaries from '@/classes/Primaries';
 import Secondaries from '@/classes/Secondaries';
+import Logger from '@/utils/logger';
 import { DMChannel, NonThreadGuildBasedChannel } from 'discord.js';
+import { Service } from 'typedi';
 
-export default class ChannelDeleteEvent extends Event<'channelDelete'> {
-  constructor() {
-    super('channelDelete');
-  }
+@Service({ id: EventToken, multiple: true })
+export default class ChannelDeleteEvent implements Event<'channelDelete'> {
+  constructor(
+    private logger: Logger,
+    private secondaries: Secondaries,
+    private primaries: Primaries
+  ) {}
+
+  event: 'channelDelete' = 'channelDelete';
+
+  once: boolean = false;
 
   // eslint-disable-next-line class-methods-use-this
   public response: (
@@ -15,8 +24,8 @@ export default class ChannelDeleteEvent extends Event<'channelDelete'> {
     if (channel.isDMBased()) return;
     if (channel.isThread()) return;
 
-    const primary = Primaries.get(channel.id);
-    const secondary = Secondaries.get(channel.id);
+    const primary = this.primaries.get(channel.id);
+    const secondary = this.secondaries.get(channel.id);
 
     if (primary) {
       try {

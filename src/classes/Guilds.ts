@@ -1,38 +1,40 @@
+import { Service } from 'typedi';
 import type DynamicaGuild from './Guild';
 import MQTT from './MQTT';
 
+@Service()
 export default class Guilds {
-  private static guilds: DynamicaGuild[] = [];
+  constructor(private mqtt: MQTT) {}
 
-  public static mqtt = MQTT.getInstance();
+  private guilds: DynamicaGuild[] = [];
 
-  public static getGuilds(): DynamicaGuild[] {
+  public getGuilds(): DynamicaGuild[] {
     return this.guilds;
   }
 
-  public static add(guild: DynamicaGuild) {
+  public add(guild: DynamicaGuild) {
     this.guilds.push(guild);
     if (this.mqtt) {
       this.mqtt.publish('dynamica/guilds', this.guilds.length.toString());
     }
   }
 
-  public static remove(guildId: string) {
+  public remove(guildId: string) {
     this.guilds = this.guilds.filter((guild) => guild.id !== guildId);
     if (this.mqtt) {
       this.mqtt.publish('dynamica/guilds', this.guilds.length.toString());
     }
   }
 
-  public static get(guildId: string) {
+  public get(guildId: string) {
     return this.guilds.find((guild) => guild.id === guildId);
   }
 
-  public static has(guildId: string) {
+  public has(guildId: string) {
     return this.guilds.some((guild) => guild.id === guildId);
   }
 
-  public static get count() {
+  public get count() {
     return this.guilds.length;
   }
 }

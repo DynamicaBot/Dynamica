@@ -1,33 +1,19 @@
-import signaleLogger from '@/utils/logger';
+import Logger from '@/utils/logger';
 import mqtt from 'mqtt';
+import { Service } from 'typedi';
 
+@Service()
 export default class MQTT {
-  private static instance: MQTT | undefined = undefined;
-
   private client: mqtt.MqttClient;
 
-  private static logger = signaleLogger.scope('MQTT');
-
-  private logger = signaleLogger.scope('MQTT');
-
-  private constructor() {
+  constructor(private logger: Logger) {
     this.client = mqtt.connect(process.env.MQTT_URL, {
       username: process.env.MQTT_USER,
       password: process.env.MQTT_PASS,
     });
     this.client.on('connect', () => {
-      this.logger.info('Connected');
+      this.logger.success('MQTT Connected');
     });
-    this.client.on('error', (error) => {
-      this.logger.error('Error', error);
-    });
-  }
-
-  public static getInstance(): MQTT | undefined {
-    if (!MQTT.instance && process.env.MQTT_URL) {
-      MQTT.instance = new MQTT();
-    }
-    return MQTT.instance;
   }
 
   public publish(topic: string, message: string | Buffer) {

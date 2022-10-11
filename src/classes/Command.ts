@@ -1,12 +1,10 @@
-import signaleLogger from '@/utils/logger';
-
 import {
   CacheType,
   ChatInputCommandInteraction,
   SlashCommandBuilder,
   SlashCommandSubcommandsOnlyBuilder,
 } from 'discord.js';
-import { Signale } from 'signale';
+import { Token } from 'typedi';
 import Condition from './Condition';
 
 type SlashCommandBuilderTypes =
@@ -14,24 +12,16 @@ type SlashCommandBuilderTypes =
   | SlashCommandSubcommandsOnlyBuilder
   | Omit<SlashCommandBuilder, 'addSubcommand' | 'addSubcommandGroup'>;
 
-/**
- * The command class for defining new Dynamica commands.
- */
-export default class Command {
-  public name: string;
+export default interface Command {
+  name: string;
 
-  public logger: Signale;
+  data: SlashCommandBuilderTypes;
 
-  public data: SlashCommandBuilderTypes;
+  conditions: Condition[];
 
-  public conditions: Condition[] = [];
-
-  public response: (
+  response: (
     interaction: ChatInputCommandInteraction<CacheType>
   ) => Promise<void>;
-
-  constructor(name: string) {
-    this.logger = signaleLogger.scope('Command', name);
-    this.name = name;
-  }
 }
+
+export const CommandToken = new Token<Command>('commands');

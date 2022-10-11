@@ -1,9 +1,9 @@
-import Help from '@/classes/Help';
+import Help, { HelpToken } from '@/classes/Help';
+import { Service } from 'typedi';
 
-export default class CreateHelp extends Help {
-  constructor() {
-    super('bitrate');
-  }
+@Service({ id: HelpToken, multiple: true })
+export default class CreateHelp implements Help {
+  name: string = 'bitrate';
 
   public short =
     'It creates a new Primary channel which your users are able to join in order to create more secondary channels.';

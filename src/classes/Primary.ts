@@ -1,5 +1,5 @@
-import db from '@db';
-import signaleLogger from '@utils/logger';
+import DB from '@db';
+import Logger from '@utils/logger';
 import {
   ChannelType,
   Client,
@@ -9,22 +9,24 @@ import {
   GuildMember,
 } from 'discord.js';
 import { Signale } from 'signale';
+import { Container, Service } from 'typedi';
 import Primaries from './Primaries';
+// eslint-disable-next-line import/no-cycle
+import PrimaryFactory from './PrimaryFactory';
 import DynamicaSecondary from './Secondary';
 
+@Service({ factory: [PrimaryFactory, 'create'] })
 export default class DynamicaPrimary {
   public id: string;
 
   public guildId: string;
 
-  private static readonly logger = signaleLogger.scope('Primary');
-
   private readonly logger: Signale;
 
-  constructor(channelId: string, guildId: string) {
+  constructor(channelId: string, guildId: string, private db: DB) {
     this.id = channelId;
     this.guildId = guildId;
-    this.logger = signaleLogger.scope('Primary', this.id);
+    this.logger = Container.get(Logger);
   }
 
   /**
@@ -38,6 +40,8 @@ export default class DynamicaPrimary {
     member: GuildMember,
     section?: GuildChannel
   ) {
+    const logger = Container.get(Logger);
+    const db = Container.get(DB);
     const parent = section?.id;
 
     const channel = await guild.channels.create({
@@ -53,14 +57,16 @@ export default class DynamicaPrimary {
       },
     });
 
-    this.logger
+    logger
       .scope('Primary', channel.id)
       .debug(
         `New primary channel ${channel.name} created by ${primary.creator}.`
       );
 
-    const createdChannel = new DynamicaPrimary(channel.id, guild.id);
-    Primaries.add(createdChannel);
+    const primaryFactory = Container.get(PrimaryFactory);
+    const createdChannel = primaryFactory.create(channel.id, guild.id);
+    const primaries = Container.get(Primaries);
+    primaries.add(createdChannel);
     return createdChannel;
   }
 
@@ -79,7 +85,8 @@ export default class DynamicaPrimary {
               `Primary channel ${channel.name} (${channel.id}) was already deleted.`
             );
             this.deletePrisma();
-            Primaries.remove(this.id);
+            const primaries = Container.get(Primaries);
+            primaries.remove(this.id);
           } else {
             this.logger.error('Unknown discord error: ', error);
           }
@@ -91,11 +98,11 @@ export default class DynamicaPrimary {
   }
 
   async deletePrisma() {
-    await db.primary.delete({ where: { id: this.id } });
+    await this.db.primary.delete({ where: { id: this.id } });
   }
 
   prisma() {
-    return db.primary.findUniqueOrThrow({
+    return this.db.primary.findUniqueOrThrow({
       where: { id: this.id },
       include: { secondaries: true },
     });

@@ -1,17 +1,20 @@
-import Command from '@/classes/Command';
+import Command, { CommandToken } from '@/classes/Command';
 import Secondaries from '@/classes/Secondaries';
 import creatorCheck from '@/preconditions/creator';
+import Logger from '@/utils/logger';
 import {
   CacheType,
   ChatInputCommandInteraction,
   PermissionFlagsBits,
   SlashCommandBuilder,
 } from 'discord.js';
+import { Service } from 'typedi';
 
-export default class TransferCommand extends Command {
-  constructor() {
-    super('transfer');
-  }
+@Service({ id: CommandToken, multiple: true })
+export default class TransferCommand implements Command {
+  constructor(private logger: Logger, private secondaries: Secondaries) {}
+
+  name = 'transfer';
 
   conditions = [creatorCheck];
 
@@ -37,7 +40,7 @@ export default class TransferCommand extends Command {
 
     const { channelId } = guildMember.voice;
 
-    const secondaryChannel = Secondaries.get(channelId);
+    const secondaryChannel = this.secondaries.get(channelId);
     if (secondaryChannel) {
       await secondaryChannel.changeOwner(user);
       interaction.reply(

@@ -1,7 +1,9 @@
 import DynamicaAlias from '@/classes/Alias';
 import Aliases from '@/classes/Aliases';
-import Command from '@/classes/Command';
+import Command, { CommandToken } from '@/classes/Command';
+import Condition from '@/classes/Condition';
 import { ErrorEmbed, SuccessEmbed } from '@/utils/discordEmbeds';
+import Logger from '@/utils/logger';
 import { PrismaClientKnownRequestError } from '@prisma/client/runtime/index.js';
 import {
   CacheType,
@@ -10,11 +12,15 @@ import {
   PermissionFlagsBits,
   SlashCommandBuilder,
 } from 'discord.js';
+import { Service } from 'typedi';
 
-export default class AliasCommand extends Command {
-  constructor() {
-    super('alias');
-  }
+@Service({ id: CommandToken, multiple: true })
+export default class AliasCommand implements Command {
+  constructor(private logger: Logger, private aliases: Aliases) {}
+
+  name: string = 'alias';
+
+  conditions: Condition[];
 
   data = new SlashCommandBuilder()
     .setName('alias')
@@ -100,7 +106,7 @@ export default class AliasCommand extends Command {
       const activity = interaction.options.getString('activity', true);
       const aliasName = interaction.options.getString('alias', true);
 
-      const existingAlias = Aliases.get(activity, interaction.guildId);
+      const existingAlias = this.aliases.get(activity, interaction.guildId);
 
       if (!existingAlias) {
         interaction.reply({
@@ -129,7 +135,7 @@ export default class AliasCommand extends Command {
       });
     } else if (subcommand === 'remove') {
       const activity = interaction.options.getString('activity', true);
-      const foundAlias = Aliases.get(activity, interaction.guildId);
+      const foundAlias = this.aliases.get(activity, interaction.guildId);
       await foundAlias.delete();
       await interaction.reply({
         embeds: [

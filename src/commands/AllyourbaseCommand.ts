@@ -1,17 +1,20 @@
-import Command from '@/classes/Command';
+import Command, { CommandToken } from '@/classes/Command';
 import Secondaries from '@/classes/Secondaries';
 import secondaryCheck from '@/preconditions/secondary';
+import Logger from '@/utils/logger';
 import {
   CacheType,
   ChatInputCommandInteraction,
   PermissionFlagsBits,
   SlashCommandBuilder,
 } from 'discord.js';
+import { Service } from 'typedi';
 
-export default class AllyourbaseCommand extends Command {
-  constructor() {
-    super('allyourbase');
-  }
+@Service({ id: CommandToken, multiple: true })
+export default class AllyourbaseCommand implements Command {
+  constructor(private logger: Logger, private secondaries: Secondaries) {}
+
+  name = 'allyourbase';
 
   conditions = [secondaryCheck];
 
@@ -31,7 +34,7 @@ export default class AllyourbaseCommand extends Command {
 
     const { channelId } = guildMember.voice;
 
-    const secondaryChannel = Secondaries.get(channelId);
+    const secondaryChannel = this.secondaries.get(channelId);
 
     if (secondaryChannel) {
       await secondaryChannel.changeOwner(interaction.user);

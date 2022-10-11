@@ -1,6 +1,7 @@
-import Command from '@/classes/Command';
+import Command, { CommandToken } from '@/classes/Command';
 import Secondaries from '@/classes/Secondaries';
 import creatorCheck from '@/preconditions/creator';
+import Logger from '@/utils/logger';
 import { SuccessEmbed } from '@utils/discordEmbeds';
 import {
   CacheType,
@@ -9,11 +10,13 @@ import {
   PermissionFlagsBits,
   SlashCommandBuilder,
 } from 'discord.js';
+import { Service } from 'typedi';
 
-export default class UnlockCommand extends Command {
-  constructor() {
-    super('unlock');
-  }
+@Service({ id: CommandToken, multiple: true })
+export default class UnlockCommand implements Command {
+  constructor(private logger: Logger, private secondaries: Secondaries) {}
+
+  name = 'unlock';
 
   conditions = [creatorCheck];
 
@@ -31,7 +34,7 @@ export default class UnlockCommand extends Command {
 
     const { channelId } = guildMember.voice;
 
-    const dynamicaSecondary = Secondaries.get(channelId);
+    const dynamicaSecondary = this.secondaries.get(channelId);
 
     await dynamicaSecondary.unlock(interaction.client);
     await interaction.reply({

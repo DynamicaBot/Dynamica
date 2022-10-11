@@ -1,13 +1,15 @@
 import Aliases from '@/classes/Aliases';
 import channelActivities from '@/utils/activity';
-import Autocomplete from '@classes/Autocomplete';
+import Autocomplete, { AutocompleteToken } from '@classes/Autocomplete';
 import { AutocompleteInteraction, CacheType, GuildMember } from 'discord.js';
 import Fuse from 'fuse.js';
+import { Service } from 'typedi';
 
-export default class AliasAutocomplete extends Autocomplete {
-  constructor() {
-    super('alias');
-  }
+@Service({ id: AutocompleteToken, multiple: true })
+export default class AliasAutocomplete implements Autocomplete {
+  name = 'alias';
+
+  constructor(private aliases: Aliases) {}
 
   // eslint-disable-next-line class-methods-use-this
   public response: (
@@ -23,7 +25,7 @@ export default class AliasAutocomplete extends Autocomplete {
     let options: { name: string; value: string }[] = [];
 
     if (subcommand === 'update' || subcommand === 'remove') {
-      const existingAliases = Aliases.getByGuildId(interaction.guildId);
+      const existingAliases = this.aliases.getByGuildId(interaction.guildId);
       options = existingAliases.map(({ activity }) => ({
         name: activity,
         value: activity,
