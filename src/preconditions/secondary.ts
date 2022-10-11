@@ -2,6 +2,7 @@ import Condition from '@/classes/Condition';
 import ConditionError from '@/classes/ConditionError';
 import Secondaries from '@/classes/Secondaries';
 import { GuildMember } from 'discord.js';
+import Container from 'typedi';
 
 const secondaryCheck = new Condition(async (interaction) => {
   try {
@@ -14,8 +15,9 @@ const secondaryCheck = new Condition(async (interaction) => {
       throw new ConditionError(
         'You need to be in a voice channel to use this command.'
       );
+    const secondaries = Container.get(Secondaries);
 
-    const secondary = Secondaries.get(channel.id);
+    const secondary = secondaries.get(channel.id);
     if (!secondary)
       throw new ConditionError(
         'You must be in a voice channel managed by the bot to use this command.'
