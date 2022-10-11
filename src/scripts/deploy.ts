@@ -1,10 +1,12 @@
 import Commands from '@/classes/Commands';
 import registerCommands from '@/register-commands';
 import { REST } from '@discordjs/rest';
-import logger from '@utils/logger';
+import Logger from '@utils/logger';
 import { Routes } from 'discord-api-types/v10';
+import { Container } from 'typedi';
 
 const { TOKEN, CLIENT_ID, GUILD_ID } = process.env;
+const logger = Container.get(Logger);
 const deployLogger = logger.scope('Deploy');
 
 export default async () => {
@@ -14,8 +16,8 @@ export default async () => {
     deployLogger.time('deploy');
 
     registerCommands();
-
-    const { json: commandData } = Commands;
+    const commands = Container.get(Commands);
+    const { json: commandData } = commands;
 
     const rest = new REST({ version: '10' }).setToken(TOKEN);
 
