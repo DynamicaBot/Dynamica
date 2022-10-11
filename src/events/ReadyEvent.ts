@@ -2,7 +2,7 @@ import Aliases from '@/classes/Aliases';
 import AliasFactory from '@/classes/AliasFactory';
 import GuildFactory from '@/classes/GuildFactory';
 import Guilds from '@/classes/Guilds';
-import MQTT from '@/classes/MQTT';
+import MQTT from '@/services/MQTT';
 import Primaries from '@/classes/Primaries';
 import PrimaryFactory from '@/classes/PrimaryFactory';
 import Secondaries from '@/classes/Secondaries';

@@ -1,6 +1,6 @@
 import { Service } from 'typedi';
 import type DynamicaGuild from './Guild';
-import MQTT from './MQTT';
+import MQTT from '../services/MQTT';
 
 @Service()
 export default class Guilds {
