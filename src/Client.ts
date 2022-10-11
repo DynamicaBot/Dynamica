@@ -14,7 +14,5 @@ export default class Client extends DiscordClient {
     super({
       intents,
     });
-
-    logger.info('Client created.');
   }
 }
