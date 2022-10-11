@@ -1,6 +1,6 @@
-import DB from '@db';
+import DB from '@/services/DB';
+import Logger from '@/services/Logger';
 import { PrismaClientKnownRequestError } from '@prisma/client/runtime/index.js';
-import Logger from '@utils/logger';
 import {
   Client,
   DiscordAPIError,

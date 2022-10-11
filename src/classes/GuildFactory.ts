@@ -1,4 +1,4 @@
-import DB from '@/utils/db';
+import DB from '@/services/DB';
 import { Service } from 'typedi';
 import DynamicaGuild from './Guild';
 

@@ -2,8 +2,8 @@ import Command, { CommandToken } from '@/classes/Command';
 import Condition from '@/classes/Condition';
 import Secondaries from '@/classes/Secondaries';
 import { SuccessEmbed } from '@/utils/discordEmbeds';
-import Logger from '@/utils/logger';
-import DB from '@db';
+import Logger from '@/services/Logger';
+import DB from '@/services/DB';
 import {
   CacheType,
   ChatInputCommandInteraction,

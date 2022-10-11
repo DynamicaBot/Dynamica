@@ -1,6 +1,6 @@
 import { Client as DiscordClient, IntentsBitField } from 'discord.js';
 import { Service } from 'typedi';
-import Logger from './utils/logger';
+import Logger from '@/services/Logger';
 
 const intents = new IntentsBitField().add(
   IntentsBitField.Flags.Guilds,

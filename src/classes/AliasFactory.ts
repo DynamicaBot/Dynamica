@@ -1,5 +1,6 @@
-import DB from '@/utils/db';
+import DB from '@/services/DB';
 import { Service } from 'typedi';
+// eslint-disable-next-line import/no-cycle
 import DynamicaAlias from './Alias';
 
 @Service()

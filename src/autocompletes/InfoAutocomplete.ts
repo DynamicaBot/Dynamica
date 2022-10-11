@@ -1,5 +1,5 @@
 import Autocomplete, { AutocompleteToken } from '@/classes/Autocomplete';
-import DB from '@/utils/db';
+import DB from '@/services/DB';
 import { AutocompleteInteraction, CacheType } from 'discord.js';
 import Fuse from 'fuse.js';
 import { Service } from 'typedi';

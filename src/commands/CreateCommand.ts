@@ -1,7 +1,7 @@
 import Command, { CommandToken } from '@/classes/Command';
 import Condition from '@/classes/Condition';
 import { SuccessEmbed } from '@/utils/discordEmbeds';
-import Logger from '@/utils/logger';
+import Logger from '@/services/Logger';
 import DynamicaPrimary from '@classes/Primary';
 import {
   CacheType,

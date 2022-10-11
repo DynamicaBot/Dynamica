@@ -1,7 +1,7 @@
 import Command, { CommandToken } from '@/classes/Command';
 import Guilds from '@/classes/Guilds';
 import { SuccessEmbed } from '@/utils/discordEmbeds';
-import Logger from '@/utils/logger';
+import Logger from '@/services/Logger';
 import { PermissionFlagsBits, SlashCommandBuilder } from 'discord.js';
 import { Service } from 'typedi';
 

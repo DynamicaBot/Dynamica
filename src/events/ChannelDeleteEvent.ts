@@ -1,7 +1,7 @@
 import Event, { EventToken } from '@/classes/Event';
 import Primaries from '@/classes/Primaries';
 import Secondaries from '@/classes/Secondaries';
-import Logger from '@/utils/logger';
+import Logger from '@/services/Logger';
 import { DMChannel, NonThreadGuildBasedChannel } from 'discord.js';
 import { Service } from 'typedi';
 

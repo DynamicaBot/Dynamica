@@ -3,7 +3,7 @@ import Secondaries from '@/classes/Secondaries';
 import creatorCheck from '@/preconditions/creator';
 import secondaryCheck from '@/preconditions/secondary';
 import { SuccessEmbed } from '@/utils/discordEmbeds';
-import Logger from '@/utils/logger';
+import Logger from '@/services/Logger';
 import {
   CacheType,
   ChatInputCommandInteraction,

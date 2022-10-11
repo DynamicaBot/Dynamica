@@ -1,7 +1,7 @@
 import Command, { CommandToken } from '@/classes/Command';
 import Secondaries from '@/classes/Secondaries';
 import creatorCheck from '@/preconditions/creator';
-import Logger from '@/utils/logger';
+import Logger from '@/services/Logger';
 import {
   CacheType,
   ChatInputCommandInteraction,

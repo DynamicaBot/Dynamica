@@ -7,11 +7,11 @@ import Primaries from '@/classes/Primaries';
 import PrimaryFactory from '@/classes/PrimaryFactory';
 import Secondaries from '@/classes/Secondaries';
 import SecondaryFactory from '@/classes/SecondaryFactory';
-import Logger from '@/utils/logger';
+import Logger from '@/services/Logger';
 import updatePresence from '@/utils/presence';
 // import { updatePresence } from '@/utils';
 import Event, { EventToken } from '@classes/Event';
-import DB from '@db';
+import DB from '@/services/DB';
 import { Client, DiscordAPIError } from 'discord.js';
 import { Service } from 'typedi';
 
