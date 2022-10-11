@@ -2,7 +2,7 @@ import Client from '@/services/Client';
 import { ClientEvents } from 'discord.js';
 import { Service } from 'typedi';
 import type Event from './Event';
-import MQTT from './MQTT';
+import MQTT from '../services/MQTT';
 
 @Service()
 export default class Events {

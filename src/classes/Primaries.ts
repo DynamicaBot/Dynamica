@@ -1,5 +1,5 @@
 import { Service } from 'typedi';
-import MQTT from './MQTT';
+import MQTT from '../services/MQTT';
 import type DynamicaPrimary from './Primary';
 
 @Service()
