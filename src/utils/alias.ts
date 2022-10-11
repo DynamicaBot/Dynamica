@@ -39,7 +39,7 @@ export const updateAlias = async (
       });
     }
   } catch (error) {
-    logger.error(error);
+    logger.error('Error updating alias', error);
   }
 };
 

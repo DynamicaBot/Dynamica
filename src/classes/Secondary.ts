@@ -276,17 +276,17 @@ export default class DynamicaSecondary {
     } catch (error) {
       if (error instanceof DiscordAPIError) {
         if (error.code === 50013) {
-          this.logger.warn(`Secondary channel not manageable.`);
+          this.logger.warn(`Discord Secondary channel not manageable.`);
         } else if (error.code === 50001) {
-          this.logger.warn(`Secondary channel not viewable.`);
+          this.logger.warn(`Discord Secondary channel not viewable.`);
         } else if (error.code === 50035) {
-          this.logger.warn(`Secondary channel not editable.`);
+          this.logger.warn(`Discord Secondary channel not editable.`);
         } else if (error.code === 50034) {
-          this.logger.warn(`Secondary channel not deletable.`);
+          this.logger.warn(`Discord Secondary channel not deletable.`);
         } else if (error.code === 10003) {
-          this.logger.warn(`Secondary channel not found.`);
+          this.logger.warn(`Discord Secondary channel not found.`);
         } else {
-          this.logger.error(error);
+          this.logger.error('Uknown discord error: ', error);
         }
       }
     }
@@ -298,20 +298,25 @@ export default class DynamicaSecondary {
     } catch (error) {
       if (error instanceof PrismaClientKnownRequestError) {
         if (error.code === 'P2025') {
-          // this.logger.error(error);
-          this.logger.warn(`Secondary channel not found.`);
+          this.logger.warn(`Prisma Secondary channel not found.`);
         } else {
-          this.logger.error(error.message);
+          this.logger.error('Unknown prisma error:', error);
         }
       }
     }
   }
 
-  async delete(client: Client<true>) {
-    await this.deleteDiscord(client);
-
-    await this.deletePrisma();
-
+  async delete(
+    client: Client<true>,
+    deleteDiscord: boolean = true,
+    deletePrisma: boolean = true
+  ) {
+    if (deleteDiscord) {
+      await this.deleteDiscord(client);
+    }
+    if (deletePrisma) {
+      await this.deletePrisma();
+    }
     this.logger.debug(`Secondary channel deleted.`);
 
     Secondaries.remove(this.id);

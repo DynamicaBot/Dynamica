@@ -28,9 +28,9 @@ export default class ChannelDeleteEvent extends Event<'channelDelete'> {
 
     if (secondary) {
       try {
-        await secondary.delete(channel.client);
+        await secondary.delete(channel.client, false);
       } catch (error) {
-        // this.logger.error(error);
+        this.logger.error('Error deleting secondary: ', error);
       }
     }
   };

@@ -20,7 +20,7 @@ const updatePresence = async (client: Client<true>) => {
       ],
     });
   } catch (error) {
-    logger.error(error);
+    logger.error('Error updating presence', error);
   }
 };
 

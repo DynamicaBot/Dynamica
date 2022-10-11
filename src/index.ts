@@ -38,7 +38,7 @@ try {
   /** Login */
   client.login(process.env.TOKEN);
 } catch (error) {
-  logger.error(error);
+  logger.error('Login Error', error);
 }
 
 // Handle stop signal

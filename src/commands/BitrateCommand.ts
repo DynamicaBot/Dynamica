@@ -1,6 +1,5 @@
 import Command from '@/classes/Command';
 import creatorCheck from '@/preconditions/creator';
-import secondaryCheck from '@/preconditions/secondary';
 
 import { ErrorEmbed, SuccessEmbed } from '@utils/discordEmbeds';
 import {
@@ -16,7 +15,7 @@ export default class BitrateCommand extends Command {
     super('bitrate');
   }
 
-  conditions = [creatorCheck, secondaryCheck];
+  conditions = [creatorCheck];
 
   data = new SlashCommandBuilder()
     .setName('bitrate')

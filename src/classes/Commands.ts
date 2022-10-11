@@ -1,5 +1,9 @@
 import { ErrorEmbed } from '@/utils/discordEmbeds';
+import logger from '@/utils/logger';
 import {
+  ActionRowBuilder,
+  ButtonBuilder,
+  ButtonStyle,
   CacheType,
   ChatInputCommandInteraction,
   RESTPostAPIApplicationCommandsJSONBody,
@@ -13,6 +17,14 @@ type SlashCommandBuilderTypes =
   | SlashCommandBuilder
   | SlashCommandSubcommandsOnlyBuilder
   | Omit<SlashCommandBuilder, 'addSubcommand' | 'addSubcommandGroup'>;
+
+// Report error button
+const errorRow = new ActionRowBuilder<ButtonBuilder>().addComponents([
+  new ButtonBuilder()
+    .setLabel('Report Error')
+    .setURL('https://github.com/DynamicaBot/Dynamica/issues')
+    .setStyle(ButtonStyle.Link),
+]);
 
 export default class Commands {
   public static commands: Record<string, Command> = {};
@@ -59,13 +71,39 @@ export default class Commands {
       if (error instanceof ConditionError) {
         interaction.reply({
           // content: `Error: ${error.message}`,
+          components: [errorRow],
           ephemeral: true,
-          embeds: [ErrorEmbed(error.message)],
+          embeds: [
+            ErrorEmbed(error.message).setFooter({
+              text: 'If you think this is an error please report it by clicking the button below.',
+            }),
+          ],
+        });
+      } else {
+        interaction.reply({
+          embeds: [
+            ErrorEmbed(error.message).setFooter({
+              text: 'If you think this is an error please report it by clicking the button below.',
+            }),
+          ],
+          components: [errorRow],
         });
       }
+
       return;
     }
-
-    await command.response(interaction);
+    try {
+      await command.response(interaction);
+    } catch (error) {
+      logger.error(`Error while running command ${command.name}`, error);
+      interaction.reply({
+        embeds: [
+          ErrorEmbed(
+            'An unknown error has occured. Please file a bug report using the link below.'
+          ),
+        ],
+        components: [errorRow],
+      });
+    }
   };
 }

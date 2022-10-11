@@ -1,21 +1,20 @@
 import Condition from '@/classes/Condition';
 import ConditionError from '@/classes/ConditionError';
 import Secondaries from '@/classes/Secondaries';
-import logger from '@utils/logger';
 import { GuildMember } from 'discord.js';
 
 const creatorCheck = new Condition(async (interaction) => {
   try {
     if (!(interaction.member instanceof GuildMember))
       throw new ConditionError("You're not in a guild.");
-    const channel = interaction.member.voice;
+    const channel = interaction.member.voice?.channel;
 
     if (!channel)
       throw new ConditionError(
         'You need to be in a voice channel to use this command.'
       );
 
-    const secondary = Secondaries.get(channel.channelId);
+    const secondary = Secondaries.get(channel.id);
 
     if (!secondary)
       throw new ConditionError(
@@ -28,7 +27,6 @@ const creatorCheck = new Condition(async (interaction) => {
         'You must be the owner of the channel to use this command.'
       );
   } catch (error) {
-    logger.error(error);
     if (error instanceof ConditionError) {
       throw error;
     } else {

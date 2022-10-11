@@ -81,10 +81,10 @@ export default class DynamicaPrimary {
             this.deletePrisma();
             Primaries.remove(this.id);
           } else {
-            this.logger.error(error);
+            this.logger.error('Unknown discord error: ', error);
           }
         } else {
-          this.logger.error(error);
+          this.logger.error('Unknown errror', error);
         }
       }
     }

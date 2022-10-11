@@ -44,6 +44,7 @@ export default class InfoCommand extends Command {
         .setDescription("Get info about the guild's settings.")
     );
 
+  // eslint-disable-next-line class-methods-use-this
   response = async (interaction) => {
     const subcommand = interaction.options.getSubcommand(true);
     if (subcommand === 'primary') {
@@ -79,10 +80,7 @@ export default class InfoCommand extends Command {
         ],
       });
     } else if (subcommand === 'secondary') {
-      const chosenSecondary = interaction.options.getString(
-        'secondarychannel',
-        true
-      );
+      const chosenSecondary = interaction.options.getString('secondary', true);
       const secondary = Secondaries.get(chosenSecondary);
       if (!secondary) {
         interaction.reply({

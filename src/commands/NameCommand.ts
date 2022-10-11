@@ -1,13 +1,12 @@
 import Command from '@/classes/Command';
 import Secondaries from '@/classes/Secondaries';
-import secondaryCheck from '@/preconditions/secondary';
+import creatorCheck from '@/preconditions/creator';
 import { SuccessEmbed } from '@/utils/discordEmbeds';
 import db from '@db';
 import {
   CacheType,
   ChatInputCommandInteraction,
   inlineCode,
-  PermissionFlagsBits,
   SlashCommandBuilder,
 } from 'discord.js';
 
@@ -16,12 +15,11 @@ export default class NameCommand extends Command {
     super('name');
   }
 
-  conditions = [secondaryCheck];
+  conditions = [creatorCheck];
 
   data = new SlashCommandBuilder()
     .setName('name')
     .setDMPermission(false)
-    .setDefaultMemberPermissions(PermissionFlagsBits.ManageChannels)
     .setDescription('Edit the name of the current channel.')
     .addStringOption((option) =>
       option

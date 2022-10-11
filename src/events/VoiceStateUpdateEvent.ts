@@ -26,14 +26,7 @@ export default class VoiceStateUpdateEvent extends Event<'voiceStateUpdate'> {
     const newChannelSecondary = Secondaries.get(newVoiceState.channelId);
 
     if (oldChannelSecondary) {
-      const oldSecondaryDiscord = await oldChannelSecondary.discord(
-        oldVoiceState.client
-      );
-      if (oldSecondaryDiscord.members.size === 0) {
-        await oldChannelSecondary.delete(oldVoiceState.client);
-      } else {
-        await oldChannelSecondary.update(oldVoiceState.client);
-      }
+      await oldChannelSecondary.update(oldVoiceState.client);
     }
 
     if (newChannelPrimary) {
