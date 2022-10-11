@@ -1,8 +1,8 @@
+import Client from '@/services/Client';
 import DB from '@/services/DB';
 import Logger from '@/services/Logger';
 import {
   ChannelType,
-  Client,
   DiscordAPIError,
   Guild,
   GuildChannel,
@@ -23,7 +23,12 @@ export default class DynamicaPrimary {
 
   private readonly logger: Signale;
 
-  constructor(channelId: string, guildId: string, private db: DB) {
+  constructor(
+    channelId: string,
+    guildId: string,
+    private db: DB,
+    private client: Client
+  ) {
     this.id = channelId;
     this.guildId = guildId;
     this.logger = Container.get(Logger);
@@ -73,8 +78,8 @@ export default class DynamicaPrimary {
   /**
    * Delete a primary discord channel. DB & Discord Channel.
    */
-  async delete(client: Client<true>): Promise<void> {
-    const channel = await this.discord(client);
+  async delete(): Promise<void> {
+    const channel = await this.discord();
     if (channel) {
       try {
         await channel.delete();
@@ -108,13 +113,13 @@ export default class DynamicaPrimary {
     });
   }
 
-  async deleteDiscord(client: Client<true>) {
-    const channel = await this.discord(client);
+  async deleteDiscord() {
+    const channel = await this.discord();
     await channel.delete();
   }
 
-  async discord(client: Client<true>) {
-    const guild = await client.guilds.fetch(this.guildId);
+  async discord() {
+    const guild = await this.client.guilds.fetch(this.guildId);
     const channel = await guild.channels.fetch(this.id);
     if (!channel.isVoiceBased()) {
       throw new Error('Not a voice channel');
@@ -122,8 +127,8 @@ export default class DynamicaPrimary {
     return channel;
   }
 
-  async update(client: Client<true>) {
-    const channel = await this.discord(client);
+  async update() {
+    const channel = await this.discord();
     const { members } = channel;
     if (members.size) {
       const primaryMember = members.at(0);

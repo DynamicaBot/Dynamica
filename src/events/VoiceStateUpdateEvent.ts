@@ -32,7 +32,7 @@ export default class VoiceStateUpdateEvent
     const newChannelSecondary = this.secondaries.get(newVoiceState.channelId);
 
     if (oldChannelSecondary) {
-      await oldChannelSecondary.update(oldVoiceState.client);
+      await oldChannelSecondary.update();
     }
 
     if (newChannelPrimary) {
@@ -40,11 +40,11 @@ export default class VoiceStateUpdateEvent
         newVoiceState.channel,
         newVoiceState.member
       );
-      updatePresence(newVoiceState.client);
+      updatePresence();
     }
 
     if (newChannelSecondary) {
-      await newChannelSecondary.update(newVoiceState.client);
+      await newChannelSecondary.update();
     }
   };
 }

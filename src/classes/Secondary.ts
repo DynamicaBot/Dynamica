@@ -7,15 +7,14 @@ import formatChannelName from '@utils/format';
 import Logger from '@/services/Logger';
 import {
   ChannelType,
-  Client,
   DiscordAPIError,
   GuildMember,
   User,
   VoiceBasedChannel,
 } from 'discord.js';
 import emojiList from 'emoji-random-list';
-import { Signale } from 'signale';
 import { Container, Service } from 'typedi';
+import Client from '@/services/Client';
 import Secondaries from './Secondaries';
 // eslint-disable-next-line import/no-cycle
 import SecondaryFactory from './SecondaryFactory';
@@ -29,18 +28,17 @@ export default class DynamicaSecondary {
   /** The prisma primary */
   parentId: string;
 
-  private readonly logger: Signale;
-
   constructor(
     channelId: string,
     guildId: string,
     primaryId: string,
-    private db: DB
+    private db: DB,
+    private client: Client,
+    private logger: Logger
   ) {
     this.guildId = guildId;
     this.id = channelId;
     this.parentId = primaryId;
-    this.logger = Container.get(Logger);
   }
 
   /**
@@ -135,17 +133,17 @@ export default class DynamicaSecondary {
   }
 
   async addMember(member: GuildMember): Promise<void> {
-    const channel = await this.discord(member.client);
+    const channel = await this.discord();
     await member.voice.setChannel(channel);
   }
 
   /**
    * Update secondary channel, changing name if required.
    */
-  async update(client: Client<true>) {
-    const discordChannel = await this.discord(client);
+  async update() {
+    const discordChannel = await this.discord();
     if (discordChannel.members.size === 0) {
-      this.delete(client);
+      this.delete();
     }
     const prismaChannel = await this.prisma();
 
@@ -185,7 +183,7 @@ export default class DynamicaSecondary {
       prismaChannel.name ??
       (!activities.length ? primaryPrisma.generalName : primaryPrisma.template);
 
-    const guild = await client.guilds.fetch(prismaChannel.guildId);
+    const guild = await this.client.guilds.fetch(prismaChannel.guildId);
 
     const creator = await guild.members.fetch(prismaChannel.creator);
 
@@ -217,8 +215,8 @@ export default class DynamicaSecondary {
     return this;
   }
 
-  async lock(client: Client<true>): Promise<void> {
-    const discordChannel = await this.discord(client);
+  async lock(): Promise<void> {
+    const discordChannel = await this.discord();
     const { everyone } = discordChannel.guild.roles;
     const currentlyActive = [...discordChannel.members.values()];
 
@@ -243,11 +241,11 @@ export default class DynamicaSecondary {
       },
     });
 
-    await this.update(client);
+    await this.update();
   }
 
-  async unlock(client: Client<true>): Promise<void> {
-    const discordChannel = await this.discord(client);
+  async unlock(): Promise<void> {
+    const discordChannel = await this.discord();
 
     await discordChannel.lockPermissions();
 
@@ -258,7 +256,7 @@ export default class DynamicaSecondary {
       },
     });
 
-    await this.update(client);
+    await this.update();
   }
 
   async changeOwner(user: User): Promise<void> {
@@ -268,8 +266,8 @@ export default class DynamicaSecondary {
     });
   }
 
-  async discord(client: Client<true>) {
-    const channel = await client.channels.fetch(this.id);
+  async discord() {
+    const channel = await this.client.channels.fetch(this.id);
     if (!channel.isVoiceBased()) {
       throw new Error('Not voice based');
     }
@@ -280,9 +278,9 @@ export default class DynamicaSecondary {
     return this.db.secondary.findUniqueOrThrow({ where: { id: this.id } });
   }
 
-  async deleteDiscord(client: Client<true>) {
+  async deleteDiscord() {
     try {
-      const channel = await this.discord(client);
+      const channel = await this.discord();
       await channel.delete();
     } catch (error) {
       if (error instanceof DiscordAPIError) {
@@ -317,13 +315,9 @@ export default class DynamicaSecondary {
     }
   }
 
-  async delete(
-    client: Client<true>,
-    deleteDiscord: boolean = true,
-    deletePrisma: boolean = true
-  ) {
+  async delete(deleteDiscord: boolean = true, deletePrisma: boolean = true) {
     if (deleteDiscord) {
-      await this.deleteDiscord(client);
+      await this.deleteDiscord();
     }
     if (deletePrisma) {
       await this.deletePrisma();
@@ -331,7 +325,7 @@ export default class DynamicaSecondary {
     this.logger.debug(`Secondary channel deleted.`);
     const secondaries = Container.get(Secondaries);
     secondaries.remove(this.id);
-    updatePresence(client);
+    updatePresence();
   }
 
   toString() {

@@ -36,7 +36,7 @@ export default class UnlockCommand implements Command {
 
     const dynamicaSecondary = this.secondaries.get(channelId);
 
-    await dynamicaSecondary.unlock(interaction.client);
+    await dynamicaSecondary.unlock();
     await interaction.reply({
       embeds: [SuccessEmbed(`Removed lock on ${channelMention(channelId)}.`)],
     });

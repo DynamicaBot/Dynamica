@@ -56,7 +56,7 @@ export default class GeneralCommand implements Command {
     });
 
     updatedPrimary.secondaries.forEach(async (secondary) => {
-      await this.secondaries.get(secondary.id).update(interaction.client);
+      await this.secondaries.get(secondary.id).update();
     });
 
     await interaction.reply({

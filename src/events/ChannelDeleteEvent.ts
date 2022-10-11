@@ -29,7 +29,7 @@ export default class ChannelDeleteEvent implements Event<'channelDelete'> {
 
     if (primary) {
       try {
-        await primary.delete(channel.client);
+        await primary.delete();
       } catch (error) {
         // this.logger.error(error);
       }
@@ -37,7 +37,7 @@ export default class ChannelDeleteEvent implements Event<'channelDelete'> {
 
     if (secondary) {
       try {
-        await secondary.delete(channel.client, false);
+        await secondary.delete(false);
       } catch (error) {
         this.logger.error('Error deleting secondary: ', error);
       }

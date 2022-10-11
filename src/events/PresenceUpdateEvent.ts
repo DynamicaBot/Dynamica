@@ -23,7 +23,7 @@ export default class PresenceUpdateEvent implements Event<'presenceUpdate'> {
     const dynamicaSecondary = this.secondaries.get(channelId);
 
     if (dynamicaSecondary) {
-      dynamicaSecondary.update(newPresence.client);
+      dynamicaSecondary.update();
     }
   };
 }
