@@ -1,5 +1,6 @@
-import Command from '@/classes/Command';
+import Command, { CommandToken } from '@/classes/Command';
 import creatorCheck from '@/preconditions/creator';
+import Logger from '@/utils/logger';
 
 import { ErrorEmbed, SuccessEmbed } from '@utils/discordEmbeds';
 import {
@@ -9,11 +10,13 @@ import {
   PermissionFlagsBits,
   SlashCommandBuilder,
 } from 'discord.js';
+import { Service } from 'typedi';
 
-export default class BitrateCommand extends Command {
-  constructor() {
-    super('bitrate');
-  }
+@Service({ id: CommandToken, multiple: true })
+export default class BitrateCommand implements Command {
+  constructor(private logger: Logger) {}
+
+  name: string = 'bitrate';
 
   conditions = [creatorCheck];
 

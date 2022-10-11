@@ -1,9 +1,9 @@
-import Help from '@/classes/Help';
+import Help, { HelpToken } from '@/classes/Help';
+import { Service } from 'typedi';
 
-export default class InfoHelp extends Help {
-  constructor() {
-    super('info');
-  }
+@Service({ id: HelpToken, multiple: true })
+export default class InfoHelp implements Help {
+  name: string = 'info';
 
   short = 'Shows the info of either a user or the current server.';
 }

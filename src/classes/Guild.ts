@@ -1,6 +1,6 @@
-import db from '@db';
+import DB from '@db';
 import { PrismaClientKnownRequestError } from '@prisma/client/runtime/index.js';
-import logger from '@utils/logger';
+import Logger from '@utils/logger';
 import {
   Client,
   DiscordAPIError,
@@ -8,6 +8,9 @@ import {
   Guild,
   hyperlink,
 } from 'discord.js';
+import { Container, Service } from 'typedi';
+// eslint-disable-next-line import/no-cycle
+import GuildFactory from './GuildFactory';
 // eslint-disable-next-line import/no-cycle
 import Guilds from './Guilds';
 
@@ -83,14 +86,16 @@ const botInfoEmbed = new EmbedBuilder()
     iconURL: 'https://dynamica.dev/img/dynamica.png',
   });
 
+@Service({ factory: [GuildFactory, 'create'] })
 export default class DynamicaGuild {
   public id: string;
 
-  constructor(id: string) {
+  constructor(id: string, private db: DB) {
     this.id = id;
   }
 
   public static async initialise(guild: Guild) {
+    const logger = Container.get(Logger);
     const owner = await guild.fetchOwner();
     if (!guild.members.me.permissions.has('Administrator')) {
       owner.send(
@@ -113,6 +118,7 @@ export default class DynamicaGuild {
     }
 
     try {
+      const db = Container.get(DB);
       await db.guild.create({
         data: {
           id: guild.id,
@@ -129,12 +135,15 @@ export default class DynamicaGuild {
     }
 
     logger.debug(`Joined guild ${guild.id} named: ${guild.name}`);
-    const newGuild = new DynamicaGuild(guild.id);
-    Guilds.add(newGuild);
+    const guildFactory = Container.get(GuildFactory);
+    const newGuild = guildFactory.create(guild.id);
+
+    const guilds = Container.get(Guilds);
+    guilds.add(newGuild);
   }
 
   prisma() {
-    return db.guild.findUniqueOrThrow({
+    return this.db.guild.findUniqueOrThrow({
       where: { id: this.id },
     });
   }
@@ -144,7 +153,7 @@ export default class DynamicaGuild {
   }
 
   async deletePrisma() {
-    return db.guild.delete({ where: { id: this.id } });
+    return this.db.guild.delete({ where: { id: this.id } });
   }
 
   async leaveDiscord(client: Client<true>) {
@@ -153,10 +162,12 @@ export default class DynamicaGuild {
   }
 
   async leave(client: Client<true>) {
+    const logger = Container.get(Logger);
+    const guilds = Container.get(Guilds);
     try {
       await this.leaveDiscord(client);
       await this.deletePrisma();
-      Guilds.remove(this.id);
+      guilds.remove(this.id);
     } catch (error) {
       if (error instanceof DiscordAPIError) {
         logger.error('Error leaving guild:', error);
@@ -172,7 +183,7 @@ export default class DynamicaGuild {
    * @returns this
    */
   async setAllowJoin(enabled: boolean) {
-    await db.guild.update({
+    await this.db.guild.update({
       where: { id: this.id },
       data: {
         allowJoinRequests: enabled,

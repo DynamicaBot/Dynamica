@@ -1,10 +1,10 @@
-import Help from '@classes/Help';
+import Help, { HelpToken } from '@classes/Help';
 import { bold } from 'discord.js';
+import { Service } from 'typedi';
 
-export default class AliasHelp extends Help {
-  constructor() {
-    super('alias');
-  }
+@Service({ id: HelpToken, multiple: true })
+export default class AliasHelp implements Help {
+  name: string = 'alias';
 
   public short =
     'Adds an alternative name for a game that replaces the default one in the channel name.';

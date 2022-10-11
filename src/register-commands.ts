@@ -1,3 +1,5 @@
+import { Container } from 'typedi';
+import { CommandToken } from './classes/Command';
 import Commands from './classes/Commands';
 import AliasCommand from './commands/AliasCommand';
 import AliasesCommand from './commands/AliasesCommand';
@@ -20,25 +22,30 @@ import UnlockCommand from './commands/UnlockCommand';
 import VersionCommand from './commands/VersionCommand';
 
 const registerCommands = () => {
-  Commands.register(new AliasCommand());
-  Commands.register(new AllowjoinCommand());
-  Commands.register(new AllyourbaseCommand());
-  Commands.register(new BitrateCommand());
-  Commands.register(new CreateCommand());
-  Commands.register(new GeneralCommand());
-  Commands.register(new HelpCommand());
-  Commands.register(new InfoCommand());
-  Commands.register(new JoinCommand());
-  Commands.register(new LimitCommand());
-  Commands.register(new LockCommand());
-  Commands.register(new NameCommand());
-  Commands.register(new PermissionCommand());
-  Commands.register(new PingCommand());
-  Commands.register(new TemplateCommand());
-  Commands.register(new TransferCommand());
-  Commands.register(new UnlockCommand());
-  Commands.register(new VersionCommand());
-  Commands.register(new AliasesCommand());
+  Container.import([
+    AliasCommand,
+    AliasesCommand,
+    AllowjoinCommand,
+    AllyourbaseCommand,
+    BitrateCommand,
+    CreateCommand,
+    GeneralCommand,
+    HelpCommand,
+    InfoCommand,
+    JoinCommand,
+    LimitCommand,
+    LockCommand,
+    NameCommand,
+    PermissionCommand,
+    PingCommand,
+    TemplateCommand,
+    TransferCommand,
+    UnlockCommand,
+    VersionCommand,
+  ]);
+  Container.getMany(CommandToken).forEach((command) => {
+    Container.get(Commands).register(command);
+  });
 };
 
 export default registerCommands;

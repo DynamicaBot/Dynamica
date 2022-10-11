@@ -1,17 +1,22 @@
 import Aliases from '@/classes/Aliases';
-import Command from '@/classes/Command';
+import Command, { CommandToken } from '@/classes/Command';
 import { InfoEmbed } from '@/utils/discordEmbeds';
+import Logger from '@/utils/logger';
 import {
   CacheType,
   ChatInputCommandInteraction,
   SlashCommandBuilder,
 } from 'discord.js';
 import _ from 'lodash';
+import { Service } from 'typedi';
 
-export default class AliasesCommand extends Command {
-  constructor() {
-    super('aliases');
-  }
+@Service({ id: CommandToken, multiple: true })
+export default class AliasesCommand implements Command {
+  constructor(private logger: Logger, private aliases: Aliases) {}
+
+  name: string = 'aliases';
+
+  conditions = [];
 
   // eslint-disable-next-line class-methods-use-this
   data = new SlashCommandBuilder()
@@ -21,10 +26,10 @@ export default class AliasesCommand extends Command {
 
   // eslint-disable-next-line class-methods-use-this
   response = async (interaction: ChatInputCommandInteraction<CacheType>) => {
-    const aliases = Aliases.getByGuildId(interaction.guildId);
+    const aliases = this.aliases.getByGuildId(interaction.guildId);
     const inlineAliases = await Promise.all(
       aliases.map(async ({ activity }) => {
-        const alias = Aliases.get(activity, interaction.guildId);
+        const alias = this.aliases.get(activity, interaction.guildId);
         const aliasPrisma = await alias.prisma();
         return {
           name: activity,

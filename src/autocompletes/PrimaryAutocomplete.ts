@@ -1,19 +1,21 @@
-import Autocomplete from '@/classes/Autocomplete';
-import db from '@db';
+import Autocomplete, { AutocompleteToken } from '@/classes/Autocomplete';
+import DB from '@db';
 import { AutocompleteInteraction, CacheType } from 'discord.js';
 import Fuse from 'fuse.js';
+import { Service } from 'typedi';
 
-export default class PrimaryAutocomplete extends Autocomplete {
-  constructor(commandName: string = 'primary') {
-    super(commandName);
-  }
+@Service({ id: AutocompleteToken, multiple: true })
+export default class PrimaryAutocomplete implements Autocomplete {
+  constructor(private db: DB) {}
+
+  public name: string = 'primary';
 
   // eslint-disable-next-line class-methods-use-this
   public response: (
     interaction: AutocompleteInteraction<CacheType>
   ) => Promise<void> = async (interaction) => {
     const { value } = interaction.options.getFocused(true);
-    const primaries = await db.primary.findMany({
+    const primaries = await this.db.primary.findMany({
       where: { guildId: interaction.guild.id },
     });
 

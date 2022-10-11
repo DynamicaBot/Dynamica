@@ -1,11 +1,11 @@
-export default class Help {
-  public name: string;
+import { Token } from 'typedi';
 
-  public short: string;
+export default interface Help {
+  name: string;
 
-  public long?: string;
+  short: string;
 
-  constructor(name: string) {
-    this.name = name;
-  }
+  long?: string;
 }
+
+export const HelpToken = new Token<Help>('help');

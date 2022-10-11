@@ -1,14 +1,20 @@
-import Command from '@/classes/Command';
+import Command, { CommandToken } from '@/classes/Command';
+import Condition from '@/classes/Condition';
+import Logger from '@/utils/logger';
 import Discord, {
   CacheType,
   ChatInputCommandInteraction,
   SlashCommandBuilder,
 } from 'discord.js';
+import { Service } from 'typedi';
 
-export default class VersionCommand extends Command {
-  constructor() {
-    super('version');
-  }
+@Service({ id: CommandToken, multiple: true })
+export default class VersionCommand implements Command {
+  constructor(private logger: Logger) {}
+
+  conditions: Condition[] = [];
+
+  name = 'version';
 
   data = new SlashCommandBuilder()
     .setName('version')

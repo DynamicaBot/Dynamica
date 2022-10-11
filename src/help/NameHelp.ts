@@ -1,9 +1,9 @@
-import Help from '@/classes/Help';
+import Help, { HelpToken } from '@/classes/Help';
+import { Service } from 'typedi';
 
-export default class NameHelp extends Help {
-  constructor() {
-    super('name');
-  }
+@Service({ id: HelpToken, multiple: true })
+export default class NameHelp implements Help {
+  name: string = 'name';
 
   short = "Changes the name of the Secondary channel you're currently in.";
 }

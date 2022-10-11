@@ -1,8 +1,9 @@
-import Command from '@/classes/Command';
+import Command, { CommandToken } from '@/classes/Command';
 import Secondaries from '@/classes/Secondaries';
 import creatorCheck from '@/preconditions/creator';
 import secondaryCheck from '@/preconditions/secondary';
 import { SuccessEmbed } from '@/utils/discordEmbeds';
+import Logger from '@/utils/logger';
 import {
   CacheType,
   ChatInputCommandInteraction,
@@ -10,11 +11,13 @@ import {
   PermissionFlagsBits,
   SlashCommandBuilder,
 } from 'discord.js';
+import { Service } from 'typedi';
 
-export default class LockCommand extends Command {
-  constructor() {
-    super('lock');
-  }
+@Service({ id: CommandToken, multiple: true })
+export default class LockCommand implements Command {
+  constructor(private logger: Logger, private secondaries: Secondaries) {}
+
+  name = 'lock';
 
   conditions = [creatorCheck, secondaryCheck];
 
@@ -24,6 +27,7 @@ export default class LockCommand extends Command {
     .setDefaultMemberPermissions(PermissionFlagsBits.ManageChannels)
     .setDescription('Lock a channel to a certain role or user.');
 
+  // eslint-disable-next-line class-methods-use-this
   response = async (interaction: ChatInputCommandInteraction<CacheType>) => {
     const guildMember = await interaction.guild.members.cache.get(
       interaction.user.id
@@ -31,7 +35,7 @@ export default class LockCommand extends Command {
 
     const channelId = guildMember?.voice.channelId;
 
-    const dynamicaSecondary = Secondaries.get(channelId);
+    const dynamicaSecondary = this.secondaries.get(channelId);
 
     dynamicaSecondary.lock(interaction.client);
     await interaction.reply({

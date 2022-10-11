@@ -1,19 +1,21 @@
-import Autocomplete from '@/classes/Autocomplete';
+import Autocomplete, { AutocompleteToken } from '@/classes/Autocomplete';
 import Helps from '@/classes/Helps';
 import { AutocompleteInteraction, CacheType } from 'discord.js';
 import Fuse from 'fuse.js';
+import { Service } from 'typedi';
 
-export default class HelpAutocomplete extends Autocomplete {
-  constructor() {
-    super('help');
-  }
+@Service({ id: AutocompleteToken, multiple: true })
+export default class HelpAutocomplete implements Autocomplete {
+  constructor(private helps: Helps) {}
+
+  name: string = 'help';
 
   // eslint-disable-next-line class-methods-use-this
   public response: (
     interaction: AutocompleteInteraction<CacheType>
   ) => Promise<void> = async (interaction) => {
     const value = interaction.options.getFocused();
-    const helpOptions = Helps.names;
+    const helpOptions = this.helps.names;
 
     const fuse = new Fuse(helpOptions);
 

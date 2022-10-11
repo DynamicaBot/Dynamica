@@ -1,18 +1,28 @@
-import Command from '@/classes/Command';
+import Command, { CommandToken } from '@/classes/Command';
+import Condition from '@/classes/Condition';
 import Secondaries from '@/classes/Secondaries';
 import { SuccessEmbed } from '@/utils/discordEmbeds';
-import db from '@db';
+import Logger from '@/utils/logger';
+import DB from '@db';
 import {
   CacheType,
   ChatInputCommandInteraction,
   PermissionFlagsBits,
   SlashCommandBuilder,
 } from 'discord.js';
+import { Service } from 'typedi';
 
-export default class GeneralCommand extends Command {
-  constructor() {
-    super('general');
-  }
+@Service({ id: CommandToken, multiple: true })
+export default class GeneralCommand implements Command {
+  constructor(
+    private logger: Logger,
+    private secondaries: Secondaries,
+    private db: DB
+  ) {}
+
+  conditions: Condition[] = [];
+
+  name: string = 'general';
 
   data = new SlashCommandBuilder()
     .setName('general')
@@ -39,14 +49,14 @@ export default class GeneralCommand extends Command {
     const name = interaction.options.getString('name', true);
     const channel = interaction.options.getString('primary', true);
 
-    const updatedPrimary = await db.primary.update({
+    const updatedPrimary = await this.db.primary.update({
       where: { id: channel },
       data: { generalName: name },
       include: { secondaries: true },
     });
 
     updatedPrimary.secondaries.forEach(async (secondary) => {
-      await Secondaries.get(secondary.id).update(interaction.client);
+      await this.secondaries.get(secondary.id).update(interaction.client);
     });
 
     await interaction.reply({

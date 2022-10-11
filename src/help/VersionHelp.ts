@@ -1,9 +1,9 @@
-import Help from '@/classes/Help';
+import Help, { HelpToken } from '@/classes/Help';
+import { Service } from 'typedi';
 
-export default class VersionHelp extends Help {
-  constructor() {
-    super('version');
-  }
+@Service({ id: HelpToken, multiple: true })
+export default class VersionHelp implements Help {
+  name: string = 'version';
 
   public short = 'Sends the running version of Dynamica.';
 }

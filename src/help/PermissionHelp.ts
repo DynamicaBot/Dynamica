@@ -1,9 +1,9 @@
-import Help from '@/classes/Help';
+import Help, { HelpToken } from '@/classes/Help';
+import { Service } from 'typedi';
 
-export default class PermissionHelp extends Help {
-  constructor() {
-    super('permission');
-  }
+@Service({ id: HelpToken, multiple: true })
+export default class PermissionHelp implements Help {
+  name = 'permission';
 
   public short =
     'Edits the permissions for secondary channels. (Works in conjuction with /lock and /unlock.';

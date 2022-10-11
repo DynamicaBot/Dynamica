@@ -1,6 +1,7 @@
-import Command from '@/classes/Command';
+import Command, { CommandToken } from '@/classes/Command';
 import creatorCheck from '@/preconditions/creator';
 import secondaryCheck from '@/preconditions/secondary';
+import Logger from '@/utils/logger';
 import { ErrorEmbed } from '@utils/discordEmbeds';
 import {
   CacheType,
@@ -9,11 +10,13 @@ import {
   Role,
   SlashCommandBuilder,
 } from 'discord.js';
+import { Service } from 'typedi';
 
-export default class PermissionCommand extends Command {
-  constructor() {
-    super('permission');
-  }
+@Service({ id: CommandToken, multiple: true })
+export default class PermissionCommand implements Command {
+  constructor(private logger: Logger) {}
+
+  name = 'permission';
 
   conditions = [creatorCheck, secondaryCheck];
 
@@ -61,6 +64,7 @@ export default class PermissionCommand extends Command {
         )
     );
 
+  // eslint-disable-next-line class-methods-use-this
   response = async (interaction: ChatInputCommandInteraction<CacheType>) => {
     const subcommand = interaction.options.getSubcommand(true);
     const user = interaction.options.getUser('user', false);

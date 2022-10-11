@@ -1,4 +1,6 @@
 import Events from '@/classes/Events';
+import { Container } from 'typedi';
+import { EventToken } from './classes/Event';
 import AutocompleteEvent from './events/AutocompleteEvent';
 import ChannelDeleteEvent from './events/ChannelDeleteEvent';
 import CommandEvent from './events/CommandEvent';
@@ -9,14 +11,19 @@ import ReadyEvent from './events/ReadyEvent';
 import VoiceStateUpdateEvent from './events/VoiceStateUpdateEvent';
 
 const registerEvents = () => {
-  Events.register(new AutocompleteEvent());
-  Events.register(new CommandEvent());
-  Events.register(new GuildCreateEvent());
-  Events.register(new GuildDeleteEvent());
-  Events.register(new PresenceUpdateEvent());
-  Events.register(new ReadyEvent());
-  Events.register(new VoiceStateUpdateEvent());
-  Events.register(new ChannelDeleteEvent());
+  Container.import([
+    AutocompleteEvent,
+    ChannelDeleteEvent,
+    CommandEvent,
+    GuildCreateEvent,
+    GuildDeleteEvent,
+    PresenceUpdateEvent,
+    ReadyEvent,
+    VoiceStateUpdateEvent,
+  ]);
+  Container.getMany(EventToken).forEach((event) => {
+    Container.get(Events).register(event);
+  });
 };
 
 export default registerEvents;

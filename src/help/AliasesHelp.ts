@@ -1,9 +1,9 @@
-import Help from '@classes/Help';
+import Help, { HelpToken } from '@classes/Help';
+import { Service } from 'typedi';
 
-export default class AliasesHelp extends Help {
-  constructor() {
-    super('aliases');
-  }
+@Service({ id: HelpToken, multiple: true })
+export default class AliasesHelp implements Help {
+  name: string = 'aliases';
 
   public short = 'List all aliases for games';
 }

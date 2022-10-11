@@ -1,9 +1,9 @@
-import Help from '@/classes/Help';
+import Help, { HelpToken } from '@/classes/Help';
+import { Service } from 'typedi';
 
-export default class TemplateHelp extends Help {
-  constructor() {
-    super('template');
-  }
+@Service({ id: HelpToken, multiple: true })
+export default class TemplateHelp implements Help {
+  name: string = 'template';
 
   short =
     'Using the /template command you can set the template for the channel name target primary channel.';

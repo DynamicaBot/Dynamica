@@ -1,25 +1,25 @@
 import { AutocompleteInteraction } from 'discord.js';
+import { Service } from 'typedi';
 import type Autocomplete from './Autocomplete';
 
+@Service()
 export default class Autocompletes {
-  public static autocompletes: Record<string, Autocomplete> = {};
+  public autocompletes: Record<string, Autocomplete> = {};
 
-  public static register(autocomplete: Autocomplete): void {
-    Autocompletes.autocompletes[autocomplete.name] = autocomplete;
+  public register(autocomplete: Autocomplete): void {
+    this.autocompletes[autocomplete.name] = autocomplete;
   }
 
-  public static get(name: string): Autocomplete | undefined {
-    return Autocompletes.autocompletes[name];
+  public get(name: string): Autocomplete | undefined {
+    return this.autocompletes[name];
   }
 
-  static get all(): Autocomplete[] {
-    return Object.values(Autocompletes.autocompletes);
+  get all(): Autocomplete[] {
+    return Object.values(this.autocompletes);
   }
 
-  static run = async (interaction: AutocompleteInteraction) => {
-    const autocomplete: Autocomplete = Autocompletes.get(
-      interaction.commandName
-    )!;
+  run = async (interaction: AutocompleteInteraction) => {
+    const autocomplete: Autocomplete = this.get(interaction.commandName)!;
     await autocomplete.response(interaction);
   };
 }

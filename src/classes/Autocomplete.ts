@@ -1,18 +1,15 @@
-import signaleLogger from '@utils/logger';
 import { AutocompleteInteraction } from 'discord.js';
-import { Signale } from 'signale';
+import { Token } from 'typedi';
 /**
  * The autocomplete discordjs class for ease of use.
  */
-export default class Autocomplete {
-  public logger: Signale;
-
+export default interface Autocomplete {
   /**
    * The response to an Autocomplete event.
    */
-  public response: (interaction: AutocompleteInteraction) => Promise<void>;
+  response: (interaction: AutocompleteInteraction) => Promise<void>;
 
-  constructor(public name: string) {
-    this.logger = signaleLogger.scope('Autocomplete', name);
-  }
+  name: string;
 }
+
+export const AutocompleteToken = new Token<Autocomplete>('autocompletes');

@@ -1,12 +1,14 @@
+import { Service } from 'typedi';
 import MQTT from './MQTT';
 import type DynamicaSecondary from './Secondary';
 
+@Service()
 export default class Secondaries {
-  public static secondaries: DynamicaSecondary[] = [];
+  constructor(private mqtt: MQTT) {}
 
-  public static mqtt = MQTT.getInstance();
+  public secondaries: DynamicaSecondary[] = [];
 
-  public static add(secondary: DynamicaSecondary) {
+  public add(secondary: DynamicaSecondary) {
     this.secondaries.push(secondary);
     if (this.mqtt) {
       this.mqtt.publish(
@@ -16,7 +18,7 @@ export default class Secondaries {
     }
   }
 
-  public static remove(id: string) {
+  public remove(id: string) {
     this.secondaries = this.secondaries.filter(
       (secondary) => secondary.id !== id
     );
@@ -28,20 +30,20 @@ export default class Secondaries {
     }
   }
 
-  public static get(id: string) {
+  public get(id: string) {
     return this.secondaries.find((secondary) => secondary.id === id);
   }
 
-  public static has = (id: string) =>
+  public has = (id: string) =>
     this.secondaries.some((secondary) => secondary.id === id);
 
-  public static getByGuildId(guildId: string) {
+  public getByGuildId(guildId: string) {
     return this.secondaries.filter(
       (secondary) => secondary.guildId === guildId
     );
   }
 
-  public static get count() {
+  public get count() {
     return this.secondaries.length;
   }
 }

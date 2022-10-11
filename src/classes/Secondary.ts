@@ -1,10 +1,10 @@
 // eslint-disable-next-line import/no-cycle
 import channelActivities from '@/utils/activity';
 import updatePresence from '@/utils/presence';
-import db from '@db';
+import DB from '@db';
 import { PrismaClientKnownRequestError } from '@prisma/client/runtime/index.js';
 import formatChannelName from '@utils/format';
-import signaleLogger from '@utils/logger';
+import Logger from '@utils/logger';
 import {
   ChannelType,
   Client,
@@ -15,9 +15,12 @@ import {
 } from 'discord.js';
 import emojiList from 'emoji-random-list';
 import { Signale } from 'signale';
+import { Container, Service } from 'typedi';
 import Secondaries from './Secondaries';
 // eslint-disable-next-line import/no-cycle
-
+import SecondaryFactory from './SecondaryFactory';
+// eslint-disable-next-line import/no-cycle
+@Service({ factory: [SecondaryFactory, 'create'] })
 export default class DynamicaSecondary {
   id: string;
 
@@ -26,15 +29,18 @@ export default class DynamicaSecondary {
   /** The prisma primary */
   parentId: string;
 
-  private static readonly logger = signaleLogger.scope('Secondary');
-
   private readonly logger: Signale;
 
-  constructor(channelId: string, guildId: string, primaryId: string) {
+  constructor(
+    channelId: string,
+    guildId: string,
+    primaryId: string,
+    private db: DB
+  ) {
     this.guildId = guildId;
     this.id = channelId;
     this.parentId = primaryId;
-    this.logger = signaleLogger.scope('Secondary', this.id);
+    this.logger = Container.get(Logger);
   }
 
   /**
@@ -48,6 +54,9 @@ export default class DynamicaSecondary {
     primary: VoiceBasedChannel,
     member: GuildMember
   ) {
+    const logger = Container.get(Logger);
+    const db = Container.get(DB);
+
     const { guild } = member;
     const aliases = await db.alias.findMany({
       where: { guildId: guild.id },
@@ -108,18 +117,20 @@ export default class DynamicaSecondary {
       },
     });
 
-    this.logger
+    logger
       .scope('Secondary', secondary.id)
       .debug(
         `Secondary channel ${secondary.name} created by ${member?.user.tag} in ${member.guild.name}.`
       );
 
-    const dynamicaSecondary = new DynamicaSecondary(
+    const secondaryFactory = Container.get(SecondaryFactory);
+    const dynamicaSecondary = secondaryFactory.create(
       secondary.id,
       guild.id,
       primary.id
     );
-    Secondaries.add(dynamicaSecondary);
+    const secondaries = Container.get(Secondaries);
+    secondaries.add(dynamicaSecondary);
     return dynamicaSecondary;
   }
 
@@ -138,11 +149,11 @@ export default class DynamicaSecondary {
     }
     const prismaChannel = await this.prisma();
 
-    const primaryPrisma = await db.primary.findUnique({
+    const primaryPrisma = await this.db.primary.findUnique({
       where: { id: this.parentId },
     });
 
-    const adjacentSecondaryCount = await db.secondary.count({
+    const adjacentSecondaryCount = await this.db.secondary.count({
       where: {
         primaryId: discordChannel.parentId,
         guildId: discordChannel.guildId,
@@ -154,7 +165,7 @@ export default class DynamicaSecondary {
     /**
      * Return aliases
      */
-    const aliases = await db.alias.findMany({
+    const aliases = await this.db.alias.findMany({
       where: {
         guildId: discordChannel.guildId,
       },
@@ -225,7 +236,7 @@ export default class DynamicaSecondary {
       }
     });
 
-    await db.secondary.update({
+    await this.db.secondary.update({
       where: { id: this.id },
       data: {
         locked: true,
@@ -240,7 +251,7 @@ export default class DynamicaSecondary {
 
     await discordChannel.lockPermissions();
 
-    await db.secondary.update({
+    await this.db.secondary.update({
       where: { id: this.id },
       data: {
         locked: false,
@@ -251,7 +262,7 @@ export default class DynamicaSecondary {
   }
 
   async changeOwner(user: User): Promise<void> {
-    await db.secondary.update({
+    await this.db.secondary.update({
       where: { id: this.id },
       data: { creator: user.id },
     });
@@ -266,7 +277,7 @@ export default class DynamicaSecondary {
   }
 
   prisma() {
-    return db.secondary.findUniqueOrThrow({ where: { id: this.id } });
+    return this.db.secondary.findUniqueOrThrow({ where: { id: this.id } });
   }
 
   async deleteDiscord(client: Client<true>) {
@@ -294,7 +305,7 @@ export default class DynamicaSecondary {
 
   async deletePrisma() {
     try {
-      await db.secondary.delete({ where: { id: this.id } });
+      await this.db.secondary.delete({ where: { id: this.id } });
     } catch (error) {
       if (error instanceof PrismaClientKnownRequestError) {
         if (error.code === 'P2025') {
@@ -318,8 +329,8 @@ export default class DynamicaSecondary {
       await this.deletePrisma();
     }
     this.logger.debug(`Secondary channel deleted.`);
-
-    Secondaries.remove(this.id);
+    const secondaries = Container.get(Secondaries);
+    secondaries.remove(this.id);
     updatePresence(client);
   }
 

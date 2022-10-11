@@ -1,37 +1,39 @@
+import { Service } from 'typedi';
 import MQTT from './MQTT';
 import type DynamicaPrimary from './Primary';
 
+@Service()
 export default class Primaries {
-  public static primaries: DynamicaPrimary[] = [];
+  constructor(private mqtt: MQTT) {}
 
-  public static mqtt = MQTT.getInstance();
+  public primaries: DynamicaPrimary[] = [];
 
-  public static add(primary: DynamicaPrimary) {
+  public add(primary: DynamicaPrimary) {
     this.primaries.push(primary);
     if (this.mqtt) {
       this.mqtt.publish('dynamica/primaries', this.primaries.length.toString());
     }
   }
 
-  public static remove(id: string) {
+  public remove(id: string) {
     this.primaries = this.primaries.filter((primary) => primary.id !== id);
     if (this.mqtt) {
       this.mqtt.publish('dynamica/primaries', this.primaries.length.toString());
     }
   }
 
-  public static get(id: string | undefined) {
+  public get(id: string | undefined) {
     return this.primaries.find((primary) => primary.id === id);
   }
 
-  public static has = (id: string) =>
+  public has = (id: string) =>
     this.primaries.some((primary) => primary.id === id);
 
-  public static getByGuildId(guildId: string) {
+  public getByGuildId(guildId: string) {
     return this.primaries.filter((primary) => primary.guildId === guildId);
   }
 
-  static get count() {
+  get count() {
     return this.primaries.length;
   }
 }

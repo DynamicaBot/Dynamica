@@ -1,14 +1,25 @@
-import Command from '@/classes/Command';
+import Command, { CommandToken } from '@/classes/Command';
+import Condition from '@/classes/Condition';
 import Primaries from '@/classes/Primaries';
 import Secondaries from '@/classes/Secondaries';
 import { ErrorEmbed } from '@/utils/discordEmbeds';
-import db from '@db';
+import Logger from '@/utils/logger';
+import DB from '@db';
 import { EmbedBuilder, SlashCommandBuilder } from 'discord.js';
+import { Service } from 'typedi';
 
-export default class InfoCommand extends Command {
-  constructor() {
-    super('info');
-  }
+@Service({ id: CommandToken, multiple: true })
+export default class InfoCommand implements Command {
+  constructor(
+    private logger: Logger,
+    private secondaries: Secondaries,
+    private primaries: Primaries,
+    private db: DB
+  ) {}
+
+  conditions: Condition[];
+
+  name: string = 'info';
 
   data = new SlashCommandBuilder()
     .setName('info')
@@ -46,10 +57,11 @@ export default class InfoCommand extends Command {
 
   // eslint-disable-next-line class-methods-use-this
   response = async (interaction) => {
+    this.logger.info('Logger');
     const subcommand = interaction.options.getSubcommand(true);
     if (subcommand === 'primary') {
       const chosenPrimary = interaction.options.getString('primary', true);
-      const primary = Primaries.get(chosenPrimary);
+      const primary = this.primaries.get(chosenPrimary);
       if (!primary) {
         interaction.reply({
           embeds: [ErrorEmbed('That primary channel does not exist.')],
@@ -81,7 +93,7 @@ export default class InfoCommand extends Command {
       });
     } else if (subcommand === 'secondary') {
       const chosenSecondary = interaction.options.getString('secondary', true);
-      const secondary = Secondaries.get(chosenSecondary);
+      const secondary = this.secondaries.get(chosenSecondary);
       if (!secondary) {
         interaction.reply({
           ephemeral: true,
@@ -112,7 +124,7 @@ export default class InfoCommand extends Command {
         ],
       });
     } else if (subcommand === 'guild') {
-      const prismaGuild = await db.guild.findUnique({
+      const prismaGuild = await this.db.guild.findUnique({
         where: { id: interaction.guildId },
       });
       interaction.reply({

@@ -1,9 +1,9 @@
-import Help from '@/classes/Help';
+import Help, { HelpToken } from '@/classes/Help';
+import { Service } from 'typedi';
 
-export default class LimitHelp extends Help {
-  constructor() {
-    super('limit');
-  }
+@Service({ id: HelpToken, multiple: true })
+export default class LimitHelp implements Help {
+  name = 'limit';
 
   short = 'Limit the maximum number of people in the channel.';
 }

@@ -1,7 +1,8 @@
-import Command from '@/classes/Command';
+import Command, { CommandToken } from '@/classes/Command';
 import Secondaries from '@/classes/Secondaries';
 import { SuccessEmbed } from '@/utils/discordEmbeds';
-import db from '@db';
+import Logger from '@/utils/logger';
+import DB from '@db';
 import {
   CacheType,
   channelMention,
@@ -10,25 +11,33 @@ import {
   PermissionFlagsBits,
   SlashCommandBuilder,
 } from 'discord.js';
+import { Service } from 'typedi';
 
-export default class TemplateCommand extends Command {
-  constructor() {
-    super('template');
-  }
+@Service({ id: CommandToken, multiple: true })
+export default class TemplateCommand implements Command {
+  constructor(
+    private logger: Logger,
+    private secondaries: Secondaries,
+    private db: DB
+  ) {}
+
+  name = 'template';
+
+  conditions = [];
 
   // eslint-disable-next-line class-methods-use-this
   response = async (interaction: ChatInputCommandInteraction<CacheType>) => {
     const template = interaction.options.getString('template', true);
     const channel = interaction.options.getString('primary', true);
 
-    const primary = await db.primary.update({
+    const primary = await this.db.primary.update({
       where: { id: channel },
       data: { template },
       include: { secondaries: true },
     });
 
     primary.secondaries.forEach(async (secondary) => {
-      const dynamicaSecondary = Secondaries.get(secondary.id);
+      const dynamicaSecondary = this.secondaries.get(secondary.id);
 
       dynamicaSecondary.update(interaction.client);
     });

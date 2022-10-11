@@ -1,9 +1,14 @@
 import prismaClient from '@prisma/client';
+import { Service } from 'typedi';
 
 const { PrismaClient } = prismaClient;
 /**
  * Prisma Client from Prisma
  */
-
-const db = new PrismaClient();
-export default db;
+@Service()
+export default class DB extends PrismaClient {
+  // eslint-disable-next-line @typescript-eslint/no-useless-constructor
+  constructor() {
+    super();
+  }
+}

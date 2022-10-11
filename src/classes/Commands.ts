@@ -1,5 +1,4 @@
 import { ErrorEmbed } from '@/utils/discordEmbeds';
-import logger from '@/utils/logger';
 import {
   ActionRowBuilder,
   ButtonBuilder,
@@ -10,6 +9,7 @@ import {
   SlashCommandBuilder,
   SlashCommandSubcommandsOnlyBuilder,
 } from 'discord.js';
+import { Service } from 'typedi';
 import type Command from './Command';
 import ConditionError from './ConditionError';
 
@@ -26,41 +26,46 @@ const errorRow = new ActionRowBuilder<ButtonBuilder>().addComponents([
     .setStyle(ButtonStyle.Link),
 ]);
 
+@Service()
 export default class Commands {
-  public static commands: Record<string, Command> = {};
+  constructor(private commands: Record<string, Command> = {}) {}
 
-  public static register(command: Command): void {
-    Commands.commands[command.name] = command;
+  public register(command: Command): void {
+    this.commands[command.name] = command;
   }
 
-  public static get(name: string): Command | undefined {
-    return Commands.commands[name];
+  public registerMany(commands: Command[]): void {
+    commands.forEach((command) => this.register(command));
   }
 
-  public static get count(): number {
-    return Object.keys(Commands.commands).length;
+  public get(name: string): Command | undefined {
+    return this.commands[name];
   }
 
-  public static get all(): Command[] {
-    return Object.values(Commands.commands);
+  public get count(): number {
+    return Object.keys(this.commands).length;
   }
 
-  public static get names(): string[] {
-    return Object.keys(Commands.commands);
+  public get all(): Command[] {
+    return Object.values(this.commands);
   }
 
-  public static get data(): SlashCommandBuilderTypes[] {
-    return Commands.all.map((command) => command.data);
+  public get names(): string[] {
+    return Object.keys(this.commands);
   }
 
-  public static get json(): RESTPostAPIApplicationCommandsJSONBody[] {
-    return Commands.all.map((command) => command.data.toJSON());
+  public get data(): SlashCommandBuilderTypes[] {
+    return this.all.map((command) => command.data);
   }
 
-  public static run = async (
+  public get json(): RESTPostAPIApplicationCommandsJSONBody[] {
+    return this.all.map((command) => command.data.toJSON());
+  }
+
+  public run = async (
     interaction: ChatInputCommandInteraction<CacheType>
   ): Promise<void> => {
-    const command = Commands.get(interaction.commandName);
+    const command = this.get(interaction.commandName);
     if (!command) return;
 
     try {
@@ -95,7 +100,7 @@ export default class Commands {
     try {
       await command.response(interaction);
     } catch (error) {
-      logger.error(`Error while running command ${command.name}`, error);
+      // logger.error(`Error while running command ${command.name}`, error);
       interaction.reply({
         embeds: [
           ErrorEmbed(
