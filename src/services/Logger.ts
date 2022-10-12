@@ -1,16 +1,16 @@
-import { config } from 'dotenv';
 import signale from 'signale';
-import { Service } from 'typedi';
+import { Service, Token } from 'typedi';
 
-config();
+export const LoggerToken = new Token<Logger>('Logger');
 
 /** Signale Logger instance */
-@Service()
+@Service({ id: Logger })
 export default class Logger extends signale.Signale {
   constructor() {
     super({ disabled: false, interactive: false });
   }
 }
+
 // const logger = new signale.Signale({
 //   disabled: false,
 //   interactive: false,

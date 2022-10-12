@@ -9,10 +9,11 @@ import registerAutocompletes from './register-autocomples';
 import registerEvents from './register-events';
 import registerHelp from './register-help';
 import registerCommands from './register-commands';
+import MQTT from './services/MQTT';
 
 dotenv.config();
 
-Container.import([Logger, DB, Events, Client]);
+Container.import([Logger, DB, Events, Client, MQTT]);
 
 registerCommands();
 registerHelp();
