@@ -17,7 +17,8 @@ export default async () => {
 
     registerCommands();
     const commands = Container.get(Commands);
-    const { json: commandData } = commands;
+    const commandData = commands.data();
+    // console.log({ commandData });
 
     const rest = new REST({ version: '10' }).setToken(TOKEN);
 

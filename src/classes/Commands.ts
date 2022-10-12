@@ -5,18 +5,10 @@ import {
   ButtonStyle,
   CacheType,
   ChatInputCommandInteraction,
-  RESTPostAPIApplicationCommandsJSONBody,
-  SlashCommandBuilder,
-  SlashCommandSubcommandsOnlyBuilder,
 } from 'discord.js';
 import { Service } from 'typedi';
 import type Command from './Command';
 import ConditionError from './ConditionError';
-
-type SlashCommandBuilderTypes =
-  | SlashCommandBuilder
-  | SlashCommandSubcommandsOnlyBuilder
-  | Omit<SlashCommandBuilder, 'addSubcommand' | 'addSubcommandGroup'>;
 
 // Report error button
 const errorRow = new ActionRowBuilder<ButtonBuilder>().addComponents([
@@ -28,10 +20,11 @@ const errorRow = new ActionRowBuilder<ButtonBuilder>().addComponents([
 
 @Service()
 export default class Commands {
-  constructor(private commands: Record<string, Command> = {}) {}
+  private commands: Record<string, Command> = {};
 
   public register(command: Command): void {
     this.commands[command.name] = command;
+    // console.log(this.commands);
   }
 
   public registerMany(commands: Command[]): void {
@@ -42,11 +35,11 @@ export default class Commands {
     return this.commands[name];
   }
 
-  public get count(): number {
+  public count(): number {
     return Object.keys(this.commands).length;
   }
 
-  public get all(): Command[] {
+  public all(): Command[] {
     return Object.values(this.commands);
   }
 
@@ -54,13 +47,8 @@ export default class Commands {
     return Object.keys(this.commands);
   }
 
-  public get data(): SlashCommandBuilderTypes[] {
-    return this.all.map((command) => command.data);
-  }
-
-  public get json(): RESTPostAPIApplicationCommandsJSONBody[] {
-    return this.all.map((command) => command.data.toJSON());
-  }
+  public data = () =>
+    Object.values(this.commands).map((command) => command.data.toJSON());
 
   public run = async (
     interaction: ChatInputCommandInteraction<CacheType>

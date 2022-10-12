@@ -1,3 +1,4 @@
+import 'reflect-metadata';
 import { config } from 'dotenv';
 import deploy from './scripts/deploy';
 
