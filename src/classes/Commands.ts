@@ -1,3 +1,4 @@
+import Logger from '@/services/Logger';
 import { ErrorEmbed } from '@/utils/discordEmbeds';
 import {
   ActionRowBuilder,
@@ -20,6 +21,8 @@ const errorRow = new ActionRowBuilder<ButtonBuilder>().addComponents([
 
 @Service()
 export default class Commands {
+  constructor(private logger: Logger) {}
+
   private commands: Record<string, Command> = {};
 
   public register(command: Command): void {
@@ -58,7 +61,8 @@ export default class Commands {
 
     try {
       await Promise.all(
-        command.conditions.map((condition) => condition.check(interaction))
+        command.conditions?.map((condition) => condition.check(interaction)) ??
+          []
       );
     } catch (error) {
       if (error instanceof ConditionError) {
@@ -73,6 +77,7 @@ export default class Commands {
           ],
         });
       } else {
+        this.logger.error(error);
         interaction.reply({
           embeds: [
             ErrorEmbed(error.message).setFooter({

@@ -57,7 +57,6 @@ export default class InfoCommand implements Command {
 
   // eslint-disable-next-line class-methods-use-this
   response = async (interaction) => {
-    this.logger.info('Logger');
     const subcommand = interaction.options.getSubcommand(true);
     if (subcommand === 'primary') {
       const chosenPrimary = interaction.options.getString('primary', true);
