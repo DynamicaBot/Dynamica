@@ -1,6 +1,6 @@
 import Aliases from '@/classes/Aliases';
 import channelActivities from '@/utils/activity';
-import Autocomplete, { AutocompleteToken } from '@classes/Autocomplete';
+import Autocomplete, { AutocompleteToken } from '@/classes/Autocomplete';
 import { AutocompleteInteraction, CacheType, GuildMember } from 'discord.js';
 import Fuse from 'fuse.js';
 import { Service } from 'typedi';
@@ -25,7 +25,9 @@ export default class AliasAutocomplete implements Autocomplete {
     let options: { name: string; value: string }[] = [];
 
     if (subcommand === 'update' || subcommand === 'remove') {
-      const existingAliases = this.aliases.getByGuildId(interaction.guildId);
+      const existingAliases = await this.aliases.getByGuild(
+        interaction.guildId
+      );
       options = existingAliases.map(({ activity }) => ({
         name: activity,
         value: activity,

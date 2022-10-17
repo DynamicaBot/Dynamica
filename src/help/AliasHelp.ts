@@ -1,4 +1,4 @@
-import Help, { HelpToken } from '@classes/Help';
+import Help, { HelpToken } from '@/classes/Help';
 import { bold } from 'discord.js';
 import { Service } from 'typedi';
 

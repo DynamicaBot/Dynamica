@@ -5,7 +5,7 @@
     "module": "ESNext",
     "moduleResolution": "node",
     "resolveJsonModule": true,
-
+    "noEmit": true,
     // Language and Environment
     "emitDecoratorMetadata": true,
     "experimentalDecorators": true,
@@ -13,31 +13,16 @@
     "target": "esnext",
     "useDefineForClassFields": true,
     // Emit
-    "rootDir": "./src" /* Specify the root folder within your source files. */,
+
     "sourceMap": true /* Create source map files for emitted JavaScript files. */,
     "outDir": "./dist" /* Specify an output folder for all emitted files. */,
     "downlevelIteration": false /* Emit more compliant, but verbose and less performant JavaScript for iteration. */,
     "esModuleInterop": true /* Emit additional JavaScript to ease support for importing CommonJS modules. This enables `allowSyntheticDefaultImports` for type compatibility. */,
-    "baseUrl": "src",
+    "baseUrl": "./",
     "skipLibCheck": true,
     "paths": {
-      "@": ["./"],
-      "@/*": ["./*"],
-      "@autocompletes/*": ["./autocompletes/*"],
-      "@autocompletes": ["./autocompletes"],
-      "@classes/*": ["./classes/*"],
-      "@classes": ["./classes"],
-      "@commands/*": ["./commands/*"],
-      "@commands": ["./commands"],
-      "@events/*": ["./events/*"],
-      "@events": ["./events"],
-      "@help/*": ["./help/*"],
-      "@help": ["./help"],
-      "@preconditions/*": ["./preconditions/*"],
-      "@preconditions": ["./preconditions"],
-      "@utils/*": ["./utils/*"],
-      "@utils": ["./utils"],
-      "@db": ["./utils/db"]
+      "@": ["src"],
+      "@/*": ["src/*"]
     }
   }
 }

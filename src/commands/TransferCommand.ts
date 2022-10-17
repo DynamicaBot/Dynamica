@@ -40,7 +40,7 @@ export default class TransferCommand implements Command {
 
     const { channelId } = guildMember.voice;
 
-    const secondaryChannel = this.secondaries.get(channelId);
+    const secondaryChannel = await this.secondaries.get(channelId);
     if (secondaryChannel) {
       await secondaryChannel.changeOwner(user);
       interaction.reply(

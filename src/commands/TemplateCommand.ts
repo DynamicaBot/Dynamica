@@ -37,7 +37,7 @@ export default class TemplateCommand implements Command {
     });
 
     primary.secondaries.forEach(async (secondary) => {
-      const dynamicaSecondary = this.secondaries.get(secondary.id);
+      const dynamicaSecondary = await this.secondaries.get(secondary.id);
 
       dynamicaSecondary.update();
     });

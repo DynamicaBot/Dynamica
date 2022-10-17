@@ -29,8 +29,8 @@ export default class AllowjoinCommand implements Command {
   // eslint-disable-next-line class-methods-use-this
   response = async (interaction) => {
     const state = interaction.options.getBoolean('state', true);
-    const guild = this.guilds.get(interaction.guildId);
-    guild.setAllowJoin(state);
+    const guild = await this.guilds.get(interaction.guildId);
+    await guild.setAllowJoin(state);
     interaction.reply({
       embeds: [SuccessEmbed(`${state ? 'Enabled' : 'Disabled'} Join Requests`)],
     });

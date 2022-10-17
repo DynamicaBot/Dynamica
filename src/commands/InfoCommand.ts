@@ -60,7 +60,7 @@ export default class InfoCommand implements Command {
     const subcommand = interaction.options.getSubcommand(true);
     if (subcommand === 'primary') {
       const chosenPrimary = interaction.options.getString('primary', true);
-      const primary = this.primaries.get(chosenPrimary);
+      const primary = await this.primaries.get(chosenPrimary);
       if (!primary) {
         interaction.reply({
           embeds: [ErrorEmbed('That primary channel does not exist.')],
@@ -92,7 +92,7 @@ export default class InfoCommand implements Command {
       });
     } else if (subcommand === 'secondary') {
       const chosenSecondary = interaction.options.getString('secondary', true);
-      const secondary = this.secondaries.get(chosenSecondary);
+      const secondary = await this.secondaries.get(chosenSecondary);
       if (!secondary) {
         interaction.reply({
           ephemeral: true,

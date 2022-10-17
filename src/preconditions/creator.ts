@@ -16,7 +16,7 @@ const creatorCheck = new Condition(async (interaction) => {
         'You need to be in a voice channel to use this command.'
       );
 
-    const secondary = secondaries.get(channel.id);
+    const secondary = await secondaries.get(channel.id);
 
     if (!secondary)
       throw new ConditionError(

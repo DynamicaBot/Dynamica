@@ -35,7 +35,7 @@ export default class LockCommand implements Command {
 
     const channelId = guildMember?.voice.channelId;
 
-    const dynamicaSecondary = this.secondaries.get(channelId);
+    const dynamicaSecondary = await this.secondaries.get(channelId);
 
     dynamicaSecondary.lock();
     await interaction.reply({

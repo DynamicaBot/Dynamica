@@ -2,7 +2,7 @@ import Command, { CommandToken } from '@/classes/Command';
 import creatorCheck from '@/preconditions/creator';
 import secondaryCheck from '@/preconditions/secondary';
 import Logger from '@/services/Logger';
-import { ErrorEmbed } from '@utils/discordEmbeds';
+import { ErrorEmbed } from '@/utils/discordEmbeds';
 import {
   CacheType,
   ChatInputCommandInteraction,

@@ -49,7 +49,7 @@ export default class NameCommand implements Command {
     });
     this.logger.info(`${channel.id} name changed.`);
 
-    await this.secondaries.get(channel.id).update();
+    await (await this.secondaries.get(channel.id)).update();
 
     interaction.reply({
       embeds: [SuccessEmbed(`Channel name changed to ${inlineCode(name)}.`)],

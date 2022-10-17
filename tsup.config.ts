@@ -1,7 +1,7 @@
 // eslint-disable-next-line import/no-extraneous-dependencies
 import { defineConfig } from 'tsup';
 
-export default defineConfig(() => ({
+export default defineConfig(({ watch }) => ({
   entry: ['src/index.ts', 'src/deploy-commands.ts', 'src/remove-commands.ts'],
   splitting: false,
   sourcemap: true,
@@ -12,4 +12,7 @@ export default defineConfig(() => ({
   dts: true,
   bundle: true,
   metafile: true,
+  onSuccess: watch
+    ? 'node --enable-source-maps dist/index.js --inspect'
+    : undefined,
 }));
