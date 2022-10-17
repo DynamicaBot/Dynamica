@@ -3,7 +3,7 @@ FROM node:18-alpine as base
 WORKDIR /app
 RUN apk update --no-cache
 RUN apk add --no-cache python3 make gcc g++ bash curl
-COPY package.json yarn.lock tsconfig.json tsup.config.js prisma ./
+COPY package.json yarn.lock tsconfig.json tsup.config.ts prisma ./
 
 # Build
 FROM base as build
