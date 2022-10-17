@@ -42,6 +42,14 @@ try {
   logger.error('Login Error', error);
 }
 
+process.on('uncaughtException', (error) => {
+  logger.error('Uncaught Exception', error);
+});
+
+process.on('unhandledRejection', (error) => {
+  logger.error('Unhandled Rejection', error);
+});
+
 // Handle stop signal
 process.on('SIGINT', () => {
   client.destroy();

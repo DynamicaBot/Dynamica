@@ -2,7 +2,6 @@ import Command, { CommandToken } from '@/classes/Command';
 import Condition from '@/classes/Condition';
 import { SuccessEmbed } from '@/utils/discordEmbeds';
 import Logger from '@/services/Logger';
-import DynamicaPrimary from '@classes/Primary';
 import {
   CacheType,
   channelMention,
@@ -13,10 +12,11 @@ import {
   SlashCommandBuilder,
 } from 'discord.js';
 import { Service } from 'typedi';
+import Primaries from '@/classes/Primaries';
 
 @Service({ id: CommandToken, multiple: true })
 export default class CreateCommand implements Command {
-  constructor(private logger: Logger) {}
+  constructor(private logger: Logger, private primaries: Primaries) {}
 
   conditions: Condition[] = [];
 
@@ -44,7 +44,7 @@ export default class CreateCommand implements Command {
     ) as GuildChannel | null;
     if (!(interaction.member instanceof GuildMember)) return;
 
-    const newPrimary = await DynamicaPrimary.initialise(
+    const newPrimary = await this.primaries.initialise(
       interaction.guild,
       interaction.member,
       section

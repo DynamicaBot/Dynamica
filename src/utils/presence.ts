@@ -1,5 +1,5 @@
-import Secondaries from '@/classes/Secondaries';
 import Client from '@/services/Client';
+import DB from '@/services/DB';
 import { ActivityType } from 'discord.js';
 import { Container } from 'typedi';
 import Logger from '../services/Logger';
@@ -7,10 +7,15 @@ import Logger from '../services/Logger';
 const pl = (n: number) => (n === 1 ? '' : 's');
 
 const updatePresence = async () => {
-  const secondaries = Container.get(Secondaries);
-  const channelCount = secondaries.count;
+  const db = Container.get(DB);
+  const secondaryCount = await db.secondary.count();
+  const primaryCount = await db.primary.count();
+
   const logger = Container.get(Logger);
   const client = Container.get(Client);
+
+  const channelCount = secondaryCount + primaryCount;
+  const name = `${channelCount} channel${pl(channelCount)}`;
   try {
     client.user.setPresence({
       afk: !!channelCount,
@@ -18,7 +23,7 @@ const updatePresence = async () => {
       activities: [
         {
           type: ActivityType.Watching,
-          name: `${channelCount} channel${pl(channelCount)}`,
+          name,
           url: 'https://dynamica.dev',
         },
       ],

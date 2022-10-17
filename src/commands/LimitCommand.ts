@@ -1,8 +1,8 @@
 import Command, { CommandToken } from '@/classes/Command';
 import Logger from '@/services/Logger';
-import creatorCheck from '@preconditions/creator';
-import secondaryCheck from '@preconditions/secondary';
-import { ErrorEmbed, SuccessEmbed } from '@utils/discordEmbeds';
+import creatorCheck from '@/preconditions/creator';
+import secondaryCheck from '@/preconditions/secondary';
+import { ErrorEmbed, SuccessEmbed } from '@/utils/discordEmbeds';
 import {
   CacheType,
   channelMention,

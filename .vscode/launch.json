@@ -2,9 +2,17 @@
   "version": "0.2.0",
   "configurations": [
     {
+      "name": "Attach by Process ID",
+      "processId": "${command:PickProcess}",
+      "request": "attach",
+      "skipFiles": ["<node_internals>/**"],
+      "type": "node"
+    },
+
+    {
       "name": "Launch via NPM",
       "request": "launch",
-      "runtimeArgs": ["watch"],
+      "runtimeArgs": ["dev"],
       "runtimeExecutable": "yarn",
       "skipFiles": ["<node_internals>/**"],
       "type": "node"

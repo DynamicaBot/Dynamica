@@ -2,7 +2,7 @@ import Condition from '@/classes/Condition';
 import ConditionError from '@/classes/ConditionError';
 import Secondaries from '@/classes/Secondaries';
 import { GuildMember } from 'discord.js';
-import Container from 'typedi';
+import { Container } from 'typedi';
 
 const secondaryCheck = new Condition(async (interaction) => {
   try {

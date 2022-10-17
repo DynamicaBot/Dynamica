@@ -2,7 +2,7 @@ import Command, { CommandToken } from '@/classes/Command';
 import Secondaries from '@/classes/Secondaries';
 import creatorCheck from '@/preconditions/creator';
 import Logger from '@/services/Logger';
-import { SuccessEmbed } from '@utils/discordEmbeds';
+import { SuccessEmbed } from '@/utils/discordEmbeds';
 import {
   CacheType,
   channelMention,
@@ -34,7 +34,7 @@ export default class UnlockCommand implements Command {
 
     const { channelId } = guildMember.voice;
 
-    const dynamicaSecondary = this.secondaries.get(channelId);
+    const dynamicaSecondary = await this.secondaries.get(channelId);
 
     await dynamicaSecondary.unlock();
     await interaction.reply({

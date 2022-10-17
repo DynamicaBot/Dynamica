@@ -1,16 +1,15 @@
 import Primaries from '@/classes/Primaries';
 import Secondaries from '@/classes/Secondaries';
 import updatePresence from '@/utils/presence';
-import Event, { EventToken } from '@classes/Event';
-import DynamicaSecondary from '@classes/Secondary';
+import Event, { EventToken } from '@/classes/Event';
 import { VoiceState } from 'discord.js';
 import { Service } from 'typedi';
 
 @Service({ id: EventToken, multiple: true })
-export default class VoiceStateUpdateEvent
-  implements Event<'voiceStateUpdate'>
-{
-  constructor(private secondaries: Secondaries, private primaries: Primaries) {}
+export default class VoiceStateUpdateEvent extends Event<'voiceStateUpdate'> {
+  constructor(private secondaries: Secondaries, private primaries: Primaries) {
+    super();
+  }
 
   event: 'voiceStateUpdate' = 'voiceStateUpdate';
 
@@ -26,17 +25,21 @@ export default class VoiceStateUpdateEvent
   ) => {
     if (oldVoiceState?.channelId === newVoiceState?.channelId) return;
     // If the channel doesn't change then just ignore it.
-    const oldChannelSecondary = this.secondaries.get(oldVoiceState.channelId);
+    const oldChannelSecondary = await this.secondaries.get(
+      oldVoiceState.channelId
+    );
 
-    const newChannelPrimary = this.primaries.get(newVoiceState.channelId);
-    const newChannelSecondary = this.secondaries.get(newVoiceState.channelId);
+    const newChannelPrimary = await this.primaries.get(newVoiceState.channelId);
+    const newChannelSecondary = await this.secondaries.get(
+      newVoiceState.channelId
+    );
 
     if (oldChannelSecondary) {
       await oldChannelSecondary.update();
     }
 
     if (newChannelPrimary) {
-      await DynamicaSecondary.initalise(
+      await this.secondaries.initalise(
         newVoiceState.channel,
         newVoiceState.member
       );

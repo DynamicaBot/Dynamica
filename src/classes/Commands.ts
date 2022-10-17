@@ -93,7 +93,7 @@ export default class Commands {
     try {
       await command.response(interaction);
     } catch (error) {
-      // logger.error(`Error while running command ${command.name}`, error);
+      this.logger.error(`Error while running command ${command.name}`, error);
       interaction.reply({
         embeds: [
           ErrorEmbed(

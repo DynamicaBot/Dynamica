@@ -6,12 +6,14 @@ import { DMChannel, NonThreadGuildBasedChannel } from 'discord.js';
 import { Service } from 'typedi';
 
 @Service({ id: EventToken, multiple: true })
-export default class ChannelDeleteEvent implements Event<'channelDelete'> {
+export default class ChannelDeleteEvent extends Event<'channelDelete'> {
   constructor(
     private logger: Logger,
     private secondaries: Secondaries,
     private primaries: Primaries
-  ) {}
+  ) {
+    super();
+  }
 
   event: 'channelDelete' = 'channelDelete';
 
@@ -24,14 +26,14 @@ export default class ChannelDeleteEvent implements Event<'channelDelete'> {
     if (channel.isDMBased()) return;
     if (channel.isThread()) return;
 
-    const primary = this.primaries.get(channel.id);
-    const secondary = this.secondaries.get(channel.id);
+    const primary = await this.primaries.get(channel.id);
+    const secondary = await this.secondaries.get(channel.id);
 
     if (primary) {
       try {
-        await primary.delete();
+        await primary.delete(false);
       } catch (error) {
-        // this.logger.error(error);
+        this.logger.error(error);
       }
     }
 

@@ -1,4 +1,4 @@
-import Help, { HelpToken } from '@classes/Help';
+import Help, { HelpToken } from '@/classes/Help';
 import { Service } from 'typedi';
 
 @Service({ id: HelpToken, multiple: true })

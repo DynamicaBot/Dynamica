@@ -1,4 +1,3 @@
-import DynamicaAlias from '@/classes/Alias';
 import Aliases from '@/classes/Aliases';
 import Command, { CommandToken } from '@/classes/Command';
 import Condition from '@/classes/Condition';
@@ -89,7 +88,7 @@ export default class AliasCommand implements Command {
       const aliasName = interaction.options.getString('alias', true);
 
       try {
-        await DynamicaAlias.create(interaction.guildId, activity, aliasName);
+        await this.aliases.create(interaction.guildId, activity, aliasName);
       } catch (error) {
         interaction.reply({ embeds: [ErrorEmbed(error.message)] });
         return;
@@ -116,7 +115,7 @@ export default class AliasCommand implements Command {
       }
 
       try {
-        await existingAlias.update(aliasName, activity);
+        await this.aliases.update(activity, interaction.guildId, aliasName);
       } catch (error) {
         if (error instanceof PrismaClientKnownRequestError) {
           interaction.reply({
@@ -136,7 +135,25 @@ export default class AliasCommand implements Command {
     } else if (subcommand === 'remove') {
       const activity = interaction.options.getString('activity', true);
       const foundAlias = this.aliases.get(activity, interaction.guildId);
-      await foundAlias.delete();
+
+      if (!foundAlias) {
+        interaction.reply({
+          embeds: [ErrorEmbed('Alias not found.')],
+        });
+        return;
+      }
+
+      try {
+        await this.aliases.remove(activity, interaction.guildId);
+      } catch (error) {
+        if (error instanceof PrismaClientKnownRequestError) {
+          interaction.reply({
+            embeds: [ErrorEmbed(error.message)],
+          });
+          return;
+        }
+      }
+
       await interaction.reply({
         embeds: [
           SuccessEmbed(`Successfully removed alias for \`${activity}\`.`),

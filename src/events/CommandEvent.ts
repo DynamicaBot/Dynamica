@@ -1,11 +1,13 @@
 import Commands from '@/classes/Commands';
-import Event, { EventToken } from '@classes/Event';
+import Event, { EventToken } from '@/classes/Event';
 import { CacheType, Interaction } from 'discord.js';
 import { Service } from 'typedi';
 
 @Service({ id: EventToken, multiple: true })
-export default class CommandEvent implements Event<'interactionCreate'> {
-  constructor(private commands: Commands) {}
+export default class CommandEvent extends Event<'interactionCreate'> {
+  constructor(private commands: Commands) {
+    super();
+  }
 
   event: 'interactionCreate' = 'interactionCreate';
 

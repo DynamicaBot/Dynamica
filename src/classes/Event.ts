@@ -3,12 +3,12 @@ import { Token } from 'typedi';
 
 type Awaitable<T> = Promise<T> | T;
 
-export default interface Event<K extends keyof ClientEvents> {
-  event: K;
+export default abstract class Event<K extends keyof ClientEvents> {
+  abstract event: K;
 
-  once: boolean;
+  abstract once: boolean;
 
-  response: (...args: ClientEvents[K]) => Awaitable<void>;
+  abstract response: (...args: ClientEvents[K]) => Awaitable<void>;
 }
 
 export const EventToken = new Token<Event<keyof ClientEvents>>('events');

@@ -26,11 +26,11 @@ export default class AliasesCommand implements Command {
 
   // eslint-disable-next-line class-methods-use-this
   response = async (interaction: ChatInputCommandInteraction<CacheType>) => {
-    const aliases = this.aliases.getByGuildId(interaction.guildId);
+    const aliases = await this.aliases.getByGuild(interaction.guildId);
     const inlineAliases = await Promise.all(
       aliases.map(async ({ activity }) => {
         const alias = this.aliases.get(activity, interaction.guildId);
-        const aliasPrisma = await alias.prisma();
+        const aliasPrisma = await alias;
         return {
           name: activity,
           value: aliasPrisma.alias,
