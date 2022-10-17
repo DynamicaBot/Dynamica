@@ -13,9 +13,8 @@ import { PrismaClientKnownRequestError } from '@prisma/client/runtime/index.js';
 // eslint-disable-next-line import/no-cycle
 import Secondaries from './Secondaries';
 // eslint-disable-next-line import/no-cycle
-import SecondaryFactory from './SecondaryFactory';
 // eslint-disable-next-line import/no-cycle
-@Service({ factory: [SecondaryFactory, 'create'] })
+@Service()
 export default class DynamicaSecondary {
   id: string;
 
@@ -30,8 +29,7 @@ export default class DynamicaSecondary {
     primaryId: string,
     private db: DB,
     private client: Client,
-    private logger: Logger,
-    private secondaries: Secondaries
+    private logger: Logger
   ) {
     this.guildId = guildId;
     this.id = channelId;

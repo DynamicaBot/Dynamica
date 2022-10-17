@@ -7,11 +7,10 @@ import { Container, Service } from 'typedi';
 // eslint-disable-next-line import/no-cycle
 import Primaries from './Primaries';
 // eslint-disable-next-line import/no-cycle
-import PrimaryFactory from './PrimaryFactory';
 // eslint-disable-next-line import/no-cycle
 import Secondaries from './Secondaries';
 
-@Service({ factory: [PrimaryFactory, 'create'] })
+@Service()
 export default class DynamicaPrimary {
   constructor(
     public id: string,

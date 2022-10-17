@@ -9,11 +9,12 @@ import {
   GuildMember,
   VoiceBasedChannel,
 } from 'discord.js';
-import { Service, Container } from 'typedi';
+import { Service } from 'typedi';
 import emojiList from 'emoji-random-list';
 import MQTT from '../services/MQTT';
 // eslint-disable-next-line import/no-cycle
-import SecondaryFactory from './SecondaryFactory';
+// eslint-disable-next-line import/no-cycle
+import Secondary from './Secondary';
 
 @Service()
 export default class Secondaries {
@@ -21,8 +22,7 @@ export default class Secondaries {
     private mqtt: MQTT,
     private db: DB,
     private logger: Logger,
-    private client: Client,
-    private secondaryFactory: SecondaryFactory
+    private client: Client
   ) {}
 
   public async delete(id: string) {
@@ -41,10 +41,13 @@ export default class Secondaries {
     if (!dbEntry) {
       return null;
     }
-    return this.secondaryFactory.create(
+    return new Secondary(
       dbEntry.id,
       dbEntry.guildId,
-      dbEntry.primaryId
+      dbEntry.primaryId,
+      this.db,
+      this.client,
+      this.logger
     );
   }
 
@@ -58,10 +61,13 @@ export default class Secondaries {
     const loadResult = await Promise.allSettled(
       dbSecondaries.map(async (channel) => {
         await this.client.channels.fetch(channel.id);
-        const secondary = this.secondaryFactory.create(
+        const secondary = new Secondary(
           channel.id,
           channel.guildId,
-          channel.primaryId
+          channel.primaryId,
+          this.db,
+          this.client,
+          this.logger
         );
 
         return secondary;
@@ -165,12 +171,19 @@ export default class Secondaries {
         `Secondary channel ${secondary.name} created by ${member?.user.tag} in ${member.guild.name}.`
       );
 
-    const secondaryFactory = Container.get(SecondaryFactory);
-    const dynamicaSecondary = secondaryFactory.create(
+    const dynamicaSecondary = new Secondary(
       secondary.id,
       guild.id,
-      primary.id
+      primary.id,
+      this.db,
+      this.client,
+      this.logger
     );
+    // secondaryFactory.create(
+    //   secondary.id,
+    //   guild.id,
+    //   primary.id
+    // );
     return dynamicaSecondary;
   }
 }

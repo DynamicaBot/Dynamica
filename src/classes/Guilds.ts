@@ -5,7 +5,8 @@ import Logger from '@/services/Logger';
 import { EmbedBuilder, Guild, hyperlink } from 'discord.js';
 import { PrismaClientKnownRequestError } from '@prisma/client/runtime/index.js';
 import MQTT from '../services/MQTT';
-import type GuildFactory from './GuildFactory';
+// eslint-disable-next-line import/no-cycle
+import DynamicaGuild from './Guild';
 
 /**
  * The list of basic commands to display.
@@ -84,7 +85,6 @@ export default class Guilds {
   constructor(
     private mqtt: MQTT,
     private db: DB,
-    private guildFactory: GuildFactory,
     private client: Client,
     private logger: Logger
   ) {}
@@ -107,7 +107,7 @@ export default class Guilds {
     if (!existingGuild) {
       return null;
     }
-    return this.guildFactory.create(guildId);
+    return new DynamicaGuild(guildId, this.db, this.client);
   }
 
   public get count() {
@@ -154,7 +154,7 @@ export default class Guilds {
     }
 
     this.logger.debug(`Joined guild ${guild.id} named: ${guild.name}`);
-    const newGuild = await this.guildFactory.create(guild.id);
+    const newGuild = new DynamicaGuild(guild.id, this.db, this.client);
     return newGuild;
   }
 }

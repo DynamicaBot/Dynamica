@@ -13,7 +13,9 @@ import {
 import { Service } from 'typedi';
 import MQTT from '../services/MQTT';
 // eslint-disable-next-line import/no-cycle
-import PrimaryFactory from './PrimaryFactory';
+import Primary from './Primary';
+// eslint-disable-next-line import/no-cycle
+import Secondaries from './Secondaries';
 
 @Service()
 export default class Primaries {
@@ -22,7 +24,7 @@ export default class Primaries {
     private client: Client,
     private db: DB,
     private logger: Logger,
-    private primaryFactory: PrimaryFactory
+    private secondaries: Secondaries
   ) {}
 
   public async remove(id: string) {
@@ -42,7 +44,15 @@ export default class Primaries {
     if (!dbEntry) {
       return null;
     }
-    return this.primaryFactory.create(dbEntry.id, dbEntry.guildId);
+    return new Primary(
+      dbEntry.id,
+      dbEntry.guildId,
+      this.db,
+      this.client,
+      this.secondaries,
+      this.logger,
+      this
+    );
   }
 
   get count() {
@@ -77,7 +87,15 @@ export default class Primaries {
         `New primary channel ${channel.name} created by ${primary.creator}.`
       );
 
-    const createdChannel = this.primaryFactory.create(channel.id, guild.id);
+    const createdChannel = new Primary(
+      primary.id,
+      primary.guildId,
+      this.db,
+      this.client,
+      this.secondaries,
+      this.logger,
+      this
+    );
 
     updatePresence();
     return createdChannel;
@@ -89,7 +107,15 @@ export default class Primaries {
     const loadResult = await Promise.allSettled(
       dbPrimaries.map(async (channel) => {
         await this.client.channels.fetch(channel.id);
-        const primary = this.primaryFactory.create(channel.id, channel.guildId);
+        const primary = new Primary(
+          channel.id,
+          channel.guildId,
+          this.db,
+          this.client,
+          this.secondaries,
+          this.logger,
+          this
+        );
 
         return primary;
       })

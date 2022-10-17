@@ -3,11 +3,9 @@ import DB from '@/services/DB';
 import Logger from '@/services/Logger';
 import { Container, Service } from 'typedi';
 // eslint-disable-next-line import/no-cycle
-import GuildFactory from './GuildFactory';
-// eslint-disable-next-line import/no-cycle
 import Guilds from './Guilds';
 
-@Service({ factory: [GuildFactory, 'create'] })
+@Service()
 export default class DynamicaGuild {
   public id: string;
 

@@ -35,9 +35,7 @@ try {
   });
 
   /** Login */
-  client.login(process.env.TOKEN).then(() => {
-    logger.info('Logged in!');
-  });
+  client.login(process.env.TOKEN);
 } catch (error) {
   logger.error('Login Error', error);
 }
