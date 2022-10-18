@@ -11,6 +11,8 @@ import Client from '@/services/Client';
 // eslint-disable-next-line import/no-cycle
 import { PrismaClientKnownRequestError } from '@prisma/client/runtime/index.js';
 // eslint-disable-next-line import/no-cycle
+import MQTT from '@/services/MQTT';
+// eslint-disable-next-line import/no-cycle
 import Secondaries from './Secondaries';
 // eslint-disable-next-line import/no-cycle
 // eslint-disable-next-line import/no-cycle
@@ -29,7 +31,8 @@ export default class DynamicaSecondary {
     primaryId: string,
     private db: DB,
     private client: Client,
-    private logger: Logger
+    private logger: Logger,
+    private mqtt: MQTT
   ) {
     this.guildId = guildId;
     this.id = channelId;
@@ -242,6 +245,12 @@ export default class DynamicaSecondary {
       await secondaries.delete(this.id);
     }
     updatePresence();
+    if (this.mqtt) {
+      this.mqtt.publish(
+        'dynamica/secondaries',
+        (await secondaries.count).toString()
+      );
+    }
   }
 
   toString() {

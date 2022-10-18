@@ -47,7 +47,8 @@ export default class Secondaries {
       dbEntry.primaryId,
       this.db,
       this.client,
-      this.logger
+      this.logger,
+      this.mqtt
     );
   }
 
@@ -67,7 +68,8 @@ export default class Secondaries {
           channel.primaryId,
           this.db,
           this.client,
-          this.logger
+          this.logger,
+          this.mqtt
         );
 
         return secondary;
@@ -177,8 +179,12 @@ export default class Secondaries {
       primary.id,
       this.db,
       this.client,
-      this.logger
+      this.logger,
+      this.mqtt
     );
+    if (this.mqtt) {
+      this.mqtt.publish('dynamica/secondaries', (await this.count).toString());
+    }
     // secondaryFactory.create(
     //   secondary.id,
     //   guild.id,
