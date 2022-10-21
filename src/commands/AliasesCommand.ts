@@ -11,10 +11,10 @@ import _ from 'lodash';
 import { Service } from 'typedi';
 
 @Service({ id: CommandToken, multiple: true })
-export default class AliasesCommand implements Command {
-  constructor(private logger: Logger, private aliases: Aliases) {}
-
-  name: string = 'aliases';
+export default class AliasesCommand extends Command {
+  constructor(private logger: Logger, private aliases: Aliases) {
+    super('aliases');
+  }
 
   conditions = [];
 

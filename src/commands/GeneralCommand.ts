@@ -13,16 +13,16 @@ import {
 import { Service } from 'typedi';
 
 @Service({ id: CommandToken, multiple: true })
-export default class GeneralCommand implements Command {
+export default class GeneralCommand extends Command {
   constructor(
     private logger: Logger,
     private secondaries: Secondaries,
     private db: DB
-  ) {}
+  ) {
+    super('general');
+  }
 
   conditions: Condition[] = [];
-
-  name: string = 'general';
 
   data = new SlashCommandBuilder()
     .setName('general')

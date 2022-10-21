@@ -18,8 +18,10 @@ import { Service } from 'typedi';
 
 // export const join = new Command({ help, data, response });
 @Service({ id: CommandToken, multiple: true })
-export default class JoinCommand implements Command {
-  constructor(private logger: Logger, private db: DB) {}
+export default class JoinCommand extends Command {
+  constructor(private logger: Logger, private db: DB) {
+    super('join');
+  }
 
   name: string = 'join';
 

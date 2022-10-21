@@ -9,8 +9,10 @@ import {
 import { Service } from 'typedi';
 
 @Service({ id: CommandToken, multiple: true })
-export default class PingCommand implements Command {
-  constructor(private logger: Logger) {}
+export default class PingCommand extends Command {
+  constructor(private logger: Logger) {
+    super('ping');
+  }
 
   conditions: Condition[] = [];
 

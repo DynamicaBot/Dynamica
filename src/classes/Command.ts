@@ -12,14 +12,14 @@ type SlashCommandBuilderTypes =
   | SlashCommandSubcommandsOnlyBuilder
   | Omit<SlashCommandBuilder, 'addSubcommand' | 'addSubcommandGroup'>;
 
-export default interface Command {
-  name: string;
+export default abstract class Command {
+  constructor(public name: string) {}
 
-  data: SlashCommandBuilderTypes;
+  abstract data: SlashCommandBuilderTypes;
 
-  conditions: Condition[];
+  abstract conditions: Condition[];
 
-  response: (
+  abstract response: (
     interaction: ChatInputCommandInteraction<CacheType>
   ) => Promise<void>;
 }

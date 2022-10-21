@@ -13,12 +13,14 @@ import {
 import { Service } from 'typedi';
 
 @Service({ id: CommandToken, multiple: true })
-export default class NameCommand implements Command {
+export default class NameCommand extends Command {
   constructor(
     private logger: Logger,
     private secondaries: Secondaries,
     private db: DB
-  ) {}
+  ) {
+    super('name');
+  }
 
   name = 'name';
 

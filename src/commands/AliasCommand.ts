@@ -14,10 +14,10 @@ import {
 import { Service } from 'typedi';
 
 @Service({ id: CommandToken, multiple: true })
-export default class AliasCommand implements Command {
-  constructor(private logger: Logger, private aliases: Aliases) {}
-
-  name: string = 'alias';
+export default class AliasCommand extends Command {
+  constructor(private logger: Logger, private aliases: Aliases) {
+    super('alias');
+  }
 
   conditions: Condition[];
 

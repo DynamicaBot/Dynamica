@@ -13,8 +13,10 @@ import {
 import { Service } from 'typedi';
 
 @Service({ id: CommandToken, multiple: true })
-export default class UnlockCommand implements Command {
-  constructor(private logger: Logger, private secondaries: Secondaries) {}
+export default class UnlockCommand extends Command {
+  constructor(private logger: Logger, private secondaries: Secondaries) {
+    super('unlock');
+  }
 
   name = 'unlock';
 

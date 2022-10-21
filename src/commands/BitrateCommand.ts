@@ -13,10 +13,10 @@ import {
 import { Service } from 'typedi';
 
 @Service({ id: CommandToken, multiple: true })
-export default class BitrateCommand implements Command {
-  constructor(private logger: Logger) {}
-
-  name: string = 'bitrate';
+export default class BitrateCommand extends Command {
+  constructor(private logger: Logger) {
+    super('bitrate');
+  }
 
   conditions = [creatorCheck];
 

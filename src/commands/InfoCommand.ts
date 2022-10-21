@@ -9,13 +9,15 @@ import { EmbedBuilder, SlashCommandBuilder } from 'discord.js';
 import { Service } from 'typedi';
 
 @Service({ id: CommandToken, multiple: true })
-export default class InfoCommand implements Command {
+export default class InfoCommand extends Command {
   constructor(
     private logger: Logger,
     private secondaries: Secondaries,
     private primaries: Primaries,
     private db: DB
-  ) {}
+  ) {
+    super('info');
+  }
 
   conditions: Condition[];
 

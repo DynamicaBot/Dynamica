@@ -6,10 +6,10 @@ import { PermissionFlagsBits, SlashCommandBuilder } from 'discord.js';
 import { Service } from 'typedi';
 
 @Service({ id: CommandToken, multiple: true })
-export default class AllowjoinCommand implements Command {
-  constructor(private logger: Logger, private guilds: Guilds) {}
-
-  name: string = 'allowjoin';
+export default class AllowjoinCommand extends Command {
+  constructor(private logger: Logger, private guilds: Guilds) {
+    super('allowjoin');
+  }
 
   conditions = [];
 

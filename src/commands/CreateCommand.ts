@@ -15,12 +15,12 @@ import { Service } from 'typedi';
 import Primaries from '@/classes/Primaries';
 
 @Service({ id: CommandToken, multiple: true })
-export default class CreateCommand implements Command {
-  constructor(private logger: Logger, private primaries: Primaries) {}
+export default class CreateCommand extends Command {
+  constructor(private logger: Logger, private primaries: Primaries) {
+    super('create');
+  }
 
   conditions: Condition[] = [];
-
-  name = 'create';
 
   data = new SlashCommandBuilder()
     .setName('create')

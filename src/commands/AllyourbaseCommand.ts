@@ -11,10 +11,10 @@ import {
 import { Service } from 'typedi';
 
 @Service({ id: CommandToken, multiple: true })
-export default class AllyourbaseCommand implements Command {
-  constructor(private logger: Logger, private secondaries: Secondaries) {}
-
-  name = 'allyourbase';
+export default class AllyourbaseCommand extends Command {
+  constructor(private logger: Logger, private secondaries: Secondaries) {
+    super('allyourbase');
+  }
 
   conditions = [secondaryCheck];
 

@@ -8,12 +8,12 @@ import _ from 'lodash';
 import { Service } from 'typedi';
 
 @Service({ id: CommandToken, multiple: true })
-export default class HelpCommand implements Command {
-  constructor(private logger: Logger, private helps: Helps) {}
+export default class HelpCommand extends Command {
+  constructor(private logger: Logger, private helps: Helps) {
+    super('help');
+  }
 
   conditions: Condition[] = [];
-
-  name: string = 'help';
 
   data = new SlashCommandBuilder()
     .setName('help')

@@ -9,8 +9,10 @@ import Discord, {
 import { Service } from 'typedi';
 
 @Service({ id: CommandToken, multiple: true })
-export default class VersionCommand implements Command {
-  constructor(private logger: Logger) {}
+export default class VersionCommand extends Command {
+  constructor(private logger: Logger) {
+    super('version');
+  }
 
   conditions: Condition[] = [];
 

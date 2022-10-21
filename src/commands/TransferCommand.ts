@@ -11,8 +11,10 @@ import {
 import { Service } from 'typedi';
 
 @Service({ id: CommandToken, multiple: true })
-export default class TransferCommand implements Command {
-  constructor(private logger: Logger, private secondaries: Secondaries) {}
+export default class TransferCommand extends Command {
+  constructor(private logger: Logger, private secondaries: Secondaries) {
+    super('transfer');
+  }
 
   name = 'transfer';
 
