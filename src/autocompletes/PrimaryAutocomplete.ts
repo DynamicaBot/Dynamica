@@ -5,10 +5,10 @@ import Fuse from 'fuse.js';
 import { Service } from 'typedi';
 
 @Service({ id: AutocompleteToken, multiple: true })
-export default class PrimaryAutocomplete implements Autocomplete {
-  constructor(private db: DB) {}
-
-  public name: string = 'primary';
+export default class PrimaryAutocomplete extends Autocomplete {
+  constructor(private db: DB) {
+    super('primary');
+  }
 
   // eslint-disable-next-line class-methods-use-this
   public response: (

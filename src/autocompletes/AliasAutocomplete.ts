@@ -6,10 +6,10 @@ import Fuse from 'fuse.js';
 import { Service } from 'typedi';
 
 @Service({ id: AutocompleteToken, multiple: true })
-export default class AliasAutocomplete implements Autocomplete {
-  name = 'alias';
-
-  constructor(private aliases: Aliases) {}
+export default class AliasAutocomplete extends Autocomplete {
+  constructor(private aliases: Aliases) {
+    super('alias');
+  }
 
   // eslint-disable-next-line class-methods-use-this
   public response: (

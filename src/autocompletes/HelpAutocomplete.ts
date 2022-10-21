@@ -5,10 +5,10 @@ import Fuse from 'fuse.js';
 import { Service } from 'typedi';
 
 @Service({ id: AutocompleteToken, multiple: true })
-export default class HelpAutocomplete implements Autocomplete {
-  constructor(private helps: Helps) {}
-
-  name: string = 'help';
+export default class HelpAutocomplete extends Autocomplete {
+  constructor(private helps: Helps) {
+    super('help');
+  }
 
   // eslint-disable-next-line class-methods-use-this
   public response: (
