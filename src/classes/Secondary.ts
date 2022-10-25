@@ -119,18 +119,28 @@ export default class DynamicaSecondary {
         emoji,
         locked,
       });
-
+      const oldName = discordChannel.name;
       if (discordChannel.name !== name) {
-        if (!discordChannel.manageable) {
-          throw new Error('Channel not manageable');
+        try {
+          await discordChannel.edit({
+            name,
+          });
+        } catch (error) {
+          if (error instanceof DiscordAPIError) {
+            if (error.code === 50013) {
+              await this.delete();
+            } else if (error.code === 10003) {
+              await this.delete(false, true);
+            } else {
+              this.logger.error(error);
+            }
+          }
         }
-        await discordChannel.edit({
-          name,
-        });
+
         this.logger
           .scope('Secondary', this.id)
           .debug(
-            `Secondary channel ${discordChannel.name} in ${discordChannel.guild.name} name changed.`
+            `Secondary channel in ${discordChannel.guild.name} name changed from ${oldName} to ${name}.`
           );
       }
     } catch (error) {

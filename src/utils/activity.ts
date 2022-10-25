@@ -8,6 +8,7 @@ const channelActivities = (channel: VoiceBasedChannel) =>
     .flat()
     .filter((activity) => activity.type !== ActivityType.Custom)
     .filter((activity) => activity.type !== ActivityType.Listening)
-    .map((activity) => activity.name) ?? [];
+    .map((activity) => activity.name)
+    .filter((activityName) => activityName !== 'With Yo Mamma') ?? [];
 
 export default channelActivities;
