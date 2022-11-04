@@ -127,7 +127,11 @@ export default class Primaries {
           this.logger.error(
             `Failed to load primary ${dbPrimaries[index].id} (${result.reason.message})`
           );
-          if (result.reason.code === 10013 || result.reason.code === 10003) {
+          if (
+            result.reason.code === 10013 ||
+            result.reason.code === 10003 ||
+            result.reason.code === 50001
+          ) {
             await this.db.primary.delete({
               where: { id: dbPrimaries[index].id },
             });

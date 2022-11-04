@@ -26,6 +26,7 @@
     "@discordjs/rest": "^0.5.0",
     "@prisma/client": "^4.4.0",
     "bufferutil": "^4.0.6",
+    "chalk": "^5.1.2",
     "discord-api-types": "^0.34.0",
     "discord.js": "^14.5.0",
     "dotenv": "^16.0.0",
@@ -42,7 +43,7 @@
     "utf-8-validate": "^5.0.8"
   },
   "scripts": {
-    "start": "node --enable-source-maps .",
+    "start": "node --enable-source-maps . | pino-pretty -i pid,hostname -t 'yyyy-mm-dd HH:MM:ss'",
     "dev": "tsup src/index.ts --watch",
     "prettier": "prettier --write ./src",
     "lint": "eslint --ext .ts",
