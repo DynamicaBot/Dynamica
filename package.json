@@ -43,7 +43,7 @@
     "utf-8-validate": "^5.0.8"
   },
   "scripts": {
-    "start": "node --enable-source-maps . | pino-pretty -i pid,hostname -t 'yyyy-mm-dd HH:MM:ss'",
+    "start": "node --enable-source-maps .",
     "dev": "tsup src/index.ts --watch",
     "prettier": "prettier --write ./src",
     "lint": "eslint --ext .ts",
