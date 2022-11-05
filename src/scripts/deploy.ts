@@ -4,7 +4,6 @@ import { REST } from '@discordjs/rest';
 import Logger from '@/services/Logger';
 import { Routes } from 'discord-api-types/v10';
 import { Container } from 'typedi';
-import MQTT from '@/services/MQTT';
 
 const { TOKEN, CLIENT_ID, GUILD_ID } = process.env;
 const logger = Container.get(Logger);
@@ -18,7 +17,6 @@ export default async function deployCommands() {
 
     registerCommands();
     const commands = Container.get(Commands);
-    const mqtt = Container.get(MQTT);
     const commandData = commands.data();
     // console.log({ commandData });
 
@@ -38,6 +36,5 @@ export default async function deployCommands() {
       logger.error(error);
     }
     deployLogger.timeEnd('deploy');
-    mqtt.stop();
   }
 }

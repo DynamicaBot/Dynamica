@@ -10,6 +10,7 @@ import registerEvents from './register-events';
 import registerHelp from './register-help';
 import registerCommands from './register-commands';
 import MQTT from './services/MQTT';
+import deployCommands from './scripts/deploy';
 
 dotenv.config();
 
@@ -19,6 +20,8 @@ registerCommands();
 registerHelp();
 registerEvents();
 registerAutocompletes();
+
+await deployCommands();
 
 const events = Container.get(Events);
 const client = Container.get(Client);

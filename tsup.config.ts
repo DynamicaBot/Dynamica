@@ -2,8 +2,8 @@
 import { defineConfig } from 'tsup';
 
 export default defineConfig(({ watch }) => ({
-  entry: ['src/index.ts', 'src/deploy-commands.ts', 'src/remove-commands.ts'],
-  splitting: false,
+  entry: ['src/index.ts'],
+  splitting: true,
   sourcemap: true,
   clean: true,
   format: ['esm'],

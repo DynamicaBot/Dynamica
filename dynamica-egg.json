@@ -11,7 +11,7 @@
   "features": null,
   "images": ["ghcr.io/dynamicabot/dynamica:latest-pterodactyl"],
   "file_denylist": [],
-  "startup": "yarn deploy;\r\nnpx prisma migrate deploy;\r\nyarn start",
+  "startup": "npx prisma migrate deploy;\r\nyarn start",
   "config": {
     "files": "{}",
     "startup": "{\r\n    \"done\": \"Ready! Logged in as\"\r\n}",

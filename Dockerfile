@@ -24,7 +24,7 @@ ENV VERSION=$VERSION
 COPY --from=build /app/node_modules/.prisma /app/node_modules/.prisma
 COPY --from=build /app/dist dist
 RUN yarn install --production --frozen-lockfile
-CMD yarn deploy && npx prisma migrate deploy && yarn start
+CMD npx prisma migrate deploy && yarn start
 
 # Runner
 FROM build as pterodactyl
