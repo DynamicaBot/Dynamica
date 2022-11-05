@@ -7,6 +7,7 @@
         image: ghcr.io/dynamicabot/dynamica:{{ lookup('env', 'VERSION') }}
         volumes:
           - ~/Dynamica/config:/app/config
+          - ~/Dynamica/logs:/app/logs
         env:
           TOKEN: "{{ lookup('env', 'TOKEN') }}"
           CLIENT_ID: "{{ lookup('env', 'CLIENT_ID') }}"

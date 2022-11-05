@@ -4,3 +4,4 @@ config/db.sqlite
 config/db.sqlite-journal
 dist/
 yarn-error.log
+**/*.log

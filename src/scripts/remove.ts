@@ -5,7 +5,7 @@ import { Container } from 'typedi';
 
 const { TOKEN, CLIENT_ID, GUILD_ID } = process.env;
 const logger = Container.get(Logger);
-export default async () => {
+export default async function removeCommands() {
   if (!TOKEN || !CLIENT_ID) {
     logger.error('Missing env vars.');
   } else {
@@ -30,9 +30,8 @@ export default async () => {
           GUILD_ID ? 'guild' : 'application'
         } (/) commands.`
       );
-      process.exit();
     } catch (error) {
       logger.error(error);
     }
   }
-};
+}
