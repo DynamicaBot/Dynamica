@@ -34,6 +34,7 @@ export default class Logger extends Signales {
         displayDate: true,
         displayTimestamp: true,
         displayLabel: true,
+        displayFilename: true,
       },
       types: {
         error: {

@@ -120,7 +120,7 @@ export default class DynamicaSecondary {
         locked,
       });
       const oldName = discordChannel.name;
-      if (discordChannel.name !== name) {
+      if (discordChannel.name !== name && name.length <= 100) {
         try {
           await discordChannel.edit({
             name,
