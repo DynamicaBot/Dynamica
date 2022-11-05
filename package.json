@@ -22,8 +22,8 @@
   "type": "module",
   "dependencies": {
     "@discordjs/rest": "^0.5.0",
-    "@prisma/client": "^4.4.0",
     "@dynamicabot/signales": "^2.0.15",
+    "@prisma/client": "^4.4.0",
     "bufferutil": "^4.0.6",
     "chalk": "^5.1.2",
     "discord-api-types": "^0.34.0",
@@ -36,7 +36,6 @@
     "mqtt": "^4.3.7",
     "reflect-metadata": "^0.1.13",
     "romans": "^2.0.3",
-    "signales": "^2.0.5",
     "tsup": "^6.2.3",
     "typedi": "^0.10.0",
     "utf-8-validate": "^5.0.8"
