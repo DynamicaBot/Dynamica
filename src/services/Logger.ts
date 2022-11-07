@@ -1,11 +1,13 @@
 import { Signales } from '@dynamicabot/signales';
 import { Service, Token } from 'typedi';
 import fs from 'node:fs';
+import fsP from 'node:fs/promises';
 
 export const LoggerToken = new Token<Logger>('Logger');
 
 // generate file name depending on the date (e.g. 2021-09-01-1.log, 2021-09-01-2.log, etc.) with a suffix parameter
-const createLogfileWriter = (suffix: string = 'log') => {
+const createLogfileWriter = async (suffix: string = 'log') => {
+  await fsP.mkdir('logs', { recursive: true });
   const date = new Date();
   const filename = `logs/${date.getFullYear()}-${
     date.getMonth() + 1
@@ -15,9 +17,9 @@ const createLogfileWriter = (suffix: string = 'log') => {
   return writer;
 };
 
-const logFile = createLogfileWriter();
+const logFile = await createLogfileWriter();
 
-const errorFile = createLogfileWriter('error');
+const errorFile = await createLogfileWriter('error');
 
 /** Signale Logger instance */
 @Service({ id: Logger })
