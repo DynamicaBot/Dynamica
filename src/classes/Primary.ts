@@ -32,7 +32,7 @@ export default class DynamicaPrimary {
 
     if (result[0].status === 'rejected') {
       this.logger
-        .scope('Primary', this.id)
+        .scope('Primary', this.id, 'delete')
         .error('Failed to delete discord:', result[0].reason);
     }
 
