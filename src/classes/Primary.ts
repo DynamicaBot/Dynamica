@@ -31,7 +31,9 @@ export default class DynamicaPrimary {
     ]);
 
     if (result[0].status === 'rejected') {
-      this.logger.error('Failed to delete discord:', result[0].reason);
+      this.logger
+        .scope('Primary', this.id)
+        .error('Failed to delete discord:', result[0].reason);
     }
 
     const primaries = Container.get(Primaries);
@@ -48,6 +50,9 @@ export default class DynamicaPrimary {
 
   async deleteDiscord() {
     const channel = await this.discord();
+    if (!channel.deletable) {
+      throw new Error('Channel is not deletable');
+    }
     return channel.delete();
   }
 
@@ -61,6 +66,9 @@ export default class DynamicaPrimary {
 
   async update() {
     const channel = await this.discord();
+    if (!channel.manageable) {
+      throw new Error('Not manageable');
+    }
     const { members } = channel;
     if (members.size) {
       const primaryMember = members.at(0);
