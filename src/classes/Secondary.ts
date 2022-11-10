@@ -58,6 +58,12 @@ export default class DynamicaSecondary {
   async update() {
     try {
       const discordChannel = await this.discord();
+      if (!discordChannel.manageable) {
+        this.logger
+          .scope('Secondary', this.id, 'update')
+          .warn('Secondary channel is not manageable.');
+        return;
+      }
       if (!discordChannel) return;
       if (discordChannel.members.size === 0) {
         await this.delete();
@@ -132,13 +138,13 @@ export default class DynamicaSecondary {
             } else if (error.code === 10003) {
               await this.delete(false, true);
             } else {
-              this.logger.error(error);
+              this.logger.scope('Secondary', this.id, 'update').error(error);
             }
           }
         }
 
         this.logger
-          .scope('Secondary', this.id)
+          .scope('Secondary', this.id, 'update')
           .debug(
             `Secondary channel in ${discordChannel.guild.name} name changed from ${oldName} to ${name}.`
           );
@@ -251,7 +257,7 @@ export default class DynamicaSecondary {
       }
 
       this.logger
-        .scope('Secondary', this.id)
+        .scope('Secondary', this.id, 'delete')
         .error('Failed to delete discord secondary channel', error);
     }
 

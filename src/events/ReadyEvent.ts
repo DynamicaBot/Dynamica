@@ -29,27 +29,23 @@ export default class ReadyEvent extends Event<'ready'> {
   once = true;
 
   public response: () => void | Promise<void> = async () => {
-    this.logger
-      .scope('Startup')
-      .info(`Ready! Logged in as ${this.client.user?.tag}`);
+    const logger = this.logger.scope('Event', 'Ready');
+
+    logger.info(`Ready! Logged in as ${this.client.user?.tag}`);
 
     try {
       this.primaries.load().then(async () => {
-        this.logger
-          .scope('Startup')
-          .info(`Loaded ${await this.primaries.count} primaries`);
+        logger.info(`Loaded ${await this.primaries.count} primaries`);
       });
 
       this.secondaries.load().then(async () => {
-        this.logger
-          .scope('Startup')
-          .info(`Loaded ${await this.secondaries.count} secondaries`);
+        logger.info(`Loaded ${await this.secondaries.count} secondaries`);
       });
 
       this.mqtt.publish('dynamica/presence', this.client.readyAt.toISOString());
       updatePresence();
     } catch (error) {
-      this.logger.scope('Startup').error(error);
+      logger.error(error);
     }
   };
 }
