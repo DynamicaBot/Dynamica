@@ -12,8 +12,6 @@ const logDir = path.join(
   'logs'
 );
 
-console.log('Log directory:', logDir);
-
 // generate file name depending on the date (e.g. 2021-09-01-1.log, 2021-09-01-2.log, etc.) with a suffix parameter
 const createLogfileWriter = async (suffix: string = 'log') => {
   await fsP.mkdir(logDir, { recursive: true });
@@ -24,6 +22,7 @@ const createLogfileWriter = async (suffix: string = 'log') => {
       date.getMonth() + 1
     }-${date.getDate()}-${suffix}.log`
   );
+
   const writer = fs.createWriteStream(filename);
 
   return writer;
@@ -48,7 +47,7 @@ export default class Logger extends Signales {
         displayDate: true,
         displayTimestamp: true,
         displayLabel: true,
-        displayFilename: true,
+        displayFilename: false,
       },
       types: {
         error: {

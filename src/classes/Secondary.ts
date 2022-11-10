@@ -244,6 +244,12 @@ export default class DynamicaSecondary {
         await this.deleteDiscord();
       }
     } catch (error) {
+      if (error instanceof DiscordAPIError) {
+        if (error.code === 10003) {
+          deleteDiscord = false;
+        }
+      }
+
       this.logger
         .scope('Secondary', this.id)
         .error('Failed to delete discord secondary channel', error);
