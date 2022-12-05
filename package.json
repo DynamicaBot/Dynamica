@@ -55,7 +55,7 @@
     "@types/lodash": "^4.14.178",
     "@types/node": "^18.0.0",
     "@types/romans": "^2.0.0",
-    "@typescript-eslint/eslint-plugin": "^5.43.0",
+    "@typescript-eslint/eslint-plugin": "^5.45.0",
     "@typescript-eslint/parser": "^5.44.0",
     "eslint": "^8.28.0",
     "eslint-config-airbnb-base": "^15.0.0",
