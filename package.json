@@ -23,7 +23,7 @@
   "dependencies": {
     "@discordjs/rest": "^0.5.0",
     "@dynamicabot/signales": "^2.0.15",
-    "@prisma/client": "^4.4.0",
+    "@prisma/client": "^4.7.1",
     "bufferutil": "^4.0.6",
     "chalk": "^5.1.2",
     "discord-api-types": "^0.37.20",
