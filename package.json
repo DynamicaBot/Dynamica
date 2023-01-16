@@ -38,7 +38,7 @@
     "romans": "^2.0.3",
     "tsup": "^6.2.3",
     "typedi": "^0.10.0",
-    "utf-8-validate": "^5.0.8"
+    "utf-8-validate": "^6.0.0"
   },
   "scripts": {
     "start": "node --enable-source-maps .",
