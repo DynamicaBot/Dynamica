@@ -62,7 +62,16 @@ export default class Aliases {
   public async create(guildId: string, activity: string, alias: string) {
     const newAlias = await this.db.alias.create({
       data: {
-        guildId,
+        guild: {
+          connectOrCreate: {
+            create: {
+              id: guildId,
+            },
+            where: {
+              id: guildId,
+            },
+          },
+        },
         activity,
         alias,
       },

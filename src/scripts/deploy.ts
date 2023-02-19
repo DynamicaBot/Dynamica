@@ -4,6 +4,9 @@ import { REST } from '@discordjs/rest';
 import Logger from '@/services/Logger';
 import { Routes } from 'discord-api-types/v10';
 import { Container } from 'typedi';
+import { config } from 'dotenv';
+
+config();
 
 const { TOKEN, CLIENT_ID, GUILD_ID } = process.env;
 const logger = Container.get(Logger);

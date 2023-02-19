@@ -77,7 +77,16 @@ export default class Primaries {
       data: {
         id: channel.id,
         creator: member.id,
-        guildId: guild.id,
+        guild: {
+          connectOrCreate: {
+            create: {
+              id: guild.id,
+            },
+            where: {
+              id: guild.id,
+            },
+          },
+        },
       },
     });
 
