@@ -192,4 +192,56 @@ export default class Secondaries {
     // );
     return dynamicaSecondary;
   }
+
+  public async cleanUp() {
+    this.logger.debug('Cleaning up secondary channels...');
+    const dbSecondaries = await this.db.secondary.findMany();
+
+    const loadResult = await Promise.allSettled(
+      dbSecondaries.map(async (channel) => {
+        await this.client.channels.fetch(channel.id);
+        const secondary = new Secondary(
+          channel.id,
+          channel.guildId,
+          channel.primaryId,
+          this.db,
+          this.client,
+          this.logger,
+          this.mqtt
+        );
+
+        return secondary;
+      })
+    );
+
+    loadResult.forEach(async (result, index) => {
+      if (result.status === 'rejected') {
+        if (result.reason instanceof DiscordAPIError) {
+          this.logger
+            .scope('Secondary', dbSecondaries[index].id)
+            .error(
+              `Failed to load secondary ${dbSecondaries[index].id} (${result.reason.message})`
+            );
+          if (result.reason.code === 10013 || result.reason.code === 10003) {
+            await this.delete(dbSecondaries[index].id);
+          } else {
+            this.logger
+              .scope('Secondary', dbSecondaries[index].id)
+              .error(result.reason);
+          }
+        }
+      } else {
+        try {
+          await result.value.update();
+        } catch (error) {
+          this.logger.scope('Secondary', dbSecondaries[index].id).error(error);
+        }
+      }
+    });
+
+    if (this.mqtt) {
+      this.mqtt.publish('dynamica/secondaries', (await this.count).toString());
+    }
+    this.logger.debug('Secondary channel cleanup complete.');
+  }
 }

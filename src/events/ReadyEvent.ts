@@ -9,6 +9,8 @@ import updatePresence from '@/utils/presence';
 import Event, { EventToken } from '@/classes/Event';
 import { Service } from 'typedi';
 import Client from '@/services/Client';
+import Tasks from '@/services/Tasks';
+import cron from 'node-cron';
 
 @Service({ id: EventToken, multiple: true })
 export default class ReadyEvent extends Event<'ready'> {
@@ -19,7 +21,8 @@ export default class ReadyEvent extends Event<'ready'> {
     private primaries: Primaries,
     private aliases: Aliases,
     private guilds: Guilds,
-    private client: Client
+    private client: Client,
+    private tasks: Tasks
   ) {
     super();
   }
@@ -44,6 +47,18 @@ export default class ReadyEvent extends Event<'ready'> {
 
       this.mqtt.publish('dynamica/presence', this.client.readyAt.toISOString());
       updatePresence();
+
+      // cleanup tasks (every hour)
+      this.tasks.addTask(
+        cron.schedule('0 * * * *', async () => {
+          this.primaries.cleanUp();
+        })
+      );
+      this.tasks.addTask(
+        cron.schedule('0 * * * *', async () => {
+          this.secondaries.cleanUp();
+        })
+      );
     } catch (error) {
       logger.error(error);
     }

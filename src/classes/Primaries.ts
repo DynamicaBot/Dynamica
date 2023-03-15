@@ -161,4 +161,53 @@ export default class Primaries {
       this.mqtt.publish('dynamica/primaries', (await this.count).toString());
     }
   }
+
+  public async cleanUp() {
+    this.logger.debug('Cleaning up primary channels');
+
+    const dbPrimaries = await this.db.primary.findMany();
+
+    const loadResult = await Promise.allSettled(
+      dbPrimaries.map(async (channel) => {
+        await this.client.channels.fetch(channel.id);
+        const primary = new Primary(
+          channel.id,
+          channel.guildId,
+          this.db,
+          this.client,
+          this.secondaries,
+          this.logger,
+          this
+        );
+
+        return primary;
+      })
+    );
+
+    loadResult.forEach(async (result, index) => {
+      if (result.status === 'rejected') {
+        if (result.reason instanceof DiscordAPIError) {
+          this.logger.error(
+            `Failed to load primary ${dbPrimaries[index].id} (${result.reason.message})`
+          );
+          if (
+            result.reason.code === 10013 ||
+            result.reason.code === 10003 ||
+            result.reason.code === 50001
+          ) {
+            await this.db.primary.delete({
+              where: { id: dbPrimaries[index].id },
+            });
+          } else {
+            this.logger.error(result.reason);
+          }
+        }
+      }
+    });
+
+    if (this.mqtt) {
+      this.mqtt.publish('dynamica/primaries', (await this.count).toString());
+    }
+    this.logger.debug('Primary channel cleanup complete');
+  }
 }
