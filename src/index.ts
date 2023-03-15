@@ -11,10 +11,11 @@ import registerHelp from './register-help';
 import registerCommands from './register-commands';
 import MQTT from './services/MQTT';
 import deployCommands from './scripts/deploy';
+import Tasks from './services/Tasks';
 
 dotenv.config();
 
-Container.import([Logger, DB, Events, Client, MQTT]);
+Container.import([Logger, DB, Events, Client, MQTT, Tasks]);
 
 registerCommands();
 registerHelp();
