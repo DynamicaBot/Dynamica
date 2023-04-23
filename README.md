@@ -2,6 +2,8 @@
 
 # Dynamica
 
+> # This code is now archived, most if not all functionality can be found in [V2](https://github.com/dynamicabot/dynamica-v2).
+
 [![Build Status](https://ci.sebasptsch.dev/api/badges/DynamicaBot/Dynamica/status.svg)](https://ci.sebasptsch.dev/DynamicaBot/Dynamica)
 
 Dynamica, a bot designed to replicate the features of the Auto Voice Channels bot which has reached end of life. It dynamically assigns voice channels and renames them based on the current activity.
